@@ -33,6 +33,7 @@ export default function Login({
       { id, pw },
       {
         onSuccess: () => {
+          // 세션 로그인 성공 시 대시보드로 이동
           navigate('/dashboard');
         }
       }

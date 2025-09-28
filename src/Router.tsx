@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useToken } from '@/hooks/useToken';
+import { Skeleton } from '@/components/shadcn/skeleton';
 
 import Login from '@/features/login/login';
 import Layout from '@/features/layout/layout';
@@ -54,13 +55,25 @@ const Router: React.FC = () => {
   const [home, setHome] = useState<boolean | undefined>(undefined);
   const navigate = useNavigate();
 
-  useToken(setHome);
+  const { isChecking } = useToken(setHome);
 
   useEffect(() => {
     if (home !== undefined && !home) {
       navigate('/login');
     }
-  }, [home]);
+  }, [home, navigate]);
+
+  // 인증 체크 중일 때 로딩 표시
+  if (isChecking || home === undefined) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
+      </div>
+    );
+  }
 
   const routeElements = generateRouteElements(routesConfig);
 

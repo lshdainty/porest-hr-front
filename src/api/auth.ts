@@ -20,7 +20,6 @@ interface PostLoginReq {
 }
 
 interface PostLoginResp {
-  token: string
   user: {
     id: string
     name: string
@@ -42,8 +41,9 @@ const usePostLogin = () => {
     },
     onSuccess: (data) => {
       toast.success('로그인에 성공했습니다.');
-      // 토큰 저장
-      localStorage.setItem('token', data.token);
+      // 세션은 서버에서 쿠키로 자동 설정되므로 키만 저장
+      localStorage.setItem('key', 'authenticated');
+      localStorage.setItem('userInfo', JSON.stringify(data.user));
     },
     onError: (error) => {
       toast.error('로그인에 실패했습니다.');
@@ -62,9 +62,9 @@ const usePostLogout = () => {
     },
     onSuccess: () => {
       toast.success('로그아웃 되었습니다.');
-      // 토큰 제거
-      localStorage.removeItem('token');
+      // 세션은 서버에서 쿠키 삭제하므로 로컬 데이터만 정리
       localStorage.removeItem('key');
+      localStorage.removeItem('userInfo');
     },
     onError: (error) => {
       toast.error('로그아웃에 실패했습니다.');
@@ -72,6 +72,7 @@ const usePostLogout = () => {
     }
   });
 }
+
 
 export {
   // QueryKey

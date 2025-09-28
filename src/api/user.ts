@@ -12,6 +12,7 @@ interface ApiResponse<T = any> {
 const enum UserQueryKey {
   GET_USER = 'getUser',
   GET_USERS = 'getUsers',
+  GET_LOGIN_USER_INFO = 'getLoginUserInfo',
   POST_USER = 'postUser',
   PUT_USER = 'putUser',
   DELETE_USER = 'deleteUser'
@@ -35,6 +36,13 @@ interface GetUserResp {
   user_work_time: string
   lunar_yn: string
   profile_url: string
+}
+
+interface LoginUserInfo {
+  id: string
+  name: string
+  email: string
+  role: string
 }
 
 const useGetUser = (reqData: GetUserReq) => {
@@ -82,6 +90,26 @@ const useGetUsers = () => {
 
       return resp.data;
     }
+  });
+};
+
+const useGetLoginUserInfo = () => {
+  return useQuery({
+    queryKey: [UserQueryKey.GET_LOGIN_USER_INFO],
+    queryFn: async (): Promise<LoginUserInfo | null> => {
+      try {
+        const resp: ApiResponse<LoginUserInfo> = await api.get('/api/v1/auth/me');
+        return resp.data;
+      } catch (error) {
+        console.error('Failed to get user info:', error);
+        localStorage.removeItem('key');
+        localStorage.removeItem('userInfo');
+        return null;
+      }
+    },
+    enabled: !!localStorage.getItem('key'),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -215,6 +243,7 @@ export {
   // API Hook
   useGetUser,
   useGetUsers,
+  useGetLoginUserInfo,
   usePostUser,
   usePutUser,
   useDeleteUser,
@@ -225,6 +254,7 @@ export type {
   // Interface
   GetUserResp,
   GetUsersResp,
+  LoginUserInfo,
   PostUserReq,
   PutUserReq
 }

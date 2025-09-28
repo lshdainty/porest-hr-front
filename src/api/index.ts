@@ -23,6 +23,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // 세션 쿠키 포함하여 요청
 });
 
 // Request interceptor
@@ -35,8 +36,7 @@ api.interceptors.request.use(
       config.baseURL = import.meta.env.VITE_BASE_URL;
     }
 
-    // url에 따른 각종 header 세팅
-    // jwt 사용시 accessToken 세팅
+    // 세션 쿠키는 withCredentials로 자동 포함됨
     return config;
   },
   (err: AxiosError) => {
@@ -62,15 +62,19 @@ api.interceptors.response.use(
 
     const { status, data } = err.response;
 
-    // 401 에러 처리
+    // 401 에러 처리 (세션 만료)
     if (status === 401) {
-      if (err.response.config.url !== `/api/relogin`) {
-        console.log('jwt relogin');
-        // 재로그인 로직 처리
-      } else {
-        toast.error('인증에 실패했습니다.');
+      // 로컬 스토리지 정리
+      localStorage.removeItem('key');
+      localStorage.removeItem('userInfo');
+
+      // 현재 페이지가 로그인 페이지가 아닌 경우에만 리다이렉트
+      if (window.location.pathname !== '/web/login') {
+        window.location.href = '/web/login';
       }
-      return Promise.reject(new Error('인증에 실패했습니다.'));
+
+      toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
+      return Promise.reject(new Error('세션이 만료되었습니다.'));
     }
 
     // 기타 HTTP 에러 처리
