@@ -77,7 +77,14 @@ api.interceptors.response.use(
 
     // 401, 403 에러 처리 (세션 만료 또는 인증 실패)
     if (status === 401 || status === 403) {
-      // 로컬 스토리지 정리
+      // 로그인 API는 별도 처리하므로 제외
+      if (err.config?.url === '/login') {
+        // 로그인 API의 경우 서버 메시지를 그대로 전달
+        const errorMessage = data?.message || '로그인에 실패했습니다.';
+        return Promise.reject(new Error(errorMessage));
+      }
+
+      // 로컬 스토리지 정리 (로그인 API가 아닌 경우)
       localStorage.removeItem('key');
       localStorage.removeItem('userInfo');
 

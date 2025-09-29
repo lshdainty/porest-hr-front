@@ -47,8 +47,10 @@ const usePostLogin = () => {
       localStorage.setItem('key', 'authenticated');
       localStorage.setItem('userInfo', JSON.stringify(data.user));
     },
-    onError: (error) => {
-      toast.error('로그인에 실패했습니다.');
+    onError: (error: any) => {
+      // 서버에서 반환한 에러 메시지를 표시
+      const errorMessage = error?.message || '로그인에 실패했습니다.';
+      toast.error(errorMessage);
       console.error('Login failed:', error);
     }
   });
