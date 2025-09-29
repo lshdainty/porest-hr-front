@@ -56,21 +56,34 @@ api.interceptors.response.use(
 
     // 네트워크 에러나 요청 자체가 실패한 경우
     if (!err.response) {
+      // 로그인 관련 API가 아닌 경우, 세션 만료로 간주하여 로그인으로 리다이렉트
+      if (err.config?.url !== '/login' && err.config?.url !== '/logout') {
+        localStorage.removeItem('key');
+        localStorage.removeItem('userInfo');
+
+        if (window.location.pathname !== '/login' && !window.location.pathname.includes('/login')) {
+        
+          toast.error('서버 연결이 끊어졌습니다. 다시 로그인해주세요.');
+          window.location.href = '/web/login';
+          return Promise.reject(new Error('서버 연결이 끊어졌습니다.'));
+        }
+      }
+
       toast.error('네트워크 오류가 발생했습니다.');
       return Promise.reject(new Error('네트워크 오류가 발생했습니다.'));
     }
 
     const { status, data } = err.response;
 
-    // 401 에러 처리 (세션 만료)
-    if (status === 401) {
+    // 401, 403 에러 처리 (세션 만료 또는 인증 실패)
+    if (status === 401 || status === 403) {
       // 로컬 스토리지 정리
       localStorage.removeItem('key');
       localStorage.removeItem('userInfo');
 
       // 현재 페이지가 로그인 페이지가 아닌 경우에만 리다이렉트
-      if (window.location.pathname !== '/web/login') {
-        window.location.href = '/web/login';
+      if (window.location.pathname !== '/login' && !window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
       }
 
       toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
