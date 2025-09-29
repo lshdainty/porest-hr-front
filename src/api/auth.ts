@@ -15,8 +15,7 @@ const enum AuthQueryKey {
 }
 
 interface PostLoginReq {
-  id: string
-  pw: string
+  formData: FormData
 }
 
 interface PostLoginResp {
@@ -30,11 +29,14 @@ interface PostLoginResp {
 
 const usePostLogin = () => {
   return useMutation({
-    mutationFn: async (d: PostLoginReq): Promise<PostLoginResp> => {
+    mutationFn: async (formData: FormData): Promise<PostLoginResp> => {
       const resp: ApiResponse<PostLoginResp> = await api.request({
         method: 'post',
         url: `/login`,
-        data: d
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
 
       return resp.data;

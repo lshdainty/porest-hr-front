@@ -21,8 +21,8 @@ export const useToken = (callback: (val: boolean) => void) => {
 
     if (isError || !userInfo) {
       // 인증 실패 또는 사용자 정보 없음
-      localStorage.removeItem('token');
       localStorage.removeItem('key');
+      localStorage.removeItem('userInfo');
       callback(false);
     } else {
       // 인증 성공

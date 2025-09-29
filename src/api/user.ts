@@ -96,16 +96,15 @@ const useGetUsers = () => {
 const useGetLoginUserInfo = () => {
   return useQuery({
     queryKey: [UserQueryKey.GET_LOGIN_USER_INFO],
-    queryFn: async (): Promise<LoginUserInfo | null> => {
-      try {
-        const resp: ApiResponse<LoginUserInfo> = await api.get('/api/v1/auth/me');
-        return resp.data;
-      } catch (error) {
-        console.error('Failed to get user info:', error);
-        localStorage.removeItem('key');
-        localStorage.removeItem('userInfo');
-        return null;
-      }
+    queryFn: async (): Promise<LoginUserInfo> => {
+      const resp: ApiResponse<LoginUserInfo> = await api.request({
+        method: 'get',
+        url: `/user-info`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
     },
     enabled: !!localStorage.getItem('key'),
     retry: false,

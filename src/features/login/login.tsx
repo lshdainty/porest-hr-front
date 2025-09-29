@@ -17,27 +17,18 @@ export default function Login({
 }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
-
   const loginMutation = usePostLogin();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!id || !pw) {
-      return;
-    }
+    const formData = new FormData(e.target as HTMLFormElement);
 
-    loginMutation.mutate(
-      { id, pw },
-      {
-        onSuccess: () => {
-          // 세션 로그인 성공 시 대시보드로 이동
-          navigate('/dashboard');
-        }
+    loginMutation.mutate(formData, {
+      onSuccess: () => {
+        navigate('/dashboard');
       }
-    );
+    });
   }
 
   return (
@@ -62,19 +53,18 @@ export default function Login({
                     <img src={ theme == 'light' ? Logo : LogoDark } alt='logo'></img>
                   </div>
                   <div className='grid gap-3'>
-                    <Label htmlFor='email'>ID</Label>
+                    <Label htmlFor='user_id'>ID</Label>
                     <Input
-                      id='email'
+                      id='user_id'
+                      name='user_id'
                       type='text'
                       placeholder='아이디를 입력하세요'
-                      value={id}
-                      onChange={(e) => setId(e.target.value)}
                       required
                     />
                   </div>
                   <div className='grid gap-3'>
                     <div className='flex items-center'>
-                      <Label htmlFor='password'>Password</Label>
+                      <Label htmlFor='user_pw'>Password</Label>
                       <a
                         href='#'
                         className='ml-auto text-sm underline-offset-2 hover:underline pl-4'
@@ -83,10 +73,9 @@ export default function Login({
                       </a>
                     </div>
                     <Input
-                      id='password'
+                      id='user_pw'
+                      name='user_pw'
                       type='password'
-                      value={pw}
-                      onChange={(e) => setPw(e.target.value)}
                       required
                     />
                   </div>
