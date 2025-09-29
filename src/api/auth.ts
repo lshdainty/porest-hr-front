@@ -1,6 +1,7 @@
 import { api } from '@/api/index'
 import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
+import { useAuthStore } from '@/store/AuthStore';
 
 interface ApiResponse<T = any> {
   code: number
@@ -43,9 +44,7 @@ const usePostLogin = () => {
     },
     onSuccess: (data) => {
       toast.success('로그인에 성공했습니다.');
-      // 세션은 서버에서 쿠키로 자동 설정되므로 키만 저장
-      localStorage.setItem('key', 'authenticated');
-      localStorage.setItem('userInfo', JSON.stringify(data.user));
+      useAuthStore.getState().actions.login(data.user);
     },
     onError: (error: any) => {
       // 서버에서 반환한 에러 메시지를 표시
@@ -66,9 +65,7 @@ const usePostLogout = () => {
     },
     onSuccess: () => {
       toast.success('로그아웃 되었습니다.');
-      // 세션은 서버에서 쿠키 삭제하므로 로컬 데이터만 정리
-      localStorage.removeItem('key');
-      localStorage.removeItem('userInfo');
+      useAuthStore.getState().actions.logout();
     },
     onError: (error) => {
       toast.error('로그아웃에 실패했습니다.');

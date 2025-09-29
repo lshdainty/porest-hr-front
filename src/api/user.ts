@@ -1,6 +1,7 @@
 import { api } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
+import { useAuthStore } from '@/store/AuthStore';
 
 interface ApiResponse<T = any> {
   code: number
@@ -94,6 +95,8 @@ const useGetUsers = () => {
 };
 
 const useGetLoginUserInfo = () => {
+  const { isAuthenticated } = useAuthStore();
+
   return useQuery({
     queryKey: [UserQueryKey.GET_LOGIN_USER_INFO],
     queryFn: async (): Promise<LoginUserInfo> => {
@@ -106,7 +109,7 @@ const useGetLoginUserInfo = () => {
 
       return resp.data;
     },
-    enabled: !!localStorage.getItem('key'),
+    enabled: isAuthenticated,
     retry: false,
     staleTime: 5 * 60 * 1000,
   });

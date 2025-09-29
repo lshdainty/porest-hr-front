@@ -7,7 +7,7 @@ import { Toaster } from '@/components/alert/toast';
 /*
   react19에서 antd 호환성 해결
   https://ant.design/docs/react/v5-for-19
-*/ 
+*/
 import '@ant-design/v5-patch-for-react-19';
 
 const App: React.FC = () => {

@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import config from '@/config/config';
 import { toast } from '@/components/alert/toast';
+import { useAuthStore } from '@/store/AuthStore';
 
 interface CustomHeaders {
   [key: string]: any;
@@ -58,11 +59,10 @@ api.interceptors.response.use(
     if (!err.response) {
       // 로그인 관련 API가 아닌 경우, 세션 만료로 간주하여 로그인으로 리다이렉트
       if (err.config?.url !== '/login' && err.config?.url !== '/logout') {
-        localStorage.removeItem('key');
-        localStorage.removeItem('userInfo');
+        useAuthStore.getState().actions.logout();
 
         if (window.location.pathname !== '/login' && !window.location.pathname.includes('/login')) {
-        
+
           toast.error('서버 연결이 끊어졌습니다. 다시 로그인해주세요.');
           window.location.href = '/web/login';
           return Promise.reject(new Error('서버 연결이 끊어졌습니다.'));
@@ -84,9 +84,8 @@ api.interceptors.response.use(
         return Promise.reject(new Error(errorMessage));
       }
 
-      // 로컬 스토리지 정리 (로그인 API가 아닌 경우)
-      localStorage.removeItem('key');
-      localStorage.removeItem('userInfo');
+      // AuthStore에서 로그아웃 처리 (로그인 API가 아닌 경우)
+      useAuthStore.getState().actions.logout();
 
       // 현재 페이지가 로그인 페이지가 아닌 경우에만 리다이렉트
       if (window.location.pathname !== '/login' && !window.location.pathname.includes('/login')) {
