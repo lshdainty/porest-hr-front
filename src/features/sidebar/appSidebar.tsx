@@ -11,12 +11,6 @@ import { NavContent } from '@/features/sidebar/navContent';
 // 설정 파일에서 import
 import { treeData, routeMapping, pathToIdMapping } from '@/config/routes.config';
 
-const user = {
-  name: 'lsh',
-  email: 'lsh@example.com',
-  image: '/avatars/shadcn.jpg',
-}
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible='icon' {...props}>
@@ -24,14 +18,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavLogo />
       </SidebarHeader>
       <SidebarContent>
-        <NavContent 
-          treeData={treeData} 
-          routeMapping={routeMapping} 
-          pathToIdMapping={pathToIdMapping} 
+        <NavContent
+          treeData={treeData}
+          routeMapping={routeMapping}
+          pathToIdMapping={pathToIdMapping}
         />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )

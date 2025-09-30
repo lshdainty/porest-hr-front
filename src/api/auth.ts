@@ -20,12 +20,11 @@ interface PostLoginReq {
 }
 
 interface PostLoginResp {
-  user: {
-    id: string
-    name: string
-    email: string
-    role: string
-  }
+  user_id: string
+  user_name: string
+  user_email: string
+  user_role: string
+  is_login: string
 }
 
 const usePostLogin = () => {
@@ -44,7 +43,7 @@ const usePostLogin = () => {
     },
     onSuccess: (data) => {
       toast.success('로그인에 성공했습니다.');
-      useAuthStore.getState().actions.login(data.user);
+      useAuthStore.getState().actions.login(data);
     },
     onError: (error: any) => {
       // 서버에서 반환한 에러 메시지를 표시

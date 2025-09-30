@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
+  user_id: string
+  user_name: string
+  user_email: string
+  user_role: string
+  is_login: string
 }
 
 interface AuthState {
