@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Login from '@/features/login/login';
+import SignUp from '@/features/auth/SignUp';
 import Layout from '@/features/layout/layout';
 import NotFound from '@/components/notFound/NotFound';
 
@@ -54,6 +55,7 @@ const Router: React.FC = () => {
   return (
     <Routes>
       <Route path='/login' element={<Login/>} />
+      <Route path='/signup' element={<SignUp/>} />
       <Route element={<Layout/>}>
         {routeElements}
       </Route>

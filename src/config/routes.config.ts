@@ -50,6 +50,7 @@ export interface RouteConfig {
   children?: RouteConfig[];
   component?: React.ComponentType; // 문자열 대신 실제 컴포넌트
   isDefault?: boolean;
+  hideInSidebar?: boolean; // 사이드바에 표시하지 않을 라우트
 }
 
 export const routesConfig: RouteConfig[] = [
@@ -278,12 +279,14 @@ export const createPathToIdMapping = (routes: RouteConfig[]): Record<string, str
 };
 
 export const convertToTreeData = (routes: RouteConfig[]): TreeDataItem[] => {
-  return routes.map(route => ({
-    id: route.id,
-    name: route.name,
-    icon: route.icon,
-    children: route.children ? convertToTreeData(route.children) : undefined,
-  }));
+  return routes
+    .filter(route => !route.hideInSidebar)
+    .map(route => ({
+      id: route.id,
+      name: route.name,
+      icon: route.icon,
+      children: route.children ? convertToTreeData(route.children) : undefined,
+    }));
 };
 
 export const createBreadcrumbMapping = (routes: RouteConfig[]): Record<string, string> => {
