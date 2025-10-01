@@ -4,17 +4,14 @@ import { api } from '@/api/index'
 import { useGetValidateInvitationToken } from '@/api/user'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card'
 import { Button } from '@/components/shadcn/button'
-import { Input } from '@/components/shadcn/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
 import { Label } from '@/components/shadcn/label'
 import { Checkbox } from '@/components/shadcn/checkbox'
-import { Loader2, UserCircle, Mail, Building2, Calendar, Clock } from 'lucide-react'
+import { Loader2, CheckCircle2, ExternalLink } from 'lucide-react'
 import { toast } from '@/components/alert/toast'
-import { cn } from '@/lib/utils'
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker'
 
 interface FormData {
   birth: string
-  workTime: string
   lunarYN: string
 }
 
@@ -27,7 +24,6 @@ export default function SignUp() {
 
   const [formData, setFormData] = useState<FormData>({
     birth: '',
-    workTime: '9 ~ 6',
     lunarYN: 'N'
   })
   const [connectedOAuth] = useState<string[]>([])
@@ -56,7 +52,8 @@ export default function SignUp() {
         url: '/auth/api/signup/complete',
         data: {
           token,
-          ...formData
+          birth: formData.birth,
+          lunarYN: formData.lunarYN
         }
       })
 
@@ -69,13 +66,6 @@ export default function SignUp() {
     }
   }
 
-  const workTimeOptions = [
-    { value: '8 ~ 5', label: '8시 ~ 5시', className: 'text-rose-500' },
-    { value: '9 ~ 6', label: '9시 ~ 6시', className: 'text-sky-500' },
-    { value: '10 ~ 7', label: '10시 ~ 7시', className: 'text-emerald-500' }
-  ]
-
-  const selectedWorkTime = workTimeOptions.find(option => option.value === formData.workTime)
 
   if (isLoading || !token) {
     return (
@@ -107,154 +97,196 @@ export default function SignUp() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <CardTitle className="text-2xl">회원가입</CardTitle>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          {/* 로고 영역 */}
+          <div className="flex justify-center mb-6">
+            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">P</span>
+            </div>
+          </div>
+
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            회원가입
+          </CardTitle>
+          <CardContent className="text-sm text-muted-foreground">
+            초대받은 정보로 계정을 완성해주세요
+          </CardContent>
         </CardHeader>
+
         <CardContent className="space-y-6">
-          <Card className="bg-muted/50">
-            <CardHeader>
-              <CardTitle className="text-lg">초대받은 사용자 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-2">
-                <UserCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">이름:</span>
-                <span className="text-sm">{validationData.user_name}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">이메일:</span>
-                <span className="text-sm">{validationData.user_email}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">소속 회사:</span>
-                <span className="text-sm">{validationData.user_origin_company_type}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">근무 시간:</span>
-                <span className="text-sm">{validationData.user_work_time}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">소셜 로그인 연동 (필수)</h3>
-              <p className="text-sm text-muted-foreground mb-4">최소 하나의 소셜 로그인을 연동해야 합니다.</p>
-
-              <div className="grid gap-3">
-                <Button
-                  type="button"
-                  variant={connectedOAuth.includes('google') ? 'default' : 'outline'}
-                  className={cn(
-                    'w-full justify-start',
-                    connectedOAuth.includes('google') && 'bg-red-500 hover:bg-red-600'
-                  )}
-                  onClick={() => handleOAuthConnect('google')}
-                  disabled={connectedOAuth.includes('google')}
-                >
-                  {connectedOAuth.includes('google') ? '✓ 구글 연동 완료' : '구글로 연동하기'}
-                </Button>
-
-                <Button
-                  type="button"
-                  variant={connectedOAuth.includes('naver') ? 'default' : 'outline'}
-                  className={cn(
-                    'w-full justify-start',
-                    connectedOAuth.includes('naver') && 'bg-green-500 hover:bg-green-600'
-                  )}
-                  onClick={() => handleOAuthConnect('naver')}
-                  disabled={connectedOAuth.includes('naver')}
-                >
-                  {connectedOAuth.includes('naver') ? '✓ 네이버 연동 완료' : '네이버로 연동하기'}
-                </Button>
-
-                <Button
-                  type="button"
-                  variant={connectedOAuth.includes('kakao') ? 'default' : 'outline'}
-                  className={cn(
-                    'w-full justify-start',
-                    connectedOAuth.includes('kakao') && 'bg-yellow-500 hover:bg-yellow-600'
-                  )}
-                  onClick={() => handleOAuthConnect('kakao')}
-                  disabled={connectedOAuth.includes('kakao')}
-                >
-                  {connectedOAuth.includes('kakao') ? '✓ 카카오 연동 완료' : '카카오로 연동하기'}
-                </Button>
+          {/* 사용자 정보 표시 */}
+          {validationData && (
+            <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+              <h3 className="font-medium text-sm text-gray-900">초대받은 정보</h3>
+              <div className="space-y-1 text-sm text-gray-600">
+                <p><span className="font-medium">이름:</span> {validationData.user_name}</p>
+                <p><span className="font-medium">이메일:</span> {validationData.user_email}</p>
+                <p><span className="font-medium">소속:</span> {validationData.user_origin_company_type}</p>
               </div>
             </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <h3 className="text-lg font-semibold">추가 정보 입력</h3>
+          {/* 소셜 로그인 연동 섹션 */}
+          <div className="space-y-4">
+            <div className="text-center">
+              <h3 className="text-sm font-medium text-gray-900 mb-2">
+                소셜 로그인 연동 <span className="text-red-500">*</span>
+              </h3>
+              <p className="text-xs text-gray-500 mb-4">
+                최소 하나의 소셜 로그인을 연동해야 합니다
+              </p>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="birth">
-                  <Calendar className="h-4 w-4 inline-block mr-1" />
-                  생년월일
-                </Label>
-                <Input
-                  id="birth"
-                  type="date"
-                  value={formData.birth}
-                  onChange={(e) => setFormData({...formData, birth: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="workTime">
-                  <Clock className="h-4 w-4 inline-block mr-1" />
-                  근무시간
-                </Label>
-                <Select
-                  value={formData.workTime}
-                  onValueChange={(value) => setFormData({...formData, workTime: value})}
-                >
-                  <SelectTrigger id="workTime" className={cn('w-full', selectedWorkTime?.className)}>
-                    <SelectValue placeholder="근무 시간 선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {workTimeOptions.map(option => (
-                      <SelectItem key={option.value} value={option.value} className={option.className}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="lunarYN"
-                  checked={formData.lunarYN === 'Y'}
-                  onCheckedChange={(checked) =>
-                    setFormData({...formData, lunarYN: checked ? 'Y' : 'N'})
-                  }
-                />
-                <Label htmlFor="lunarYN" className="cursor-pointer">
-                  음력 생일 사용
-                </Label>
-              </div>
-
+            <div className="space-y-3">
+              {/* Google 연동 */}
               <Button
-                type="submit"
-                disabled={connectedOAuth.length === 0 || submitting}
-                className="w-full"
+                type="button"
+                variant={connectedOAuth.includes('google') ? "default" : "outline"}
+                className={`w-full justify-start ${
+                  connectedOAuth.includes('google')
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'hover:bg-gray-50'
+                }`}
+                onClick={() => handleOAuthConnect('google')}
+                disabled={connectedOAuth.includes('google')}
               >
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    처리 중...
-                  </>
-                ) : (
-                  '회원가입 완료'
-                )}
+                <div className="flex items-center w-full">
+                  {connectedOAuth.includes('google') ? (
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                  ) : (
+                    <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                  )}
+                  <span>
+                    {connectedOAuth.includes('google') ? '구글 연동 완료' : 'Google로 연동하기'}
+                  </span>
+                  {!connectedOAuth.includes('google') && (
+                    <ExternalLink className="h-3 w-3 ml-auto" />
+                  )}
+                </div>
               </Button>
-            </form>
+
+              {/* Naver 연동 */}
+              <Button
+                type="button"
+                variant={connectedOAuth.includes('naver') ? "default" : "outline"}
+                className={`w-full justify-start ${
+                  connectedOAuth.includes('naver')
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'hover:bg-gray-50'
+                }`}
+                onClick={() => handleOAuthConnect('naver')}
+                disabled={connectedOAuth.includes('naver')}
+              >
+                <div className="flex items-center w-full">
+                  {connectedOAuth.includes('naver') ? (
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                  ) : (
+                    <div className="h-4 w-4 mr-2 bg-green-500 rounded"></div>
+                  )}
+                  <span>
+                    {connectedOAuth.includes('naver') ? '네이버 연동 완료' : '네이버로 연동하기'}
+                  </span>
+                  {!connectedOAuth.includes('naver') && (
+                    <ExternalLink className="h-3 w-3 ml-auto" />
+                  )}
+                </div>
+              </Button>
+
+              {/* Kakao 연동 */}
+              <Button
+                type="button"
+                variant={connectedOAuth.includes('kakao') ? "default" : "outline"}
+                className={`w-full justify-start ${
+                  connectedOAuth.includes('kakao')
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'hover:bg-gray-50'
+                }`}
+                onClick={() => handleOAuthConnect('kakao')}
+                disabled={connectedOAuth.includes('kakao')}
+              >
+                <div className="flex items-center w-full">
+                  {connectedOAuth.includes('kakao') ? (
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                  ) : (
+                    <div className="h-4 w-4 mr-2 bg-yellow-400 rounded"></div>
+                  )}
+                  <span>
+                    {connectedOAuth.includes('kakao') ? '카카오 연동 완료' : '카카오로 연동하기'}
+                  </span>
+                  {!connectedOAuth.includes('kakao') && (
+                    <ExternalLink className="h-3 w-3 ml-auto" />
+                  )}
+                </div>
+              </Button>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">추가 정보</span>
+            </div>
+          </div>
+
+          {/* 추가 정보 입력 폼 */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="birth">생년월일</Label>
+              <InputDatePicker
+                value={formData.birth}
+                onValueChange={(value) => setFormData({...formData, birth: value || ''})}
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="lunarYN"
+                checked={formData.lunarYN === 'Y'}
+                onCheckedChange={(checked) =>
+                  setFormData({...formData, lunarYN: checked ? 'Y' : 'N'})
+                }
+              />
+              <Label htmlFor="lunarYN" className="text-sm font-normal cursor-pointer">
+                음력 생일 사용
+              </Label>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={connectedOAuth.length === 0 || submitting}
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  처리 중...
+                </>
+              ) : (
+                '회원가입 완료'
+              )}
+            </Button>
+          </form>
+
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              이미 계정이 있으신가요?{' '}
+              <Button
+                variant="link"
+                className="p-0 h-auto font-semibold text-primary"
+                onClick={() => navigate('/login')}
+              >
+                로그인
+              </Button>
+            </p>
           </div>
         </CardContent>
       </Card>
