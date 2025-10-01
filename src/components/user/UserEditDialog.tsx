@@ -53,7 +53,6 @@ interface UserEditDialogProps {
   user: GetUsersResp;
   trigger: React.ReactNode;
   onSave: (updatedUser: PutUserReq) => void;
-  title: string;
 }
 
 // 이미지 URL 변환 유틸리티 함수
@@ -96,7 +95,7 @@ const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8
   });
 };
 
-export default function UserEditDialog({ user, trigger, onSave, title }: UserEditDialogProps) {
+export default function UserEditDialog({ user, trigger, onSave }: UserEditDialogProps) {
   const [open, setOpen] = useState(false);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfile();
   
@@ -124,24 +123,18 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
 
   useEffect(() => {
     if (open) {
-      if (title === '사용자 추가') {
-        form.reset();
-        setProfileImage('');
-      } else { // 수정
-        form.reset({
-          ...user,
-          user_company_type: user.user_company_type || companyOptions[0].company_type,
-          user_department_type: user.user_department_type || departmentOptions[0].department_type,
-          lunar_yn: user.lunar_yn || 'N',
-        });
-        // 기존 이미지도 완전한 URL로 설정
-        setProfileImage(getFullImageUrl(user.profile_url || ''));
-      }
+      form.reset({
+        ...user,
+        user_company_type: user.user_company_type || companyOptions[0].company_type,
+        user_department_type: user.user_department_type || departmentOptions[0].department_type,
+        lunar_yn: user.lunar_yn || 'N',
+      });
+      setProfileImage(getFullImageUrl(user.profile_url || ''));
       setProfileUUID('');
       setUploadError('');
       setUploadSuccess(false);
     }
-  }, [open, user, title, form]);
+  }, [open, user, form]);
 
   // 이미지 파일 선택 핸들러
   const handleImageSelect = () => {
@@ -238,7 +231,7 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
       </DialogTrigger>
       <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>사용자 수정</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

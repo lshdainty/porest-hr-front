@@ -15,6 +15,8 @@ const enum UserQueryKey {
   GET_USERS = 'getUsers',
   GET_LOGIN_USER_INFO = 'getLoginUserInfo',
   POST_USER = 'postUser',
+  POST_USER_INVITE = 'postUserInvite',
+  POST_RESEND_INVITATION = 'postResendInvitation',
   PUT_USER = 'putUser',
   DELETE_USER = 'deleteUser'
 }
@@ -28,15 +30,18 @@ interface GetUserResp {
   user_name: string
   user_email: string
   user_birth: string
+  user_work_time: string
   user_role_type: string
   user_role_name: string
-  user_company_type: string
+  user_origin_company_type: string
   user_company_name: string
-  user_department_type: string
-  user_department_name: string
-  user_work_time: string
   lunar_yn: string
   profile_url: string
+  invitation_token?: string
+  invitation_sent_at?: string
+  invitation_expires_at?: string
+  invitation_status?: string
+  registered_at?: string
 }
 
 interface LoginUserInfo {
@@ -67,15 +72,18 @@ interface GetUsersResp {
   user_name: string
   user_email: string
   user_birth: string
+  user_work_time: string
   user_role_type: string
   user_role_name: string
-  user_company_type: string
+  user_origin_company_type: string
   user_company_name: string
-  user_department_type: string
-  user_department_name: string
-  user_work_time: string
   lunar_yn: string
   profile_url: string
+  invitation_token?: string
+  invitation_sent_at?: string
+  invitation_expires_at?: string
+  invitation_status?: string
+  registered_at?: string
 }
 
 const useGetUsers = () => {
@@ -216,6 +224,51 @@ const useDeleteUser = () => {
   });
 }
 
+interface PostUserInviteReq {
+  user_id: string
+  user_name: string
+  user_email: string
+  user_origin_company_type: string
+  user_work_time: string
+}
+
+interface PostUserInviteResp {
+  user_id: string
+  user_name: string
+  user_email: string
+  user_role_type: string
+  user_work_time: string
+  user_origin_company_type: string
+  invitation_sent_at: string
+  invitation_expires_at: string
+  invitation_status: string
+}
+
+const usePostUserInvite = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (d: PostUserInviteReq): Promise<PostUserInviteResp> => {
+      const resp: ApiResponse<PostUserInviteResp> = await api.request({
+        method: 'post',
+        url: `/user/invite`,
+        data: d
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserQueryKey.GET_USERS] });
+      toast.success('사용자 초대가 완료되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
 const usePostUploadProfile = () => {
   return useMutation({
     mutationFn: async (file: File) => {
@@ -238,6 +291,30 @@ const usePostUploadProfile = () => {
   });
 }
 
+const usePostResendInvitation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (user_id: string) => {
+      const resp: ApiResponse = await api.request({
+        method: 'post',
+        url: `/user/invitation/resend/${user_id}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserQueryKey.GET_USERS] });
+      toast.success('초대 메일이 재전송되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
 export {
   // QueryKey
   UserQueryKey,
@@ -247,6 +324,8 @@ export {
   useGetUsers,
   useGetLoginUserInfo,
   usePostUser,
+  usePostUserInvite,
+  usePostResendInvitation,
   usePutUser,
   useDeleteUser,
   usePostUploadProfile
@@ -258,5 +337,7 @@ export type {
   GetUsersResp,
   LoginUserInfo,
   PostUserReq,
+  PostUserInviteReq,
+  PostUserInviteResp,
   PutUserReq
 }
