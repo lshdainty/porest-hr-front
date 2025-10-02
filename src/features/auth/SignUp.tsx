@@ -1,4 +1,5 @@
-import { useState } from 'react'
+// pages/SignUp.tsx
+import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { api } from '@/api/index'
 import { useGetValidateInvitationToken } from '@/api/auth'
@@ -26,14 +27,41 @@ export default function SignUp() {
     birth: '',
     lunarYN: 'N'
   })
-  const [connectedOAuth] = useState<string[]>([])
+  const [connectedOAuth, setConnectedOAuth] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
 
-  const handleOAuthConnect = (provider: string) => {
-    sessionStorage.setItem('signupToken', token || '')
-    sessionStorage.setItem('signupStep', 'oauth-connect')
+  // ✅ OAuth2 연동 결과 처리
+  useEffect(() => {
+    const oauth = searchParams.get('oauth')
+    const status = searchParams.get('status')
+    const error = searchParams.get('error')
+    // spring에서 redirect하는 부분까지 확인 완료
+    // 프론트로 다시 와서 로직 처리해야함
+    // 현재 back에서 oauth을 통해 회원가입이 완료되면 token을 null로 세팅하고 있음
+    // 방법을 변경해야할거 같은게 인증은 완료했지만 회원가입은 아직 완전히 처리된게 아니기때문에
+    // 세션에 oauth에 대한 정보를 받아온 후 여기에서 나머지 정보 입력받고 save 호출할 때 모든 값을 null로 처리해야 할 것 같음
+    
+    if (oauth && status === 'connected') {
+      // OAuth2 연동 성공
+      setConnectedOAuth(prev => {
+        if (!prev.includes(oauth)) {
+          return [...prev, oauth]
+        }
+        return prev
+      })
+      toast.success(`${oauth} 계정 연동이 완료되었습니다!`)
+      
+      // URL 파라미터 정리 (token만 남기고 제거)
+      navigate(`/signup?token=${token}`, { replace: true })
+    } else if (error) {
+      // OAuth2 연동 실패
+      toast.error(decodeURIComponent(error))
+    }
+  }, [searchParams, token, navigate])
 
-    window.location.href = `/oauth2/authorization/${provider}?token=${token}`
+  const handleOAuthConnect = (provider: string) => {
+    // OAuth2 로그인 시작 (세션에 이미 토큰이 저장되어 있음)
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/oauth2/authorization/${provider}?token=${token}`
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,7 +93,6 @@ export default function SignUp() {
       setSubmitting(false)
     }
   }
-
 
   if (isLoading || !token) {
     return (
@@ -100,7 +127,6 @@ export default function SignUp() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          {/* 로고 영역 */}
           <div className="flex justify-center mb-6">
             <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">P</span>
@@ -116,7 +142,6 @@ export default function SignUp() {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* 사용자 정보 표시 */}
           {validationData && (
             <div className="bg-gray-50 p-4 rounded-lg space-y-2">
               <h3 className="font-medium text-sm text-gray-900">초대받은 정보</h3>
@@ -128,7 +153,6 @@ export default function SignUp() {
             </div>
           )}
 
-          {/* 소셜 로그인 연동 섹션 */}
           <div className="space-y-4">
             <div className="text-center">
               <h3 className="text-sm font-medium text-gray-900 mb-2">
@@ -237,7 +261,6 @@ export default function SignUp() {
             </div>
           </div>
 
-          {/* 추가 정보 입력 폼 */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="birth">생년월일</Label>
