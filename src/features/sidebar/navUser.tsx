@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { EllipsisVertical, CircleUser, CreditCard, MessageSquareDot, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePostLogout } from '@/api/auth';
-import { useAuthStore } from '@/store/AuthStore';
+import { useGetLoginUserInfo } from '@/api/user';
 
 const defaultUser = {
   user_name: 'Guest',
@@ -18,7 +18,8 @@ export function NavUser() {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
   const logoutMutation = usePostLogout()
-  const user = useAuthStore((state) => state.user)
+
+  const { data: userInfo, isLoading } = useGetLoginUserInfo()
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
@@ -28,8 +29,18 @@ export function NavUser() {
     })
   }
 
-  const currentUser = user || defaultUser
-  const avatarUrl = (user as any)?.user_image || '/default-avatar.png'
+  if (isLoading) {
+    return null
+  }
+
+  const currentUser = userInfo ? {
+    user_id: userInfo.user_id,
+    user_name: userInfo.user_name,
+    user_email: userInfo.user_email,
+    user_role: userInfo.user_role,
+    is_login: 'Y'
+  } : defaultUser
+  const avatarUrl = (userInfo as any)?.user_image || '/default-avatar.png'
 
   return (
     <SidebarMenu>

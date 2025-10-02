@@ -1,7 +1,6 @@
 import { api } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
-import { useAuthStore } from '@/store/AuthStore';
 
 interface ApiResponse<T = any> {
   code: number
@@ -14,7 +13,6 @@ const enum UserQueryKey {
   GET_USER = 'getUser',
   GET_USERS = 'getUsers',
   GET_LOGIN_USER_INFO = 'getLoginUserInfo',
-  GET_VALIDATE_INVITATION_TOKEN = 'getValidateInvitationToken',
   POST_USER = 'postUser',
   POST_USER_INVITE = 'postUserInvite',
   POST_RESEND_INVITATION = 'postResendInvitation',
@@ -43,13 +41,6 @@ interface GetUserResp {
   invitation_expires_at?: string
   invitation_status?: string
   registered_at?: string
-}
-
-interface LoginUserInfo {
-  id: string
-  name: string
-  email: string
-  role: string
 }
 
 const useGetUser = (reqData: GetUserReq) => {
@@ -103,56 +94,28 @@ const useGetUsers = () => {
   });
 };
 
-const useGetLoginUserInfo = () => {
-  const { isAuthenticated } = useAuthStore();
+interface LoginUserInfo {
+  user_id: string
+  user_name: string
+  user_email: string
+  user_role: string
+}
 
+const useGetLoginUserInfo = () => {
   return useQuery({
     queryKey: [UserQueryKey.GET_LOGIN_USER_INFO],
     queryFn: async (): Promise<LoginUserInfo> => {
       const resp: ApiResponse<LoginUserInfo> = await api.request({
         method: 'get',
-        url: `/user-info`
+        url: `/login/user-info`
       });
 
       if (resp.code !== 200) throw new Error(resp.data.data.message);
 
       return resp.data;
     },
-    enabled: isAuthenticated,
-    retry: false,
+    // retry: false,
     staleTime: 5 * 60 * 1000,
-  });
-};
-
-interface ValidateInvitationTokenReq {
-  token: string
-}
-
-interface ValidateInvitationTokenResp {
-  user_id: string
-  user_name: string
-  user_email: string
-  user_role_type: string
-  user_work_time: string
-  user_origin_company_type: string
-  invitation_sent_at: string
-  invitation_expires_at: string
-  invitation_status: string
-}
-
-const useGetValidateInvitationToken = (reqData: ValidateInvitationTokenReq) => {
-  return useQuery({
-    queryKey: [UserQueryKey.GET_VALIDATE_INVITATION_TOKEN, reqData.token],
-    queryFn: async (): Promise<ValidateInvitationTokenResp> => {
-      const resp: ApiResponse<ValidateInvitationTokenResp> = await api.request({
-        method: 'get',
-        url: `/user/invitation/validate/${reqData.token}`
-      });
-
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
-
-      return resp.data;
-    },
   });
 };
 
@@ -356,7 +319,6 @@ export {
   useGetUser,
   useGetUsers,
   useGetLoginUserInfo,
-  useGetValidateInvitationToken,
   usePostUser,
   usePostUserInvite,
   usePostResendInvitation,
@@ -370,7 +332,6 @@ export type {
   GetUserResp,
   GetUsersResp,
   LoginUserInfo,
-  ValidateInvitationTokenResp,
   PostUserReq,
   PostUserInviteReq,
   PostUserInviteResp,

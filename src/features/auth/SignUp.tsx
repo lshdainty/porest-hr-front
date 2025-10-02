@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { api } from '@/api/index'
-import { useGetValidateInvitationToken } from '@/api/user'
+import { useGetValidateInvitationToken } from '@/api/auth'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card'
 import { Button } from '@/components/shadcn/button'
 import { Label } from '@/components/shadcn/label'
@@ -33,7 +33,7 @@ export default function SignUp() {
     sessionStorage.setItem('signupToken', token || '')
     sessionStorage.setItem('signupStep', 'oauth-connect')
 
-    window.location.href = `/oauth2/authorization/${provider}`
+    window.location.href = `/oauth2/authorization/${provider}?token=${token}`
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

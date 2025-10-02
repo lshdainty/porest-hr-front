@@ -2,7 +2,6 @@ import { useEffect, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '@/api/index'
 import { toast } from '@/components/alert/toast'
-import { useAuthStore } from '@/store/AuthStore'
 import type { AxiosError, AxiosResponse } from 'axios'
 
 interface CustomHeaders {
@@ -26,7 +25,6 @@ interface AxiosInterceptorProviderProps {
 
 export const AxiosInterceptorProvider = ({ children }: AxiosInterceptorProviderProps) => {
   const navigate = useNavigate()
-  const logout = useAuthStore((state) => state.actions.logout)
 
   useEffect(() => {
     // Request interceptor
@@ -35,7 +33,7 @@ export const AxiosInterceptorProvider = ({ children }: AxiosInterceptorProviderP
         const headers = config.headers as CustomHeaders
 
         // login, logout API는 /api/v1 없이 호출
-        if (config.url === '/login' || config.url === '/logout') {
+        if (config.url === '/login' || config.url === '/logout' || config.url.includes('/oauth2')) {
           config.baseURL = import.meta.env.VITE_BASE_URL
         }
 
@@ -61,7 +59,6 @@ export const AxiosInterceptorProvider = ({ children }: AxiosInterceptorProviderP
         if (!err.response) {
           // 로그인 관련 API가 아닌 경우, 세션 만료로 간주하여 로그인으로 리다이렉트
           if (err.config?.url !== '/login' && err.config?.url !== '/logout') {
-            logout()
 
             if (window.location.pathname !== '/login' && !window.location.pathname.includes('/login')) {
               toast.error('서버 연결이 끊어졌습니다. 다시 로그인해주세요.')
@@ -84,9 +81,6 @@ export const AxiosInterceptorProvider = ({ children }: AxiosInterceptorProviderP
             const errorMessage = data?.message || '로그인에 실패했습니다.'
             return Promise.reject(new Error(errorMessage))
           }
-
-          // AuthStore에서 로그아웃 처리 (로그인 API가 아닌 경우)
-          logout()
 
           // 현재 페이지가 로그인 페이지가 아닌 경우에만 리다이렉트
           if (window.location.pathname !== '/login' && !window.location.pathname.includes('/login')) {
@@ -117,7 +111,7 @@ export const AxiosInterceptorProvider = ({ children }: AxiosInterceptorProviderP
       api.interceptors.request.eject(requestInterceptor)
       api.interceptors.response.eject(responseInterceptor)
     }
-  }, [navigate, logout])
+  }, [navigate])
 
   return <>{children}</>
 }
