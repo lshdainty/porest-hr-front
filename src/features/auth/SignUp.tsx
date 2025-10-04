@@ -1,8 +1,7 @@
 // pages/SignUp.tsx
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { api } from '@/api/index'
-import { useGetValidateInvitationToken } from '@/api/auth'
+import { useGetValidateInvitationToken, usePostCompleteSignup } from '@/api/auth'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card'
 import { Button } from '@/components/shadcn/button'
 import { Label } from '@/components/shadcn/label'
@@ -22,25 +21,30 @@ export default function SignUp() {
   const token = searchParams.get('token') || ''
 
   const { data: validationData, isLoading, isError } = useGetValidateInvitationToken({ token })
+  const { mutate: completeSignup, isPending } = usePostCompleteSignup()
 
   const [formData, setFormData] = useState<FormData>({
     birth: '',
     lunarYN: 'N'
   })
   const [connectedOAuth, setConnectedOAuth] = useState<string[]>([])
-  const [submitting, setSubmitting] = useState(false)
 
   // ✅ OAuth2 연동 결과 처리
   useEffect(() => {
+    // 전체 URL 로그
+    console.log('전체 URL:', window.location.href)
+
+    // searchParams 결과 로그
+    console.log('searchParams 전체:', Object.fromEntries(searchParams.entries()))
+    console.log('token:', searchParams.get('token'))
+    console.log('oauth:', searchParams.get('oauth'))
+    console.log('status:', searchParams.get('status'))
+    console.log('error:', searchParams.get('error'))
+
     const oauth = searchParams.get('oauth')
     const status = searchParams.get('status')
     const error = searchParams.get('error')
-    // spring에서 redirect하는 부분까지 확인 완료
-    // 프론트로 다시 와서 로직 처리해야함
-    // 현재 back에서 oauth을 통해 회원가입이 완료되면 token을 null로 세팅하고 있음
-    // 방법을 변경해야할거 같은게 인증은 완료했지만 회원가입은 아직 완전히 처리된게 아니기때문에
-    // 세션에 oauth에 대한 정보를 받아온 후 여기에서 나머지 정보 입력받고 save 호출할 때 모든 값을 null로 처리해야 할 것 같음
-    
+
     if (oauth && status === 'connected') {
       // OAuth2 연동 성공
       setConnectedOAuth(prev => {
@@ -64,7 +68,7 @@ export default function SignUp() {
     window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/oauth2/authorization/${provider}?token=${token}`
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (connectedOAuth.length === 0) {
@@ -72,26 +76,18 @@ export default function SignUp() {
       return
     }
 
-    try {
-      setSubmitting(true)
-
-      await api.request({
-        method: 'post',
-        url: '/auth/api/signup/complete',
-        data: {
-          token,
-          birth: formData.birth,
-          lunarYN: formData.lunarYN
+    completeSignup(
+      {
+        invitation_token: token,
+        user_birth: formData.birth,
+        lunar_yn: formData.lunarYN
+      },
+      {
+        onSuccess: () => {
+          navigate('/login')
         }
-      })
-
-      toast.success('회원가입이 완료되었습니다!')
-      navigate('/login')
-    } catch (error: any) {
-      toast.error('회원가입에 실패했습니다: ' + (error.response?.data?.message || ''))
-    } finally {
-      setSubmitting(false)
-    }
+      }
+    )
   }
 
   if (isLoading || !token) {
@@ -174,7 +170,7 @@ export default function SignUp() {
                     : 'hover:bg-gray-50'
                 }`}
                 onClick={() => handleOAuthConnect('google')}
-                disabled={connectedOAuth.includes('google')}
+                disabled={connectedOAuth.length > 0}
               >
                 <div className="flex items-center w-full">
                   {connectedOAuth.includes('google') ? (
@@ -206,7 +202,7 @@ export default function SignUp() {
                     : 'hover:bg-gray-50'
                 }`}
                 onClick={() => handleOAuthConnect('naver')}
-                disabled={connectedOAuth.includes('naver')}
+                disabled={connectedOAuth.length > 0}
               >
                 <div className="flex items-center w-full">
                   {connectedOAuth.includes('naver') ? (
@@ -233,7 +229,7 @@ export default function SignUp() {
                     : 'hover:bg-gray-50'
                 }`}
                 onClick={() => handleOAuthConnect('kakao')}
-                disabled={connectedOAuth.includes('kakao')}
+                disabled={connectedOAuth.length > 0}
               >
                 <div className="flex items-center w-full">
                   {connectedOAuth.includes('kakao') ? (
@@ -286,9 +282,9 @@ export default function SignUp() {
             <Button
               type="submit"
               className="w-full"
-              disabled={connectedOAuth.length === 0 || submitting}
+              disabled={connectedOAuth.length === 0 || isPending}
             >
-              {submitting ? (
+              {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   처리 중...

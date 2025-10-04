@@ -13,6 +13,7 @@ const enum AuthQueryKey {
   POST_LOGIN = 'postLogin',
   POST_LOGOUT = 'postLogout',
   GET_VALIDATE_INVITATION_TOKEN = 'getValidateInvitationToken',
+  POST_COMPLETE_SIGNUP = 'postCompleteSignup',
 }
 
 interface PostLoginReq {
@@ -103,6 +104,40 @@ const useGetValidateInvitationToken = (reqData: ValidateInvitationTokenReq) => {
   });
 };
 
+interface PostCompleteSignupReq {
+  invitation_token: string
+  user_birth: string
+  lunar_yn: string
+}
+
+interface PostCompleteSignupResp {
+  user_id: string
+  user_name: string
+  user_email: string
+}
+
+const usePostCompleteSignup = () => {
+  return useMutation({
+    mutationFn: async (reqData: PostCompleteSignupReq): Promise<PostCompleteSignupResp> => {
+      const resp: ApiResponse<PostCompleteSignupResp> = await api.request({
+        method: 'post',
+        url: `/user/invitation/complete`,
+        data: reqData
+      });
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      toast.success('회원가입이 완료되었습니다!');
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || '회원가입에 실패했습니다.';
+      toast.error(errorMessage);
+      console.error('Signup failed:', error);
+    }
+  });
+};
+
 export {
   // QueryKey
   AuthQueryKey,
@@ -111,6 +146,7 @@ export {
   usePostLogin,
   usePostLogout,
   useGetValidateInvitationToken,
+  usePostCompleteSignup,
 }
 
 export type {
@@ -118,4 +154,6 @@ export type {
   PostLoginReq,
   PostLoginResp,
   ValidateInvitationTokenResp,
+  PostCompleteSignupReq,
+  PostCompleteSignupResp,
 }
