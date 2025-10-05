@@ -121,7 +121,7 @@ const usePostCompleteSignup = () => {
     mutationFn: async (reqData: PostCompleteSignupReq): Promise<PostCompleteSignupResp> => {
       const resp: ApiResponse<PostCompleteSignupResp> = await api.request({
         method: 'post',
-        url: `/user/invitation/complete`,
+        url: `/oauth2/signup/invitation/complete`,
         data: reqData
       });
 
