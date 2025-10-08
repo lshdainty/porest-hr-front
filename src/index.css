@@ -131,5 +131,80 @@
     }
 }
 
+@layer components {
+    .gsi-material-button {
+        @apply select-none appearance-none bg-white border border-[#747775] rounded cursor-pointer;
+        @apply text-[#1f1f1f] text-sm h-10 tracking-wide outline-none overflow-hidden px-3;
+        @apply relative text-center align-middle whitespace-nowrap w-full max-w-md;
+        font-family: 'Roboto', arial, sans-serif;
+        transition: background-color .218s, border-color .218s, box-shadow .218s;
+    }
+
+    .dark .gsi-material-button {
+        @apply bg-[#131314] border-[#8e918f] text-[#e3e3e3];
+    }
+
+    .gsi-material-button .gsi-material-button-icon {
+        @apply h-5 w-5 min-w-5 mr-3;
+    }
+
+    .gsi-material-button .gsi-material-button-content-wrapper {
+        @apply flex flex-row flex-nowrap items-center justify-center h-full w-full relative;
+    }
+
+    .gsi-material-button .gsi-material-button-contents {
+        @apply flex-grow-0 font-medium overflow-hidden text-ellipsis align-top;
+        font-family: 'Roboto', arial, sans-serif;
+    }
+
+    .gsi-material-button .gsi-material-button-state {
+        @apply absolute inset-0 opacity-0;
+        transition: opacity .218s;
+    }
+
+    .gsi-material-button:disabled {
+        @apply cursor-default bg-white/40 border-[#1f1f1f]/10;
+    }
+
+    .dark .gsi-material-button:disabled {
+        background-color: #13131461;
+        border-color: #8e918f1f;
+    }
+
+    .dark .gsi-material-button:disabled .gsi-material-button-state {
+        background-color: #e3e3e31f;
+    }
+
+    .gsi-material-button:disabled .gsi-material-button-contents {
+        @apply opacity-40;
+    }
+
+    .gsi-material-button:disabled .gsi-material-button-icon {
+        @apply opacity-40;
+    }
+
+    .gsi-material-button:not(:disabled):active .gsi-material-button-state,
+    .gsi-material-button:not(:disabled):focus .gsi-material-button-state {
+        @apply bg-[#303030] opacity-10;
+    }
+
+    .dark .gsi-material-button:not(:disabled):active .gsi-material-button-state,
+    .dark .gsi-material-button:not(:disabled):focus .gsi-material-button-state {
+        @apply bg-white opacity-10;
+    }
+
+    .gsi-material-button:not(:disabled):hover {
+        box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+    }
+
+    .gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+        @apply bg-[#303030] opacity-10;
+    }
+
+    .dark .gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+        @apply bg-white opacity-10;
+    }
+}
+
 /* components css */
 @import './components/calendar/index.scss'

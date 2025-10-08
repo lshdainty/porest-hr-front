@@ -1,7 +1,7 @@
 
 import { Toaster as Sonner } from "sonner";
 import { toast as sonnerToast } from "sonner";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/shadcn/themeProvider";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
