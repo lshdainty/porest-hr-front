@@ -3,8 +3,9 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/c
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { EllipsisVertical, CircleUser, CreditCard, MessageSquareDot, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { usePostLogout } from '@/api/auth';
-import { useGetLoginUserInfo } from '@/api/user';
+import { useQueryClient } from '@tanstack/react-query';
+import { usePostLogout, AuthQueryKey } from '@/api/auth';
+import { useLoginUserStore } from '@/store/LoginUser';
 
 const defaultUser = {
   user_name: 'Guest',
@@ -17,30 +18,32 @@ const defaultUser = {
 export function NavUser() {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const logoutMutation = usePostLogout()
-
-  const { data: userInfo, isLoading } = useGetLoginUserInfo()
+  const { loginUser, clearLoginUser } = useLoginUserStore()
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
+        // 전역 store 초기화
+        clearLoginUser()
+        // React Query 캐시 제거 (재요청 없이 캐시만 삭제)
+        queryClient.removeQueries({
+          queryKey: [AuthQueryKey.GET_LOGIN_USER_INFO]
+        })
         navigate('/login')
       }
     })
   }
 
-  if (isLoading) {
-    return null
-  }
-
-  const currentUser = userInfo ? {
-    user_id: userInfo.user_id,
-    user_name: userInfo.user_name,
-    user_email: userInfo.user_email,
-    user_role: userInfo.user_role,
-    is_login: 'Y'
+  const user = loginUser ? {
+    user_name: loginUser.user_name,
+    user_email: loginUser.user_email,
+    user_id: loginUser.user_id,
+    user_role: loginUser.user_role,
   } : defaultUser
-  const avatarUrl = (userInfo as any)?.user_image || '/default-avatar.png'
+
+  const avatarUrl = '/default-avatar.png'
 
   return (
     <SidebarMenu>
@@ -52,13 +55,13 @@ export function NavUser() {
               className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
             >
               <Avatar className='h-8 w-8 rounded-lg grayscale'>
-                <AvatarImage src={avatarUrl} alt={currentUser.user_name} />
-                <AvatarFallback className='rounded-lg'>{currentUser.user_name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={avatarUrl} alt={user.user_name} />
+                <AvatarFallback className='rounded-lg'>{user.user_name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-medium'>{currentUser.user_name}</span>
+                <span className='truncate font-medium'>{user.user_name}</span>
                 <span className='text-muted-foreground truncate text-xs'>
-                  {currentUser.user_email}
+                  {user.user_email}
                 </span>
               </div>
               <EllipsisVertical className='ml-auto size-4' />
@@ -73,13 +76,13 @@ export function NavUser() {
             <DropdownMenuLabel className='p-0 font-normal'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
-                  <AvatarImage src={avatarUrl} alt={currentUser.user_name} />
-                  <AvatarFallback className='rounded-lg'>{currentUser.user_name.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={avatarUrl} alt={user.user_name} />
+                  <AvatarFallback className='rounded-lg'>{user.user_name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-medium'>{currentUser.user_name}</span>
+                  <span className='truncate font-medium'>{user.user_name}</span>
                   <span className='text-muted-foreground truncate text-xs'>
-                    {currentUser.user_email}
+                    {user.user_email}
                   </span>
                 </div>
               </div>

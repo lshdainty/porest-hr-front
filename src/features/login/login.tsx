@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/shadcn/button';
@@ -7,7 +8,7 @@ import { Card, CardContent } from '@/components/shadcn/card';
 import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { useTheme } from '@/components/shadcn/themeProvider';
-import { usePostLogin } from '@/api/auth';
+import { usePostLogin, AuthQueryKey } from '@/api/auth';
 import loginBG from '@/assets/img/login_bg.jpg';
 import Logo from '@/assets/img/porest.svg';
 import LogoDark from '@/assets/img/porest_dark.svg';
@@ -19,14 +20,31 @@ export default function Login({
 }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const queryClient = useQueryClient();
   const loginMutation = usePostLogin();
 
-  // OAuth2 로그인 실패 처리
+  // OAuth2 로그인 성공/실패 처리
   useEffect(() => {
-    // window.location에서 직접 error 파라미터 확인
     const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
     const error = urlParams.get('error');
 
+    // OAuth2 로그인 성공 처리
+    if (status === 'success') {
+      // 유저 정보 다시 가져오기
+      queryClient.invalidateQueries({
+        queryKey: [AuthQueryKey.GET_LOGIN_USER_INFO]
+      }).then(() => {
+        toast.success('로그인에 성공했습니다.');
+        // URL 파라미터 제거 후 대시보드로 이동
+        window.history.replaceState({}, '', window.location.pathname);
+        navigate('/dashboard');
+      });
+
+      return;
+    }
+
+    // OAuth2 로그인 실패 처리
     if (error) {
       const errorMessage = decodeURIComponent(error);
 
@@ -42,7 +60,7 @@ export default function Login({
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [navigate, queryClient]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +68,11 @@ export default function Login({
     const formData = new FormData(e.target as HTMLFormElement);
 
     loginMutation.mutate(formData, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        // 로그인 성공 후 유저 정보 다시 가져오기
+        await queryClient.invalidateQueries({
+          queryKey: [AuthQueryKey.GET_LOGIN_USER_INFO]
+        });
         navigate('/dashboard');
       }
     });

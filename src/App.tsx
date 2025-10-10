@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ClientProviders } from '@/ClientProviders'
 import { ThemeProvider } from '@/components/shadcn/themeProvider'
 import { AxiosInterceptorProvider } from '@/api/AxiosInterceptorProvider'
+import { LoginCheckProvider } from '@/components/auth/LoginCheckProvider'
 import Router from '@/Router'
 import { Toaster } from '@/components/alert/toast'
 /*
@@ -17,9 +18,11 @@ const App: React.FC = () => {
       <ClientProviders>
         <BrowserRouter basename='/web' future={{v7_startTransition: true, v7_relativeSplatPath: true }}>
           <AxiosInterceptorProvider>
-            <Router />
-            <Toaster />
-            <ReactQueryDevtools />
+            <LoginCheckProvider>
+              <Router />
+              <Toaster />
+              <ReactQueryDevtools />
+            </LoginCheckProvider>
           </AxiosInterceptorProvider>
         </BrowserRouter>
       </ClientProviders>

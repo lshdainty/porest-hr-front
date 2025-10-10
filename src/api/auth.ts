@@ -12,6 +12,7 @@ interface ApiResponse<T = any> {
 const enum AuthQueryKey {
   POST_LOGIN = 'postLogin',
   POST_LOGOUT = 'postLogout',
+  GET_LOGIN_USER_INFO = 'getLoginUserInfo',
   GET_VALIDATE_INVITATION_TOKEN = 'getValidateInvitationToken',
   POST_COMPLETE_SIGNUP = 'postCompleteSignup',
 }
@@ -71,6 +72,34 @@ const usePostLogout = () => {
     }
   });
 }
+
+interface LoginUserInfo {
+  user_id: string
+  user_name: string
+  user_email: string
+  user_role: string
+}
+
+const useGetLoginUserInfo = () => {
+  return useQuery({
+    queryKey: [AuthQueryKey.GET_LOGIN_USER_INFO],
+    queryFn: async (): Promise<LoginUserInfo> => {
+      console.log('[useGetLoginUserInfo] API 호출 시작');
+      const resp: ApiResponse<LoginUserInfo> = await api.request({
+        method: 'get',
+        url: `/login/user-info`
+      });
+
+      console.log('[useGetLoginUserInfo] API 응답:', resp);
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+};
 
 interface ValidateInvitationTokenReq {
   token: string
@@ -145,6 +174,7 @@ export {
   // API Hook
   usePostLogin,
   usePostLogout,
+  useGetLoginUserInfo,
   useGetValidateInvitationToken,
   usePostCompleteSignup,
 }
@@ -153,6 +183,7 @@ export type {
   // Interface
   PostLoginReq,
   PostLoginResp,
+  LoginUserInfo,
   ValidateInvitationTokenResp,
   PostCompleteSignupReq,
   PostCompleteSignupResp,

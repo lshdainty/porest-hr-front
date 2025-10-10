@@ -12,7 +12,6 @@ interface ApiResponse<T = any> {
 const enum UserQueryKey {
   GET_USER = 'getUser',
   GET_USERS = 'getUsers',
-  GET_LOGIN_USER_INFO = 'getLoginUserInfo',
   POST_USER = 'postUser',
   POST_USER_INVITE = 'postUserInvite',
   POST_RESEND_INVITATION = 'postResendInvitation',
@@ -91,31 +90,6 @@ const useGetUsers = () => {
 
       return resp.data;
     }
-  });
-};
-
-interface LoginUserInfo {
-  user_id: string
-  user_name: string
-  user_email: string
-  user_role: string
-}
-
-const useGetLoginUserInfo = () => {
-  return useQuery({
-    queryKey: [UserQueryKey.GET_LOGIN_USER_INFO],
-    queryFn: async (): Promise<LoginUserInfo> => {
-      const resp: ApiResponse<LoginUserInfo> = await api.request({
-        method: 'get',
-        url: `/login/user-info`
-      });
-
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
-
-      return resp.data;
-    },
-    // retry: false,
-    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -318,7 +292,6 @@ export {
   // API Hook
   useGetUser,
   useGetUsers,
-  useGetLoginUserInfo,
   usePostUser,
   usePostUserInvite,
   usePostResendInvitation,
@@ -331,7 +304,6 @@ export type {
   // Interface
   GetUserResp,
   GetUsersResp,
-  LoginUserInfo,
   PostUserReq,
   PostUserInviteReq,
   PostUserInviteResp,

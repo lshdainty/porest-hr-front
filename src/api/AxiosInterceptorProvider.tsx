@@ -50,6 +50,8 @@ export const AxiosInterceptorProvider = ({ children }: AxiosInterceptorProviderP
     const responseInterceptor = api.interceptors.response.use(
       (resp: AxiosResponse) => {
         // 성공 응답은 그대로 data 부분만 반환
+        console.log('test log : ', resp)
+        console.log('test log .data : ', resp.data)
         return resp.data
       },
       async (err: AxiosError<ApiErrorResponse>) => {
