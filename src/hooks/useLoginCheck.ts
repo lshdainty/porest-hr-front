@@ -13,11 +13,7 @@ export function useLoginCheck() {
   const { setLoginUser, clearLoginUser } = useLoginUserStore()
 
   useEffect(() => {
-    console.log('useLoginCheck before loginuser : ', loginUser)
-
     if (loginUser) {
-      console.log('useLoginCheck after loginuser : ', loginUser)
-
       setLoginUser(loginUser)
     }
   }, [loginUser])

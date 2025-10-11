@@ -69,11 +69,6 @@ export default function Login({
 
     loginMutation.mutate(formData, {
       onSuccess: async () => {
-        // 로그인 성공 후 유저 정보 다시 가져오기
-        // await queryClient.invalidateQueries({
-        //   queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
-        // });
-        console.log('navigate dashboard')
         navigate('/dashboard');
       }
     });

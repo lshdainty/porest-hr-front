@@ -11,10 +11,8 @@ export const useLoginUserStore = create<LoginUserState>((set) => ({
   loginUser: null,
   setLoginUser: (user) => {
     set({ loginUser: user })
-    console.log('[LoginUserStore] setLoginUser 호출됨:', user)
   },
   clearLoginUser: () => {
     set({ loginUser: null })
-    console.log('[LoginUserStore] clearLoginUser 호출됨: null')
   }
 }))
