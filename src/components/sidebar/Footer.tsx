@@ -12,10 +12,11 @@ const defaultUser = {
   user_email: 'guest@example.com',
   user_id: '',
   user_role: '',
-  is_login: 'N'
+  is_login: 'N',
+  profile_url: '/default-avatar.png'
 }
 
-export function NavUser() {
+export function Footer() {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -41,9 +42,8 @@ export function NavUser() {
     user_email: loginUser.user_email,
     user_id: loginUser.user_id,
     user_role: loginUser.user_role,
+    profile_url: loginUser.profile_url
   } : defaultUser
-
-  const avatarUrl = '/default-avatar.png'
 
   return (
     <SidebarMenu>
@@ -55,7 +55,7 @@ export function NavUser() {
               className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
             >
               <Avatar className='h-8 w-8 rounded-lg grayscale'>
-                <AvatarImage src={avatarUrl} alt={user.user_name} />
+                <AvatarImage src={user.profile_url} alt={user.user_name} />
                 <AvatarFallback className='rounded-lg'>{user.user_name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
@@ -76,7 +76,7 @@ export function NavUser() {
             <DropdownMenuLabel className='p-0 font-normal'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
-                  <AvatarImage src={avatarUrl} alt={user.user_name} />
+                  <AvatarImage src={user.profile_url} alt={user.user_name} />
                   <AvatarFallback className='rounded-lg'>{user.user_name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>

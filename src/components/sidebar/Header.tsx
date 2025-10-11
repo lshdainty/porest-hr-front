@@ -7,7 +7,7 @@ import {
   SidebarMenuItem,
 } from '@/components/shadcn/sidebar';
 
-export function NavLogo() {
+export function Header() {
   const { theme } = useTheme();
 
   return (

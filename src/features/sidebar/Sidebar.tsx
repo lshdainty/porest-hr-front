@@ -4,9 +4,9 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from '@/components/shadcn/sidebar';
-import { NavLogo } from '@/features/sidebar/navLogo';
-import { NavUser } from '@/features/sidebar/navUser';
-import { NavContent } from '@/features/sidebar/navContent';
+import { Header } from '@/components/sidebar/Header';
+import { Footer } from '@/components/sidebar/Footer';
+import { Content } from '@/components/sidebar/Content';
 
 // 설정 파일에서 import
 import { treeData, routeMapping, pathToIdMapping } from '@/config/routes.config';
@@ -15,17 +15,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
-        <NavLogo />
+        <Header />
       </SidebarHeader>
       <SidebarContent>
-        <NavContent
+        <Content
           treeData={treeData}
           routeMapping={routeMapping}
           pathToIdMapping={pathToIdMapping}
         />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
+        <Footer />
       </SidebarFooter>
     </Sidebar>
   )

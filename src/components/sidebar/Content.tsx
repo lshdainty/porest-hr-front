@@ -20,7 +20,7 @@ import {
 } from '@/components/shadcn/dropdownMenu';
 import { cn } from "@/lib/utils";
 
-interface NavContentProps {
+interface ContentProps {
   treeData: TreeDataItem[];
   routeMapping: Record<string, string>;
   pathToIdMapping: Record<string, string>;
@@ -78,7 +78,7 @@ function getAllSubItems(item: TreeDataItem, routeMapping: Record<string, string>
   return subItems;
 }
 
-export function NavContent({ treeData, routeMapping, pathToIdMapping }: NavContentProps) {
+export function Content({ treeData, routeMapping, pathToIdMapping }: ContentProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { state, isMobile } = useSidebar();
