@@ -1,5 +1,5 @@
 import { api } from '@/api/index'
-import {useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
 
 interface ApiResponse<T = any> {
@@ -12,7 +12,7 @@ interface ApiResponse<T = any> {
 const enum AuthQueryKey {
   POST_LOGIN = 'postLogin',
   POST_LOGOUT = 'postLogout',
-  GET_LOGIN_USER_INFO = 'getLoginUserInfo',
+  GET_LOGIN_CHECK = 'getLoginCheck',
   GET_VALIDATE_INVITATION_TOKEN = 'getValidateInvitationToken',
   POST_COMPLETE_SIGNUP = 'postCompleteSignup',
 }
@@ -73,39 +73,46 @@ const usePostLogout = () => {
   });
 }
 
-interface LoginUserInfo {
+interface GetLoginCheck {
   user_id: string
   user_name: string
   user_email: string
   user_role: string
+  is_login: string
+  profile_url?: string
 }
 
-const useGetLoginUserInfo = () => {
-  return useQuery({
-    queryKey: [AuthQueryKey.GET_LOGIN_USER_INFO],
-    queryFn: async (): Promise<LoginUserInfo> => {
-      console.log('[useGetLoginUserInfo] API 호출 시작');
-      const resp: ApiResponse<LoginUserInfo> = await api.request({
-        method: 'get',
-        url: `/login/user-info`
-      });
+interface UseGetLoginCheckOptions {
+  enabled?: boolean
+}
 
-      console.log('[useGetLoginUserInfo] API 응답:', resp);
+const useGetLoginCheck = (options?: UseGetLoginCheckOptions) => {
+  return useQuery({
+    queryKey: [AuthQueryKey.GET_LOGIN_CHECK],
+    queryFn: async (): Promise<GetLoginCheck> => {
+      console.log('[useGetLoginCheck] API 호출 시작');
+
+      const resp: ApiResponse<GetLoginCheck> = await api.request({
+        method: 'get',
+        url: `/login/check`
+      });
 
       if (resp.code !== 200) throw new Error(resp.message);
 
+      console.log('[useGetLoginCheck] API 호출 완료 ', resp.data)
+
       return resp.data;
     },
-    staleTime: 5 * 60 * 1000,
+    enabled: options?.enabled ?? true,
     retry: false,
   });
 };
 
-interface ValidateInvitationTokenReq {
+interface GetValidateInvitationTokenReq {
   token: string
 }
 
-interface ValidateInvitationTokenResp {
+interface GetValidateInvitationTokenResp {
   user_id: string
   user_name: string
   user_email: string
@@ -117,16 +124,16 @@ interface ValidateInvitationTokenResp {
   invitation_status: string
 }
 
-const useGetValidateInvitationToken = (reqData: ValidateInvitationTokenReq) => {
+const useGetValidateInvitationToken = (reqData: GetValidateInvitationTokenReq) => {
   return useQuery({
     queryKey: [AuthQueryKey.GET_VALIDATE_INVITATION_TOKEN, reqData.token],
-    queryFn: async (): Promise<ValidateInvitationTokenResp> => {
-      const resp: ApiResponse<ValidateInvitationTokenResp> = await api.request({
+    queryFn: async (): Promise<GetValidateInvitationTokenResp> => {
+      const resp: ApiResponse<GetValidateInvitationTokenResp> = await api.request({
         method: 'get',
         url: `/oauth2/signup/validate?token=${reqData.token}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -174,7 +181,7 @@ export {
   // API Hook
   usePostLogin,
   usePostLogout,
-  useGetLoginUserInfo,
+  useGetLoginCheck,
   useGetValidateInvitationToken,
   usePostCompleteSignup,
 }
@@ -183,8 +190,8 @@ export type {
   // Interface
   PostLoginReq,
   PostLoginResp,
-  LoginUserInfo,
-  ValidateInvitationTokenResp,
+  GetLoginCheck,
+  GetValidateInvitationTokenResp,
   PostCompleteSignupReq,
   PostCompleteSignupResp,
 }

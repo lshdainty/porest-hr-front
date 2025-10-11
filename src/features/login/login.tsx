@@ -33,7 +33,7 @@ export default function Login({
     if (status === 'success') {
       // 유저 정보 다시 가져오기
       queryClient.invalidateQueries({
-        queryKey: [AuthQueryKey.GET_LOGIN_USER_INFO]
+        queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
       }).then(() => {
         toast.success('로그인에 성공했습니다.');
         // URL 파라미터 제거 후 대시보드로 이동
@@ -70,9 +70,10 @@ export default function Login({
     loginMutation.mutate(formData, {
       onSuccess: async () => {
         // 로그인 성공 후 유저 정보 다시 가져오기
-        await queryClient.invalidateQueries({
-          queryKey: [AuthQueryKey.GET_LOGIN_USER_INFO]
-        });
+        // await queryClient.invalidateQueries({
+        //   queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
+        // });
+        console.log('navigate dashboard')
         navigate('/dashboard');
       }
     });

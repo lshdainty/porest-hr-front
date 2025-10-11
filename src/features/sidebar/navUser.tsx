@@ -29,7 +29,7 @@ export function NavUser() {
         clearLoginUser()
         // React Query 캐시 제거 (재요청 없이 캐시만 삭제)
         queryClient.removeQueries({
-          queryKey: [AuthQueryKey.GET_LOGIN_USER_INFO]
+          queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
         })
         navigate('/login')
       }

@@ -1,14 +1,20 @@
 import { create } from 'zustand'
-import type { LoginUserInfo } from '@/api/auth'
+import type { GetLoginCheck } from '@/api/auth'
 
 interface LoginUserState {
-  loginUser: LoginUserInfo | null
-  setLoginUser: (user: LoginUserInfo | null) => void
+  loginUser: GetLoginCheck | null
+  setLoginUser: (user: GetLoginCheck | null) => void
   clearLoginUser: () => void
 }
 
 export const useLoginUserStore = create<LoginUserState>((set) => ({
   loginUser: null,
-  setLoginUser: (user) => set({ loginUser: user }),
-  clearLoginUser: () => set({ loginUser: null })
+  setLoginUser: (user) => {
+    set({ loginUser: user })
+    console.log('[LoginUserStore] setLoginUser 호출됨:', user)
+  },
+  clearLoginUser: () => {
+    set({ loginUser: null })
+    console.log('[LoginUserStore] clearLoginUser 호출됨: null')
+  }
 }))

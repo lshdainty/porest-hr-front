@@ -7,10 +7,8 @@ interface LoginCheckProviderProps {
 }
 
 export const LoginCheckProvider = ({ children }: LoginCheckProviderProps) => {
-  const { isLoading, isError } = useLoginCheck()
-
-  console.log('[LoginCheckProvider] isLoading:', isLoading, 'isError:', isError)
-
+  const { isLoading } = useLoginCheck()
+  
   if (isLoading) {
     return <Loading />
   }
