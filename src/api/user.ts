@@ -1,13 +1,6 @@
-import { api } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
-
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  count: string
-  data: T
-}
 
 const enum UserQueryKey {
   GET_USER = 'getUser',
@@ -46,12 +39,12 @@ const useGetUser = (reqData: GetUserReq) => {
   return useQuery({
     queryKey: [UserQueryKey.GET_USER, reqData.user_id],
     queryFn: async (): Promise<GetUserResp> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetUserResp> = await api.request({
         method: 'get',
         url: `/user/${reqData.user_id}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -81,12 +74,12 @@ const useGetUsers = () => {
   return useQuery({
     queryKey: [UserQueryKey.GET_USERS],
     queryFn: async (): Promise<GetUsersResp[]> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetUsersResp[]> = await api.request({
         method: 'get',
         url: `/users`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -118,7 +111,7 @@ const usePostUser = () => {
         data: d
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -156,7 +149,7 @@ const usePutUser = () => {
         data: d
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -180,7 +173,7 @@ const useDeleteUser = () => {
         url: `/user/${user_id}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -225,7 +218,7 @@ const usePostUserInvite = () => {
         data: d
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -254,7 +247,7 @@ const usePostUploadProfile = () => {
         }
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -271,7 +264,7 @@ const usePostResendInvitation = () => {
         url: `/user/invitation/resend/${user_id}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },

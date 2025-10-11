@@ -1,13 +1,6 @@
-import { api } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
-
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  count: string
-  data: T
-}
 
 const enum DuesQueryKey {
   GET_YEAR_DUES = 'getYearDues',
@@ -38,12 +31,12 @@ const useGetYearDues = (reqData: GetYearDuesReq) => {
   return useQuery({
     queryKey: [DuesQueryKey.GET_YEAR_DUES, reqData],
     queryFn: async (): Promise<GetYearDuesResp[]> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetYearDuesResp[]> = await api.request({
         method: 'get',
         url: `/dues?year=${reqData.year}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -64,12 +57,12 @@ const useGetYearOperationDues = (reqData: GetYearOperationDuesReq) => {
   return useQuery({
     queryKey: [DuesQueryKey.GET_YEAR_OPERATION_DUES, reqData],
     queryFn: async (): Promise<GetYearOperationDuesResp> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetYearOperationDuesResp> = await api.request({
         method: 'get',
         url: `/dues/operation?year=${reqData.year}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -89,12 +82,12 @@ const useGetMonthBirthDues = (reqData: GetMonthBirthDuesReq) => {
   return useQuery({
     queryKey: [DuesQueryKey.GET_MONTH_BIRTH_DUES, reqData],
     queryFn: async (): Promise<GetMonthBirthDuesResp> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetMonthBirthDuesResp> = await api.request({
         method: 'get',
         url: `/dues/birth/month?year=${reqData.year}&month=${reqData.month}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -114,12 +107,12 @@ const useGetUsersMonthBirthDues = (reqData: GetUsersMonthBirthDuesReq) => {
   return useQuery({
     queryKey: [DuesQueryKey.GET_USERS_MONTH_BIRTH_DUES, reqData],
     queryFn: async (): Promise<GetUsersMonthBirthDuesResp[]> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetUsersMonthBirthDuesResp[]> = await api.request({
         method: 'get',
         url: `/dues/users/birth/month?year=${reqData.year}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -146,7 +139,7 @@ const usePostDues = () => {
         data: d
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -181,7 +174,7 @@ const usePutDues = () => {
         data: d
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -205,7 +198,7 @@ const useDeleteDues = () => {
           url: `/dues/${dues_seq}`
         });
   
-        if (resp.code !== 200) throw new Error(resp.data.data.message);
+        if (resp.code !== 200) throw new Error(resp.message);
   
         return resp.data;
       },

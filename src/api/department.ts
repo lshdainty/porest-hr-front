@@ -1,14 +1,7 @@
-import { api } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
 import { CompanyQueryKey } from '@/api/company';
-
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  count: number
-  data: T
-}
 
 const enum DepartmentQueryKey {
   POST_DEPARTMENT = 'postDepartment',
@@ -42,6 +35,8 @@ const usePostDepartment = () => {
         url: `/department`,
         data: d
       });
+
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -132,6 +127,8 @@ const useGetDepartment = (departmentId: number, enabled: boolean = true) => {
         url: `/department/${departmentId}`
       });
 
+      if (resp.code !== 200) throw new Error(resp.message);
+
       return resp.data;
     },
     enabled: enabled && !!departmentId
@@ -158,6 +155,8 @@ const useGetDepartmentWithChildren = (departmentId: number, enabled: boolean = t
         method: 'get',
         url: `/department/${departmentId}/children`
       });
+
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },

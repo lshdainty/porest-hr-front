@@ -1,14 +1,7 @@
-import { api } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarQueryKey } from '@/api/calendar';
 import { toast } from '@/components/alert/toast';
-
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  count: string
-  data: T
-}
 
 const enum ScheduleQueryKey {
   POST_SCHEDULE = 'postSchedule',
@@ -34,7 +27,7 @@ const usePostSchedule = () => {
         data: d
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -58,7 +51,7 @@ const useDeleteSchedule = () => {
           url: `/schedule/${scheduleId}`,
         });
   
-        if (resp.code !== 200) throw new Error(resp.data.data.message);
+        if (resp.code !== 200) throw new Error(resp.message);
   
         return resp.data;
       },

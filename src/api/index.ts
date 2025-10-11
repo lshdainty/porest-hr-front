@@ -17,6 +17,13 @@ interface CustomHeaders {
   [key: string]: any
 }
 
+interface ApiResponse<T = any> {
+  code: number
+  message: string
+  count: number
+  data: T
+}
+
 interface ApiErrorResponse {
   code: number
   message: string
@@ -45,7 +52,7 @@ api.interceptors.request.use(
     return config
   },
   (err: AxiosError) => {
-    console.log('Request Error: ', err)
+    console.log('axios request error : ', err)
     return Promise.reject(err)
   }
 )
@@ -53,11 +60,10 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (resp: AxiosResponse) => {
     // 성공 응답은 그대로 data 부분만 반환
-    console.log(' axios interceptor log ', resp.data)
     return resp.data
   },
   async (err: AxiosError<ApiErrorResponse>) => {
-    console.log('API Error : ', err)
+    console.log('axios response error : ', err)
 
     // 네트워크 에러나 요청 자체가 실패한 경우
     if (!err.response) {
@@ -114,3 +120,5 @@ api.interceptors.response.use(
 )
 
 export { api }
+
+export type { ApiResponse }

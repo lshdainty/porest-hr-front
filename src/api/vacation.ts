@@ -1,14 +1,7 @@
-import { api } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarQueryKey } from '@/api/calendar';
 import { toast } from '@/components/alert/toast';
-
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  count: string
-  data: T
-}
 
 const enum VacationQueryKey {
   POST_USE_VACATION = 'postUseVacation',
@@ -41,7 +34,7 @@ const usePostUseVacation = () => {
         data: reqData.vacation_data
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -74,12 +67,12 @@ const useGetAvailableVacations = (reqData: GetAvailableVacationsReq) => {
   return useQuery({
     queryKey: [VacationQueryKey.GET_AVAILABLE_VACATIONS, reqData.user_id, reqData.start_date],
     queryFn: async (): Promise<GetAvailableVacationsResp[]> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetAvailableVacationsResp[]> = await api.request({
         method: 'get',
         url: `/vacation/available/${reqData.user_id}?startDate=${reqData.start_date}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -96,7 +89,7 @@ const useDeleteVacationHistory = () => {
         url: `/vacation/history/${vacationHistoryId}`,
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -130,12 +123,12 @@ const useGetUserPeriodVacationUseHistories = (reqData: GetUserPeriodVacationUseH
   return useQuery({
     queryKey: [VacationQueryKey.GET_USER_PERIOD_VACATION_USE_HISTORIES, reqData.user_id, reqData.start_date, reqData.end_date],
     queryFn: async (): Promise<GetUserPeriodVacationUseHistoriesResp[]> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetUserPeriodVacationUseHistoriesResp[]> = await api.request({
         method: 'get',
         url: `/vacation/use/histories/user/period?userId=${reqData.user_id}&startDate=${reqData.start_date}&endDate=${reqData.end_date}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -157,12 +150,12 @@ const useGetUserMonthStatsVacationUseHistories = (reqData: GetUserMonthStatsVaca
   return useQuery({
     queryKey: [VacationQueryKey.GET_USER_MONTH_STATS_VACATION_USE_HISTORIES, reqData.user_id, reqData.year],
     queryFn: async (): Promise<GetUserMonthStatsVacationUseHistoriesResp[]> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetUserMonthStatsVacationUseHistoriesResp[]> = await api.request({
         method: 'get',
         url: `/vacation/use/histories/user/month/stats?userId=${reqData.user_id}&year=${reqData.year}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -197,12 +190,12 @@ const useGetUserVacationUseStats = (reqData: GetUserVacationUseStatsReq) => {
   return useQuery({
     queryKey: [VacationQueryKey.GET_USER_VACATION_USE_STATS, reqData.user_id, reqData.base_date],
     queryFn: async (): Promise<GetUserVacationUseStatsResp> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetUserVacationUseStatsResp> = await api.request({
         method: 'get',
         url: `/vacation/use/stats/user?userId=${reqData.user_id}&baseDate=${reqData.base_date}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }

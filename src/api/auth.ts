@@ -1,13 +1,6 @@
-import { api } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index'
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
-
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  count: number
-  data: T
-}
 
 const enum AuthQueryKey {
   POST_LOGIN = 'postLogin',
@@ -90,16 +83,12 @@ const useGetLoginCheck = (options?: UseGetLoginCheckOptions) => {
   return useQuery({
     queryKey: [AuthQueryKey.GET_LOGIN_CHECK],
     queryFn: async (): Promise<GetLoginCheck> => {
-      console.log('[useGetLoginCheck] API 호출 시작');
-
       const resp: ApiResponse<GetLoginCheck> = await api.request({
         method: 'get',
         url: `/login/check`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
-
-      console.log('[useGetLoginCheck] API 호출 완료 ', resp.data)
 
       return resp.data;
     },

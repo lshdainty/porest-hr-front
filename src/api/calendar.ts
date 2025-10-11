@@ -1,12 +1,5 @@
-import { api } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index'
 import { useQuery } from '@tanstack/react-query';
-
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  count: string
-  data: T
-}
 
 const enum CalendarQueryKey {
   GET_EVENTS_BY_PERIOD = 'getEventsByPeriod'
@@ -34,12 +27,12 @@ const useGetEventsByPeriod = (d: getEventsByPeriodReq) => {
   return useQuery({
     queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD, d.start_date, d.end_date],
     queryFn: async (): Promise<getEventsByPeriodResp[]> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<getEventsByPeriodResp[]> = await api.request({
         method: 'get',
         url: `/calendar/period?startDate=${d.start_date}&endDate=${d.end_date}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }

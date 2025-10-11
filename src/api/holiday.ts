@@ -1,13 +1,6 @@
-import { api } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
-
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  count: string
-  data: T
-}
 
 const enum HolidayQueryKey {
   GET_HOLIDAYS_BY_START_END_DATE = 'getHolidaysByStartEndDate',
@@ -38,12 +31,12 @@ const useGetHolidaysByStartEndDate = (d: GetHolidaysReq) => {
   return useQuery({
     queryKey: [HolidayQueryKey.GET_HOLIDAYS_BY_START_END_DATE, d.start_date, d.end_date],
     queryFn: async (): Promise<GetHolidaysResp[]> => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<GetHolidaysResp[]> = await api.request({
         method: 'get',
         url: `/holidays/date?start=${d.start_date}&end=${d.end_date}&country_code=${'KR'}`    // TODO: 추후 국가코드 api가 추가된다면 d.country_code로 변경해야함
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     }
@@ -72,7 +65,7 @@ const usePostHoliday = () => {
         data: d
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -109,7 +102,7 @@ const usePutHoliday = () => {
         data: d
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
@@ -133,7 +126,7 @@ const useDeleteHoliday = () => {
         url: `/holiday/${holiday_seq}`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
     },
