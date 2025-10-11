@@ -73,7 +73,7 @@ export default function UserInfoCard({
           </Avatar>
           <p className='text-2xl font-bold'>{selectedUser.user_name}</p>
           <p className='text-sm text-muted-foreground'>
-            {selectedUser.user_company_name} / {selectedUser.user_department_name}
+            {selectedUser.user_origin_company_name} / {selectedUser.user_department_name}
           </p>
           <Separator className='my-6' />
           <div className='w-full text-left space-y-5 text-sm'>
@@ -97,7 +97,7 @@ export default function UserInfoCard({
             <div className='flex items-center'>
               <Building2 className='mr-3 h-4 w-4 text-muted-foreground' />
               <span className='font-semibold w-24'>회사</span>
-              <span>{selectedUser.user_company_name}</span>
+              <span>{selectedUser.user_origin_company_name}</span>
             </div>
             <div className='flex items-center'>
               <Briefcase className='mr-3 h-4 w-4 text-muted-foreground' />

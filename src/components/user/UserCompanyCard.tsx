@@ -18,7 +18,7 @@ export default function UserCompanyCard({ value: users }: UserCompanyCardProps) 
     const counts: { [key: string]: number } = {};
 
     users.forEach((user: GetUsersResp) => {
-      (counts[user.user_company_name]) ? counts[user.user_company_name]++ : counts[user.user_company_name] = 1;
+      (counts[user.user_origin_company_name]) ? counts[user.user_origin_company_name]++ : counts[user.user_origin_company_name] = 1;
     });
 
     return Object.keys(counts).map(companyName => ({

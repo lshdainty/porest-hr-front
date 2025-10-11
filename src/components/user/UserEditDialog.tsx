@@ -40,7 +40,7 @@ const formSchema = z.object({
   user_id: z.string().min(1, { message: '아이디를 입력해주세요.' }),
   user_email: z.string().email({ message: '유효한 이메일을 입력해주세요.' }),
   user_birth: z.string().min(1, { message: '생년월일을 입력해주세요.' }),
-  user_company_type: z.string().min(1, { message: '회사를 선택해주세요.' }),
+  user_origin_company_type: z.string().min(1, { message: '회사를 선택해주세요.' }),
   user_department_type: z.string().min(1, { message: '부서를 선택해주세요.' }),
   lunar_yn: z.string().min(1, { message: '음력여부를 선택해주세요.' }),
   user_work_time: z.string().min(1, { message: '유연근무시간을 선택해주세요.' }),
@@ -113,7 +113,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
       user_id: '',
       user_email: '',
       user_birth: dayjs().format('YYYY-MM-DD'),
-      user_company_type: companyOptions[0].company_type,
+      user_origin_company_type: companyOptions[0].company_type,
       user_department_type: departmentOptions[0].department_type,
       lunar_yn: 'N',
       user_work_time: '9 ~ 6',
@@ -125,7 +125,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
     if (open) {
       form.reset({
         ...user,
-        user_company_type: user.user_company_type || companyOptions[0].company_type,
+        user_origin_company_type: user.user_origin_company_type || companyOptions[0].company_type,
         user_department_type: user.user_department_type || departmentOptions[0].department_type,
         lunar_yn: user.lunar_yn || 'N',
       });
@@ -337,7 +337,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                 )}
 
                 {uploadSuccess && (
-                  <Alert className="w-full" variant="default" className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
+                  <Alert className="w-full border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950" variant="default">
                     <AlertCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                     <AlertDescription className="text-green-800 dark:text-green-300">
                       이미지가 성공적으로 처리되었습니다.
@@ -432,7 +432,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="user_company_type"
+                    name="user_origin_company_type"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel><Building2 className='h-4 w-4 text-muted-foreground inline-block' /> 회사</FormLabel>

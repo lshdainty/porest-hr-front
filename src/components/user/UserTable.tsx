@@ -29,7 +29,7 @@ export default function UserTable({ value: users }: UserTableProps) {
       user_name: user.user_name,
       user_email: user.user_email,
       user_birth: dayjs(user.user_birth).format('YYYYMMDD'),
-      user_company_type: user.user_company_type,
+      user_origin_company_type: user.user_origin_company_type,
       user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
       lunar_yn: user.lunar_yn,
@@ -116,7 +116,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <span className='text-sm'>{row.user_company_name}</span>
+                      <span className='text-sm'>{row.user_origin_company_name}</span>
                     </TableCell>
                     <TableCell>
                       <div className={cn(

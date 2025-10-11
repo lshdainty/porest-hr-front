@@ -25,7 +25,7 @@ interface GetUserResp {
   user_role_type: string
   user_role_name: string
   user_origin_company_type: string
-  user_company_name: string
+  user_origin_company_name: string
   lunar_yn: string
   profile_url: string
   invitation_token?: string
@@ -60,7 +60,7 @@ interface GetUsersResp {
   user_role_type: string
   user_role_name: string
   user_origin_company_type: string
-  user_company_name: string
+  user_origin_company_name: string
   lunar_yn: string
   profile_url: string
   invitation_token?: string
@@ -92,7 +92,7 @@ interface PostUserReq {
   user_name: string
   user_email: string
   user_birth: string
-  user_company_type: string
+  user_origin_company_type: string
   user_department_type: string
   user_work_time: string
   lunar_yn: string
@@ -130,7 +130,7 @@ interface PutUserReq {
   user_name: string
   user_email: string
   user_birth: string
-  user_company_type: string
+  user_origin_company_type: string
   user_department_type: string
   user_work_time: string
   lunar_yn: string
