@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/shadcn/checkbox'
 import { Loader2, CheckCircle2, ExternalLink } from 'lucide-react'
 import { toast } from '@/components/alert/toast'
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker'
+import PorestLogo from '@/assets/img/porest.svg'
 
 interface FormData {
   birth: string
@@ -31,16 +32,6 @@ export default function SignUp() {
 
   // ✅ OAuth2 연동 결과 처리
   useEffect(() => {
-    // 전체 URL 로그
-    console.log('전체 URL:', window.location.href)
-
-    // searchParams 결과 로그
-    console.log('searchParams 전체:', Object.fromEntries(searchParams.entries()))
-    console.log('token:', searchParams.get('token'))
-    console.log('oauth:', searchParams.get('oauth'))
-    console.log('status:', searchParams.get('status'))
-    console.log('error:', searchParams.get('error'))
-
     const oauth = searchParams.get('oauth')
     const status = searchParams.get('status')
     const error = searchParams.get('error')
@@ -124,10 +115,8 @@ export default function SignUp() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">P</span>
-            </div>
+          <div className="flex justify-center">
+            <img src={PorestLogo} alt="Porest Logo" className="w-36 h-16" />
           </div>
 
           <CardTitle className="text-2xl font-semibold tracking-tight">
