@@ -6,28 +6,23 @@ import DepartmentTreePanelSkeleton from '@/components/company/DepartmentTreePane
 import DepartmentChartPanelSkeleton from '@/components/company/DepartmentChartPanelSkeleton';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import { Building2 } from 'lucide-react';
-import { useGetCompanyWithDepartments, usePostCompany, type GetCompanyWithDepartmentResp, type GetCompanyWithDepartment, type PostCompanyReq } from '@/api/company';
+import { useGetCompany, usePostCompany, type GetCompanyResp, type PostCompanyReq } from '@/api/company';
 import { usePostDepartment, usePutDepartment, useDeleteDepartment, type PostDepartmentReq, type PutDepartmentReq } from '@/api/department';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
 
 export default function Company() {
-  const [selectedDept, setSelectedDept] = useState<GetCompanyWithDepartment | null>(null);
-  
-  // 임시로 company_id 'SKC' 사용
-  const { data: companyData, isLoading } = useGetCompanyWithDepartments({ company_id: 'SKC' });
+  const [selectedDept, setSelectedDept] = useState<any | null>(null);
+
+  const { data: company, isLoading } = useGetCompany();
   const { mutate: createCompany } = usePostCompany();
   const { mutate: createDepartment } = usePostDepartment();
   const { mutate: updateDepartment } = usePutDepartment();
   const { mutate: deleteDepartment } = useDeleteDepartment();
 
-  const company: GetCompanyWithDepartmentResp | null = useMemo(() => {
-    return companyData || null;
-  }, [companyData]);
-
-  const departments: GetCompanyWithDepartment[] = useMemo(() => {
-    return companyData?.departments || [];
-  }, [companyData]);
+  const departments: any[] = useMemo(() => {
+    return [];
+  }, []);
 
   const handleCompanyCreate = (companyFormData: PostCompanyReq) => {
     createCompany(companyFormData);
@@ -41,7 +36,7 @@ export default function Company() {
       // 생성 모드
       const createData: PostDepartmentReq = {
         ...formData,
-        company_id: company?.company_id || 'skc'
+        company_id: company?.company_id || ''
       };
       createDepartment(createData);
     }
@@ -95,7 +90,7 @@ export default function Company() {
             onDeptSelect={setSelectedDept}
             onDeptUpdate={handleDeptUpdate}
             onDeptDelete={handleDeptDelete}
-            companyId={company?.company_id || 'SKC'}
+            companyId={company?.company_id || ''}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />

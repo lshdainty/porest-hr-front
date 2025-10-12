@@ -4,6 +4,7 @@ import { toast } from '@/components/alert/toast';
 
 const enum CompanyQueryKey {
   POST_COMPANY = 'postCompany',
+  GET_COMPANY = 'getCompany',
   PUT_COMPANY = 'putCompany',
   DELETE_COMPANY = 'deleteCompany',
   GET_COMPANY_WITH_DEPARTMENTS = 'getCompanyWithDepartments'
@@ -41,6 +42,28 @@ const usePostCompany = () => {
     }
   });
 }
+
+interface GetCompanyResp {
+  company_id: string
+  company_name: string
+  company_desc: string
+}
+
+const useGetCompany = () => {
+  return useQuery({
+    queryKey: [CompanyQueryKey.GET_COMPANY],
+    queryFn: async (): Promise<GetCompanyResp> => {
+      const resp: ApiResponse<GetCompanyResp> = await api.request({
+        method: 'get',
+        url: `/company`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    }
+  });
+};
 
 interface PutCompanyReq {
   company_name?: string
@@ -141,6 +164,7 @@ export {
 
   // API Hook
   usePostCompany,
+  useGetCompany,
   usePutCompany,
   useDeleteCompany,
   useGetCompanyWithDepartments
@@ -150,6 +174,7 @@ export type {
   // Interface
   PostCompanyReq,
   PostCompanyResp,
+  GetCompanyResp,
   PutCompanyReq,
   GetCompanyWithDepartmentsReq,
   GetCompanyWithDepartmentResp,
