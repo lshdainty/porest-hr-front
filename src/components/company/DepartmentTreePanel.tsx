@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import DepartmentFormDialog from '@/components/company/DepartmentFormDialog';
 import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
 import { GetCompanyWithDepartment } from '@/api/company';
+import { toast } from '@/components/alert/toast';
 
 interface DepartmentTreePanelProps {
   departments: GetCompanyWithDepartment[];
@@ -53,6 +54,15 @@ export default function DepartmentTreePanel({
     if (dept) onDeptSelect(dept);
   };
 
+  const handleDelete = (dept: GetCompanyWithDepartment) => {
+    // 자식 노드가 있는지 확인
+    if (dept.children && dept.children.length > 0) {
+      toast.error('하위 부서가 있어 삭제할 수 없습니다.');
+      return;
+    }
+    onDeptDelete(dept.department_id);
+  };
+
   const mapDeptToTreeItem = (dept: GetCompanyWithDepartment): TreeDataItem => ({
     id: dept.department_id.toString(),
     name: dept.department_name_kr,
@@ -95,12 +105,12 @@ export default function DepartmentTreePanel({
           className="size-6 hover:border hover:border-input hover:bg-background"
           onClick={e => {
             e.stopPropagation();
-            onDeptDelete(dept.department_id);
+            handleDelete(dept);
           }}
           title="삭제"
         >
-          <Trash2 
-            size={10} 
+          <Trash2
+            size={10}
             strokeWidth={1.5}
           />
         </Button>
@@ -138,7 +148,6 @@ export default function DepartmentTreePanel({
           부서 추가
         </Button>
       </div>
-
       <div className="flex-1 p-4 overflow-y-auto">
         {departments.length > 0 ? (
           <TreeView
@@ -155,7 +164,6 @@ export default function DepartmentTreePanel({
           </div>
         )}
       </div>
-
       <DepartmentFormDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}

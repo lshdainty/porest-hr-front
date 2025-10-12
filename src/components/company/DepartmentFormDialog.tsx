@@ -2,24 +2,32 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
 } from '@/components/shadcn/dialog';
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { Textarea } from '@/components/shadcn/textarea';
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
 } from '@/components/shadcn/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/shadcn/select';
 import { PostDepartmentReq, PutDepartmentReq } from '@/api/department';
+import { useGetUsers } from '@/api/user';
 
 const departmentFormSchema = z.object({
   department_name: z.string().min(1, { message: '영문 부서명을 입력해주세요.' }),
@@ -54,6 +62,8 @@ export default function DepartmentFormDialog({
   parentId,
   companyId
 }: DepartmentFormDialogProps) {
+  const { data: users, isLoading: usersLoading } = useGetUsers();
+
   const form = useForm<DepartmentFormValues>({
     resolver: zodResolver(departmentFormSchema),
     defaultValues: {
@@ -134,7 +144,6 @@ export default function DepartmentFormDialog({
         <DialogHeader>
           <DialogTitle>{getDialogTitle()}</DialogTitle>
         </DialogHeader>
-        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -151,7 +160,6 @@ export default function DepartmentFormDialog({
                   </FormItem>
                 )}
               />
-              
               <FormField
                 control={form.control}
                 name="department_name"
@@ -166,21 +174,37 @@ export default function DepartmentFormDialog({
                 )}
               />
             </div>
-            
             <FormField
               control={form.control}
               name="head_user_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>부서장 ID</FormLabel>
-                  <FormControl>
-                    <Input placeholder="부서장 ID를 입력하세요" {...field} />
-                  </FormControl>
+                  <FormLabel>부서장</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value === 'none' ? '' : value)
+                    }}
+                    value={field.value || 'none'}
+                    disabled={usersLoading}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="부서장을 선택해주세요" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">부서장을 선택해주세요</SelectItem>
+                      {users?.map((user) => (
+                        <SelectItem key={user.user_id} value={user.user_id}>
+                          {user.user_name} ({user.user_id})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
             <FormField
               control={form.control}
               name="department_desc"
@@ -198,7 +222,6 @@ export default function DepartmentFormDialog({
                 </FormItem>
               )}
             />
-            
             <div className="flex justify-end space-x-2 pt-4">
               <Button 
                 type="button" 

@@ -15,7 +15,7 @@ export default function Company() {
   const [selectedDept, setSelectedDept] = useState<GetCompanyWithDepartment | null>(null);
   
   // 임시로 company_id 'SKC' 사용
-  const { data: companyData, isLoading, isError } = useGetCompanyWithDepartments({ company_id: 'SKC' });
+  const { data: companyData, isLoading } = useGetCompanyWithDepartments({ company_id: 'SKC' });
   const { mutate: createCompany } = usePostCompany();
   const { mutate: createDepartment } = usePostDepartment();
   const { mutate: updateDepartment } = usePutDepartment();
@@ -72,8 +72,8 @@ export default function Company() {
     );
   }
 
-  // 회사 정보가 없거나 에러 발생 시 회사 생성 화면 표시
-  if (isError || !company) {
+  // 회사 정보가 없을 때 회사 생성 화면 표시
+  if (!company) {
     return (
       <div className='flex-1 flex items-center justify-center'>
         <CompanyCreateCard onCompanyCreate={handleCompanyCreate} />
@@ -87,7 +87,6 @@ export default function Company() {
         <Building2 />
         <h1 className="text-3xl font-bold">{company.company_name}</h1>
       </div>
-
       <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border">
         <ResizablePanel defaultSize={30} minSize={25}>
           <DepartmentTreePanel
@@ -99,9 +98,7 @@ export default function Company() {
             companyId={company?.company_id || 'SKC'}
           />
         </ResizablePanel>
-        
         <ResizableHandle withHandle />
-        
         <ResizablePanel defaultSize={70}>
           <DepartmentChartPanel
             departments={departments}
