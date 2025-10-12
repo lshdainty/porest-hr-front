@@ -1,12 +1,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
-import { EllipsisVertical, CircleUser, CreditCard, MessageSquareDot, LogOut } from 'lucide-react';
+import { EllipsisVertical, CircleUser, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePostLogout, AuthQueryKey } from '@/api/auth';
 import { useLoginUserStore } from '@/store/LoginUser';
+import { useGetUser, usePutUser, type PutUserReq } from '@/api/user';
+import UserEditDialog from '@/components/user/UserEditDialog';
 import config from '@/config/config';
+import dayjs from 'dayjs';
 
 const defaultUser = {
   user_name: 'Guest',
@@ -23,6 +26,12 @@ export function Footer() {
   const queryClient = useQueryClient()
   const logoutMutation = usePostLogout()
   const { loginUser, clearLoginUser } = useLoginUserStore()
+  const { mutate: putUser } = usePutUser()
+
+  // 로그인한 사용자의 상세 정보 가져오기
+  const { data: userData } = useGetUser({
+    user_id: loginUser?.user_id || ''
+  })
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
@@ -35,6 +44,21 @@ export function Footer() {
         })
         navigate('/login')
       }
+    })
+  }
+
+  const handleUpdateUser = (user: PutUserReq) => {
+    putUser({
+      user_id: user.user_id,
+      user_name: user.user_name,
+      user_email: user.user_email,
+      user_birth: dayjs(user.user_birth).format('YYYYMMDD'),
+      user_origin_company_type: user.user_origin_company_type,
+      user_department_type: user.user_department_type,
+      user_work_time: user.user_work_time,
+      lunar_yn: user.lunar_yn,
+      profile_url: user.profile_url,
+      profile_uuid: user.profile_uuid
     })
   }
 
@@ -90,18 +114,18 @@ export function Footer() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <CircleUser />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <MessageSquareDot />
-                Notifications
-              </DropdownMenuItem>
+              {userData && (
+                <UserEditDialog
+                  user={userData}
+                  onSave={handleUpdateUser}
+                  trigger={
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      <CircleUser />
+                      Account
+                    </DropdownMenuItem>
+                  }
+                />
+              )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} disabled={logoutMutation.isPending}>

@@ -181,60 +181,6 @@ export default function SignUp() {
                   )}
                 </div>
               </Button>
-
-              {/* Naver 연동 */}
-              <Button
-                type="button"
-                variant={connectedOAuth.includes('naver') ? "default" : "outline"}
-                className={`w-full justify-start ${
-                  connectedOAuth.includes('naver')
-                    ? 'bg-green-600 hover:bg-green-700 text-white'
-                    : 'hover:bg-gray-50'
-                }`}
-                onClick={() => handleOAuthConnect('naver')}
-                disabled={connectedOAuth.length > 0}
-              >
-                <div className="flex items-center w-full">
-                  {connectedOAuth.includes('naver') ? (
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                  ) : (
-                    <div className="h-4 w-4 mr-2 bg-green-500 rounded"></div>
-                  )}
-                  <span>
-                    {connectedOAuth.includes('naver') ? '네이버 연동 완료' : '네이버로 연동하기'}
-                  </span>
-                  {!connectedOAuth.includes('naver') && (
-                    <ExternalLink className="h-3 w-3 ml-auto" />
-                  )}
-                </div>
-              </Button>
-
-              {/* Kakao 연동 */}
-              <Button
-                type="button"
-                variant={connectedOAuth.includes('kakao') ? "default" : "outline"}
-                className={`w-full justify-start ${
-                  connectedOAuth.includes('kakao')
-                    ? 'bg-green-600 hover:bg-green-700 text-white'
-                    : 'hover:bg-gray-50'
-                }`}
-                onClick={() => handleOAuthConnect('kakao')}
-                disabled={connectedOAuth.length > 0}
-              >
-                <div className="flex items-center w-full">
-                  {connectedOAuth.includes('kakao') ? (
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                  ) : (
-                    <div className="h-4 w-4 mr-2 bg-yellow-400 rounded"></div>
-                  )}
-                  <span>
-                    {connectedOAuth.includes('kakao') ? '카카오 연동 완료' : '카카오로 연동하기'}
-                  </span>
-                  {!connectedOAuth.includes('kakao') && (
-                    <ExternalLink className="h-3 w-3 ml-auto" />
-                  )}
-                </div>
-              </Button>
             </div>
           </div>
 

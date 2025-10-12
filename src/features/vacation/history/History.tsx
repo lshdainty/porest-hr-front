@@ -15,10 +15,12 @@ import VacationTypeStatsCard from '@/components/vacation/VacationTypeStatsCard';
 import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton';
 import VacationHistoryTable from '@/components/vacation/VacationHistoryTable';
 import VacationHistoryTableSkeleton from '@/components/vacation/VacationHistoryTableSkeleton';
+import { useLoginUserStore } from '@/store/LoginUser';
 import dayjs from 'dayjs';
 
 export default function History() {
-  const user_id = 'user1';
+  const { loginUser } = useLoginUserStore();
+  const user_id = loginUser?.user_id || '';
 
   const { data: user, isLoading: userLoading } = useGetUser({
     user_id: user_id,
