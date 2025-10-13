@@ -5,11 +5,16 @@
 
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryCache, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
+import { toast } from '@/components/alert/toast'
 
 function makeQueryClient() {
-  return new QueryClient({ /* ...opts */ });
+  return new QueryClient({
+    queryCache: new QueryCache({
+      onError: error => toast.error(error.message),
+    }),
+  });
 }
 
 let clientQueryClient: QueryClient | undefined = undefined;
@@ -25,7 +30,7 @@ function getQueryClient() {
   }
 }
 
-export const ClientProviders = ({ children }: { children: ReactNode }) => {
+export const CustomQueryClientProviders = ({ children }: { children: ReactNode }) => {
   const queryClient = getQueryClient();
 
   return (

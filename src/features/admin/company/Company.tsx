@@ -6,7 +6,7 @@ import DepartmentTreePanelSkeleton from '@/components/company/DepartmentTreePane
 import DepartmentChartPanelSkeleton from '@/components/company/DepartmentChartPanelSkeleton';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import { Building2 } from 'lucide-react';
-import { useGetCompany, usePostCompany, type GetCompanyResp, type PostCompanyReq } from '@/api/company';
+import { useGetCompany, usePostCompany, useGetCompanyWithDepartments, type PostCompanyReq } from '@/api/company';
 import { usePostDepartment, usePutDepartment, useDeleteDepartment, type PostDepartmentReq, type PutDepartmentReq } from '@/api/department';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
@@ -15,14 +15,17 @@ export default function Company() {
   const [selectedDept, setSelectedDept] = useState<any | null>(null);
 
   const { data: company, isLoading } = useGetCompany();
+  const { data: companyWithDepartments } = useGetCompanyWithDepartments({
+    company_id: company?.company_id ?? ''
+  });
   const { mutate: createCompany } = usePostCompany();
   const { mutate: createDepartment } = usePostDepartment();
   const { mutate: updateDepartment } = usePutDepartment();
   const { mutate: deleteDepartment } = useDeleteDepartment();
 
-  const departments: any[] = useMemo(() => {
-    return [];
-  }, []);
+  const departments = useMemo(() => {
+    return companyWithDepartments?.departments || [];
+  }, [companyWithDepartments]);
 
   const handleCompanyCreate = (companyFormData: PostCompanyReq) => {
     createCompany(companyFormData);
@@ -54,12 +57,12 @@ export default function Company() {
           <Skeleton className="h-8 w-8" />
           <Skeleton className="h-8 w-48" />
         </div>
-        <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border">
-          <ResizablePanel defaultSize={30} minSize={25}>
+        <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border" storage={null}>
+          <ResizablePanel defaultSize={25} minSize={25}>
             <DepartmentTreePanelSkeleton />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={70}>
+          <ResizablePanel defaultSize={75}>
             <DepartmentChartPanelSkeleton />
           </ResizablePanel>
         </ResizablePanelGroup>
@@ -82,8 +85,8 @@ export default function Company() {
         <Building2 />
         <h1 className="text-3xl font-bold">{company.company_name}</h1>
       </div>
-      <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border">
-        <ResizablePanel defaultSize={30} minSize={25}>
+      <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border" storage={null}>
+        <ResizablePanel defaultSize={25} minSize={25}>
           <DepartmentTreePanel
             departments={departments}
             selectedDept={selectedDept}
@@ -94,7 +97,7 @@ export default function Company() {
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={70}>
+        <ResizablePanel defaultSize={75}>
           <DepartmentChartPanel
             departments={departments}
           />

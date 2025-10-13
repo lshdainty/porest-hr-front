@@ -47,7 +47,8 @@ const useGetUser = (reqData: GetUserReq) => {
       if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
-    }
+    },
+    enabled: !!reqData.user_id
   });
 };
 

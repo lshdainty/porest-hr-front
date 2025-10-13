@@ -68,52 +68,70 @@ export default function DepartmentTreePanel({
     name: dept.department_name_kr,
     icon: Building2,
     actions: (
-      <div className="flex space-x-1 items-center">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-6 hover:border hover:border-input hover:bg-background"
+      <div className="flex space-x-1 items-center" onClick={e => e.stopPropagation()}>
+        <div
+          role="button"
+          tabIndex={0}
+          className="inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors"
           onClick={e => {
             e.stopPropagation();
             handleAddChild(dept.department_id);
           }}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              handleAddChild(dept.department_id);
+            }
+          }}
           title="하위 부서 추가"
         >
-          <Plus 
-            size={10} 
+          <Plus
+            size={16}
             strokeWidth={1.5}
           />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-6 hover:border hover:border-input hover:bg-background"
+        </div>
+        <div
+          role="button"
+          tabIndex={0}
+          className="inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors"
           onClick={e => {
             e.stopPropagation();
             handleEdit(dept);
           }}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              handleEdit(dept);
+            }
+          }}
           title="수정"
         >
-          <Edit 
-            size={10} 
+          <Edit
+            size={16}
             strokeWidth={1.5}
           />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-6 hover:border hover:border-input hover:bg-background"
+        </div>
+        <div
+          role="button"
+          tabIndex={0}
+          className="inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors"
           onClick={e => {
             e.stopPropagation();
             handleDelete(dept);
           }}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              handleDelete(dept);
+            }
+          }}
           title="삭제"
         >
           <Trash2
-            size={10}
+            size={16}
             strokeWidth={1.5}
           />
-        </Button>
+        </div>
       </div>
     ),
     children: dept.children?.map(mapDeptToTreeItem),

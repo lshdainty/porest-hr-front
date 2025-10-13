@@ -34,7 +34,7 @@ const usePostCompany = () => {
       return resp.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
+      queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY] });
       toast.success('회사가 등록되었습니다.');
     },
     onError: (error) => {
@@ -137,14 +137,10 @@ interface GetCompanyWithDepartment {
   children?: Array<GetCompanyWithDepartment>
 }
 
-const useGetCompanyWithDepartments = (reqData: GetCompanyWithDepartmentsReq, enabled: boolean = true) => {
+const useGetCompanyWithDepartments = (reqData: GetCompanyWithDepartmentsReq) => {
   return useQuery({
     queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS, reqData.company_id],
     queryFn: async (): Promise<GetCompanyWithDepartmentResp> => {
-      if (!reqData.company_id || reqData.company_id.trim() === '') {
-        throw new Error('회사 ID가 필요합니다.');
-      }
-
       const resp: ApiResponse<GetCompanyWithDepartmentResp> = await api.request({
         method: 'get',
         url: `/company/${reqData.company_id}/departments`
@@ -154,7 +150,7 @@ const useGetCompanyWithDepartments = (reqData: GetCompanyWithDepartmentsReq, ena
 
       return resp.data;
     },
-    enabled: enabled && !!reqData.company_id && reqData.company_id.trim() !== ''
+    enabled: !!reqData.company_id
   });
 };
 

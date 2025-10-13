@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { ClientProviders } from '@/ClientProviders'
+import { CustomQueryClientProviders } from '@/ClientProviders'
 import { ThemeProvider } from '@/components/shadcn/themeProvider'
 import { AxiosInterceptorProvider } from '@/components/global/AxiosInterceptorProvider'
 import { LoginCheckProvider } from '@/components/global/LoginCheckProvider'
@@ -15,9 +15,9 @@ import '@ant-design/v5-patch-for-react-19'
 const App: React.FC = () => {
   return (
     <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
-      <ClientProviders>
+      <Toaster />
+      <CustomQueryClientProviders>
         <BrowserRouter basename='/web' future={{v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Toaster />
           <AxiosInterceptorProvider>
             <LoginCheckProvider>
               <Router />
@@ -25,7 +25,7 @@ const App: React.FC = () => {
             </LoginCheckProvider>
           </AxiosInterceptorProvider>
         </BrowserRouter>
-      </ClientProviders>
+      </CustomQueryClientProviders>
     </ThemeProvider>
   )
 }
