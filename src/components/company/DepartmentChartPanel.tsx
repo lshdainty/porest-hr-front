@@ -1,30 +1,29 @@
+import { useMemo } from 'react'
 import { Tree, TreeNode } from 'react-organizational-chart';
 import { Building2, Plus, Users } from 'lucide-react';
-import { Button } from '@/components/shadcn/button';
+import { Card } from '@/components/shadcn/card'
 import { GetCompanyWithDepartment } from '@/api/company';
 
 interface DepartmentChartPanelProps {
   departments: GetCompanyWithDepartment[];
 }
 
+interface StyledNodeProps {
+  children: React.ReactNode;
+  isRoot?: boolean;
+}
+
 export default function DepartmentChartPanel({
   departments
 }: DepartmentChartPanelProps) {
-  const StyledNode = ({ children, isRoot = false }) => (
-    <div className={`
-      p-3
-      border-2
-      rounded-lg
-      shadow-sm
-      min-w-[120px]
-      text-center
-      transition-all
-      duration-200
-      hover:shadow-md
-      hover:-translate-y-1
-      ${isRoot ? 'border-blue-500 bg-blue-50' : 'border-blue-200'}
-    `}>
-      {children}
+  const lineColor = useMemo(() => {
+    return getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
+  }, [])
+  const StyledNode = ({ children, isRoot = false }: StyledNodeProps) => (
+    <div className='flex justify-center items-center'>
+      <Card className='p-3 min-w-20 max-w-24 text-center'>
+        {children}
+      </Card>
     </div>
   );
 
@@ -48,9 +47,9 @@ export default function DepartmentChartPanel({
       <div className="flex justify-center items-center min-h-[400px] p-4">
         <Tree
           lineWidth="2px"
-          lineColor="#3b82f6"
-          lineBorderRadius="8px"
-          nodePadding="8px"
+          lineColor={lineColor}
+          lineBorderRadius="5px"
+          nodePadding="10px"
           label={
             <StyledNode isRoot={true}>
               <div className="font-bold text-base text-foreground">{dept.department_name_kr}</div>

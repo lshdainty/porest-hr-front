@@ -63,7 +63,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.62.0",
     "react-organizational-chart": "^2.2.1",
-    "react-resizable-panels": "^3.0.5",
+    "react-resizable-panels": "^3.0.6",
     "react-router-dom": "^6.30.0",
     "recharts": "^3.1.2",
     "sass-embedded": "^1.86.3",
