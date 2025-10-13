@@ -30,7 +30,7 @@ export default function DepartmentTreePanel({
   const handleAddChild = (parentId: number) => {
     setAddingChildToId(parentId);
     const parentDept = findDeptById(departments, parentId);
-    setEditingDept(parentDept); // 부모 부서 정보 (트리 레벨 계산용)
+    setEditingDept(parentDept);
     setIsDialogOpen(true);
   };
 
@@ -42,7 +42,6 @@ export default function DepartmentTreePanel({
 
   const handleSave = (formData: any) => {
     onDeptUpdate(formData);
-
     setIsDialogOpen(false);
     setEditingDept(null);
     setAddingChildToId(null);
@@ -55,7 +54,6 @@ export default function DepartmentTreePanel({
   };
 
   const handleDelete = (dept: GetCompanyWithDepartment) => {
-    // 자식 노드가 있는지 확인
     if (dept.children && dept.children.length > 0) {
       toast.error('하위 부서가 있어 삭제할 수 없습니다.');
       return;
@@ -85,10 +83,7 @@ export default function DepartmentTreePanel({
           }}
           title="하위 부서 추가"
         >
-          <Plus
-            size={16}
-            strokeWidth={1.5}
-          />
+          <Plus size={16} strokeWidth={1.5} />
         </div>
         <div
           role="button"
@@ -106,10 +101,7 @@ export default function DepartmentTreePanel({
           }}
           title="수정"
         >
-          <Edit
-            size={16}
-            strokeWidth={1.5}
-          />
+          <Edit size={16} strokeWidth={1.5} />
         </div>
         <div
           role="button"
@@ -127,10 +119,7 @@ export default function DepartmentTreePanel({
           }}
           title="삭제"
         >
-          <Trash2
-            size={16}
-            strokeWidth={1.5}
-          />
+          <Trash2 size={16} strokeWidth={1.5} />
         </div>
       </div>
     ),
@@ -138,7 +127,6 @@ export default function DepartmentTreePanel({
     draggable: true,
     droppable: true,
   });
-
 
   const findDeptById = (depts: GetCompanyWithDepartment[], id: number): GetCompanyWithDepartment | null => {
     for (const dept of depts) {
@@ -154,8 +142,9 @@ export default function DepartmentTreePanel({
   const treeData = departments.map(mapDeptToTreeItem);
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between p-4 border-b">
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* 헤더 - 고정 */}
+      <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
         <h2 className="text-lg font-semibold">부서 관리</h2>
         <Button size="sm" onClick={() => {
           setEditingDept(null);
@@ -166,7 +155,9 @@ export default function DepartmentTreePanel({
           부서 추가
         </Button>
       </div>
-      <div className="flex-1 p-4 overflow-y-auto">
+      
+      {/* 트리 영역 - 스크롤 가능 */}
+      <div className="flex-1 min-h-0 p-4 overflow-y-auto">
         {departments.length > 0 ? (
           <TreeView
             data={treeData}
@@ -182,6 +173,7 @@ export default function DepartmentTreePanel({
           </div>
         )}
       </div>
+      
       <DepartmentFormDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
@@ -194,4 +186,4 @@ export default function DepartmentTreePanel({
       />
     </div>
   );
-};
+}

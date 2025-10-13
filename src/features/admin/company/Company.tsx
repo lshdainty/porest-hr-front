@@ -4,7 +4,7 @@ import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
 import DepartmentTreePanelSkeleton from '@/components/company/DepartmentTreePanelSkeleton';
 import DepartmentChartPanelSkeleton from '@/components/company/DepartmentChartPanelSkeleton';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
 import { Building2 } from 'lucide-react';
 import { useGetCompany, usePostCompany, useGetCompanyWithDepartments, type PostCompanyReq } from '@/api/company';
 import { usePostDepartment, usePutDepartment, useDeleteDepartment, type PostDepartmentReq, type PutDepartmentReq } from '@/api/department';
@@ -49,15 +49,14 @@ export default function Company() {
     deleteDepartment(deptId);
   };
 
-
   if (isLoading) {
     return (
-      <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6 h-full">
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-8 w-8" />
-          <Skeleton className="h-8 w-48" />
+      <div className='p-4 sm:p-6 md:p-8 flex flex-col gap-6 h-full'>
+        <div className='flex items-center gap-2'>
+          <Skeleton className='h-8 w-8' />
+          <Skeleton className='h-8 w-48' />
         </div>
-        <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border" storage={null}>
+        <ResizablePanelGroup direction='horizontal' className='flex-grow rounded-lg border' storage={null}>
           <ResizablePanel defaultSize={25} minSize={25}>
             <DepartmentTreePanelSkeleton />
           </ResizablePanel>
@@ -70,23 +69,27 @@ export default function Company() {
     );
   }
 
-  // 회사 정보가 없을 때 회사 생성 화면 표시
   if (!company) {
     return (
-      <div className='flex-1 flex items-center justify-center'>
+      <div className='h-full flex items-center justify-center overflow-hidden'>
         <CompanyCreateCard onCompanyCreate={handleCompanyCreate} />
       </div>
     );
   }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6 h-full">
-      <div className="flex items-center gap-2">
+    <div className='h-full w-full'>
+    <div className='h-full flex flex-col p-4 sm:p-6 md:p-8 gap-6 overflow-hidden'>
+      <div className='flex items-center gap-2 flex-shrink-0'>
         <Building2 />
-        <h1 className="text-3xl font-bold">{company.company_name}</h1>
+        <h1 className='text-3xl font-bold'>{company.company_name}</h1>
       </div>
-      <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border" storage={null}>
-        <ResizablePanel defaultSize={25} minSize={25}>
+      <ResizablePanelGroup direction='horizontal' className='flex-1 min-h-0 rounded-lg border'>
+        <ResizablePanel 
+          defaultSize={25} 
+          minSize={25}
+          style={{ overflow: 'hidden' }}
+        >
           <DepartmentTreePanel
             departments={departments}
             selectedDept={selectedDept}
@@ -97,12 +100,16 @@ export default function Company() {
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={75}>
+        <ResizablePanel 
+          defaultSize={75}
+          style={{ overflow: 'hidden' }}
+        >
           <DepartmentChartPanel
             departments={departments}
           />
         </ResizablePanel>
       </ResizablePanelGroup>
+    </div>
     </div>
   );
 }
