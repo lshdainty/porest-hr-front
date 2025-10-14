@@ -130,12 +130,12 @@ interface GetCompanyWithDepartment {
   department_id: number
   department_name: string
   department_name_kr: string
-  parent_id?: number
-  head_user_id?: string
+  parent_id: number
+  head_user_id: string
   tree_level: number
-  department_desc?: string
-  color_code?: string
-  children?: Array<GetCompanyWithDepartment>
+  department_desc: string
+  color_code: string
+  children: Array<GetCompanyWithDepartment>
 }
 
 const useGetCompanyWithDepartments = (reqData: GetCompanyWithDepartmentsReq) => {

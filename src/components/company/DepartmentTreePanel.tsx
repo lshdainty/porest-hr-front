@@ -4,6 +4,7 @@ import { Button } from '@/components/shadcn/button';
 import DepartmentFormDialog from '@/components/company/DepartmentFormDialog';
 import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
 import { GetCompanyWithDepartment } from '@/api/company';
+import { PutDepartmentReq } from '@/api/department';
 import { toast } from '@/components/alert/toast';
 
 interface DepartmentTreePanelProps {
@@ -59,6 +60,45 @@ export default function DepartmentTreePanel({
       return;
     }
     onDeptDelete(dept.department_id);
+  };
+
+  const handleDragDrop = (sourceItem: TreeDataItem, targetItem: TreeDataItem) => {
+    // 드래그된 부서 찾기
+    const draggedDept = findDeptById(departments, Number(sourceItem.id));
+    if (!draggedDept) {
+      return;
+    }
+
+    // 드롭된 위치의 부서 찾기
+    const targetDept = findDeptById(departments, Number(targetItem.id));
+    if (!targetDept) {
+      return;
+    }
+
+    // 부서를 자기 자신에게 드롭하는 경우 무시
+    if (draggedDept.department_id === targetDept.department_id) {
+      return;
+    }
+
+    // 업데이트할 데이터 준비
+    const data: PutDepartmentReq = {
+      department_name: draggedDept.department_name,
+      department_name_kr: draggedDept.department_name_kr,
+      parent_id: targetDept.department_id,
+      head_user_id: draggedDept.head_user_id || undefined,
+      color_code: draggedDept.color_code || undefined,
+      tree_level: targetDept.tree_level + 1,
+      department_desc: draggedDept.department_desc || undefined,
+      company_id: companyId || undefined,
+    };
+
+    const updateData = {
+      departmentId: draggedDept.department_id,
+      data
+    };
+
+    // 부서 업데이트
+    onDeptUpdate(updateData);
   };
 
   const mapDeptToTreeItem = (dept: GetCompanyWithDepartment): TreeDataItem => ({
@@ -124,7 +164,7 @@ export default function DepartmentTreePanel({
       </div>
     ),
     children: dept.children?.map(mapDeptToTreeItem),
-    draggable: true,
+    draggable: dept.parent_id !== null,
     droppable: true,
   });
 
@@ -171,6 +211,7 @@ export default function DepartmentTreePanel({
             initialSelectedItemId={selectedDept?.department_id.toString()}
             onSelectChange={handleSelectChange}
             expandAll={true}
+            onDocumentDrag={handleDragDrop}
             className='bg-transparent'
           />
         ) : (

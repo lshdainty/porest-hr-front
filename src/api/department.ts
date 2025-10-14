@@ -113,12 +113,12 @@ interface GetDepartmentResp {
   department_id: number
   department_name: string
   department_name_kr: string
-  parent_id?: number
-  head_user_id?: string
+  parent_id: number
+  head_user_id: string
   tree_level: number
-  department_desc?: string
-  color_code?:string
-  company_id?: string
+  department_desc: string
+  color_code:string
+  company_id: string
 }
 
 const useGetDepartment = (departmentId: number, enabled: boolean = true) => {
@@ -142,13 +142,13 @@ interface GetDepartmentWithChildrenResp {
   department_id: number
   department_name: string
   department_name_kr: string
-  parent_id?: number
-  head_user_id?: string
+  parent_id: number
+  head_user_id: string
   tree_level: number
-  department_desc?: string
-  color_code?:string
-  company_id?: string
-  children?: GetDepartmentWithChildrenResp[]
+  department_desc: string
+  color_code:string
+  company_id: string
+  children: GetDepartmentWithChildrenResp[]
 }
 
 const useGetDepartmentWithChildren = (departmentId: number, enabled: boolean = true) => {
