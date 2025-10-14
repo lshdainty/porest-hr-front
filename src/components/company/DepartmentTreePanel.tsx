@@ -66,11 +66,11 @@ export default function DepartmentTreePanel({
     name: dept.department_name_kr,
     icon: Building2,
     actions: (
-      <div className="flex space-x-1 items-center" onClick={e => e.stopPropagation()}>
+      <div className='flex space-x-1 items-center' onClick={e => e.stopPropagation()}>
         <div
-          role="button"
+          role='button'
           tabIndex={0}
-          className="inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors"
+          className='inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors'
           onClick={e => {
             e.stopPropagation();
             handleAddChild(dept.department_id);
@@ -81,14 +81,14 @@ export default function DepartmentTreePanel({
               handleAddChild(dept.department_id);
             }
           }}
-          title="하위 부서 추가"
+          title='하위 부서 추가'
         >
           <Plus size={16} strokeWidth={1.5} />
         </div>
         <div
-          role="button"
+          role='button'
           tabIndex={0}
-          className="inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors"
+          className='inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors'
           onClick={e => {
             e.stopPropagation();
             handleEdit(dept);
@@ -99,14 +99,14 @@ export default function DepartmentTreePanel({
               handleEdit(dept);
             }
           }}
-          title="수정"
+          title='수정'
         >
           <Edit size={16} strokeWidth={1.5} />
         </div>
         <div
-          role="button"
+          role='button'
           tabIndex={0}
-          className="inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors"
+          className='inline-flex items-center justify-center size-6 rounded-md hover:border hover:border-input hover:bg-background cursor-pointer transition-colors'
           onClick={e => {
             e.stopPropagation();
             handleDelete(dept);
@@ -117,7 +117,7 @@ export default function DepartmentTreePanel({
               handleDelete(dept);
             }
           }}
-          title="삭제"
+          title='삭제'
         >
           <Trash2 size={16} strokeWidth={1.5} />
         </div>
@@ -141,34 +141,41 @@ export default function DepartmentTreePanel({
 
   const treeData = departments.map(mapDeptToTreeItem);
 
+  // department_level이 0인 항목이 하나라도 있는지 확인
+  const hasLevelZeroDept = departments.some(dept => dept.tree_level === 0);
+
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className='h-full flex flex-col overflow-hidden'>
       {/* 헤더 - 고정 */}
-      <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
-        <h2 className="text-lg font-semibold">부서 관리</h2>
-        <Button size="sm" onClick={() => {
-          setEditingDept(null);
-          setAddingChildToId(null);
-          setIsDialogOpen(true);
-        }}>
-          <Plus size={16} className="mr-2" />
+      <div className='flex items-center justify-between p-4 border-b flex-shrink-0'>
+        <h2 className='text-lg font-semibold'>부서 관리</h2>
+        <Button
+          size='sm'
+          disabled={hasLevelZeroDept}
+          onClick={() => {
+            setEditingDept(null);
+            setAddingChildToId(null);
+            setIsDialogOpen(true);
+          }}
+        >
+          <Plus size={16} />
           부서 추가
         </Button>
       </div>
       
       {/* 트리 영역 - 스크롤 가능 */}
-      <div className="flex-1 min-h-0 p-4 overflow-y-auto">
+      <div className='flex-1 min-h-0 p-4 overflow-y-auto'>
         {departments.length > 0 ? (
           <TreeView
             data={treeData}
             initialSelectedItemId={selectedDept?.department_id.toString()}
             onSelectChange={handleSelectChange}
-            expandAll={false}
-            className="bg-transparent"
+            expandAll={true}
+            className='bg-transparent'
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-            <Building2 size={48} className="mb-4 text-muted-foreground" />
+          <div className='flex flex-col items-center justify-center h-full text-muted-foreground'>
+            <Building2 size={48} className='mb-4 text-muted-foreground' />
             <p>부서가 없습니다</p>
           </div>
         )}

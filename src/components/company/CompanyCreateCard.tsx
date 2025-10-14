@@ -22,21 +22,21 @@ export default function CompanyCreateCard({ onCompanyCreate }: CompanyCreateCard
   };
 
   return (
-    <Card className="w-full max-w-md shadow-lg">
-      <CardHeader className="text-center">
-        <CardTitle className="flex items-center justify-center space-x-2">
-          <Building2 className="text-blue-600" />
+    <Card className='w-full max-w-md shadow-lg'>
+      <CardHeader className='text-center'>
+        <CardTitle className='flex items-center justify-center space-x-2'>
+          <Building2 className='text-blue-600' />
           <span>회사 정보 추가하기</span>
         </CardTitle>
         <CardDescription>회사 정보를 입력하여 시작하세요</CardDescription>
       </CardHeader>
       <CardContent>
         <Button 
-          className="w-full" 
-          size="lg"
+          className='w-full' 
+          size='lg'
           onClick={() => setIsDialogOpen(true)}
         >
-          <Plus className="mr-2" />
+          <Plus className='mr-2' />
           회사 추가하기
         </Button>
         <CompanyFormDialog

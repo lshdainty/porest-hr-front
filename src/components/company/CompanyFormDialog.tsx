@@ -67,21 +67,21 @@ export default function CompanyFormDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className='max-w-md'>
         <DialogHeader>
           <DialogTitle>회사 정보 입력</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="company_id"
+              name='company_id'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>회사 ID *</FormLabel>
                   <FormControl>
-                    <Input placeholder="회사 ID를 입력하세요" {...field} />
+                    <Input placeholder='회사 ID를 입력하세요' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,12 +89,12 @@ export default function CompanyFormDialog({
             />
             <FormField
               control={form.control}
-              name="company_name"
+              name='company_name'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>회사명 *</FormLabel>
                   <FormControl>
-                    <Input placeholder="회사명을 입력하세요" {...field} />
+                    <Input placeholder='회사명을 입력하세요' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -102,13 +102,13 @@ export default function CompanyFormDialog({
             />
             <FormField
               control={form.control}
-              name="company_desc"
+              name='company_desc'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>회사소개</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="회사에 대한 간단한 소개를 입력하세요"
+                      placeholder='회사에 대한 간단한 소개를 입력하세요'
                       rows={4}
                       {...field} 
                     />
@@ -117,16 +117,16 @@ export default function CompanyFormDialog({
                 </FormItem>
               )}
             />
-            <div className="flex justify-end space-x-2 pt-4">
+            <div className='flex justify-end space-x-2 pt-4'>
               <Button 
-                type="button" 
-                variant="secondary" 
+                type='button' 
+                variant='secondary' 
                 onClick={() => handleOpenChange(false)}
               >
                 취소
               </Button>
               <Button 
-                type="submit"
+                type='submit'
                 disabled={!form.formState.isValid || form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? '저장 중...' : '저장'}

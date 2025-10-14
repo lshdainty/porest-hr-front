@@ -134,6 +134,7 @@ interface GetCompanyWithDepartment {
   head_user_id?: string
   tree_level: number
   department_desc?: string
+  color_code?: string
   children?: Array<GetCompanyWithDepartment>
 }
 

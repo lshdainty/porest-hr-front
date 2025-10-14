@@ -18,6 +18,7 @@ interface PostDepartmentReq {
   head_user_id?: string
   tree_level?: number
   department_desc?: string
+  color_code?:string
   company_id?: string
 }
 
@@ -59,6 +60,7 @@ interface PutDepartmentReq {
   head_user_id?: string
   tree_level?: number
   department_desc?: string
+  color_code?:string
   company_id?: string
 }
 
@@ -115,6 +117,7 @@ interface GetDepartmentResp {
   head_user_id?: string
   tree_level: number
   department_desc?: string
+  color_code?:string
   company_id?: string
 }
 
@@ -143,6 +146,7 @@ interface GetDepartmentWithChildrenResp {
   head_user_id?: string
   tree_level: number
   department_desc?: string
+  color_code?:string
   company_id?: string
   children?: GetDepartmentWithChildrenResp[]
 }

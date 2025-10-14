@@ -91,6 +91,28 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeProps>(
         }, [draggedItem, onDocumentDrag])
 
         const expandedItemIds = React.useMemo(() => {
+            // expandAll이 true이면 children이 있는 모든 노드를 확장
+            if (expandAll) {
+                const ids: string[] = []
+
+                function collectAllParentIds(items: TreeDataItem[] | TreeDataItem) {
+                    if (items instanceof Array) {
+                        items.forEach(item => {
+                            if (item.children && item.children.length > 0) {
+                                ids.push(item.id)
+                                collectAllParentIds(item.children)
+                            }
+                        })
+                    } else if (items.children && items.children.length > 0) {
+                        ids.push(items.id)
+                        collectAllParentIds(items.children)
+                    }
+                }
+
+                collectAllParentIds(data)
+                return ids
+            }
+
             if (!initialSelectedItemId) {
                 return [] as string[]
             }

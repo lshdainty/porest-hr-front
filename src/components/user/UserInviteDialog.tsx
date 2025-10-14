@@ -5,7 +5,8 @@ import { Button } from '@/components/shadcn/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/shadcn/dialog'
-import { User as UserIcon, Mail, Building2, Clock, Loader2 } from 'lucide-react'
+import { Spinner } from '@/components/shadcn/spinner'
+import { User as UserIcon, Mail, Building2, Clock } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -166,14 +167,8 @@ export default function UserInviteDialog({ trigger, title }: UserInviteDialogPro
                 </Button>
               </DialogClose>
               <Button type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    처리 중...
-                  </>
-                ) : (
-                  '초대'
-                )}
+                {isPending && <Spinner />}
+                {isPending ? '처리 중...' : '초대'}
               </Button>
             </DialogFooter>
           </form>
