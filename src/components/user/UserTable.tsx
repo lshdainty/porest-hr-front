@@ -3,6 +3,7 @@ import UserInviteDialog from '@/components/user/UserInviteDialog';
 import UserDeleteDialog from '@/components/user/UserDeleteDialog';
 import ResendEmailDialog from '@/components/user/ResendEmailDialog';
 import { usePutUser, useDeleteUser, type GetUsersResp, type PutUserReq } from '@/api/user';
+import { useGetOriginCompanyTypes } from '@/api/type';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/shadcn/avatar';
@@ -22,6 +23,7 @@ interface UserTableProps {
 export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: putUser } = usePutUser();
   const { mutate: deleteUser } = useDeleteUser();
+  const { data: companyTypes } = useGetOriginCompanyTypes();
 
   const handleUpdateUser = (user: PutUserReq) => {
     putUser({
@@ -51,6 +53,7 @@ export default function UserTable({ value: users }: UserTableProps) {
             <UserInviteDialog
               title='사용자 초대'
               trigger={<Button className='text-sm h-8' size='sm'>초대</Button>}
+              companyOptions={companyTypes || []}
             />
           </div>
         </div>
@@ -176,19 +179,50 @@ export default function UserTable({ value: users }: UserTableProps) {
                                 </DropdownMenuItem>
                               }
                             />
-                            <UserEditDialog
-                              user={row}
-                              onSave={handleUpdateUser}
-                              trigger={
-                                <DropdownMenuItem
-                                  disabled={row.invitation_status !== 'ACTIVE'}
-                                  onSelect={(e) => e.preventDefault()}
-                                >
-                                  <Pencil className='h-4 w-4' />
-                                  <span>수정</span>
-                                </DropdownMenuItem>
-                              }
-                            />
+                            {row.invitation_status === 'ACTIVE' && (
+                              <UserEditDialog
+                                user={row}
+                                onSave={handleUpdateUser}
+                                trigger={
+                                  <DropdownMenuItem
+                                    onSelect={(e) => e.preventDefault()}
+                                  >
+                                    <Pencil className='h-4 w-4' />
+                                    <span>수정</span>
+                                  </DropdownMenuItem>
+                                }
+                              />
+                            )}
+                            {row.invitation_status === 'PENDING' && (
+                              <UserInviteDialog
+                                title='사용자 정보 수정'
+                                companyOptions={companyTypes || []}
+                                initialData={{
+                                  user_id: row.user_id,
+                                  user_name: row.user_name,
+                                  user_email: row.user_email,
+                                  user_origin_company_type: row.user_origin_company_type,
+                                  user_work_time: row.user_work_time
+                                }}
+                                trigger={
+                                  <DropdownMenuItem
+                                    onSelect={(e) => e.preventDefault()}
+                                  >
+                                    <Pencil className='h-4 w-4' />
+                                    <span>수정</span>
+                                  </DropdownMenuItem>
+                                }
+                              />
+                            )}
+                            {row.invitation_status !== 'ACTIVE' && row.invitation_status !== 'PENDING' && (
+                              <DropdownMenuItem
+                                disabled
+                                onSelect={(e) => e.preventDefault()}
+                              >
+                                <Pencil className='h-4 w-4' />
+                                <span>수정</span>
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuSeparator />
                             <UserDeleteDialog
                               user={row}

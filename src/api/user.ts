@@ -5,10 +5,12 @@ import { toast } from '@/components/alert/toast';
 const enum UserQueryKey {
   GET_USER = 'getUser',
   GET_USERS = 'getUsers',
+  GET_USER_ID_DUPLICATE = 'getUserIdDuplicate',
   POST_USER = 'postUser',
   POST_USER_INVITE = 'postUserInvite',
   POST_RESEND_INVITATION = 'postResendInvitation',
   PUT_USER = 'putUser',
+  PUT_INVITED_USER = 'putInvitedUser',
   DELETE_USER = 'deleteUser'
 }
 
@@ -41,7 +43,7 @@ const useGetUser = (reqData: GetUserReq) => {
     queryFn: async (): Promise<GetUserResp> => {
       const resp: ApiResponse<GetUserResp> = await api.request({
         method: 'get',
-        url: `/user/${reqData.user_id}`
+        url: `/users/${reqData.user_id}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -87,6 +89,34 @@ const useGetUsers = () => {
   });
 };
 
+interface GetUserIdDuplicateReq {
+  user_id: string
+}
+
+interface GetUserIdDuplicateResp {
+  duplicate: boolean
+}
+
+const useGetUserIdDuplicate = (reqData: GetUserIdDuplicateReq) => {
+  return useQuery({
+    queryKey: [UserQueryKey.GET_USER_ID_DUPLICATE, reqData.user_id],
+    queryFn: async (): Promise<GetUserIdDuplicateResp> => {
+      const resp: ApiResponse<GetUserIdDuplicateResp> = await api.request({
+        method: 'get',
+        url: `/users/check-duplicate`,
+        params: {
+          user_id: reqData.user_id
+        }
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.user_id
+  });
+};
+
 interface PostUserReq {
   user_id: string
   // user_pwd: string
@@ -108,7 +138,7 @@ const usePostUser = () => {
     mutationFn: async (d: PostUserReq) => {
       const resp: ApiResponse = await api.request({
         method: 'post',
-        url: `/user`,
+        url: `/users`,
         data: d
       });
 
@@ -131,6 +161,7 @@ interface PutUserReq {
   user_name: string
   user_email: string
   user_birth: string
+  user_role_type: string
   user_origin_company_type: string
   user_department_type: string
   user_work_time: string
@@ -146,7 +177,7 @@ const usePutUser = () => {
     mutationFn: async (d: PutUserReq) => {
       const resp: ApiResponse = await api.request({
         method: 'put',
-        url: `/user/${d.user_id}`,
+        url: `/users/${d.user_id}`,
         data: d
       });
 
@@ -164,6 +195,56 @@ const usePutUser = () => {
   });
 }
 
+interface PutInvitedUserReq {
+  user_id: string
+  user_name: string
+  user_email: string
+  user_origin_company_type: string
+  user_work_time: string
+}
+
+interface PutInvitedUserResp {
+  user_id: string
+  user_name: string
+  user_email: string
+  user_origin_company_type: string
+  user_work_time: string
+  user_role_type: string
+  invitation_sent_at: string
+  invitation_expires_at: string
+  invitation_status: string
+}
+
+const usePutInvitedUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (d: PutInvitedUserReq): Promise<PutInvitedUserResp> => {
+      const resp: ApiResponse<PutInvitedUserResp> = await api.request({
+        method: 'put',
+        url: `/users/${d.user_id}/invitations`,
+        data: {
+          user_name: d.user_name,
+          user_email: d.user_email,
+          user_origin_company_type: d.user_origin_company_type,
+          user_work_time: d.user_work_time
+        }
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UserQueryKey.GET_USERS] });
+      toast.success('초대된 사용자 정보가 수정되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
 const useDeleteUser = () => {
   const queryClient = useQueryClient();
 
@@ -171,7 +252,7 @@ const useDeleteUser = () => {
     mutationFn: async (user_id: string) => {
       const resp: ApiResponse = await api.request({
         method: 'delete',
-        url: `/user/${user_id}`
+        url: `/users/${user_id}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -215,7 +296,7 @@ const usePostUserInvite = () => {
     mutationFn: async (d: PostUserInviteReq): Promise<PostUserInviteResp> => {
       const resp: ApiResponse<PostUserInviteResp> = await api.request({
         method: 'post',
-        url: `/user/invite`,
+        url: `/users/invitations`,
         data: d
       });
 
@@ -241,7 +322,7 @@ const usePostUploadProfile = () => {
 
       const resp: ApiResponse = await api.request({
         method: 'post',
-        url: `/user/upload/profile`,
+        url: `/users/profiles`,
         data: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -262,7 +343,7 @@ const usePostResendInvitation = () => {
     mutationFn: async (user_id: string) => {
       const resp: ApiResponse = await api.request({
         method: 'post',
-        url: `/user/invitation/resend/${user_id}`
+        url: `/users/${user_id}/invitations/resend`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -286,10 +367,12 @@ export {
   // API Hook
   useGetUser,
   useGetUsers,
+  useGetUserIdDuplicate,
   usePostUser,
   usePostUserInvite,
   usePostResendInvitation,
   usePutUser,
+  usePutInvitedUser,
   useDeleteUser,
   usePostUploadProfile
 }
@@ -298,8 +381,12 @@ export type {
   // Interface
   GetUserResp,
   GetUsersResp,
+  GetUserIdDuplicateReq,
+  GetUserIdDuplicateResp,
   PostUserReq,
   PostUserInviteReq,
   PostUserInviteResp,
-  PutUserReq
+  PutUserReq,
+  PutInvitedUserReq,
+  PutInvitedUserResp
 }

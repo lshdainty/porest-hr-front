@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { usePostUserInvite } from '@/api/user'
+import { usePostUserInvite, usePutInvitedUser, useGetUserIdDuplicate } from '@/api/user'
+import type { TypeResp } from '@/api/type'
 import { Input } from '@/components/shadcn/input'
 import { Button } from '@/components/shadcn/button'
 import { Field, FieldLabel, FieldError } from '@/components/shadcn/field'
@@ -10,7 +11,6 @@ import { User as UserIcon, Mail, Building2, Clock } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { companyOptions } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 const formSchema = z.object({
@@ -26,22 +26,66 @@ type UserInviteFormValues = z.infer<typeof formSchema>
 interface UserInviteDialogProps {
   trigger: React.ReactNode
   title: string
+  companyOptions: TypeResp[]
+  initialData?: {
+    user_id: string
+    user_name: string
+    user_email: string
+    user_origin_company_type: string
+    user_work_time: string
+  }
 }
 
-export default function UserInviteDialog({ trigger, title }: UserInviteDialogProps) {
+export default function UserInviteDialog({ trigger, title, companyOptions, initialData }: UserInviteDialogProps) {
   const [open, setOpen] = useState(false)
-  const { mutateAsync: inviteUser, isPending } = usePostUserInvite()
+  const [userIdToCheck, setUserIdToCheck] = useState('')
+  const { mutateAsync: inviteUser, isPending: isInvitePending } = usePostUserInvite()
+  const { mutateAsync: updateInvitedUser, isPending: isUpdatePending } = usePutInvitedUser()
+
+  const isEditMode = !!initialData?.user_id
+  const isPending = isInvitePending || isUpdatePending
+
+  const { data: duplicateCheckResult, isLoading: isCheckingDuplicate } = useGetUserIdDuplicate({
+    user_id: userIdToCheck
+  })
 
   const form = useForm<UserInviteFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      user_id: '',
-      user_name: '',
-      user_email: '',
-      user_origin_company_type: companyOptions[0].company_type,
-      user_work_time: '9 ~ 6'
+      user_id: initialData?.user_id || '',
+      user_name: initialData?.user_name || '',
+      user_email: initialData?.user_email || '',
+      user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
+      user_work_time: initialData?.user_work_time || '9 ~ 6'
     }
   })
+
+  // 중복 체크 결과에 따라 에러 설정
+  useEffect(() => {
+    if (duplicateCheckResult && userIdToCheck) {
+      if (duplicateCheckResult.duplicate) {
+        form.setError('user_id', {
+          type: 'manual',
+          message: '아이디가 중복됩니다.'
+        })
+      } else {
+        form.clearErrors('user_id')
+      }
+    }
+  }, [duplicateCheckResult, userIdToCheck, form])
+
+  const handleUserIdBlur = () => {
+    const userId = form.getValues('user_id')
+
+    // 빈 값이면 체크하지 않음
+    if (!userId || userId.trim() === '') {
+      setUserIdToCheck('')
+      return
+    }
+
+    // user_id를 설정하면 useGetUserIdDuplicate가 자동으로 호출됨
+    setUserIdToCheck(userId)
+  }
 
   const workTimeOptions = [
     { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
@@ -54,17 +98,30 @@ export default function UserInviteDialog({ trigger, title }: UserInviteDialogPro
   useEffect(() => {
     if (open) {
       form.reset({
-        user_id: '',
-        user_name: '',
-        user_email: '',
-        user_origin_company_type: companyOptions[0].company_type,
-        user_work_time: '9 ~ 6'
+        user_id: initialData?.user_id || '',
+        user_name: initialData?.user_name || '',
+        user_email: initialData?.user_email || '',
+        user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
+        user_work_time: initialData?.user_work_time || '9 ~ 6'
       })
+      setUserIdToCheck('') // 다이얼로그 열릴 때 중복 체크 상태 초기화
     }
-  }, [open, form])
+  }, [open, form, companyOptions, initialData])
 
   const onSubmit = async (values: UserInviteFormValues) => {
-    await inviteUser(values)
+    if (isEditMode) {
+      // 수정 모드: PUT /users/{id}/invitations
+      await updateInvitedUser({
+        user_id: values.user_id,
+        user_name: values.user_name,
+        user_email: values.user_email,
+        user_origin_company_type: values.user_origin_company_type,
+        user_work_time: values.user_work_time
+      })
+    } else {
+      // 신규 초대 모드: POST /users/invitations
+      await inviteUser(values)
+    }
     setOpen(false)
   }
 
@@ -102,7 +159,17 @@ export default function UserInviteDialog({ trigger, title }: UserInviteDialogPro
                     <UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> 아이디
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    onBlur={(e) => {
+                      field.onBlur()
+                      handleUserIdBlur()
+                    }}
+                    disabled={isCheckingDuplicate || !!initialData?.user_id}
+                  />
+                  {isCheckingDuplicate && (
+                    <div className="text-xs text-muted-foreground mt-1">중복 확인 중...</div>
+                  )}
                   <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                 </Field>
               )}
@@ -135,7 +202,7 @@ export default function UserInviteDialog({ trigger, title }: UserInviteDialogPro
                       <SelectValue placeholder="회사 선택" />
                     </SelectTrigger>
                     <SelectContent>
-                      {companyOptions.map(option => <SelectItem key={option.company_type} value={option.company_type}>{option.company_name}</SelectItem>)}
+                      {companyOptions.map(option => <SelectItem key={option.code} value={option.code}>{option.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
@@ -172,7 +239,7 @@ export default function UserInviteDialog({ trigger, title }: UserInviteDialogPro
             </DialogClose>
             <Button type="submit" disabled={!form.formState.isValid || isPending}>
               {isPending && <Spinner />}
-              {isPending ? '처리 중...' : '초대'}
+              {isPending ? '처리 중...' : isEditMode ? '수정' : '초대'}
             </Button>
           </DialogFooter>
         </form>
