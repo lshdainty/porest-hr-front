@@ -8,7 +8,9 @@ const enum DepartmentQueryKey {
   PUT_DEPARTMENT = 'putDepartment',
   DELETE_DEPARTMENT = 'deleteDepartment',
   GET_DEPARTMENT = 'getDepartment',
-  GET_DEPARTMENT_WITH_CHILDREN = 'getDepartmentWithChildren'
+  GET_DEPARTMENT_WITH_CHILDREN = 'getDepartmentWithChildren',
+  POST_DEPARTMENT_USER = 'postDepartmentUser',
+  DELETE_DEPARTMENT_USER = 'deleteDepartmentUser'
 }
 
 interface PostDepartmentReq {
@@ -33,7 +35,7 @@ const usePostDepartment = () => {
     mutationFn: async (d: PostDepartmentReq): Promise<PostDepartmentResp> => {
       const resp: ApiResponse<PostDepartmentResp> = await api.request({
         method: 'post',
-        url: `/department`,
+        url: `/departments`,
         data: d
       });
 
@@ -71,7 +73,7 @@ const usePutDepartment = () => {
     mutationFn: async ({ departmentId, data }: { departmentId: number;  data: PutDepartmentReq }): Promise<void> => {
       await api.request({
         method: 'put',
-        url: `/department/${departmentId}`,
+        url: `/departments/${departmentId}`,
         data: data
       });
     },
@@ -94,7 +96,7 @@ const useDeleteDepartment = () => {
     mutationFn: async (departmentId: number): Promise<void> => {
       await api.request({
         method: 'delete',
-        url: `/department/${departmentId}`
+        url: `/departments/${departmentId}`
       });
     },
     onSuccess: () => {
@@ -127,7 +129,7 @@ const useGetDepartment = (departmentId: number, enabled: boolean = true) => {
     queryFn: async (): Promise<GetDepartmentResp> => {
       const resp: ApiResponse<GetDepartmentResp> = await api.request({
         method: 'get',
-        url: `/department/${departmentId}`
+        url: `/departments/${departmentId}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -157,7 +159,7 @@ const useGetDepartmentWithChildren = (departmentId: number, enabled: boolean = t
     queryFn: async (): Promise<GetDepartmentWithChildrenResp> => {
       const resp: ApiResponse<GetDepartmentWithChildrenResp> = await api.request({
         method: 'get',
-        url: `/department/${departmentId}/children`
+        url: `/departments/${departmentId}/children`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -165,6 +167,64 @@ const useGetDepartmentWithChildren = (departmentId: number, enabled: boolean = t
       return resp.data;
     },
     enabled: enabled && !!departmentId
+  });
+};
+
+interface PostDepartmentUserReq {
+  user_id: string
+  main_yn: 'Y' | 'N'
+}
+
+interface PostDepartmentUserResp {
+  user_department_id: number
+}
+
+const usePostDepartmentUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ departmentId, data }: { departmentId: number; data: PostDepartmentUserReq }): Promise<PostDepartmentUserResp> => {
+      const resp: ApiResponse<PostDepartmentUserResp> = await api.request({
+        method: 'post',
+        url: `/departments/${departmentId}/users`,
+        data: data
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT] });
+      queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_WITH_CHILDREN] });
+      queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
+      toast.success('부서에 사용자가 추가되었습니다.');
+    },
+    onError: (error) => {
+      console.error('Department user registration failed:', error);
+    }
+  });
+};
+
+const useDeleteDepartmentUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ departmentId, userId }: { departmentId: number; userId: string }): Promise<void> => {
+      await api.request({
+        method: 'delete',
+        url: `/departments/${departmentId}/users/${userId}`
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT] });
+      queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_WITH_CHILDREN] });
+      queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
+      toast.success('부서에서 사용자가 삭제되었습니다.');
+    },
+    onError: (error) => {
+      console.error('Department user deletion failed:', error);
+    }
   });
 };
 
@@ -177,7 +237,9 @@ export {
   usePutDepartment,
   useDeleteDepartment,
   useGetDepartment,
-  useGetDepartmentWithChildren
+  useGetDepartmentWithChildren,
+  usePostDepartmentUser,
+  useDeleteDepartmentUser
 }
 
 export type {
@@ -186,5 +248,7 @@ export type {
   PostDepartmentResp,
   PutDepartmentReq,
   GetDepartmentResp,
-  GetDepartmentWithChildrenResp
+  GetDepartmentWithChildrenResp,
+  PostDepartmentUserReq,
+  PostDepartmentUserResp
 }
