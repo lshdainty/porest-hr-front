@@ -5,11 +5,12 @@ import { Button } from '@/components/shadcn/button';
 import { Separator } from '@/components/shadcn/separator';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import { Field, FieldLabel, FieldError } from '@/components/shadcn/field';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/shadcn/dialog';
 import { Alert, AlertDescription } from '@/components/shadcn/alert';
 import { Skeleton } from '@/components/shadcn/skeleton';
+import { Spinner } from '@/components/shadcn/spinner';
 import { 
   User as UserIcon, 
   Mail, 
@@ -29,7 +30,7 @@ import {
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { cn } from '@/lib/utils';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { companyOptions, departmentOptions } from '@/lib/constants';
@@ -233,9 +234,8 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
         <DialogHeader>
           <DialogTitle>사용자 수정</DialogTitle>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex gap-6 p-6">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex gap-6 p-6">
               <div className="w-1/3 flex flex-col items-center justify-center gap-4">
                 <div className="relative group">
                   {isUploading ? (
@@ -349,164 +349,146 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
               <Separator orientation="vertical" className="h-auto" />
 
               <div className="w-2/3 space-y-4">
-                <FormField
+                <Controller
                   control={form.control}
                   name="user_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>이름</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>이름</FieldLabel>
+                      <Input {...field} />
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
                   )}
                 />
                 <div className="grid grid-cols-2 gap-4">
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="user_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel><UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> 아이디</FormLabel>
-                        <FormControl>
-                          <Input {...field} disabled={user.user_id !== ''} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel><UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> 아이디</FieldLabel>
+                        <Input {...field} disabled={user.user_id !== ''} />
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
                     )}
                   />
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="user_email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel><Mail className='h-4 w-4 text-muted-foreground inline-block' /> 이메일</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel><Mail className='h-4 w-4 text-muted-foreground inline-block' /> 이메일</FieldLabel>
+                        <Input {...field} />
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
                     )}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="user_birth"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel><Cake className='h-4 w-4 text-muted-foreground inline-block' /> 생년월일</FormLabel>
-                        <FormControl>
-                          <InputDatePicker
-                            value={dayjs(field.value).format('YYYY-MM-DD')}
-                            onValueChange={(value) => field.onChange(dayjs(value).format('YYYYMMDD'))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel><Cake className='h-4 w-4 text-muted-foreground inline-block' /> 생년월일</FieldLabel>
+                        <InputDatePicker
+                          value={dayjs(field.value).format('YYYY-MM-DD')}
+                          onValueChange={(value) => field.onChange(dayjs(value).format('YYYYMMDD'))}
+                        />
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
                     )}
                   />
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="lunar_yn"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel><Moon className='h-4 w-4 text-muted-foreground inline-block' /> 음력여부</FormLabel>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel><Moon className='h-4 w-4 text-muted-foreground inline-block' /> 음력여부</FieldLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="음력여부 선택" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="음력여부 선택" />
+                          </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="Y">Y</SelectItem>
                             <SelectItem value="N">N</SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
                     )}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="user_origin_company_type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel><Building2 className='h-4 w-4 text-muted-foreground inline-block' /> 회사</FormLabel>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel><Building2 className='h-4 w-4 text-muted-foreground inline-block' /> 회사</FieldLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="회사 선택" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="회사 선택" />
+                          </SelectTrigger>
                           <SelectContent>
                             {companyOptions.map(option => <SelectItem key={option.company_type} value={option.company_type}>{option.company_name}</SelectItem>)}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
                     )}
                   />
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="user_department_type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel><Briefcase className='h-4 w-4 text-muted-foreground inline-block' /> 부서</FormLabel>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel><Briefcase className='h-4 w-4 text-muted-foreground inline-block' /> 부서</FieldLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="부서 선택" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="부서 선택" />
+                          </SelectTrigger>
                           <SelectContent>
                             {departmentOptions.map(option => <SelectItem key={option.department_type} value={option.department_type}>{option.department_name}</SelectItem>)}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
                     )}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="user_work_time"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel><Clock className='h-4 w-4 text-muted-foreground inline-block' /> 유연근무시간</FormLabel>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel><Clock className='h-4 w-4 text-muted-foreground inline-block' /> 유연근무시간</FieldLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className={cn('w-full', selectedWorkTime?.className)}>
-                              <SelectValue placeholder="근무 시간 선택" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger className={cn('w-full', selectedWorkTime?.className)}>
+                            <SelectValue placeholder="근무 시간 선택" />
+                          </SelectTrigger>
                           <SelectContent>
                             {workTimeOptions.map(option => <SelectItem key={option.value} value={option.value} className={option.className}>{option.value}</SelectItem>)}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
                     )}
                   />
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="user_role_type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel><Shield className='h-4 w-4 text-muted-foreground inline-block' /> 권한</FormLabel>
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel><Shield className='h-4 w-4 text-muted-foreground inline-block' /> 권한</FieldLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <div className={cn('flex items-center gap-2', selectedRole?.className)}>
-                                {field.value === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}
-                                {field.value}
-                              </div>
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger className="w-full">
+                            <div className={cn('flex items-center gap-2', selectedRole?.className)}>
+                              {field.value === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}
+                              {field.value}
+                            </div>
+                          </SelectTrigger>
                           <SelectContent>
                             {roleOptions.map(option => (
                               <SelectItem key={option.value} value={option.value}>
@@ -518,32 +500,25 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
                     )}
                   />
                 </div>
               </div>
             </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="secondary">
-                  취소
-                </Button>
-              </DialogClose>
-              <Button type="submit" disabled={isUploading}>
-                {isUploading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    처리 중...
-                  </>
-                ) : (
-                  '저장'
-                )}
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                취소
               </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+            </DialogClose>
+            <Button type="submit" disabled={isUploading}>
+              {isUploading && <Spinner />}
+              {isUploading ? '처리 중...' : '저장'}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { usePostUserInvite } from '@/api/user'
 import { Input } from '@/components/shadcn/input'
 import { Button } from '@/components/shadcn/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form'
+import { Field, FieldLabel, FieldError } from '@/components/shadcn/field'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/shadcn/dialog'
 import { Spinner } from '@/components/shadcn/spinner'
 import { User as UserIcon, Mail, Building2, Clock } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { companyOptions } from '@/lib/constants'
@@ -77,102 +77,105 @@ export default function UserInviteDialog({ trigger, title }: UserInviteDialogPro
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="p-6 space-y-4">
-              <FormField
-                control={form.control}
-                name="user_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>이름</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="user_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel><UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> 아이디</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="user_email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel><Mail className='h-4 w-4 text-muted-foreground inline-block' /> 이메일</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="user_origin_company_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel><Building2 className='h-4 w-4 text-muted-foreground inline-block' /> 회사</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="회사 선택" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {companyOptions.map(option => <SelectItem key={option.company_type} value={option.company_type}>{option.company_name}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="user_work_time"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel><Clock className='h-4 w-4 text-muted-foreground inline-block' /> 유연근무시간</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className={cn('w-full', selectedWorkTime?.className)}>
-                          <SelectValue placeholder="근무 시간 선택" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {workTimeOptions.map(option => <SelectItem key={option.value} value={option.value} className={option.className}>{option.value}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="secondary">
-                  취소
-                </Button>
-              </DialogClose>
-              <Button type="submit" disabled={isPending}>
-                {isPending && <Spinner />}
-                {isPending ? '처리 중...' : '초대'}
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="p-6 space-y-4">
+            <Controller
+              control={form.control}
+              name="user_name"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    이름
+                    <span className='text-destructive ml-0.5'>*</span>
+                  </FieldLabel>
+                  <Input {...field} />
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="user_id"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    <UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> 아이디
+                    <span className='text-destructive ml-0.5'>*</span>
+                  </FieldLabel>
+                  <Input {...field} />
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="user_email"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    <Mail className='h-4 w-4 text-muted-foreground inline-block' /> 이메일
+                    <span className='text-destructive ml-0.5'>*</span>
+                  </FieldLabel>
+                  <Input {...field} />
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="user_origin_company_type"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    <Building2 className='h-4 w-4 text-muted-foreground inline-block' /> 회사
+                    <span className='text-destructive ml-0.5'>*</span>
+                  </FieldLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="회사 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companyOptions.map(option => <SelectItem key={option.company_type} value={option.company_type}>{option.company_name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="user_work_time"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    <Clock className='h-4 w-4 text-muted-foreground inline-block' /> 유연근무시간
+                    <span className='text-destructive ml-0.5'>*</span>
+                  </FieldLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger className={cn('w-full', selectedWorkTime?.className)}>
+                      <SelectValue placeholder="근무 시간 선택" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {workTimeOptions.map(option => <SelectItem key={option.value} value={option.value} className={option.className}>{option.value}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
+              )}
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                취소
               </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+            </DialogClose>
+            <Button type="submit" disabled={!form.formState.isValid || isPending}>
+              {isPending && <Spinner />}
+              {isPending ? '처리 중...' : '초대'}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
