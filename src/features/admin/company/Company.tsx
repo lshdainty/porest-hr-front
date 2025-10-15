@@ -1,24 +1,28 @@
 import { useState, useMemo } from 'react';
 import CompanyCreateCard from '@/components/company/CompanyCreateCard';
+import CompanyFormDialog from '@/components/company/CompanyFormDialog';
 import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
 import DepartmentTreePanelSkeleton from '@/components/company/DepartmentTreePanelSkeleton';
 import DepartmentChartPanelSkeleton from '@/components/company/DepartmentChartPanelSkeleton';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
-import { Building2 } from 'lucide-react';
-import { useGetCompany, usePostCompany, useGetCompanyWithDepartments, type PostCompanyReq } from '@/api/company';
+import { Building2, Pencil } from 'lucide-react';
+import { Button } from '@/components/shadcn/button';
+import { useGetCompany, usePostCompany, usePutCompany, useGetCompanyWithDepartments, type PostCompanyReq, type PutCompanyReq } from '@/api/company';
 import { usePostDepartment, usePutDepartment, useDeleteDepartment, type PostDepartmentReq, type PutDepartmentReq } from '@/api/department';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
 
 export default function Company() {
   const [selectedDept, setSelectedDept] = useState<any | null>(null);
+  const [isCompanyEditDialogOpen, setIsCompanyEditDialogOpen] = useState(false);
 
   const { data: company, isLoading } = useGetCompany();
   const { data: companyWithDepartments } = useGetCompanyWithDepartments({
     company_id: company?.company_id ?? ''
   });
   const { mutate: createCompany } = usePostCompany();
+  const { mutate: updateCompany } = usePutCompany();
   const { mutate: createDepartment } = usePostDepartment();
   const { mutate: updateDepartment } = usePutDepartment();
   const { mutate: deleteDepartment } = useDeleteDepartment();
@@ -29,6 +33,20 @@ export default function Company() {
 
   const handleCompanyCreate = (companyFormData: PostCompanyReq) => {
     createCompany(companyFormData);
+  };
+
+  const handleCompanySave = (formData: PostCompanyReq | { companyId: string; data: PutCompanyReq }) => {
+    if ('companyId' in formData) {
+      // 수정 모드
+      updateCompany(formData, {
+        onSuccess: () => {
+          setIsCompanyEditDialogOpen(false);
+        }
+      });
+    } else {
+      // 생성 모드 (필요시)
+      createCompany(formData);
+    }
   };
 
   const handleDeptUpdate = (formData: PostDepartmentReq | { departmentId: number; data: PutDepartmentReq }) => {
@@ -83,7 +101,25 @@ export default function Company() {
       <div className='flex items-center gap-2 flex-shrink-0'>
         <Building2 />
         <h1 className='text-3xl font-bold'>{company.company_name}</h1>
+        <div
+          onClick={() => setIsCompanyEditDialogOpen(true)}
+          className='cursor-pointer p-1 rounded hover:bg-accent transition-colors'
+        >
+          <Pencil className='h-4 w-4' />
+        </div>
       </div>
+
+      <CompanyFormDialog
+        isOpen={isCompanyEditDialogOpen}
+        onOpenChange={setIsCompanyEditDialogOpen}
+        onSave={handleCompanySave}
+        initialData={{
+          company_id: company.company_id,
+          company_name: company.company_name,
+          company_desc: company.company_desc
+        }}
+        mode='edit'
+      />
       <ResizablePanelGroup direction='horizontal' className='flex-1 min-h-0 rounded-lg border'>
         <ResizablePanel 
           defaultSize={25} 
