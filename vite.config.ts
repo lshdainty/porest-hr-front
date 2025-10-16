@@ -4,9 +4,25 @@ import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import { defineConfig } from 'vite';
 
+const ReactCompilerConfig = {
+  sources: (filename) => {
+    return filename.indexOf('src/components') !== -1;
+  },
+};
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), svgr(), tailwindcss()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [
+          ["babel-plugin-react-compiler", ReactCompilerConfig],
+        ],
+      },
+    }),
+    svgr(),
+    tailwindcss()
+  ],
   server: {
     port: 3000,
   },

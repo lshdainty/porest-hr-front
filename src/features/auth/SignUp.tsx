@@ -1,15 +1,14 @@
-// pages/SignUp.tsx
-import { useState, useEffect } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useGetValidateInvitationToken, usePostCompleteSignup } from '@/api/auth'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card'
-import { Button } from '@/components/shadcn/button'
-import { Label } from '@/components/shadcn/label'
-import { Checkbox } from '@/components/shadcn/checkbox'
-import { Loader2, CheckCircle2, ExternalLink } from 'lucide-react'
-import { toast } from '@/components/alert/toast'
-import { InputDatePicker } from '@/components/shadcn/inputDatePicker'
 import PorestLogo from '@/assets/img/porest.svg'
+import { toast } from '@/components/alert/toast'
+import { Button } from '@/components/shadcn/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
+import { Checkbox } from '@/components/shadcn/checkbox'
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker'
+import { Label } from '@/components/shadcn/label'
+import { CheckCircle2, ExternalLink, Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 interface FormData {
   birth: string
