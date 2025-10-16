@@ -1,40 +1,40 @@
-import { useState, useRef, useEffect } from 'react';
 import { GetUsersResp, usePostUploadProfile, type PutUserReq } from '@/api/user';
-import { Input } from '@/components/shadcn/input';
-import { Button } from '@/components/shadcn/button';
-import { Separator } from '@/components/shadcn/separator';
-import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
-import { Field, FieldLabel, FieldError } from '@/components/shadcn/field';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/shadcn/dialog';
 import { Alert, AlertDescription } from '@/components/shadcn/alert';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import { Button } from '@/components/shadcn/button';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { Field, FieldError, FieldLabel } from '@/components/shadcn/field';
+import { Input } from '@/components/shadcn/input';
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Separator } from '@/components/shadcn/separator';
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Spinner } from '@/components/shadcn/spinner';
-import { 
-  User as UserIcon, 
-  Mail, 
-  Cake, 
-  Briefcase, 
-  Clock, 
-  Shield, 
-  Building2, 
-  UserRoundCog, 
-  UserRound, 
-  Moon,
-  Upload,
-  Trash2,
-  Loader2,
-  AlertCircle,
-  Camera
-} from 'lucide-react';
-import dayjs from 'dayjs';
-import { cn } from '@/lib/utils';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { companyOptions, departmentOptions } from '@/lib/constants';
 import config from '@/config/config';
+import { companyOptions, departmentOptions } from '@/lib/constants';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import dayjs from 'dayjs';
+import {
+  AlertCircle,
+  Briefcase,
+  Building2,
+  Cake,
+  Camera,
+  Clock,
+  Loader2,
+  Mail,
+  Moon,
+  Shield,
+  Trash2,
+  Upload,
+  User as UserIcon,
+  UserRound,
+  UserRoundCog
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const formSchema = z.object({
   user_name: z.string().min(1, { message: '이름을 입력해주세요.' }),
@@ -392,8 +392,8 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel><Cake className='h-4 w-4 text-muted-foreground inline-block' /> 생년월일</FieldLabel>
                         <InputDatePicker
-                          value={dayjs(field.value).format('YYYY-MM-DD')}
-                          onValueChange={(value) => field.onChange(dayjs(value).format('YYYYMMDD'))}
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
                         />
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>

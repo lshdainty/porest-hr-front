@@ -1,6 +1,6 @@
-import { api, type ApiResponse } from '@/api/index'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api, type ApiResponse } from '@/api/index';
 import { toast } from '@/components/alert/toast';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const enum UserQueryKey {
   GET_USER = 'getUser',
@@ -24,6 +24,7 @@ interface GetUserResp {
   user_email: string
   user_birth: string
   user_work_time: string
+  join_date: string
   user_role_type: string
   user_role_name: string
   user_origin_company_type: string
@@ -60,6 +61,7 @@ interface GetUsersResp {
   user_email: string
   user_birth: string
   user_work_time: string
+  join_date: string
   user_role_type: string
   user_role_name: string
   user_origin_company_type: string
@@ -201,6 +203,7 @@ interface PutInvitedUserReq {
   user_email: string
   user_origin_company_type: string
   user_work_time: string
+  join_date: string
 }
 
 interface PutInvitedUserResp {
@@ -209,6 +212,7 @@ interface PutInvitedUserResp {
   user_email: string
   user_origin_company_type: string
   user_work_time: string
+  join_date: string
   user_role_type: string
   invitation_sent_at: string
   invitation_expires_at: string
@@ -227,7 +231,8 @@ const usePutInvitedUser = () => {
           user_name: d.user_name,
           user_email: d.user_email,
           user_origin_company_type: d.user_origin_company_type,
-          user_work_time: d.user_work_time
+          user_work_time: d.user_work_time,
+          join_date: d.join_date
         }
       });
 
@@ -275,15 +280,17 @@ interface PostUserInviteReq {
   user_email: string
   user_origin_company_type: string
   user_work_time: string
+  join_date: string
 }
 
 interface PostUserInviteResp {
   user_id: string
   user_name: string
   user_email: string
-  user_role_type: string
-  user_work_time: string
   user_origin_company_type: string
+  user_work_time: string
+  join_date: string
+  user_role_type: string
   invitation_sent_at: string
   invitation_expires_at: string
   invitation_status: string
@@ -361,32 +368,20 @@ const usePostResendInvitation = () => {
 }
 
 export {
-  // QueryKey
-  UserQueryKey,
-
-  // API Hook
-  useGetUser,
-  useGetUsers,
-  useGetUserIdDuplicate,
-  usePostUser,
-  usePostUserInvite,
-  usePostResendInvitation,
-  usePutUser,
-  usePutInvitedUser,
   useDeleteUser,
-  usePostUploadProfile
-}
+  // API Hook
+  useGetUser, useGetUserIdDuplicate, useGetUsers, usePostResendInvitation, usePostUploadProfile, usePostUser,
+  usePostUserInvite, usePutInvitedUser, usePutUser,
+  // QueryKey
+  UserQueryKey
+};
 
 export type {
-  // Interface
-  GetUserResp,
-  GetUsersResp,
   GetUserIdDuplicateReq,
   GetUserIdDuplicateResp,
-  PostUserReq,
-  PostUserInviteReq,
-  PostUserInviteResp,
-  PutUserReq,
-  PutInvitedUserReq,
-  PutInvitedUserResp
-}
+  // Interface
+  GetUserResp,
+  GetUsersResp, PostUserInviteReq,
+  PostUserInviteResp, PostUserReq, PutInvitedUserReq,
+  PutInvitedUserResp, PutUserReq
+};

@@ -1,20 +1,20 @@
-import UserEditDialog from '@/components/user/UserEditDialog';
-import UserInviteDialog from '@/components/user/UserInviteDialog';
-import UserDeleteDialog from '@/components/user/UserDeleteDialog';
-import ResendEmailDialog from '@/components/user/ResendEmailDialog';
-import { usePutUser, useDeleteUser, type GetUsersResp, type PutUserReq } from '@/api/user';
 import { useGetOriginCompanyTypes } from '@/api/type';
+import { useDeleteUser, usePutUser, type GetUsersResp, type PutUserReq } from '@/api/user';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/shadcn/avatar';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
-import { UserRoundCog, UserRound, EllipsisVertical, Pencil, Trash2, MailPlus } from 'lucide-react';
-import { Empty } from 'antd';
-import { cn } from '@/lib/utils';
+import ResendEmailDialog from '@/components/user/ResendEmailDialog';
+import UserDeleteDialog from '@/components/user/UserDeleteDialog';
+import UserEditDialog from '@/components/user/UserEditDialog';
+import UserInviteDialog from '@/components/user/UserInviteDialog';
 import config from '@/config/config';
+import { cn } from '@/lib/utils';
+import { Empty } from 'antd';
 import dayjs from 'dayjs';
+import { EllipsisVertical, MailPlus, Pencil, Trash2, UserRound, UserRoundCog } from 'lucide-react';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -202,7 +202,8 @@ export default function UserTable({ value: users }: UserTableProps) {
                                   user_name: row.user_name,
                                   user_email: row.user_email,
                                   user_origin_company_type: row.user_origin_company_type,
-                                  user_work_time: row.user_work_time
+                                  user_work_time: row.user_work_time,
+                                  join_date: row.join_date
                                 }}
                                 trigger={
                                   <DropdownMenuItem

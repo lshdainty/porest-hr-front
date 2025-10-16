@@ -1,11 +1,11 @@
 import { GetUsersResp } from '@/api/user';
-import { Separator } from '@/components/shadcn/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
-import { User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, UserRound, UserRoundCog, Building2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Separator } from '@/components/shadcn/separator';
 import config from '@/config/config';
+import { cn } from '@/lib/utils';
+import { Briefcase, Building2, Cake, Clock, Mail, Shield, User as UserIcon, UserRound, UserRoundCog } from 'lucide-react';
 
 interface UserInfoCardProps {
   title?: string;
@@ -91,7 +91,10 @@ export default function UserInfoCard({
               <Cake className='mr-3 h-4 w-4 text-muted-foreground' />
               <span className='font-semibold w-24'>생년월일</span>
               <span>
-                {`${selectedUser.user_birth.substr(0, 4)}년 ${selectedUser.user_birth.substr(4, 2)}월 ${selectedUser.user_birth.substr(6, 2)}일`}
+                {selectedUser.user_birth ?
+                  `${selectedUser.user_birth.split('-')[0]}년 ${selectedUser.user_birth.split('-')[1]}월 ${selectedUser.user_birth.split('-')[2]}일` :
+                  '-'
+                }
               </span>
             </div>
             <div className='flex items-center'>

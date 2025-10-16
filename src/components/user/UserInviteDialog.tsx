@@ -1,22 +1,24 @@
-import { useState, useEffect } from 'react'
-import { usePostUserInvite, usePutInvitedUser, useGetUserIdDuplicate } from '@/api/user'
 import type { TypeResp } from '@/api/type'
-import { Input } from '@/components/shadcn/input'
+import { useGetUserIdDuplicate, usePostUserInvite, usePutInvitedUser } from '@/api/user'
 import { Button } from '@/components/shadcn/button'
-import { Field, FieldLabel, FieldError } from '@/components/shadcn/field'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog'
+import { Field, FieldError, FieldLabel } from '@/components/shadcn/field'
+import { Input } from '@/components/shadcn/input'
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/shadcn/dialog'
 import { Spinner } from '@/components/shadcn/spinner'
-import { User as UserIcon, Mail, Building2, Clock } from 'lucide-react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Building2, Calendar, Clock, Mail, User as UserIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const formSchema = z.object({
   user_id: z.string().min(1, '아이디를 입력해주세요.'),
   user_name: z.string().min(1, '이름을 입력해주세요.'),
   user_email: z.string().email('유효한 이메일을 입력해주세요.'),
+  join_date: z.string().min(1, '입사일을 입력해주세요.'),
   user_origin_company_type: z.string().min(1, '회사를 선택해주세요.'),
   user_work_time: z.string().min(1, '유연근무시간을 선택해주세요.')
 })
@@ -33,6 +35,7 @@ interface UserInviteDialogProps {
     user_email: string
     user_origin_company_type: string
     user_work_time: string
+    join_date: string
   }
 }
 
@@ -56,7 +59,8 @@ export default function UserInviteDialog({ trigger, title, companyOptions, initi
       user_name: initialData?.user_name || '',
       user_email: initialData?.user_email || '',
       user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
-      user_work_time: initialData?.user_work_time || '9 ~ 6'
+      user_work_time: initialData?.user_work_time || '9 ~ 6',
+      join_date: initialData?.join_date || ''
     }
   })
 
@@ -102,7 +106,8 @@ export default function UserInviteDialog({ trigger, title, companyOptions, initi
         user_name: initialData?.user_name || '',
         user_email: initialData?.user_email || '',
         user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
-        user_work_time: initialData?.user_work_time || '9 ~ 6'
+        user_work_time: initialData?.user_work_time || '9 ~ 6',
+        join_date: initialData?.join_date || ''
       })
       setUserIdToCheck('') // 다이얼로그 열릴 때 중복 체크 상태 초기화
     }
@@ -116,7 +121,8 @@ export default function UserInviteDialog({ trigger, title, companyOptions, initi
         user_name: values.user_name,
         user_email: values.user_email,
         user_origin_company_type: values.user_origin_company_type,
-        user_work_time: values.user_work_time
+        user_work_time: values.user_work_time,
+        join_date: values.join_date
       })
     } else {
       // 신규 초대 모드: POST /users/invitations
@@ -184,6 +190,23 @@ export default function UserInviteDialog({ trigger, title, companyOptions, initi
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
                   <Input {...field} />
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="join_date"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    <Calendar className='h-4 w-4 text-muted-foreground inline-block' /> 입사일
+                    <span className='text-destructive ml-0.5'>*</span>
+                  </FieldLabel>
+                  <InputDatePicker
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  />
                   <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                 </Field>
               )}
