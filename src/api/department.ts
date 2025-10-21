@@ -9,6 +9,7 @@ const enum DepartmentQueryKey {
   DELETE_DEPARTMENT = 'deleteDepartment',
   GET_DEPARTMENT = 'getDepartment',
   GET_DEPARTMENT_WITH_CHILDREN = 'getDepartmentWithChildren',
+  GET_DEPARTMENT_USERS = 'getDepartmentUsers',
   POST_DEPARTMENT_USER = 'postDepartmentUser',
   DELETE_DEPARTMENT_USER = 'deleteDepartmentUser'
 }
@@ -170,6 +171,42 @@ const useGetDepartmentWithChildren = (departmentId: number, enabled: boolean = t
   });
 };
 
+interface UserInfo {
+  user_id: string
+  user_name: string
+}
+
+interface GetDepartmentUsersResp {
+  department_id: number
+  department_name: string
+  department_name_kr: string
+  parent_id: number | null
+  head_user_id: string | null
+  tree_level: number
+  department_desc: string | null
+  color_code: string | null
+  company_id: string
+  users_in_department: UserInfo[]
+  users_not_in_department: UserInfo[]
+}
+
+const useGetDepartmentUsers = (departmentId: number, enabled: boolean = true) => {
+  return useQuery({
+    queryKey: [DepartmentQueryKey.GET_DEPARTMENT_USERS, departmentId],
+    queryFn: async (): Promise<GetDepartmentUsersResp> => {
+      const resp: ApiResponse<GetDepartmentUsersResp> = await api.request({
+        method: 'get',
+        url: `/departments/${departmentId}/users`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: enabled && !!departmentId
+  });
+};
+
 interface PostDepartmentUserReq {
   user_id: string
   main_yn: 'Y' | 'N'
@@ -238,6 +275,7 @@ export {
   useDeleteDepartment,
   useGetDepartment,
   useGetDepartmentWithChildren,
+  useGetDepartmentUsers,
   usePostDepartmentUser,
   useDeleteDepartmentUser
 }
@@ -249,6 +287,8 @@ export type {
   PutDepartmentReq,
   GetDepartmentResp,
   GetDepartmentWithChildrenResp,
+  UserInfo,
+  GetDepartmentUsersResp,
   PostDepartmentUserReq,
   PostDepartmentUserResp
 }

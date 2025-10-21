@@ -1,43 +1,45 @@
 import {
-  Home,
   Briefcase,
-  HeartHandshake,
-  ShieldUser,
-  LayoutDashboard,
-  CalendarDays,
-  CircleDollarSign,
-  Scale,
-  Users as UserIcon,
-  ShieldCheck,
-  CalendarCog,
-  TreePalm,
-  MessageSquarePlus,
-  ChartNoAxesCombined,
   Building2,
-  NotebookPen,
+  CalendarCog,
+  CalendarDays,
   ChartGantt,
-  Settings,
-  UserRoundCog,
-  ShieldPlus,
   ChartLine,
+  ChartNoAxesCombined,
+  CircleDollarSign,
+  HeartHandshake,
+  Home,
+  IdCardLanyard,
+  LayoutDashboard,
+  MessageSquarePlus,
+  NotebookPen,
+  Scale,
+  Settings,
+  ShieldCheck,
   ShieldEllipsis,
+  ShieldPlus,
+  ShieldUser,
+  TreePalm,
+  Users as UserIcon,
+  UserRoundCog,
 } from 'lucide-react';
 
 // 컴포넌트 직접 import
-import Dashboard from '@/features/home/dashboard/Dashboard';
-import Calendar from '@/features/home/calendar/Calendar';
-import History from '@/features/vacation/history/History';
-import Application from '@/features/vacation/application/Application';
+import Authority from '@/features/admin/authority/Authority';
+import Company from '@/features/admin/company/Company';
+import Holiday from '@/features/admin/holiday/Holiday';
+import UsersDepartment from '@/features/admin/users/department/Department.tsx';
+import UsersManagement from '@/features/admin/users/management/Management.tsx';
+import Policy from '@/features/admin/vacation/Policy';
+import Vacation from '@/features/admin/vacation/Vacation';
 import Dues from '@/features/culture/dues/Dues';
 import Rule from '@/features/culture/rule/Rule';
+import Calendar from '@/features/home/calendar/Calendar';
+import Dashboard from '@/features/home/dashboard/Dashboard';
+import Application from '@/features/vacation/application/Application';
+import History from '@/features/vacation/history/History';
 import Report from '@/features/work/report/Report';
 import Schedule from '@/features/work/schedule/Schedule';
-import Users from '@/features/admin/users/Users';
-import Vacation from '@/features/admin/vacation/Vacation';
-import Policy from '@/features/admin/vacation/Policy';
-import Authority from '@/features/admin/authority/Authority';
-import Holiday from '@/features/admin/holiday/Holiday';
-import Company from '@/features/admin/company/Company'
 
 import { TreeDataItem } from '@/components/shadcn/treeView';
 import React from 'react';
@@ -172,7 +174,15 @@ export const routesConfig: RouteConfig[] = [
             name: 'Management',
             path: '/admin/users/management',
             icon: UserRoundCog,
-            component: Users,
+            component: UsersManagement,
+            isDefault: true,
+          },
+          {
+            id: 'admin-users-department',
+            name: 'department',
+            path: '/admin/users/department',
+            icon: IdCardLanyard,
+            component: UsersDepartment,
             isDefault: true,
           },
           {
@@ -180,7 +190,7 @@ export const routesConfig: RouteConfig[] = [
             name: 'Vacation Policy',
             path: '/admin/users/vacation/policy',
             icon: ShieldPlus,
-            component: Users,
+            component: () => {return null},
           },
         ],
       },
@@ -226,7 +236,7 @@ export const routesConfig: RouteConfig[] = [
             name: 'Dashboard',
             path: '/admin/authority/dashboard',
             icon: LayoutDashboard,
-            component: Authority,
+            component: () => {return null},
           },
         ],
       },

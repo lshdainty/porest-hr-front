@@ -14,6 +14,9 @@ interface DepartmentTreePanelProps {
   onDeptUpdate: (formData: any) => void;
   onDeptDelete: (deptId: number) => void;
   companyId: string;
+  title?: string;
+  showAddButton?: boolean;
+  showNodeActions?: boolean;
 }
 
 export default function DepartmentTreePanel({
@@ -23,6 +26,9 @@ export default function DepartmentTreePanel({
   onDeptUpdate,
   onDeptDelete,
   companyId,
+  title = '부서 관리',
+  showAddButton = true,
+  showNodeActions = true,
 }: DepartmentTreePanelProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDept, setEditingDept] = useState<GetCompanyWithDepartment | null>(null);
@@ -105,7 +111,7 @@ export default function DepartmentTreePanel({
     id: dept.department_id.toString(),
     name: dept.department_name_kr,
     icon: Building2,
-    actions: (
+    actions: showNodeActions ? (
       <div className='flex space-x-1 items-center' onClick={e => e.stopPropagation()}>
         <div
           role='button'
@@ -162,7 +168,7 @@ export default function DepartmentTreePanel({
           <Trash2 size={16} strokeWidth={1.5} />
         </div>
       </div>
-    ),
+    ) : undefined,
     children: dept.children?.map(mapDeptToTreeItem),
     draggable: dept.parent_id !== null,
     droppable: true,
@@ -188,19 +194,21 @@ export default function DepartmentTreePanel({
     <div className='h-full flex flex-col overflow-hidden'>
       {/* 헤더 - 고정 */}
       <div className='flex items-center justify-between p-4 border-b flex-shrink-0'>
-        <h2 className='text-lg font-semibold'>부서 관리</h2>
-        <Button
-          size='sm'
-          disabled={hasLevelZeroDept}
-          onClick={() => {
-            setEditingDept(null);
-            setAddingChildToId(null);
-            setIsDialogOpen(true);
-          }}
-        >
-          <Plus size={16} />
-          부서 추가
-        </Button>
+        <h2 className='text-lg font-semibold'>{title}</h2>
+        {showAddButton && (
+          <Button
+            size='sm'
+            disabled={hasLevelZeroDept}
+            onClick={() => {
+              setEditingDept(null);
+              setAddingChildToId(null);
+              setIsDialogOpen(true);
+            }}
+          >
+            <Plus size={16} />
+            부서 추가
+          </Button>
+        )}
       </div>
       
       {/* 트리 영역 - 스크롤 가능 */}

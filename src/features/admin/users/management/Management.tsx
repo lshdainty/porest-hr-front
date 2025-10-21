@@ -1,10 +1,10 @@
 import { useGetUsers } from '@/api/user';
-import UserTable from '@/components/user/UserTable';
-import UserTableSkeleton from '@/components/user/UserTableSkeleton';
 import UserCompanyCard from '@/components/user/UserCompanyCard';
 import UserCompanyCardSkeleton from '@/components/user/UserCompanyCardSkeleton';
+import UserTable from '@/components/user/UserTable';
+import UserTableSkeleton from '@/components/user/UserTableSkeleton';
 
-export default function Users() {
+export default function Management() {
   const { data: users, isLoading: usersLoading } = useGetUsers();
 
   if (usersLoading) {

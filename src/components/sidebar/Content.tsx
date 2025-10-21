@@ -1,14 +1,3 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
-import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  useSidebar,
-} from '@/components/shadcn/sidebar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +7,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdownMenu';
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from '@/components/shadcn/sidebar';
+import { TreeDataItem, TreeView } from '@/components/shadcn/treeView';
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface ContentProps {
   treeData: TreeDataItem[];
@@ -126,6 +126,7 @@ export function Content({ treeData, routeMapping, pathToIdMapping }: ContentProp
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       
       {/* Collapsed 상태: 메인 탭 아이콘만 표시 */}
+      {/* Collapsed 상태에서 모바일 화면으로 변경 시 tree 정상적으로 보이지 않음(수정필요) */}
       {state === 'collapsed' && !isMobile && (
         <SidebarMenu>
           {treeData.map((item) => {
