@@ -55,202 +55,222 @@ export interface RouteConfig {
   hideInSidebar?: boolean; // 사이드바에 표시하지 않을 라우트
 }
 
-export const routesConfig: RouteConfig[] = [
+export interface RouteGroup {
+  label: string;
+  routes: RouteConfig[];
+}
+
+export const routesConfig: RouteGroup[] = [
   {
-    id: 'home',
-    name: 'Home',
-    path: '/',
-    icon: Home,
-    children: [
+    label: 'Platform',
+    routes: [
       {
-        id: 'dashboard',
-        name: 'Dashboard',
-        path: '/dashboard',
-        icon: LayoutDashboard,
-        component: Dashboard, // 직접 컴포넌트 참조
-        isDefault: true,
-      },
-      {
-        id: 'calendar',
-        name: 'Calendar',
-        path: '/calendar',
-        icon: CalendarDays,
-        component: Calendar,
-      },
-    ],
-  },
-  {
-    id: 'vacation',
-    name: 'Vacation',
-    path: '/vacation',
-    icon: TreePalm,
-    children: [
-      {
-        id: 'vacation-history',
-        name: 'History',
-        path: '/vacation/history',
-        icon: ChartNoAxesCombined,
-        component: History,
-        isDefault: true,
-      },
-      {
-        id: 'vacation-application',
-        name: 'Application',
-        path: '/vacation/application',
-        icon: MessageSquarePlus,
-        component: Application,
-      },
-    ],
-  },
-  {
-    id: 'work',
-    name: 'Work',
-    path: '/work',
-    icon: Briefcase,
-    children: [
-      {
-        id: 'work-report',
-        name: 'Report',
-        path: '/work/report',
-        icon: NotebookPen,
-        component: Report,
-        isDefault: true,
-      },
-      {
-        id: 'work-schedule',
-        name: 'Schedule',
-        path: '/work/schedule',
-        icon: ChartGantt,
-        component: Schedule,
-      },
-    ],
-  },
-  {
-    id: 'culture',
-    name: 'Culture',
-    path: '/culture',
-    icon: HeartHandshake,
-    children: [
-      {
-        id: 'culture-dues',
-        name: 'Dues',
-        path: '/culture/dues',
-        icon: CircleDollarSign,
-        component: Dues,
-        isDefault: true,
-      },
-      {
-        id: 'culture-rule',
-        name: 'Rule',
-        path: '/culture/rule',
-        icon: Scale,
-        component: Rule,
-      },
-    ],
-  },
-  {
-    id: 'admin',
-    name: 'Admin',
-    path: '/admin',
-    icon: ShieldUser,
-    children: [
-      {
-        id: 'admin-company',
-        name: 'Company',
-        path: '/admin/company',
-        icon: Building2,
-        component: Company,
-        isDefault: true,
-      },
-      {
-        id: 'admin-users',
-        name: 'Users',
-        path: '/admin/users',
-        icon: UserIcon,
-        isDefault: true,
+        id: 'home',
+        name: 'Home',
+        path: '/',
+        icon: Home,
         children: [
           {
-            id: 'admin-users-management',
-            name: 'Management',
-            path: '/admin/users/management',
-            icon: UserRoundCog,
-            component: UsersManagement,
+            id: 'dashboard',
+            name: 'Dashboard',
+            path: '/dashboard',
+            icon: LayoutDashboard,
+            component: Dashboard, // 직접 컴포넌트 참조
             isDefault: true,
           },
           {
-            id: 'admin-users-department',
-            name: 'department',
-            path: '/admin/users/department',
-            icon: IdCardLanyard,
-            component: UsersDepartment,
-            isDefault: true,
-          },
-          {
-            id: 'admin-users-vacation-policy',
-            name: 'Vacation Policy',
-            path: '/admin/users/vacation/policy',
-            icon: ShieldPlus,
-            component: () => {return null},
+            id: 'calendar',
+            name: 'Calendar',
+            path: '/calendar',
+            icon: CalendarDays,
+            component: Calendar,
           },
         ],
       },
       {
-        id: 'admin-vacation',
+        id: 'vacation',
         name: 'Vacation',
-        path: '/admin/vacation',
+        path: '/vacation',
         icon: TreePalm,
         children: [
           {
-            id: 'admin-vacation-stats',
-            name: 'Stats',
-            path: '/admin/vacation/stats',
-            icon: ChartLine,
-            component: Vacation,
+            id: 'vacation-history',
+            name: 'History',
+            path: '/vacation/history',
+            icon: ChartNoAxesCombined,
+            component: History,
             isDefault: true,
           },
           {
-            id: 'admin-vacation-policy',
-            name: 'Policy',
-            path: '/admin/vacation/policy',
-            icon: ShieldEllipsis,
-            component: Policy,
+            id: 'vacation-application',
+            name: 'Application',
+            path: '/vacation/application',
+            icon: MessageSquarePlus,
+            component: Application,
           },
         ],
       },
       {
-        id: 'admin-authority',
-        name: 'Authority',
-        path: '/admin/authority',
-        icon: ShieldCheck,
+        id: 'admin',
+        name: 'Admin',
+        path: '/admin',
+        icon: ShieldUser,
         children: [
           {
-            id: 'admin-authority-mgmt',
-            name: 'Management',
-            path: '/admin/authority/mgmt',
-            icon: Settings,
-            component: Authority,
+            id: 'admin-company',
+            name: 'Company',
+            path: '/admin/company',
+            icon: Building2,
+            component: Company,
             isDefault: true,
           },
           {
-            id: 'admin-authority-dashboard',
-            name: 'Dashboard',
-            path: '/admin/authority/dashboard',
-            icon: LayoutDashboard,
-            component: () => {return null},
+            id: 'admin-users',
+            name: 'Users',
+            path: '/admin/users',
+            icon: UserIcon,
+            isDefault: true,
+            children: [
+              {
+                id: 'admin-users-management',
+                name: 'Management',
+                path: '/admin/users/management',
+                icon: UserRoundCog,
+                component: UsersManagement,
+                isDefault: true,
+              },
+              {
+                id: 'admin-users-department',
+                name: 'department',
+                path: '/admin/users/department',
+                icon: IdCardLanyard,
+                component: UsersDepartment,
+                isDefault: true,
+              },
+              {
+                id: 'admin-users-vacation-policy',
+                name: 'Vacation Policy',
+                path: '/admin/users/vacation/policy',
+                icon: ShieldPlus,
+                component: () => {return null},
+              },
+            ],
+          },
+          {
+            id: 'admin-vacation',
+            name: 'Vacation',
+            path: '/admin/vacation',
+            icon: TreePalm,
+            children: [
+              {
+                id: 'admin-vacation-stats',
+                name: 'Stats',
+                path: '/admin/vacation/stats',
+                icon: ChartLine,
+                component: Vacation,
+                isDefault: true,
+              },
+              {
+                id: 'admin-vacation-policy',
+                name: 'Policy',
+                path: '/admin/vacation/policy',
+                icon: ShieldEllipsis,
+                component: Policy,
+              },
+            ],
+          },
+          {
+            id: 'admin-authority',
+            name: 'Authority',
+            path: '/admin/authority',
+            icon: ShieldCheck,
+            children: [
+              {
+                id: 'admin-authority-mgmt',
+                name: 'Management',
+                path: '/admin/authority/mgmt',
+                icon: Settings,
+                component: Authority,
+                isDefault: true,
+              },
+              {
+                id: 'admin-authority-dashboard',
+                name: 'Dashboard',
+                path: '/admin/authority/dashboard',
+                icon: LayoutDashboard,
+                component: () => {return null},
+              },
+            ],
+          },
+          {
+            id: 'admin-holiday',
+            name: 'Holiday',
+            path: '/admin/holiday',
+            icon: CalendarCog,
+            component: Holiday,
+            isDefault: true,
           },
         ],
-      },
-      {
-        id: 'admin-holiday',
-        name: 'Holiday',
-        path: '/admin/holiday',
-        icon: CalendarCog,
-        component: Holiday,
-        isDefault: true,
       },
     ],
   },
+  {
+    label: 'SKC',
+    routes: [
+      {
+        id: 'work',
+        name: 'Work',
+        path: '/work',
+        icon: Briefcase,
+        children: [
+          {
+            id: 'work-report',
+            name: 'Report',
+            path: '/work/report',
+            icon: NotebookPen,
+            component: Report,
+            isDefault: true,
+          },
+          {
+            id: 'work-schedule',
+            name: 'Schedule',
+            path: '/work/schedule',
+            icon: ChartGantt,
+            component: Schedule,
+          },
+        ],
+      },
+      {
+        id: 'culture',
+        name: 'Culture',
+        path: '/culture',
+        icon: HeartHandshake,
+        children: [
+          {
+            id: 'culture-dues',
+            name: 'Dues',
+            path: '/culture/dues',
+            icon: CircleDollarSign,
+            component: Dues,
+            isDefault: true,
+          },
+          {
+            id: 'culture-rule',
+            name: 'Rule',
+            path: '/culture/rule',
+            icon: Scale,
+            component: Rule,
+          },
+        ],
+      }
+    ]
+  }
 ];
+
+// 모든 그룹의 routes를 하나의 배열로 합치는 헬퍼 함수
+export const flattenRoutes = (groups: RouteGroup[]): RouteConfig[] => {
+  return groups.flatMap(group => group.routes);
+};
 
 export const createRouteMapping = (routes: RouteConfig[]): Record<string, string> => {
   const mapping: Record<string, string> = {};
@@ -339,8 +359,22 @@ export const createDefaultRedirects = (routes: RouteConfig[]): Record<string, st
   return redirects;
 };
 
-export const routeMapping = createRouteMapping(routesConfig);
-export const pathToIdMapping = createPathToIdMapping(routesConfig);
-export const treeData = convertToTreeData(routesConfig);
-export const breadcrumbMapping = createBreadcrumbMapping(routesConfig);
-export const defaultRedirects = createDefaultRedirects(routesConfig);
+// 그룹 정보를 포함하여 TreeData로 변환하는 함수
+export const convertGroupsToTreeData = (groups: RouteGroup[]): Array<{ label: string; treeData: TreeDataItem[] }> => {
+  return groups.map(group => ({
+    label: group.label,
+    treeData: convertToTreeData(group.routes),
+  }));
+};
+
+// 기존 함수들은 flattenRoutes를 사용하여 호환성 유지
+const flattenedRoutes = flattenRoutes(routesConfig);
+
+export const routeMapping = createRouteMapping(flattenedRoutes);
+export const pathToIdMapping = createPathToIdMapping(flattenedRoutes);
+export const treeData = convertToTreeData(flattenedRoutes);
+export const breadcrumbMapping = createBreadcrumbMapping(flattenedRoutes);
+export const defaultRedirects = createDefaultRedirects(flattenedRoutes);
+
+// 그룹별 트리 데이터 export (새로운 방식)
+export const groupedTreeData = convertGroupsToTreeData(routesConfig);

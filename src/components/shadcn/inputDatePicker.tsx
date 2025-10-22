@@ -1,11 +1,15 @@
 "use client"
 
-import * as React from "react"
 import { CalendarIcon } from "lucide-react"
+import * as React from "react"
 
-import { Button } from "@/components/shadcn/button"
 import { Calendar } from "@/components/shadcn/calendar"
-import { Input } from "@/components/shadcn/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/shadcn/inputGroup"
 import {
   Popover,
   PopoverContent,
@@ -43,33 +47,31 @@ export function InputDatePicker({ value, onValueChange }: InputDatePickerProps) 
   }, [date]);
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="relative flex gap-2">
-        <Input
-          id="date"
-          value={value || ''}
-          placeholder="YYYY-MM-DD"
-          className="bg-background pr-10"
-          onChange={(e) => {
-            onValueChange(e.target.value || undefined);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "ArrowDown") {
-              e.preventDefault()
-              setOpen(true)
-            }
-          }}
-        />
+    <InputGroup>
+      <InputGroupInput
+        id="date"
+        value={value || ''}
+        placeholder="YYYY-MM-DD"
+        onChange={(e) => {
+          onValueChange(e.target.value || undefined);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown") {
+            e.preventDefault()
+            setOpen(true)
+          }
+        }}
+      />
+      <InputGroupAddon align="inline-end">
         <Popover open={open} onOpenChange={setOpen} modal={true}>
           <PopoverTrigger asChild>
-            <Button
+            <InputGroupButton
               id="date-picker"
-              variant="ghost"
-              className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
+              size="icon-xs"
             >
-              <CalendarIcon className="size-3.5" />
+              <CalendarIcon />
               <span className="sr-only">Select date</span>
-            </Button>
+            </InputGroupButton>
           </PopoverTrigger>
           <PopoverContent
             className="w-auto overflow-hidden p-0"
@@ -90,7 +92,7 @@ export function InputDatePicker({ value, onValueChange }: InputDatePickerProps) 
             />
           </PopoverContent>
         </Popover>
-      </div>
-    </div>
+      </InputGroupAddon>
+    </InputGroup>
   )
 }

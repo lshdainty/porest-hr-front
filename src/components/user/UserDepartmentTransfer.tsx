@@ -1,4 +1,5 @@
-import { type UserInfo } from '@/api/department'
+import { useCheckUserMainDepartment, type UserInfo } from '@/api/department'
+import { toast } from '@/components/alert/toast'
 import { Button } from '@/components/shadcn/button'
 import { Checkbox } from '@/components/shadcn/checkbox'
 import { Label } from '@/components/shadcn/label'
@@ -24,6 +25,10 @@ export default function UserDepartmentTransfer({
 
   const [leftItems, setLeftItems] = useState<TransferItem[]>([])
   const [rightItems, setRightItems] = useState<TransferItem[]>([])
+  const [checkingUserId, setCheckingUserId] = useState<string>('')
+
+  // 메인부서 존재 여부 확인 API
+  const { data: mainDepartmentCheck, isSuccess } = useCheckUserMainDepartment(checkingUserId)
 
   // props가 변경될 때마다 상태 업데이트
   useEffect(() => {
@@ -51,6 +56,16 @@ export default function UserDepartmentTransfer({
     setRightItems(newRightItems)
   }, [usersInDepartment, usersNotInDepartment])
 
+  // 변경사항이 있는지 확인하는 함수
+  const hasChanges = () => {
+    // 추가된 사용자가 있는지 확인
+    const hasAddedUsers = rightItems.some(item => initialLeftUserIds.has(item.key))
+    // 삭제된 사용자가 있는지 확인
+    const hasRemovedUsers = leftItems.some(item => initialRightUserIds.has(item.key))
+
+    return hasAddedUsers || hasRemovedUsers
+  }
+
   const handleSave = () => {
     if (onTransfer) {
       // 추가된 사용자: 초기에는 왼쪽에 있었는데 현재는 오른쪽에 있는 사용자
@@ -75,14 +90,46 @@ export default function UserDepartmentTransfer({
     }
   }
 
-  const handleMainDepartmentChange = (userId: string, isMain: boolean) => {
-    const updatedItems = rightItems.map((item) => {
-      if (item.key === userId) {
-        return { ...item, main_yn: isMain ? 'Y' : 'N' }
+  // API 응답 처리
+  useEffect(() => {
+    if (isSuccess && checkingUserId && mainDepartmentCheck) {
+      const hasMainDepartment = mainDepartmentCheck.has_main_department === 'Y'
+
+      if (hasMainDepartment) {
+        // 이미 메인부서가 있는 경우 - toast 표시
+        toast.error('이미 메인부서가 존재합니다')
+        setCheckingUserId('') // 체크 중인 userId 초기화
+        return
       }
-      return item
-    })
-    setRightItems(updatedItems)
+
+      // 메인부서가 없는 경우 -> 체크 허용
+      const updatedItems = rightItems.map((item) => {
+        if (item.key === checkingUserId) {
+          return { ...item, main_yn: 'Y' }
+        }
+        return item
+      })
+      setRightItems(updatedItems)
+      setCheckingUserId('') // 체크 중인 userId 초기화
+    }
+  }, [isSuccess, checkingUserId, mainDepartmentCheck, rightItems])
+
+  const handleMainDepartmentChange = (userId: string, isMain: boolean) => {
+    // 메인부서 체크 해제하는 경우 (true -> false)
+    if (!isMain) {
+      const updatedItems = rightItems.map((item) => {
+        if (item.key === userId) {
+          return { ...item, main_yn: 'N' }
+        }
+        return item
+      })
+      setRightItems(updatedItems)
+      return
+    }
+
+    // 메인부서로 체크하려는 경우 (false -> true)
+    // API 호출을 위한 userId 설정
+    setCheckingUserId(userId)
   }
 
   const renderLeftUserItem = (item: TransferItem) => {
@@ -133,7 +180,7 @@ export default function UserDepartmentTransfer({
   return (
     <div className='w-full h-full flex flex-col gap-4'>
       <div className='flex justify-end gap-2'>
-        <Button onClick={handleSave} disabled={rightItems.length === 0}>
+        <Button onClick={handleSave} disabled={!hasChanges()}>
           저장
         </Button>
       </div>

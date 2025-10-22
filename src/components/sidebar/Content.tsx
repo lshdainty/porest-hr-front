@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface ContentProps {
-  treeData: TreeDataItem[];
+  groups: Array<{ label: string; treeData: TreeDataItem[] }>;
   routeMapping: Record<string, string>;
   pathToIdMapping: Record<string, string>;
 }
@@ -78,7 +78,7 @@ function getAllSubItems(item: TreeDataItem, routeMapping: Record<string, string>
   return subItems;
 }
 
-export function Content({ treeData, routeMapping, pathToIdMapping }: ContentProps) {
+export function Content({ groups, routeMapping, pathToIdMapping }: ContentProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { state, isMobile } = useSidebar();
@@ -92,8 +92,11 @@ export function Content({ treeData, routeMapping, pathToIdMapping }: ContentProp
     }
   }, [location.pathname, pathToIdMapping]);
 
-  // 클릭 핸들러가 추가된 트리 데이터
-  const enhancedTreeData = addClickHandlers(treeData, navigate, routeMapping);
+  // 각 그룹의 클릭 핸들러가 추가된 트리 데이터
+  const enhancedGroups = groups.map(group => ({
+    label: group.label,
+    treeData: addClickHandlers(group.treeData, navigate, routeMapping),
+  }));
 
   const handleSelectChange = (item: TreeDataItem | undefined) => {
     if (item && !item.children) {
@@ -122,63 +125,66 @@ export function Content({ treeData, routeMapping, pathToIdMapping }: ContentProp
   };
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
-      
-      {/* Collapsed 상태: 메인 탭 아이콘만 표시 */}
-      {/* Collapsed 상태에서 모바일 화면으로 변경 시 tree 정상적으로 보이지 않음(수정필요) */}
-      {state === 'collapsed' && !isMobile && (
-        <SidebarMenu>
-          {treeData.map((item) => {
-            const subItems = getAllSubItems(item, routeMapping);
-            const isActive = isParentActive(item);
-            
-            return (
-              <SidebarMenuItem key={item.id}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton
-                      tooltip={item.name}
-                      isActive={isActive}
-                    >
-                      {item.icon && <item.icon />}
-                    </SidebarMenuButton>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    side="right" 
-                    align="start"
-                    className="w-56"
-                  >
-                    <DropdownMenuLabel>{item.name}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      {subItems.map((subItem) => (
-                        <DropdownMenuItem
-                          key={subItem.id}
-                          onClick={() => navigate(subItem.url)}
-                        >
-                          <span>{subItem.name}</span>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
-      )}
+    <>
+      {enhancedGroups.map((group) => (
+        <SidebarGroup key={group.label}>
+          <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
 
-      {/* Expanded 상태: 전체 트리 구조 표시 */}
-      {state === 'expanded' && (
-        <TreeView
-          data={enhancedTreeData}
-          initialSelectedItemId={selectedItemId}
-          onSelectChange={handleSelectChange}
-          expandAll={false}
-          className={cn('p-0 w-full')}
-        />
-      )}
-    </SidebarGroup>
+          {/* Collapsed 상태 (데스크톱): 메인 탭 아이콘만 표시 */}
+          {state === 'collapsed' && !isMobile && (
+            <SidebarMenu>
+              {group.treeData.map((item) => {
+                const subItems = getAllSubItems(item, routeMapping);
+                const isActive = isParentActive(item);
+
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <SidebarMenuButton
+                          tooltip={item.name}
+                          isActive={isActive}
+                        >
+                          {item.icon && <item.icon />}
+                        </SidebarMenuButton>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        side="right"
+                        align="start"
+                        className="w-56"
+                      >
+                        <DropdownMenuLabel>{item.name}</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                          {subItems.map((subItem) => (
+                            <DropdownMenuItem
+                              key={subItem.id}
+                              onClick={() => navigate(subItem.url)}
+                            >
+                              <span>{subItem.name}</span>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          )}
+
+          {/* Expanded 상태 또는 모바일: 전체 트리 구조 표시 */}
+          {(state === 'expanded' || isMobile) && (
+            <TreeView
+              data={group.treeData}
+              initialSelectedItemId={selectedItemId}
+              onSelectChange={handleSelectChange}
+              expandAll={false}
+              className={cn('p-0 w-full')}
+            />
+          )}
+        </SidebarGroup>
+      ))}
+    </>
   );
 }

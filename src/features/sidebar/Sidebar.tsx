@@ -9,7 +9,7 @@ import { Footer } from '@/components/sidebar/Footer';
 import { Content } from '@/components/sidebar/Content';
 
 // 설정 파일에서 import
-import { treeData, routeMapping, pathToIdMapping } from '@/config/routes.config';
+import { groupedTreeData, routeMapping, pathToIdMapping } from '@/config/routes.config';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -19,7 +19,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <Content
-          treeData={treeData}
+          groups={groupedTreeData}
           routeMapping={routeMapping}
           pathToIdMapping={pathToIdMapping}
         />

@@ -1,5 +1,5 @@
 import { useGetCompany, useGetCompanyWithDepartments } from '@/api/company';
-import { useGetDepartmentUsers } from '@/api/department';
+import { useDeleteDepartmentUsers, useGetDepartmentUsers, usePostDepartmentUsers, type UserInfo } from '@/api/department';
 import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentTreePanelSkeleton from '@/components/company/DepartmentTreePanelSkeleton';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
@@ -21,9 +21,45 @@ export default function Department() {
     selectedDept?.department_id
   );
 
+  const postDepartmentUsers = usePostDepartmentUsers();
+  const deleteDepartmentUsers = useDeleteDepartmentUsers();
+
   const departments = useMemo(() => {
     return companyWithDepartments?.departments || [];
   }, [companyWithDepartments]);
+
+  const handleTransfer = async (addedUsers: UserInfo[], removedUsers: UserInfo[]) => {
+    if (!selectedDept?.department_id) return;
+
+    const departmentId = selectedDept.department_id;
+
+    try {
+      // 추가할 사용자가 있는 경우
+      if (addedUsers.length > 0) {
+        await postDepartmentUsers.mutateAsync({
+          departmentId,
+          data: {
+            users: addedUsers.map(user => ({
+              user_id: user.user_id,
+              main_yn: user.main_yn
+            }))
+          }
+        });
+      }
+
+      // 삭제할 사용자가 있는 경우
+      if (removedUsers.length > 0) {
+        await deleteDepartmentUsers.mutateAsync({
+          departmentId,
+          data: {
+            user_ids: removedUsers.map(user => user.user_id)
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to update department users:', error);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -85,11 +121,7 @@ export default function Department() {
                 usersInDepartment={departmentUsers?.users_in_department || []}
                 usersNotInDepartment={departmentUsers?.users_not_in_department || []}
                 isLoading={isDepartmentUsersLoading}
-                onTransfer={(addedUsers, removedUsers) => {
-                  console.log('Added users:', addedUsers)
-                  console.log('Removed users:', removedUsers)
-                  // TODO: API 호출하여 부서에 사용자 추가/제거
-                }}
+                onTransfer={handleTransfer}
               />
             ) : (
               <div className='flex items-center justify-center h-full text-muted-foreground'>

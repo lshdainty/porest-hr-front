@@ -6,7 +6,7 @@ import Layout from '@/features/layout/layout';
 import NotFound from '@/components/notFound/NotFound';
 
 // 설정 파일에서 import
-import { routesConfig, RouteConfig } from '@/config/routes.config';
+import { routesConfig, RouteConfig, flattenRoutes } from '@/config/routes.config';
 import React from 'react';
 
 // 라우트 요소들을 재귀적으로 생성하는 함수
@@ -50,7 +50,8 @@ const generateRouteElements = (routes: RouteConfig[], parentPath = ''): React.Re
 };
 
 const Router: React.FC = () => {
-  const routeElements = generateRouteElements(routesConfig);
+  const flattenedRoutes = flattenRoutes(routesConfig);
+  const routeElements = generateRouteElements(flattenedRoutes);
 
   return (
     <Routes>

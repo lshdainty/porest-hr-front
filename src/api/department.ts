@@ -11,7 +11,8 @@ const enum DepartmentQueryKey {
   GET_DEPARTMENT_WITH_CHILDREN = 'getDepartmentWithChildren',
   GET_DEPARTMENT_USERS = 'getDepartmentUsers',
   POST_DEPARTMENT_USER = 'postDepartmentUser',
-  DELETE_DEPARTMENT_USER = 'deleteDepartmentUser'
+  DELETE_DEPARTMENT_USER = 'deleteDepartmentUser',
+  CHECK_USER_MAIN_DEPARTMENT = 'checkUserMainDepartment'
 }
 
 interface PostDepartmentReq {
@@ -208,21 +209,25 @@ const useGetDepartmentUsers = (departmentId: number) => {
   });
 };
 
-interface PostDepartmentUserReq {
+interface UserDepartmentInfo {
   user_id: string
   main_yn: 'Y' | 'N'
 }
 
-interface PostDepartmentUserResp {
-  user_department_id: number
+interface PostDepartmentUsersReq {
+  users: UserDepartmentInfo[]
 }
 
-const usePostDepartmentUser = () => {
+interface PostDepartmentUsersResp {
+  user_department_ids: number[]
+}
+
+const usePostDepartmentUsers = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ departmentId, data }: { departmentId: number; data: PostDepartmentUserReq }): Promise<PostDepartmentUserResp> => {
-      const resp: ApiResponse<PostDepartmentUserResp> = await api.request({
+    mutationFn: async ({ departmentId, data }: { departmentId: number; data: PostDepartmentUsersReq }): Promise<PostDepartmentUsersResp> => {
+      const resp: ApiResponse<PostDepartmentUsersResp> = await api.request({
         method: 'post',
         url: `/departments/${departmentId}/users`,
         data: data
@@ -236,6 +241,7 @@ const usePostDepartmentUser = () => {
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT] });
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_WITH_CHILDREN] });
       queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
+      queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_USERS] });
       toast.success('부서에 사용자가 추가되었습니다.');
     },
     onError: (error) => {
@@ -244,20 +250,26 @@ const usePostDepartmentUser = () => {
   });
 };
 
-const useDeleteDepartmentUser = () => {
+interface DeleteDepartmentUsersReq {
+  user_ids: string[]
+}
+
+const useDeleteDepartmentUsers = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ departmentId, userId }: { departmentId: number; userId: string }): Promise<void> => {
+    mutationFn: async ({ departmentId, data }: { departmentId: number; data: DeleteDepartmentUsersReq }): Promise<void> => {
       await api.request({
         method: 'delete',
-        url: `/departments/${departmentId}/users/${userId}`
+        url: `/departments/${departmentId}/users`,
+        data: data
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT] });
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_WITH_CHILDREN] });
       queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
+      queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_USERS] });
       toast.success('부서에서 사용자가 삭제되었습니다.');
     },
     onError: (error) => {
@@ -266,18 +278,39 @@ const useDeleteDepartmentUser = () => {
   });
 };
 
+interface CheckUserMainDepartmentResp {
+  has_main_department: 'Y' | 'N'
+}
+
+const useCheckUserMainDepartment = (userId: string) => {
+  return useQuery({
+    queryKey: [DepartmentQueryKey.CHECK_USER_MAIN_DEPARTMENT, userId],
+    queryFn: async (): Promise<CheckUserMainDepartmentResp> => {
+      const resp: ApiResponse<CheckUserMainDepartmentResp> = await api.request({
+        method: 'get',
+        url: `/users/${userId}/main-department/existence`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!userId
+  });
+};
+
 export {
   // QueryKey
-  DepartmentQueryKey, useDeleteDepartment, useDeleteDepartmentUser, useGetDepartment, useGetDepartmentUsers, useGetDepartmentWithChildren,
+  DepartmentQueryKey,
   // API Hook
-  usePostDepartment, usePostDepartmentUser, usePutDepartment
+  useCheckUserMainDepartment, useDeleteDepartment, useDeleteDepartmentUsers, useGetDepartment, useGetDepartmentUsers, useGetDepartmentWithChildren, usePostDepartment, usePostDepartmentUsers, usePutDepartment
 };
 
   export type {
-    GetDepartmentResp, GetDepartmentUsersResp, GetDepartmentWithChildrenResp,
+    CheckUserMainDepartmentResp, DeleteDepartmentUsersReq, GetDepartmentResp, GetDepartmentUsersResp, GetDepartmentWithChildrenResp,
     // Interface
     PostDepartmentReq,
-    PostDepartmentResp, PostDepartmentUserReq,
-    PostDepartmentUserResp, PutDepartmentReq, UserInfo
+    PostDepartmentResp, PostDepartmentUsersReq,
+    PostDepartmentUsersResp, PutDepartmentReq, UserDepartmentInfo, UserInfo
   };
 
