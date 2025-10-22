@@ -174,6 +174,7 @@ const useGetDepartmentWithChildren = (departmentId: number) => {
 interface UserInfo {
   user_id: string
   user_name: string
+  main_yn: 'Y' | 'N'
 }
 
 interface GetDepartmentUsersResp {

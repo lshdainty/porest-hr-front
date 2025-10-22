@@ -1,5 +1,7 @@
 import { type UserInfo } from '@/api/department'
 import { Button } from '@/components/shadcn/button'
+import { Checkbox } from '@/components/shadcn/checkbox'
+import { Label } from '@/components/shadcn/label'
 import TransferList, { type TransferItem } from '@/components/shadcn/transfer'
 import { useEffect, useState } from 'react'
 
@@ -56,7 +58,8 @@ export default function UserDepartmentTransfer({
         .filter(item => initialLeftUserIds.has(item.key))
         .map(item => ({
           user_id: item.key,
-          user_name: item.label
+          user_name: item.label,
+          main_yn: (item.main_yn || 'N') as 'Y' | 'N'
         }))
 
       // 제거된 사용자: 초기에는 오른쪽에 있었는데 현재는 왼쪽에 있는 사용자
@@ -64,18 +67,53 @@ export default function UserDepartmentTransfer({
         .filter(item => initialRightUserIds.has(item.key))
         .map(item => ({
           user_id: item.key,
-          user_name: item.label
+          user_name: item.label,
+          main_yn: 'N' as 'Y' | 'N'
         }))
 
       onTransfer(addedUsers, removedUsers)
     }
   }
 
-  const renderUserItem = (item: TransferItem) => {
+  const handleMainDepartmentChange = (userId: string, isMain: boolean) => {
+    const updatedItems = rightItems.map((item) => {
+      if (item.key === userId) {
+        return { ...item, main_yn: isMain ? 'Y' : 'N' }
+      }
+      return item
+    })
+    setRightItems(updatedItems)
+  }
+
+  const renderLeftUserItem = (item: TransferItem) => {
     return (
       <div className='flex flex-col items-start'>
         <span className='font-medium'>{item.label}</span>
         <span className='text-xs text-muted-foreground'>{item.key}</span>
+      </div>
+    )
+  }
+
+  const renderRightUserItem = (item: TransferItem) => {
+    return (
+      <div className='flex items-center justify-between w-full gap-2'>
+        <div className='flex flex-col items-start flex-1'>
+          <span className='font-medium'>{item.label}</span>
+          <span className='text-xs text-muted-foreground'>{item.key}</span>
+        </div>
+        <div className='flex items-center gap-2' onClick={(e) => e.stopPropagation()}>
+          <Checkbox
+            id={`main-${item.key}`}
+            checked={item.main_yn === 'Y'}
+            onCheckedChange={(checked) => handleMainDepartmentChange(item.key, checked === true)}
+          />
+          <Label
+            htmlFor={`main-${item.key}`}
+            className='text-xs text-muted-foreground cursor-pointer whitespace-nowrap'
+          >
+            메인부서
+          </Label>
+        </div>
       </div>
     )
   }
@@ -109,7 +147,8 @@ export default function UserDepartmentTransfer({
         rightTitle='부서 소속 사용자'
         leftPlaceholder='사용자 검색...'
         rightPlaceholder='사용자 검색...'
-        renderItem={renderUserItem}
+        renderItem={renderLeftUserItem}
+        renderRightItem={renderRightUserItem}
         filterItem={filterUserItem}
       />
     </div>

@@ -24,6 +24,7 @@ export interface TransferListProps {
   leftPlaceholder?: string
   rightPlaceholder?: string
   renderItem?: (item: TransferItem) => React.ReactNode
+  renderRightItem?: (item: TransferItem) => React.ReactNode
   filterItem?: (item: TransferItem, search: string) => boolean
 }
 
@@ -37,6 +38,7 @@ export default function TransferList({
   leftPlaceholder = 'Search',
   rightPlaceholder = 'Search',
   renderItem,
+  renderRightItem,
   filterItem,
 }: TransferListProps) {
   const [leftSearch, setLeftSearch] = React.useState('')
@@ -164,7 +166,7 @@ export default function TransferList({
                 <Label
                   htmlFor={`right-${item.key}`}
                   className='flex-1 cursor-pointer'>
-                  {renderItem ? renderItem(item) : defaultRenderItem(item)}
+                  {renderRightItem ? renderRightItem(item) : (renderItem ? renderItem(item) : defaultRenderItem(item))}
                 </Label>
               </li>
             ))}
