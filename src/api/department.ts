@@ -1,7 +1,7 @@
-import { api, type ApiResponse } from '@/api/index'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from '@/components/alert/toast';
 import { CompanyQueryKey } from '@/api/company';
+import { api, type ApiResponse } from '@/api/index';
+import { toast } from '@/components/alert/toast';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const enum DepartmentQueryKey {
   POST_DEPARTMENT = 'postDepartment',
@@ -124,7 +124,7 @@ interface GetDepartmentResp {
   company_id: string
 }
 
-const useGetDepartment = (departmentId: number, enabled: boolean = true) => {
+const useGetDepartment = (departmentId: number) => {
   return useQuery({
     queryKey: [DepartmentQueryKey.GET_DEPARTMENT, departmentId],
     queryFn: async (): Promise<GetDepartmentResp> => {
@@ -137,7 +137,7 @@ const useGetDepartment = (departmentId: number, enabled: boolean = true) => {
 
       return resp.data;
     },
-    enabled: enabled && !!departmentId
+    enabled: !!departmentId
   });
 };
 
@@ -154,7 +154,7 @@ interface GetDepartmentWithChildrenResp {
   children: GetDepartmentWithChildrenResp[]
 }
 
-const useGetDepartmentWithChildren = (departmentId: number, enabled: boolean = true) => {
+const useGetDepartmentWithChildren = (departmentId: number) => {
   return useQuery({
     queryKey: [DepartmentQueryKey.GET_DEPARTMENT_WITH_CHILDREN, departmentId],
     queryFn: async (): Promise<GetDepartmentWithChildrenResp> => {
@@ -167,7 +167,7 @@ const useGetDepartmentWithChildren = (departmentId: number, enabled: boolean = t
 
       return resp.data;
     },
-    enabled: enabled && !!departmentId
+    enabled: !!departmentId
   });
 };
 
@@ -190,7 +190,7 @@ interface GetDepartmentUsersResp {
   users_not_in_department: UserInfo[]
 }
 
-const useGetDepartmentUsers = (departmentId: number, enabled: boolean = true) => {
+const useGetDepartmentUsers = (departmentId: number) => {
   return useQuery({
     queryKey: [DepartmentQueryKey.GET_DEPARTMENT_USERS, departmentId],
     queryFn: async (): Promise<GetDepartmentUsersResp> => {
@@ -203,7 +203,7 @@ const useGetDepartmentUsers = (departmentId: number, enabled: boolean = true) =>
 
       return resp.data;
     },
-    enabled: enabled && !!departmentId
+    enabled: !!departmentId
   });
 };
 
@@ -267,28 +267,16 @@ const useDeleteDepartmentUser = () => {
 
 export {
   // QueryKey
-  DepartmentQueryKey,
-
+  DepartmentQueryKey, useDeleteDepartment, useDeleteDepartmentUser, useGetDepartment, useGetDepartmentUsers, useGetDepartmentWithChildren,
   // API Hook
-  usePostDepartment,
-  usePutDepartment,
-  useDeleteDepartment,
-  useGetDepartment,
-  useGetDepartmentWithChildren,
-  useGetDepartmentUsers,
-  usePostDepartmentUser,
-  useDeleteDepartmentUser
-}
+  usePostDepartment, usePostDepartmentUser, usePutDepartment
+};
 
-export type {
-  // Interface
-  PostDepartmentReq,
-  PostDepartmentResp,
-  PutDepartmentReq,
-  GetDepartmentResp,
-  GetDepartmentWithChildrenResp,
-  UserInfo,
-  GetDepartmentUsersResp,
-  PostDepartmentUserReq,
-  PostDepartmentUserResp
-}
+  export type {
+    GetDepartmentResp, GetDepartmentUsersResp, GetDepartmentWithChildrenResp,
+    // Interface
+    PostDepartmentReq,
+    PostDepartmentResp, PostDepartmentUserReq,
+    PostDepartmentUserResp, PutDepartmentReq, UserInfo
+  };
+

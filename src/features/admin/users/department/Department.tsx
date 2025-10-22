@@ -2,9 +2,9 @@ import { useGetCompany, useGetCompanyWithDepartments } from '@/api/company';
 import { useGetDepartmentUsers } from '@/api/department';
 import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentTreePanelSkeleton from '@/components/company/DepartmentTreePanelSkeleton';
-import UserDepartmentTransfer from '@/components/user/UserDepartmentTransfer';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
 import { Skeleton } from '@/components/shadcn/skeleton';
+import UserDepartmentTransfer from '@/components/user/UserDepartmentTransfer';
 import { Building2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -18,8 +18,7 @@ export default function Department() {
   });
 
   const { data: departmentUsers, isLoading: isDepartmentUsersLoading } = useGetDepartmentUsers(
-    selectedDept?.department_id,
-    !!selectedDept?.department_id
+    selectedDept?.department_id
   );
 
   const departments = useMemo(() => {
@@ -33,7 +32,7 @@ export default function Department() {
           <Skeleton className='h-8 w-8' />
           <Skeleton className='h-8 w-48' />
         </div>
-        <ResizablePanelGroup direction='horizontal' className='flex-grow rounded-lg border' storage={null}>
+        <ResizablePanelGroup direction='horizontal' className='flex-grow rounded-lg border'>
           <ResizablePanel defaultSize={25} minSize={25}>
             <DepartmentTreePanelSkeleton />
           </ResizablePanel>
@@ -71,6 +70,7 @@ export default function Department() {
             title="부서 목록"
             showAddButton={false}
             showNodeActions={false}
+            disableCollapse={true}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />

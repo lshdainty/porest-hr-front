@@ -1,7 +1,7 @@
 import { type UserInfo } from '@/api/department'
 import { Button } from '@/components/shadcn/button'
 import TransferList, { type TransferItem } from '@/components/shadcn/transfer'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface UserDepartmentTransferProps {
   usersInDepartment: UserInfo[]
@@ -16,40 +16,38 @@ export default function UserDepartmentTransfer({
   onTransfer,
   isLoading = false,
 }: UserDepartmentTransferProps) {
-  // 초기 상태를 useMemo로 계산
-  const initialLeftUserIds = useMemo(
-    () => new Set(usersNotInDepartment.map(u => u.user_id)),
-    [usersNotInDepartment]
-  )
+  // 초기 사용자 ID 추적을 위한 상태
+  const [initialLeftUserIds, setInitialLeftUserIds] = useState<Set<string>>(new Set())
+  const [initialRightUserIds, setInitialRightUserIds] = useState<Set<string>>(new Set())
 
-  const initialRightUserIds = useMemo(
-    () => new Set(usersInDepartment.map(u => u.user_id)),
-    [usersInDepartment]
-  )
+  const [leftItems, setLeftItems] = useState<TransferItem[]>([])
+  const [rightItems, setRightItems] = useState<TransferItem[]>([])
 
-  // 초기 아이템을 useMemo로 계산
-  const initialLeftItems = useMemo(
-    () => usersNotInDepartment.map(user => ({
+  // props가 변경될 때마다 상태 업데이트
+  useEffect(() => {
+    const newLeftUserIds = new Set(usersNotInDepartment.map(u => u.user_id))
+    const newRightUserIds = new Set(usersInDepartment.map(u => u.user_id))
+
+    setInitialLeftUserIds(newLeftUserIds)
+    setInitialRightUserIds(newRightUserIds)
+
+    const newLeftItems = usersNotInDepartment.map(user => ({
       key: user.user_id,
       label: user.user_name,
       selected: false,
       ...user
-    })),
-    [usersNotInDepartment]
-  )
+    }))
 
-  const initialRightItems = useMemo(
-    () => usersInDepartment.map(user => ({
+    const newRightItems = usersInDepartment.map(user => ({
       key: user.user_id,
       label: user.user_name,
       selected: false,
       ...user
-    })),
-    [usersInDepartment]
-  )
+    }))
 
-  const [leftItems, setLeftItems] = useState<TransferItem[]>(initialLeftItems)
-  const [rightItems, setRightItems] = useState<TransferItem[]>(initialRightItems)
+    setLeftItems(newLeftItems)
+    setRightItems(newRightItems)
+  }, [usersInDepartment, usersNotInDepartment])
 
   const handleSave = () => {
     if (onTransfer) {

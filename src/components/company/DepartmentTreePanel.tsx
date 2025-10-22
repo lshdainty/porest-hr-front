@@ -17,6 +17,7 @@ interface DepartmentTreePanelProps {
   title?: string;
   showAddButton?: boolean;
   showNodeActions?: boolean;
+  disableCollapse?: boolean;
 }
 
 export default function DepartmentTreePanel({
@@ -29,6 +30,7 @@ export default function DepartmentTreePanel({
   title = '부서 관리',
   showAddButton = true,
   showNodeActions = true,
+  disableCollapse = false,
 }: DepartmentTreePanelProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDept, setEditingDept] = useState<GetCompanyWithDepartment | null>(null);
@@ -169,7 +171,7 @@ export default function DepartmentTreePanel({
         </div>
       </div>
     ) : undefined,
-    children: dept.children?.map(mapDeptToTreeItem),
+    children: dept.children && dept.children.length > 0 ? dept.children.map(mapDeptToTreeItem) : undefined,
     draggable: dept.parent_id !== null,
     droppable: true,
   });
@@ -221,6 +223,7 @@ export default function DepartmentTreePanel({
             expandAll={true}
             onDocumentDrag={handleDragDrop}
             className='bg-transparent'
+            disableCollapse={disableCollapse}
           />
         ) : (
           <div className='flex flex-col items-center justify-center h-full text-muted-foreground'>
