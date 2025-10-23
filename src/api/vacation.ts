@@ -1,7 +1,7 @@
-import { api, type ApiResponse } from '@/api/index'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarQueryKey } from '@/api/calendar';
+import { api, type ApiResponse } from '@/api/index';
 import { toast } from '@/components/alert/toast';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const enum VacationQueryKey {
   POST_USE_VACATION = 'postUseVacation',
@@ -9,7 +9,9 @@ const enum VacationQueryKey {
   DELETE_VACATION_HISTORY = 'deleteVacationHistory',
   GET_USER_PERIOD_VACATION_USE_HISTORIES = 'getUserPeriodVacationUseHistories',
   GET_USER_MONTH_STATS_VACATION_USE_HISTORIES = 'getUserMonthStatsVacationUseHistories',
-  GET_USER_VACATION_USE_STATS = 'getUserVacationUseStats'
+  GET_USER_VACATION_USE_STATS = 'getUserVacationUseStats',
+  GET_VACATION_POLICY = 'getVacationPolicy',
+  GET_VACATION_POLICIES = 'getVacationPolicies'
 }
 
 interface PostUseVacationReq {
@@ -202,23 +204,80 @@ const useGetUserVacationUseStats = (reqData: GetUserVacationUseStatsReq) => {
   });
 }
 
-export {
-  // QueryKey
-  VacationQueryKey,
+interface GetVacationPolicyReq {
+  vacation_policy_id: number
+}
 
+interface GetVacationPolicyResp {
+  vacation_policy_id: number
+  vacation_policy_name: string
+  vacation_policy_desc: string
+  vacation_type: string
+  grant_method: string
+  grant_time: number
+  repeat_unit: string
+  repeat_interval: number
+  grant_timing: string
+  specific_months: number
+  specific_days: number
+}
+
+const useGetVacationPolicy = (reqData: GetVacationPolicyReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_VACATION_POLICY, reqData.vacation_policy_id],
+    queryFn: async (): Promise<GetVacationPolicyResp> => {
+      const resp: ApiResponse<GetVacationPolicyResp> = await api.request({
+        method: 'get',
+        url: `/vacation/policies/${reqData.vacation_policy_id}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.vacation_policy_id
+  });
+}
+
+interface GetVacationPoliciesResp {
+  vacation_policy_id: number
+  vacation_policy_name: string
+  vacation_policy_desc: string
+  vacation_type: string
+  grant_method: string
+  grant_time: number
+  repeat_unit: string
+  repeat_interval: number
+  grant_timing: string
+  specific_months: number
+  specific_days: number
+}
+
+const useGetVacationPolicies = () => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_VACATION_POLICIES],
+    queryFn: async (): Promise<GetVacationPoliciesResp[]> => {
+      const resp: ApiResponse<GetVacationPoliciesResp[]> = await api.request({
+        method: 'get',
+        url: `/vacation/policies`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    }
+  });
+}
+
+export {
+  useDeleteVacationHistory, useGetAvailableVacations, useGetUserMonthStatsVacationUseHistories, useGetUserPeriodVacationUseHistories, useGetUserVacationUseStats, useGetVacationPolicies, useGetVacationPolicy,
   // API Hook
   usePostUseVacation,
-  useGetAvailableVacations,
-  useDeleteVacationHistory,
-  useGetUserPeriodVacationUseHistories,
-  useGetUserMonthStatsVacationUseHistories,
-  useGetUserVacationUseStats
-}
+  // QueryKey
+  VacationQueryKey
+};
 
 export type {
   // Interface
-  GetAvailableVacationsResp,
-  GetUserPeriodVacationUseHistoriesResp,
-  GetUserMonthStatsVacationUseHistoriesResp,
-  GetUserVacationUseStatsResp
-}
+  GetAvailableVacationsResp, GetUserMonthStatsVacationUseHistoriesResp, GetUserPeriodVacationUseHistoriesResp, GetUserVacationUseStatsResp, GetVacationPoliciesResp, GetVacationPolicyResp
+};
