@@ -30,21 +30,26 @@ export default function UserBirthDues({ usersBirthDues, users }: UserBirthDuesPr
                 return (
                   <>
                     <div className='font-semibold text-left py-1'>{user.user_name}</div>
-                    {dues.map((value, index) => (
-                      <div key={index} className='flex justify-center items-center'>
-                        <div className={cn(
-                          'relative w-12 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-md text-base',
-                          value > 0 ? 'bg-blue-500 dark:bg-blue-600 text-white' : 'bg-muted dark:bg-muted'
-                        )}>
-                          {user.user_birth && parseInt(user.user_birth.substring(4, 6)) === index + 1 && <Gift className='absolute top-1 left-1 h-3.5 w-3.5' />}
-                          {value > 0 && (
-                            <span className='font-semibold'>
-                              {(value / 10000).toLocaleString()}
-                            </span>
-                          )}
+                    {dues.map((value, index) => {
+                      const birthMonth = user.user_birth ? parseInt(user.user_birth.split('-')[1]) : null;
+                      const isBirthMonth = birthMonth === index + 1;
+
+                      return (
+                        <div key={index} className='flex justify-center items-center'>
+                          <div className={cn(
+                            'relative w-12 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-md text-base',
+                            value > 0 ? 'bg-blue-500 dark:bg-blue-600 text-white' : 'bg-muted dark:bg-muted'
+                          )}>
+                            {isBirthMonth && <Gift className='absolute top-1 left-1 h-3.5 w-3.5' />}
+                            {value > 0 && (
+                              <span className='font-semibold'>
+                                {(value / 10000).toLocaleString()}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </>
                 );
               })}

@@ -29,6 +29,7 @@ interface GetUserResp {
   user_role_name: string
   user_origin_company_type: string
   user_origin_company_name: string
+  main_department_name_kr: string | null
   lunar_yn: string
   profile_url: string
   invitation_token?: string
@@ -66,6 +67,7 @@ interface GetUsersResp {
   user_role_name: string
   user_origin_company_type: string
   user_origin_company_name: string
+  main_department_name_kr: string | null
   lunar_yn: string
   profile_url: string
   invitation_token?: string

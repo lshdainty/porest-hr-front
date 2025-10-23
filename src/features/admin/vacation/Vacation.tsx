@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useGetUsers } from '@/api/user';
 import {
   useGetAvailableVacations,
@@ -8,18 +7,22 @@ import {
 } from '@/api/vacation';
 import UserInfoCard from '@/components/user/UserInfoCard';
 import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
-import VacationStatsCard from '@/components/vacation/VacationStatsCard';
-import VacationStatsCardSkeleton from '@/components/vacation/VacationStatsCardSkeleton';
 import MonthVacationStatsCard from '@/components/vacation/MonthVacationStatsCard';
 import MonthVacationStatsCardSkeleton from '@/components/vacation/MonthVacationStatsCardSkeleton';
-import VacationTypeStatsCard from '@/components/vacation/VacationTypeStatsCard';
-import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton';
 import VacationHistoryTable from '@/components/vacation/VacationHistoryTable';
 import VacationHistoryTableSkeleton from '@/components/vacation/VacationHistoryTableSkeleton';
+import VacationStatsCard from '@/components/vacation/VacationStatsCard';
+import VacationStatsCardSkeleton from '@/components/vacation/VacationStatsCardSkeleton';
+import VacationTypeStatsCard from '@/components/vacation/VacationTypeStatsCard';
+import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton';
+import { useLoginUserStore } from '@/store/LoginUser';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 
 export default function Vacation() {
-  const [selectedUserId, setSelectedUserId] = useState<string | undefined>();
+  const { loginUser } = useLoginUserStore();
+  const [selectedUserId, setSelectedUserId] = useState<string>(loginUser?.user_id || '');
+
   const { data: users, isLoading: usersLoading } = useGetUsers();
   const { data: vacationTypes, isLoading: vacationTypesLoading } = useGetAvailableVacations({
     user_id: selectedUserId,
@@ -40,10 +43,10 @@ export default function Vacation() {
   });
 
   useEffect(() => {
-    if (users && users.length > 0 && !selectedUserId) {
-      setSelectedUserId(users[0].user_id);
+    if (loginUser && !selectedUserId) {
+      setSelectedUserId(loginUser.user_id);
     }
-  }, [users, selectedUserId]);
+  }, [loginUser, selectedUserId]);
 
   if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading) {
     return (
