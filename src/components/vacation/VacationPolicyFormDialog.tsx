@@ -1,9 +1,13 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import * as z from 'zod';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/shadcn/dialog';
 import {
   Field,
   FieldLabel,
@@ -29,6 +33,7 @@ import { Button } from '@/components/shadcn/button';
 import { Switch } from '@/components/shadcn/switch';
 import { Separator } from '@/components/shadcn/separator';
 import { Badge } from '@/components/shadcn/badge';
+import { Spinner } from '@/components/shadcn/spinner';
 import {
   Collapsible,
   CollapsibleContent,
@@ -40,7 +45,6 @@ import {
   Info,
   Plus,
   X,
-  ArrowLeft,
   Calendar,
   Clock,
   Users,
@@ -118,13 +122,21 @@ const grantMethodOptions = [
   },
 ] as const;
 
-interface VacationPolicyFormProps {
+interface VacationPolicyFormDialogProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSave: (data: VacationConfig) => void;
   initialData?: VacationPolicy | null;
-  onSubmit: (data: VacationConfig) => void;
-  onCancel: () => void;
+  isEditing?: boolean;
 }
 
-export function VacationPolicyForm({ initialData, onSubmit, onCancel }: VacationPolicyFormProps) {
+export function VacationPolicyFormDialog({
+  isOpen,
+  onOpenChange,
+  onSave,
+  initialData = null,
+  isEditing = false
+}: VacationPolicyFormDialogProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [excludedWorkTypes, setExcludedWorkTypes] = useState<string[]>([]);
   const [excludedOrganizations, setExcludedOrganizations] = useState<string[]>([]);
@@ -158,28 +170,38 @@ export function VacationPolicyForm({ initialData, onSubmit, onCancel }: Vacation
   const watchRequireApproval = form.watch('requireApproval');
 
   useEffect(() => {
-    if (initialData) {
-      // 폼에 기존 데이터 설정
-      Object.keys(initialData).forEach((key) => {
-        if (key in form.getValues()) {
-          form.setValue(key as any, initialData[key as keyof VacationPolicy] as any);
+    if (isOpen) {
+      if (isEditing && initialData) {
+        // 폼에 기존 데이터 설정
+        Object.keys(initialData).forEach((key) => {
+          if (key in form.getValues()) {
+            form.setValue(key as any, initialData[key as keyof VacationPolicy] as any);
+          }
+        });
+
+        if (initialData.excludedWorkTypes) {
+          setExcludedWorkTypes(initialData.excludedWorkTypes);
         }
-      });
-      
-      if (initialData.excludedWorkTypes) {
-        setExcludedWorkTypes(initialData.excludedWorkTypes);
-      }
-      if (initialData.excludedOrganizations) {
-        setExcludedOrganizations(initialData.excludedOrganizations);
-      }
-      if (initialData.approvers) {
-        setApprovers(initialData.approvers);
-      }
-      if (initialData.references) {
-        setReferences(initialData.references);
+        if (initialData.excludedOrganizations) {
+          setExcludedOrganizations(initialData.excludedOrganizations);
+        }
+        if (initialData.approvers) {
+          setApprovers(initialData.approvers);
+        }
+        if (initialData.references) {
+          setReferences(initialData.references);
+        }
+      } else {
+        // 새로 생성할 때 폼 초기화
+        form.reset();
+        setExcludedWorkTypes([]);
+        setExcludedOrganizations([]);
+        setApprovers([]);
+        setReferences([]);
+        setShowAdvanced(false);
       }
     }
-  }, [initialData, form]);
+  }, [isOpen, isEditing, initialData, form]);
 
   const handleSubmit = (data: FormData) => {
     const submitData: VacationConfig = {
@@ -189,7 +211,8 @@ export function VacationPolicyForm({ initialData, onSubmit, onCancel }: Vacation
       approvers: approvers,
       references: references,
     };
-    onSubmit(submitData);
+    onSave(submitData);
+    onOpenChange(false);
   };
 
   const addExcludedOrganization = (org: string) => {
@@ -234,29 +257,18 @@ export function VacationPolicyForm({ initialData, onSubmit, onCancel }: Vacation
     form.setValue('references', newReferences);
   };
 
+  const getDialogTitle = () => {
+    if (isEditing) return '휴가 정책 수정';
+    return '휴가 정책 추가';
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* 뒤로가기 버튼 */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={onCancel}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          목록으로 돌아가기
-        </Button>
-      </div>
-
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {initialData ? '맞춤 휴가 수정' : '맞춤 휴가 설정'}
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          {initialData 
-            ? `${initialData.name} 휴가 정책을 수정합니다.`
-            : '새로운 휴가 정책을 생성합니다.'
-          }
-        </p>
-      </div>
-
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{getDialogTitle()}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           {/* 기본 설정 */}
           <Card>
             <CardHeader>
@@ -737,14 +749,19 @@ export function VacationPolicyForm({ initialData, onSubmit, onCancel }: Vacation
 
           {/* 제출 버튼 */}
           <div className="flex justify-end gap-4 pt-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
               취소
             </Button>
-            <Button type="submit">
-              {initialData ? '휴가 정책 수정' : '휴가 정책 생성'}
+            <Button
+              type="submit"
+              disabled={!form.formState.isValid || form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting && <Spinner />}
+              {form.formState.isSubmitting ? '저장 중...' : (isEditing ? '수정' : '저장')}
             </Button>
           </div>
         </form>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

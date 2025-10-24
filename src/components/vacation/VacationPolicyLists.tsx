@@ -42,6 +42,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useState } from 'react';
+import { VacationPolicyFormDialog } from '@/components/vacation/VacationPolicyFormDialog';
 
 export function VacationPolicyLists() {
   const { data: vacationPolicies, isLoading } = useGetVacationPolicies();
@@ -51,6 +52,7 @@ export function VacationPolicyLists() {
   const { data: vacationTypes } = useGetVacationTypes();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [formDialog, setFormDialog] = useState<{ open: boolean; policy: GetVacationPoliciesResp | null }>({ open: false, policy: null });
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; policy: GetVacationPoliciesResp | null }>({ open: false, policy: null });
 
   const filteredPolicies = (vacationPolicies || []).filter(
@@ -66,9 +68,18 @@ export function VacationPolicyLists() {
     return type ? type.name : code;
   };
 
-  const openEditForm = (policy: GetVacationPoliciesResp | null) => {
-    // TODO: 폼 편집 기능 구현 필요
-    console.log('Edit policy:', policy);
+  const openCreateForm = () => {
+    setFormDialog({ open: true, policy: null });
+  };
+
+  const openEditForm = (policy: GetVacationPoliciesResp) => {
+    setFormDialog({ open: true, policy });
+  };
+
+  const handleFormSave = (data: any) => {
+    // TODO: API 호출하여 저장
+    console.log('Form saved:', data);
+    setFormDialog({ open: false, policy: null });
   };
 
   const deletePolicy = (policy: GetVacationPoliciesResp) => {
@@ -115,7 +126,7 @@ export function VacationPolicyLists() {
             </div>
             <div className="text-sm text-muted-foreground">총 {filteredPolicies.length}개 정책</div>
           </div>
-          <Button onClick={() => console.log('새 휴가 정책 추가 - TODO')} className="flex items-center gap-2">
+          <Button onClick={openCreateForm} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             새 휴가 정책 추가
           </Button>
@@ -149,7 +160,7 @@ export function VacationPolicyLists() {
                       <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          <span>부여 시간: {policy.grant_time}시간</span>
+                          <span>부여 시간: {policy.grant_time_str}</span>
                         </div>
                         {policy.repeat_unit && policy.repeat_interval && (
                           <div className="flex items-center gap-1">
@@ -236,6 +247,14 @@ export function VacationPolicyLists() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <VacationPolicyFormDialog
+        isOpen={formDialog.open}
+        onOpenChange={(open) => setFormDialog({ open, policy: null })}
+        onSave={handleFormSave}
+        initialData={formDialog.policy as any}
+        isEditing={!!formDialog.policy}
+      />
     </div>
   );
 }

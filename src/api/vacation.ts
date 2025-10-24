@@ -246,6 +246,7 @@ interface GetVacationPoliciesResp {
   vacation_type: string
   grant_method: string
   grant_time: number
+  grant_time_str: string
   repeat_unit: string
   repeat_interval: number
   grant_timing: string
@@ -277,7 +278,8 @@ export {
   VacationQueryKey
 };
 
-export type {
-  // Interface
-  GetAvailableVacationsResp, GetUserMonthStatsVacationUseHistoriesResp, GetUserPeriodVacationUseHistoriesResp, GetUserVacationUseStatsResp, GetVacationPoliciesResp, GetVacationPolicyResp
-};
+  export type {
+    // Interface
+    GetAvailableVacationsResp, GetUserMonthStatsVacationUseHistoriesResp, GetUserPeriodVacationUseHistoriesResp, GetUserVacationUseStatsResp, GetVacationPoliciesResp, GetVacationPolicyResp
+  };
+
