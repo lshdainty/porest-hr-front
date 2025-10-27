@@ -58,7 +58,7 @@ import type { VacationPolicy, VacationConfig } from '@/types/vacation';
 const formSchema = z.object({
   name: z.string().min(1, '휴가 이름을 입력해주세요'),
   description: z.string().optional(),
-  grantMethod: z.enum(['on_request', 'after_annual', 'on_joining', 'admin_manual', 'recurring', 'by_tenure']),
+  grantMethod: z.string(),
   grantUnit: z.enum(['day', 'hour', 'minute']),
   grantAmount: z.number().min(1, '부여 수량을 입력해주세요'),
   usageUnit: z.enum(['all_at_once', 'divisible']),
@@ -75,7 +75,7 @@ const formSchema = z.object({
   excludedOrganizations: z.array(z.string()).optional(),
   documentSubmission: z.enum(['before', 'after', 'none']),
   documentDescription: z.string().optional(),
-  recurringType: z.enum(['yearly', 'monthly']).optional(),
+  recurringType: z.enum(['YEARLY', 'MONTHLY']).optional(),
   recurringStartDate: z.string().optional(),
   tenureMonths: z.number().optional(),
   applyToExisting: z.boolean(),
@@ -83,51 +83,13 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const grantMethodOptions = [
-  { 
-    value: 'on_request', 
-    label: '신청시 부여', 
-    description: '구성원이 신청할 때마다 정해진 휴가 수량을 부여해요',
-    icon: <Calendar className="h-4 w-4" />
-  },
-  { 
-    value: 'after_annual', 
-    label: '연차 소진시 부여', 
-    description: '구성원이 보유한 법정 연차를 모두 사용한 시점부터 부여해요',
-    icon: <Clock className="h-4 w-4" />
-  },
-  { 
-    value: 'on_joining', 
-    label: '입사시 부여', 
-    description: '구성원이 입사하는 날 부여되는 자동 부여 방식이에요',
-    icon: <Users className="h-4 w-4" />
-  },
-  { 
-    value: 'admin_manual', 
-    label: '관리자가 직접 부여', 
-    description: '관리자가 직접 부여해야 노출돼요',
-    icon: <Shield className="h-4 w-4" />
-  },
-  { 
-    value: 'recurring', 
-    label: '반복 부여', 
-    description: '매년 또는 매월 첫 부여 시점을 설정할 수 있어요',
-    icon: <Calendar className="h-4 w-4" />
-  },
-  { 
-    value: 'by_tenure', 
-    label: '근속시 부여', 
-    description: '입사일 기준 근속시 자동 부여되는 휴가를 설정할 수 있어요',
-    icon: <Clock className="h-4 w-4" />
-  },
-] as const;
-
 interface VacationPolicyFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (data: VacationConfig) => void;
   initialData?: VacationPolicy | null;
   isEditing?: boolean;
+  grantMethodTypes?: Array<{ code: string; name: string }>;
 }
 
 export function VacationPolicyFormDialog({
@@ -135,7 +97,8 @@ export function VacationPolicyFormDialog({
   onOpenChange,
   onSave,
   initialData = null,
-  isEditing = false
+  isEditing = false,
+  grantMethodTypes = []
 }: VacationPolicyFormDialogProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [excludedWorkTypes, setExcludedWorkTypes] = useState<string[]>([]);
@@ -148,7 +111,7 @@ export function VacationPolicyFormDialog({
     defaultValues: {
       name: '',
       description: '',
-      grantMethod: 'on_request',
+      grantMethod: '',
       grantUnit: 'day',
       grantAmount: 1,
       usageUnit: 'all_at_once',
@@ -168,6 +131,14 @@ export function VacationPolicyFormDialog({
   const watchGrantMethod = form.watch('grantMethod');
   const watchDocumentSubmission = form.watch('documentSubmission');
   const watchRequireApproval = form.watch('requireApproval');
+  const watchGrantUnit = form.watch('grantUnit');
+
+  // 부여 단위가 '분'으로 변경되면 부여 수량을 30으로 고정
+  useEffect(() => {
+    if (watchGrantUnit === 'minute') {
+      form.setValue('grantAmount', 30);
+    }
+  }, [watchGrantUnit, form]);
 
   useEffect(() => {
     if (isOpen) {
@@ -204,8 +175,21 @@ export function VacationPolicyFormDialog({
   }, [isOpen, isEditing, initialData, form]);
 
   const handleSubmit = (data: FormData) => {
+    // 부여 단위에 따른 grantAmount 값 변환
+    let convertedGrantAmount = data.grantAmount;
+
+    if (data.grantUnit === 'hour') {
+      // 시간: 입력값 / 8 (1시간 = 0.125일)
+      convertedGrantAmount = data.grantAmount / 8;
+    } else if (data.grantUnit === 'minute') {
+      // 분: 항상 30분 = 0.0625일 (0.125 / 2)
+      convertedGrantAmount = 0.0625;
+    }
+    // day는 그대로 사용
+
     const submitData: VacationConfig = {
       ...data,
+      grantAmount: convertedGrantAmount,
       excludedWorkTypes: excludedWorkTypes,
       excludedOrganizations: excludedOrganizations,
       approvers: approvers,
@@ -288,7 +272,10 @@ export function VacationPolicyFormDialog({
                   name="name"
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
-                      <FieldLabel>휴가 이름 *</FieldLabel>
+                      <FieldLabel>
+                        휴가 이름
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
                       <Input placeholder="예: 리프레시 휴가" {...field} />
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
@@ -323,23 +310,18 @@ export function VacationPolicyFormDialog({
                 name="grantMethod"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={!!fieldState.error}>
-                    <FieldLabel>부여 방법 *</FieldLabel>
+                    <FieldLabel>
+                      부여 방법
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="부여 방법을 선택해주세요" />
                       </SelectTrigger>
                       <SelectContent>
-                        {grantMethodOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            <div className="flex items-start gap-3">
-                              {option.icon}
-                              <div>
-                                <div className="font-medium">{option.label}</div>
-                                <div className="text-sm text-muted-foreground max-w-xs">
-                                  {option.description}
-                                </div>
-                              </div>
-                            </div>
+                        {grantMethodTypes.map((type) => (
+                          <SelectItem key={type.code} value={type.code}>
+                            {type.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -350,7 +332,7 @@ export function VacationPolicyFormDialog({
               />
 
               {/* 반복 부여 설정 (반복 부여일 때만 표시) */}
-              {watchGrantMethod === 'recurring' && (
+              {watchGrantMethod === 'REPEAT_GRANT' && (
                 <div className="grid grid-cols-2 gap-4 p-4 border rounded-lg bg-muted/30">
                   <Controller
                     control={form.control}
@@ -363,8 +345,8 @@ export function VacationPolicyFormDialog({
                             <SelectValue placeholder="주기 선택" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="yearly">매년</SelectItem>
-                            <SelectItem value="monthly">매월</SelectItem>
+                            <SelectItem value="YEARLY">매년</SelectItem>
+                            <SelectItem value="MONTHLY">매월</SelectItem>
                           </SelectContent>
                         </Select>
                         <p className="text-sm text-muted-foreground">
@@ -403,7 +385,10 @@ export function VacationPolicyFormDialog({
                     name="grantUnit"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>부여 단위 *</FieldLabel>
+                        <FieldLabel>
+                          부여 단위
+                          <span className='text-destructive ml-0.5'>*</span>
+                        </FieldLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <SelectTrigger>
                             <SelectValue />
@@ -427,16 +412,22 @@ export function VacationPolicyFormDialog({
                     name="grantAmount"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>부여 수량 *</FieldLabel>
+                        <FieldLabel>
+                          부여 수량
+                          <span className='text-destructive ml-0.5'>*</span>
+                        </FieldLabel>
                         <Input
                           type="number"
                           min="1"
                           placeholder="1"
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
+                          disabled={watchGrantUnit === 'minute'}
                         />
                         <p className="text-sm text-muted-foreground">
-                          부여할 휴가 수량을 설정해주세요.
+                          {watchGrantUnit === 'minute'
+                            ? '분 단위 휴가는 30분으로 고정됩니다.'
+                            : '부여할 휴가 수량을 설정해주세요.'}
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -452,17 +443,19 @@ export function VacationPolicyFormDialog({
                   control={form.control}
                   name="requireApproval"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error} className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FieldLabel className="text-base">승인/참조 사용</FieldLabel>
-                        <p className="text-sm text-muted-foreground">
-                          구성원이 휴가를 등록하거나 취소할 때 승인이 필요한지 설정해주세요.
-                        </p>
+                    <Field data-invalid={!!fieldState.error}>
+                      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FieldLabel className="text-base">승인/참조 사용</FieldLabel>
+                          <p className="text-sm text-muted-foreground">
+                            구성원이 휴가를 등록하거나 취소할 때 승인이 필요한지 설정해주세요.
+                          </p>
+                        </div>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </div>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
                   )}
@@ -580,26 +573,21 @@ export function VacationPolicyFormDialog({
                 <CollapsibleContent>
                   <CardContent className="space-y-6 pt-6">
                     {/* 사용 만료 기한 */}
-                    {(watchGrantMethod === 'after_annual' || watchGrantMethod === 'by_tenure') && (
-                      <>
-                        <Controller
-                          control={form.control}
-                          name="expirationDate"
-                          render={({ field, fieldState }) => (
-                            <Field data-invalid={!!fieldState.error}>
-                              <FieldLabel>사용 만료 기한</FieldLabel>
-                              <Input type="date" {...field} />
-                              <p className="text-sm text-muted-foreground">
-                                [연차 소진시 부여], [근속시 부여] 방식에서만 설정 가능해요.
-                                [관리자가 직접 부여] 휴가는 관리자가 부여 시 사용 만료 기한을 설정할 수 있어요.
-                              </p>
-                              <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                            </Field>
-                          )}
-                        />
-                        <Separator />
-                      </>
-                    )}
+                    <Controller
+                      control={form.control}
+                      name="expirationDate"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>사용 만료 기한</FieldLabel>
+                          <Input type="date" {...field} />
+                          <p className="text-sm text-muted-foreground">
+                            휴가 사용 만료 기한을 설정할 수 있어요.
+                          </p>
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
+                    <Separator />
 
                     {/* 제외 대상 설정 */}
                     <div className="space-y-4">

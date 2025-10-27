@@ -172,7 +172,7 @@ export function VacationPolicyLists() {
                         )}
                       </div>
                       <div className="flex flex-col gap-3">
-                        {policy.grant_method === 'RECURRING' && (
+                        {policy.grant_method === 'REPEAT_GRANT' && (
                           <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg dark:bg-purple-950/30 dark:border-purple-900">
                             <p className="text-sm text-purple-700 dark:text-purple-300">
                               <span className="font-medium">반복 부여:</span>{' '}
@@ -254,6 +254,7 @@ export function VacationPolicyLists() {
         onSave={handleFormSave}
         initialData={formDialog.policy as any}
         isEditing={!!formDialog.policy}
+        grantMethodTypes={grantMethodTypes}
       />
     </div>
   );
