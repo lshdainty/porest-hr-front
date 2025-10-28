@@ -7,16 +7,6 @@ import {
   useGetVacationTypes
 } from '@/api/type';
 import { useGetVacationPolicies, type GetVacationPoliciesResp } from '@/api/vacation';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/shadcn/alertDialog';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import {
@@ -30,6 +20,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdownMenu';
 import { Input } from '@/components/shadcn/input';
+import { VacationPolicyDeleteDialog } from '@/components/vacation/VacationPolicyDeleteDialog';
+import { VacationPolicyFormDialog } from '@/components/vacation/VacationPolicyFormDialog';
 import {
   Calendar,
   Clock,
@@ -42,7 +34,6 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useState } from 'react';
-import { VacationPolicyFormDialog } from '@/components/vacation/VacationPolicyFormDialog';
 
 export function VacationPolicyLists() {
   const { data: vacationPolicies, isLoading } = useGetVacationPolicies();
@@ -84,14 +75,6 @@ export function VacationPolicyLists() {
 
   const deletePolicy = (policy: GetVacationPoliciesResp) => {
     setDeleteDialog({ open: true, policy });
-  };
-
-  const confirmDelete = () => {
-    if (deleteDialog.policy) {
-      // TODO: 삭제 API 구현 필요
-      console.log('Delete policy:', deleteDialog.policy.vacation_policy_id);
-      setDeleteDialog({ open: false, policy: null });
-    }
   };
 
   if (isLoading) {
@@ -229,24 +212,11 @@ export function VacationPolicyLists() {
         </div>
       </div>
 
-      <AlertDialog open={deleteDialog.open} onOpenChange={open => setDeleteDialog({ open, policy: null })}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>휴가 정책 삭제</AlertDialogTitle>
-            <AlertDialogDescription>
-              '{deleteDialog.policy?.vacation_policy_name}' 휴가 정책을 삭제하시겠습니까?
-              <br />
-              기존에 부여된 휴가나 사용 내역은 삭제되지 않지만, 더 이상 새로운 휴가가 부여되지 않습니다.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground">
-              삭제
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <VacationPolicyDeleteDialog
+        open={deleteDialog.open}
+        onOpenChange={(open) => setDeleteDialog({ open, policy: null })}
+        policy={deleteDialog.policy}
+      />
 
       <VacationPolicyFormDialog
         isOpen={formDialog.open}
@@ -255,6 +225,8 @@ export function VacationPolicyLists() {
         initialData={formDialog.policy as any}
         isEditing={!!formDialog.policy}
         grantMethodTypes={grantMethodTypes}
+        vacationTypes={vacationTypes}
+        grantTimingTypes={grantTimingTypes}
       />
     </div>
   );

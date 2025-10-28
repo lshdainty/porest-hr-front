@@ -1,18 +1,6 @@
-import { useState, useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
-import * as z from 'zod';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/shadcn/dialog';
-import {
-  Field,
-  FieldLabel,
-  FieldError
-} from '@/components/shadcn/field';
+import { usePostVacationPolicy } from '@/api/vacation';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
 import {
   Card,
   CardContent,
@@ -21,63 +9,68 @@ import {
   CardTitle,
 } from '@/components/shadcn/card';
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/shadcn/collapsible';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/shadcn/dialog';
+import {
+  Field,
+  FieldError,
+  FieldLabel
+} from '@/components/shadcn/field';
+import { Input } from '@/components/shadcn/input';
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select';
-import { Input } from '@/components/shadcn/input';
-import { Textarea } from '@/components/shadcn/textarea';
-import { Button } from '@/components/shadcn/button';
-import { Switch } from '@/components/shadcn/switch';
 import { Separator } from '@/components/shadcn/separator';
-import { Badge } from '@/components/shadcn/badge';
-import { Spinner } from '@/components/shadcn/spinner';
+import { Switch } from '@/components/shadcn/switch';
+import { Textarea } from '@/components/shadcn/textarea';
+import type { VacationConfig, VacationPolicy } from '@/types/vacation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/shadcn/collapsible';
-import {
+  AlertCircle,
+  Calendar,
   ChevronDown,
   ChevronUp,
+  FileText,
   Info,
   Plus,
-  X,
-  Calendar,
-  Clock,
-  Users,
-  Shield,
-  FileText,
-  AlertCircle
+  X
 } from 'lucide-react';
-import type { VacationPolicy, VacationConfig } from '@/types/vacation';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import * as z from 'zod';
 
 // 폼 스키마 정의
 const formSchema = z.object({
   name: z.string().min(1, '휴가 이름을 입력해주세요'),
   description: z.string().optional(),
+  vacationType: z.string().min(1, '휴가 타입을 선택해주세요'),
   grantMethod: z.string(),
+  grantTiming: z.string().min(1, '부여 시점을 선택해주세요'),
   grantUnit: z.enum(['day', 'hour', 'minute']),
   grantAmount: z.number().min(1, '부여 수량을 입력해주세요'),
-  usageUnit: z.enum(['all_at_once', 'divisible']),
-  salaryType: z.enum(['paid', 'unpaid', 'partial']),
-  partialPaidDays: z.number().optional(),
-  partialPaidPercentage: z.number().optional(),
   requireApproval: z.boolean(),
   approvers: z.array(z.string()).optional(),
   references: z.array(z.string()).optional(),
-  availableGender: z.enum(['all', 'male', 'female']),
   expirationDate: z.string().optional(),
-  includeHolidays: z.boolean(),
-  excludedWorkTypes: z.array(z.string()).optional(),
   excludedOrganizations: z.array(z.string()).optional(),
   documentSubmission: z.enum(['before', 'after', 'none']),
   documentDescription: z.string().optional(),
   recurringType: z.enum(['YEARLY', 'MONTHLY']).optional(),
+  recurringInterval: z.number().min(1, '반복 간격을 입력해주세요').optional(),
   recurringStartDate: z.string().optional(),
-  tenureMonths: z.number().optional(),
   applyToExisting: z.boolean(),
 });
 
@@ -90,6 +83,8 @@ interface VacationPolicyFormDialogProps {
   initialData?: VacationPolicy | null;
   isEditing?: boolean;
   grantMethodTypes?: Array<{ code: string; name: string }>;
+  vacationTypes?: Array<{ code: string; name: string }>;
+  grantTimingTypes?: Array<{ code: string; name: string }>;
 }
 
 export function VacationPolicyFormDialog({
@@ -98,32 +93,33 @@ export function VacationPolicyFormDialog({
   onSave,
   initialData = null,
   isEditing = false,
-  grantMethodTypes = []
+  grantMethodTypes = [],
+  vacationTypes = [],
+  grantTimingTypes = []
 }: VacationPolicyFormDialogProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [excludedWorkTypes, setExcludedWorkTypes] = useState<string[]>([]);
   const [excludedOrganizations, setExcludedOrganizations] = useState<string[]>([]);
   const [approvers, setApprovers] = useState<string[]>([]);
   const [references, setReferences] = useState<string[]>([]);
+
+  const { mutateAsync: postVacationPolicy, isPending } = usePostVacationPolicy();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       description: '',
+      vacationType: '',
       grantMethod: '',
+      grantTiming: '',
       grantUnit: 'day',
       grantAmount: 1,
-      usageUnit: 'all_at_once',
-      salaryType: 'paid',
       requireApproval: false,
-      availableGender: 'all',
-      includeHolidays: false,
-      excludedWorkTypes: [],
       excludedOrganizations: [],
       approvers: [],
       references: [],
       documentSubmission: 'none',
+      recurringInterval: 1,
       applyToExisting: false,
     },
   });
@@ -150,9 +146,6 @@ export function VacationPolicyFormDialog({
           }
         });
 
-        if (initialData.excludedWorkTypes) {
-          setExcludedWorkTypes(initialData.excludedWorkTypes);
-        }
         if (initialData.excludedOrganizations) {
           setExcludedOrganizations(initialData.excludedOrganizations);
         }
@@ -165,7 +158,6 @@ export function VacationPolicyFormDialog({
       } else {
         // 새로 생성할 때 폼 초기화
         form.reset();
-        setExcludedWorkTypes([]);
         setExcludedOrganizations([]);
         setApprovers([]);
         setReferences([]);
@@ -174,7 +166,7 @@ export function VacationPolicyFormDialog({
     }
   }, [isOpen, isEditing, initialData, form]);
 
-  const handleSubmit = (data: FormData) => {
+  const handleSubmit = async (data: FormData) => {
     // 부여 단위에 따른 grantAmount 값 변환
     let convertedGrantAmount = data.grantAmount;
 
@@ -187,15 +179,20 @@ export function VacationPolicyFormDialog({
     }
     // day는 그대로 사용
 
-    const submitData: VacationConfig = {
-      ...data,
-      grantAmount: convertedGrantAmount,
-      excludedWorkTypes: excludedWorkTypes,
-      excludedOrganizations: excludedOrganizations,
-      approvers: approvers,
-      references: references,
-    };
-    onSave(submitData);
+    // 백엔드 API 스펙에 맞게 데이터 매핑
+    await postVacationPolicy({
+      vacation_policy_name: data.name,
+      vacation_policy_desc: data.description || '',
+      vacation_type: data.vacationType,
+      grant_method: data.grantMethod,
+      grant_time: convertedGrantAmount,
+      repeat_unit: data.recurringType || 'YEARLY',
+      repeat_interval: data.recurringInterval || 1,
+      grant_timing: data.grantTiming,
+      specific_months: data.recurringStartDate ? new Date(data.recurringStartDate).getMonth() + 1 : 1,
+      specific_days: data.recurringStartDate ? new Date(data.recurringStartDate).getDate() : 1,
+    });
+
     onOpenChange(false);
   };
 
@@ -304,6 +301,38 @@ export function VacationPolicyFormDialog({
 
               <Separator />
 
+              {/* 휴가 타입 */}
+              <Controller
+                control={form.control}
+                name="vacationType"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error}>
+                    <FieldLabel>
+                      휴가 타입
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="휴가 타입을 선택해주세요" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vacationTypes.map((type) => (
+                          <SelectItem key={type.code} value={type.code}>
+                            {type.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-muted-foreground">
+                      휴가의 종류를 선택해주세요 (연차, 출산, 결혼 등).
+                    </p>
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
+                )}
+              />
+
+              <Separator />
+
               {/* 부여 방법 */}
               <Controller
                 control={form.control}
@@ -326,6 +355,36 @@ export function VacationPolicyFormDialog({
                         ))}
                       </SelectContent>
                     </Select>
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
+                )}
+              />
+
+              {/* 부여 시점 */}
+              <Controller
+                control={form.control}
+                name="grantTiming"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error}>
+                    <FieldLabel>
+                      부여 시점
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="부여 시점을 선택해주세요" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {grantTimingTypes.map((type) => (
+                          <SelectItem key={type.code} value={type.code}>
+                            {type.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-muted-foreground">
+                      휴가를 언제 부여할지 시점을 선택해주세요.
+                    </p>
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                   </Field>
                 )}
@@ -359,11 +418,35 @@ export function VacationPolicyFormDialog({
 
                   <Controller
                     control={form.control}
+                    name="recurringInterval"
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel>반복 간격</FieldLabel>
+                        <Input
+                          type="number"
+                          min="1"
+                          placeholder="1"
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          반복 주기마다 몇 번째에 부여할지 설정해주세요 (예: 1 = 매번, 2 = 격번).
+                        </p>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
+                    )}
+                  />
+
+                  <Controller
+                    control={form.control}
                     name="recurringStartDate"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel>첫 부여 시점</FieldLabel>
-                        <Input type="date" {...field} />
+                        <InputDatePicker
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        />
                         <p className="text-sm text-muted-foreground">
                           첫 번째 휴가가 부여될 날짜를 설정해주세요.
                         </p>
@@ -579,7 +662,10 @@ export function VacationPolicyFormDialog({
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>사용 만료 기한</FieldLabel>
-                          <Input type="date" {...field} />
+                          <InputDatePicker
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          />
                           <p className="text-sm text-muted-foreground">
                             휴가 사용 만료 기한을 설정할 수 있어요.
                           </p>
@@ -740,12 +826,9 @@ export function VacationPolicyFormDialog({
             <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
               취소
             </Button>
-            <Button
-              type="submit"
-              disabled={!form.formState.isValid || form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting && <Spinner />}
-              {form.formState.isSubmitting ? '저장 중...' : (isEditing ? '수정' : '저장')}
+            <Button type="submit" disabled={isPending}>
+              {isPending && <Spinner />}
+              {isPending ? '저장 중...' : (isEditing ? '수정' : '저장')}
             </Button>
           </div>
         </form>

@@ -11,7 +11,13 @@ const enum VacationQueryKey {
   GET_USER_MONTH_STATS_VACATION_USE_HISTORIES = 'getUserMonthStatsVacationUseHistories',
   GET_USER_VACATION_USE_STATS = 'getUserVacationUseStats',
   GET_VACATION_POLICY = 'getVacationPolicy',
-  GET_VACATION_POLICIES = 'getVacationPolicies'
+  GET_VACATION_POLICIES = 'getVacationPolicies',
+  POST_VACATION_POLICY = 'postVacationPolicy',
+  DELETE_VACATION_POLICY = 'deleteVacationPolicy',
+  POST_ASSIGN_VACATION_POLICIES_TO_USER = 'postAssignVacationPoliciesToUser',
+  GET_USER_VACATION_POLICIES = 'getUserVacationPolicies',
+  DELETE_REVOKE_VACATION_POLICY_FROM_USER = 'deleteRevokeVacationPolicyFromUser',
+  DELETE_REVOKE_VACATION_POLICIES_FROM_USER = 'deleteRevokeVacationPoliciesFromUser'
 }
 
 interface PostUseVacationReq {
@@ -270,16 +276,257 @@ const useGetVacationPolicies = () => {
   });
 }
 
+interface PostVacationPolicyReq {
+  vacation_policy_name: string
+  vacation_policy_desc: string
+  vacation_type: string
+  grant_method: string
+  grant_time: number
+  repeat_unit: string
+  repeat_interval: number
+  grant_timing: string
+  specific_months: number
+  specific_days: number
+}
+
+interface PostVacationPolicyResp {
+  vacation_policy_id: number
+}
+
+const usePostVacationPolicy = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PostVacationPolicyReq) => {
+      const resp: ApiResponse<PostVacationPolicyResp> = await api.request({
+        method: 'post',
+        url: `/vacation/policies`,
+        data: reqData
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_VACATION_POLICIES] });
+      toast.success('휴가 정책이 등록되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface DeleteVacationPolicyResp {
+  vacation_policy_id: number
+}
+
+const useDeleteVacationPolicy = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (vacationPolicyId: number) => {
+      const resp: ApiResponse<DeleteVacationPolicyResp> = await api.request({
+        method: 'delete',
+        url: `/vacation/policies/${vacationPolicyId}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_VACATION_POLICIES] });
+      toast.success('휴가 정책이 삭제되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface PostAssignVacationPoliciesToUserReq {
+  user_id: string
+  vacation_policy_ids: number[]
+}
+
+interface PostAssignVacationPoliciesToUserResp {
+  user_id: string
+  assigned_vacation_policy_ids: number[]
+}
+
+const usePostAssignVacationPoliciesToUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PostAssignVacationPoliciesToUserReq) => {
+      const resp: ApiResponse<PostAssignVacationPoliciesToUserResp> = await api.request({
+        method: 'post',
+        url: `/users/${reqData.user_id}/vacation-policies`,
+        data: {
+          vacation_policy_ids: reqData.vacation_policy_ids
+        }
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_POLICIES] });
+      toast.success('휴가 정책이 할당되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface GetUserVacationPoliciesReq {
+  user_id: string
+}
+
+interface GetUserVacationPoliciesResp {
+  user_vacation_policy_id: number
+  vacation_policy_id: number
+  vacation_policy_name: string
+  vacation_policy_desc: string
+  vacation_type: string
+  grant_method: string
+  grant_time: number
+  grant_time_str: string
+  repeat_unit: string
+  repeat_interval: number
+  grant_timing: string
+  specific_months: number
+  specific_days: number
+}
+
+const useGetUserVacationPolicies = (reqData: GetUserVacationPoliciesReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_VACATION_POLICIES, reqData.user_id],
+    queryFn: async (): Promise<GetUserVacationPoliciesResp[]> => {
+      const resp: ApiResponse<GetUserVacationPoliciesResp[]> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.user_id}/vacation-policies`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.user_id
+  });
+}
+
+interface DeleteRevokeVacationPolicyFromUserReq {
+  user_id: string
+  vacation_policy_id: number
+}
+
+interface DeleteRevokeVacationPolicyFromUserResp {
+  user_id: string
+  vacation_policy_id: number
+  user_vacation_policy_id: number
+}
+
+const useDeleteRevokeVacationPolicyFromUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: DeleteRevokeVacationPolicyFromUserReq) => {
+      const resp: ApiResponse<DeleteRevokeVacationPolicyFromUserResp> = await api.request({
+        method: 'delete',
+        url: `/users/${reqData.user_id}/vacation-policies/${reqData.vacation_policy_id}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_POLICIES] });
+      toast.success('휴가 정책이 회수되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface DeleteRevokeVacationPoliciesFromUserReq {
+  user_id: string
+  vacation_policy_ids: number[]
+}
+
+interface DeleteRevokeVacationPoliciesFromUserResp {
+  user_id: string
+  revoked_vacation_policy_ids: number[]
+}
+
+const useDeleteRevokeVacationPoliciesFromUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: DeleteRevokeVacationPoliciesFromUserReq) => {
+      const resp: ApiResponse<DeleteRevokeVacationPoliciesFromUserResp> = await api.request({
+        method: 'delete',
+        url: `/users/${reqData.user_id}/vacation-policies`,
+        data: {
+          vacation_policy_ids: reqData.vacation_policy_ids
+        }
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_POLICIES] });
+      toast.success('휴가 정책이 일괄 회수되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
 export {
-  useDeleteVacationHistory, useGetAvailableVacations, useGetUserMonthStatsVacationUseHistories, useGetUserPeriodVacationUseHistories, useGetUserVacationUseStats, useGetVacationPolicies, useGetVacationPolicy,
-  // API Hook
+  useDeleteVacationHistory,
+  useGetAvailableVacations,
+  useGetUserMonthStatsVacationUseHistories,
+  useGetUserPeriodVacationUseHistories,
+  useGetUserVacationUseStats,
+  useGetVacationPolicies,
+  useGetVacationPolicy,
   usePostUseVacation,
-  // QueryKey
+  usePostVacationPolicy,
+  useDeleteVacationPolicy,
+  usePostAssignVacationPoliciesToUser,
+  useGetUserVacationPolicies,
+  useDeleteRevokeVacationPolicyFromUser,
+  useDeleteRevokeVacationPoliciesFromUser,
   VacationQueryKey
 };
 
-  export type {
-    // Interface
-    GetAvailableVacationsResp, GetUserMonthStatsVacationUseHistoriesResp, GetUserPeriodVacationUseHistoriesResp, GetUserVacationUseStatsResp, GetVacationPoliciesResp, GetVacationPolicyResp
-  };
+export type {
+  GetAvailableVacationsResp,
+  GetUserMonthStatsVacationUseHistoriesResp,
+  GetUserPeriodVacationUseHistoriesResp,
+  GetUserVacationUseStatsResp,
+  GetVacationPoliciesResp,
+  GetVacationPolicyResp,
+  PostVacationPolicyReq,
+  PostVacationPolicyResp,
+  DeleteVacationPolicyResp,
+  PostAssignVacationPoliciesToUserReq,
+  PostAssignVacationPoliciesToUserResp,
+  GetUserVacationPoliciesReq,
+  GetUserVacationPoliciesResp,
+  DeleteRevokeVacationPolicyFromUserReq,
+  DeleteRevokeVacationPolicyFromUserResp,
+  DeleteRevokeVacationPoliciesFromUserReq,
+  DeleteRevokeVacationPoliciesFromUserResp
+};
 
