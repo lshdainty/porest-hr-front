@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from '@/components/shadcn/select';
 import { Separator } from '@/components/shadcn/separator';
+import { Spinner } from '@/components/shadcn/spinner';
 import { Switch } from '@/components/shadcn/switch';
 import { Textarea } from '@/components/shadcn/textarea';
 import type { VacationConfig, VacationPolicy } from '@/types/vacation';
