@@ -5,11 +5,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const enum VacationQueryKey {
   POST_USE_VACATION = 'postUseVacation',
+  GET_USER_VACATION_HISTORY = 'getUserVacationHistory',
+  GET_ALL_USERS_VACATION_HISTORY = 'getAllUsersVacationHistory',
   GET_AVAILABLE_VACATIONS = 'getAvailableVacations',
-  DELETE_VACATION_HISTORY = 'deleteVacationHistory',
-  GET_USER_PERIOD_VACATION_USE_HISTORIES = 'getUserPeriodVacationUseHistories',
-  GET_USER_MONTH_STATS_VACATION_USE_HISTORIES = 'getUserMonthStatsVacationUseHistories',
-  GET_USER_VACATION_USE_STATS = 'getUserVacationUseStats',
+  DELETE_VACATION_USAGE = 'deleteVacationUsage',
+  GET_VACATION_USAGES_BY_PERIOD = 'getVacationUsagesByPeriod',
+  GET_USER_VACATION_USAGES_BY_PERIOD = 'getUserVacationUsagesByPeriod',
+  GET_USER_MONTHLY_VACATION_STATS = 'getUserMonthlyVacationStats',
+  GET_USER_VACATION_STATS = 'getUserVacationStats',
   GET_VACATION_POLICY = 'getVacationPolicy',
   GET_VACATION_POLICIES = 'getVacationPolicies',
   POST_VACATION_POLICY = 'postVacationPolicy',
@@ -17,18 +20,26 @@ const enum VacationQueryKey {
   POST_ASSIGN_VACATION_POLICIES_TO_USER = 'postAssignVacationPoliciesToUser',
   GET_USER_VACATION_POLICIES = 'getUserVacationPolicies',
   DELETE_REVOKE_VACATION_POLICY_FROM_USER = 'deleteRevokeVacationPolicyFromUser',
-  DELETE_REVOKE_VACATION_POLICIES_FROM_USER = 'deleteRevokeVacationPoliciesFromUser'
+  DELETE_REVOKE_VACATION_POLICIES_FROM_USER = 'deleteRevokeVacationPoliciesFromUser',
+  POST_MANUAL_GRANT_VACATION = 'postManualGrantVacation',
+  DELETE_REVOKE_VACATION_GRANT = 'deleteRevokeVacationGrant',
+  POST_REQUEST_VACATION = 'postRequestVacation',
+  POST_APPROVE_VACATION = 'postApproveVacation',
+  POST_REJECT_VACATION = 'postRejectVacation',
+  GET_PENDING_APPROVALS_BY_APPROVER = 'getPendingApprovalsByApprover'
 }
 
 interface PostUseVacationReq {
-  vacation_id: number
-  vacation_data: {
-    user_id: string
-    start_date: string
-    end_date: string
-    vacation_time_type: string
-    vacation_desc: string
-  }
+  user_id: string
+  vacation_type: string
+  vacation_desc: string
+  vacation_time_type: string
+  start_date: string
+  end_date: string
+}
+
+interface PostUseVacationResp {
+  vacation_usage_id: number
 }
 
 const usePostUseVacation = () => {
@@ -36,10 +47,10 @@ const usePostUseVacation = () => {
 
   return useMutation({
     mutationFn: async (reqData: PostUseVacationReq) => {
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<PostUseVacationResp> = await api.request({
         method: 'post',
-        url: `/vacation/use/${reqData.vacation_id}`,
-        data: reqData.vacation_data
+        url: `/vacation-usages`,
+        data: reqData
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -48,10 +59,81 @@ const usePostUseVacation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
-      toast.success('휴가/외출이 등록되었습니다.');
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY] });
+      toast.success('휴가가 등록되었습니다.');
     },
     onError: (error) => {
       toast.error(error.message);
+    }
+  });
+}
+
+interface GetUserVacationHistoryReq {
+  user_id: string
+}
+
+interface VacationGrantInfo {
+  vacation_grant_id: number
+  vacation_type: string
+  vacation_type_name: string
+  vacation_grant_desc: string
+  grant_time: number
+  remain_time: number
+  grant_date: string
+  expiry_date: string
+}
+
+interface VacationUsageInfo {
+  vacation_usage_id: number
+  vacation_usage_desc: string
+  vacation_time_type: string
+  vacation_time_type_name: string
+  used_time: number
+  start_date: string
+  end_date: string
+}
+
+interface GetUserVacationHistoryResp {
+  grants: VacationGrantInfo[]
+  usages: VacationUsageInfo[]
+}
+
+const useGetUserVacationHistory = (reqData: GetUserVacationHistoryReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY, reqData.user_id],
+    queryFn: async (): Promise<GetUserVacationHistoryResp> => {
+      const resp: ApiResponse<GetUserVacationHistoryResp> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.user_id}/vacations`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.user_id
+  });
+}
+
+interface GetAllUsersVacationHistoryResp {
+  user_id: string
+  user_name: string
+  grants: VacationGrantInfo[]
+  usages: VacationUsageInfo[]
+}
+
+const useGetAllUsersVacationHistory = () => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_ALL_USERS_VACATION_HISTORY],
+    queryFn: async (): Promise<GetAllUsersVacationHistoryResp[]> => {
+      const resp: ApiResponse<GetAllUsersVacationHistoryResp[]> = await api.request({
+        method: 'get',
+        url: `/vacations`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
     }
   });
 }
@@ -62,13 +144,10 @@ interface GetAvailableVacationsReq {
 }
 
 interface GetAvailableVacationsResp {
-  vacation_id: number;
-  vacation_type: string;
-  vacation_type_name: string;
-  remain_time: number;
-  remain_time_str: string;
-  occur_date: Date;
-  expiry_date: Date;
+  vacation_type: string
+  vacation_type_name: string
+  total_remain_time: number
+  total_remain_time_str: string
 }
 
 const useGetAvailableVacations = (reqData: GetAvailableVacationsReq) => {
@@ -77,24 +156,25 @@ const useGetAvailableVacations = (reqData: GetAvailableVacationsReq) => {
     queryFn: async (): Promise<GetAvailableVacationsResp[]> => {
       const resp: ApiResponse<GetAvailableVacationsResp[]> = await api.request({
         method: 'get',
-        url: `/vacation/available/${reqData.user_id}?startDate=${reqData.start_date}`
+        url: `/users/${reqData.user_id}/vacations/available?startDate=${reqData.start_date}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
-    }
+    },
+    enabled: !!reqData.user_id
   });
 }
 
-const useDeleteVacationHistory = () => {
+const useDeleteVacationUsage = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (vacationHistoryId: number) => {
+    mutationFn: async (vacationUsageId: number) => {
       const resp: ApiResponse = await api.request({
         method: 'delete',
-        url: `/vacation/history/${vacationHistoryId}`,
+        url: `/vacation-usages/${vacationUsageId}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -103,7 +183,8 @@ const useDeleteVacationHistory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
-      toast.success('휴가/외출이 삭제되었습니다.');
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY] });
+      toast.success('휴가 사용 내역이 삭제되었습니다.');
     },
     onError: (error) => {
       toast.error(error.message);
@@ -111,71 +192,106 @@ const useDeleteVacationHistory = () => {
   });
 }
 
-interface GetUserPeriodVacationUseHistoriesReq {
+interface GetVacationUsagesByPeriodReq {
+  start_date: string
+  end_date: string
+}
+
+interface GetVacationUsagesByPeriodResp {
+  user_id: string
+  user_name: string
+  vacation_usage_id: number
+  vacation_usage_desc: string
+  vacation_time_type: string
+  vacation_time_type_name: string
+  used_time: number
+  start_date: string
+  end_date: string
+}
+
+const useGetVacationUsagesByPeriod = (reqData: GetVacationUsagesByPeriodReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_VACATION_USAGES_BY_PERIOD, reqData.start_date, reqData.end_date],
+    queryFn: async (): Promise<GetVacationUsagesByPeriodResp[]> => {
+      const resp: ApiResponse<GetVacationUsagesByPeriodResp[]> = await api.request({
+        method: 'get',
+        url: `/vacation-usages?startDate=${reqData.start_date}&endDate=${reqData.end_date}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    }
+  });
+}
+
+interface GetUserVacationUsagesByPeriodReq {
   user_id: string
   start_date: string
   end_date: string
 }
 
-interface GetUserPeriodVacationUseHistoriesResp {
-  vacation_id: number
-  vacation_desc: string
-  vacation_history_id: number
+interface GetUserVacationUsagesByPeriodResp {
+  vacation_usage_id: number
+  vacation_usage_desc: string
   vacation_time_type: string
   vacation_time_type_name: string
-  start_date: Date
-  end_date: Date
+  used_time: number
+  start_date: string
+  end_date: string
 }
 
-const useGetUserPeriodVacationUseHistories = (reqData: GetUserPeriodVacationUseHistoriesReq) => {
+const useGetUserVacationUsagesByPeriod = (reqData: GetUserVacationUsagesByPeriodReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_USER_PERIOD_VACATION_USE_HISTORIES, reqData.user_id, reqData.start_date, reqData.end_date],
-    queryFn: async (): Promise<GetUserPeriodVacationUseHistoriesResp[]> => {
-      const resp: ApiResponse<GetUserPeriodVacationUseHistoriesResp[]> = await api.request({
+    queryKey: [VacationQueryKey.GET_USER_VACATION_USAGES_BY_PERIOD, reqData.user_id, reqData.start_date, reqData.end_date],
+    queryFn: async (): Promise<GetUserVacationUsagesByPeriodResp[]> => {
+      const resp: ApiResponse<GetUserVacationUsagesByPeriodResp[]> = await api.request({
         method: 'get',
-        url: `/vacation/use/histories/user/period?userId=${reqData.user_id}&startDate=${reqData.start_date}&endDate=${reqData.end_date}`
+        url: `/users/${reqData.user_id}/vacation-usages?startDate=${reqData.start_date}&endDate=${reqData.end_date}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
-    }
+    },
+    enabled: !!reqData.user_id
   });
 }
 
-interface GetUserMonthStatsVacationUseHistoriesReq {
+interface GetUserMonthlyVacationStatsReq {
   user_id: string
   year: string
 }
 
-interface GetUserMonthStatsVacationUseHistoriesResp {
+interface GetUserMonthlyVacationStatsResp {
   month: number
   used_time: number
   used_time_str: string
 }
 
-const useGetUserMonthStatsVacationUseHistories = (reqData: GetUserMonthStatsVacationUseHistoriesReq) => {
+const useGetUserMonthlyVacationStats = (reqData: GetUserMonthlyVacationStatsReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_USER_MONTH_STATS_VACATION_USE_HISTORIES, reqData.user_id, reqData.year],
-    queryFn: async (): Promise<GetUserMonthStatsVacationUseHistoriesResp[]> => {
-      const resp: ApiResponse<GetUserMonthStatsVacationUseHistoriesResp[]> = await api.request({
+    queryKey: [VacationQueryKey.GET_USER_MONTHLY_VACATION_STATS, reqData.user_id, reqData.year],
+    queryFn: async (): Promise<GetUserMonthlyVacationStatsResp[]> => {
+      const resp: ApiResponse<GetUserMonthlyVacationStatsResp[]> = await api.request({
         method: 'get',
-        url: `/vacation/use/histories/user/month/stats?userId=${reqData.user_id}&year=${reqData.year}`
+        url: `/users/${reqData.user_id}/vacation-usages/monthly-stats?year=${reqData.year}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
-    }
+    },
+    enabled: !!reqData.user_id
   });
 }
 
-interface GetUserVacationUseStatsReq {
+interface GetUserVacationStatsReq {
   user_id: string
   base_date: string
 }
 
-interface GetUserVacationUseStatsResp {
+interface GetUserVacationStatsResp {
   remain_time: number
   remain_time_str: string
   used_time: number
@@ -194,19 +310,20 @@ interface GetUserVacationUseStatsResp {
   used_time_gap_str: string
 }
 
-const useGetUserVacationUseStats = (reqData: GetUserVacationUseStatsReq) => {
+const useGetUserVacationStats = (reqData: GetUserVacationStatsReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_USER_VACATION_USE_STATS, reqData.user_id, reqData.base_date],
-    queryFn: async (): Promise<GetUserVacationUseStatsResp> => {
-      const resp: ApiResponse<GetUserVacationUseStatsResp> = await api.request({
+    queryKey: [VacationQueryKey.GET_USER_VACATION_STATS, reqData.user_id, reqData.base_date],
+    queryFn: async (): Promise<GetUserVacationStatsResp> => {
+      const resp: ApiResponse<GetUserVacationStatsResp> = await api.request({
         method: 'get',
-        url: `/vacation/use/stats/user?userId=${reqData.user_id}&baseDate=${reqData.base_date}`
+        url: `/users/${reqData.user_id}/vacations/stats?baseDate=${reqData.base_date}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
 
       return resp.data;
-    }
+    },
+    enabled: !!reqData.user_id
   });
 }
 
@@ -221,11 +338,13 @@ interface GetVacationPolicyResp {
   vacation_type: string
   grant_method: string
   grant_time: number
+  grant_time_str: string
   repeat_unit: string
   repeat_interval: number
-  grant_timing: string
   specific_months: number
   specific_days: number
+  effective_type: string
+  expiration_type: string
 }
 
 const useGetVacationPolicy = (reqData: GetVacationPolicyReq) => {
@@ -234,7 +353,7 @@ const useGetVacationPolicy = (reqData: GetVacationPolicyReq) => {
     queryFn: async (): Promise<GetVacationPolicyResp> => {
       const resp: ApiResponse<GetVacationPolicyResp> = await api.request({
         method: 'get',
-        url: `/vacation/policies/${reqData.vacation_policy_id}`
+        url: `/vacation-policies/${reqData.vacation_policy_id}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -255,9 +374,10 @@ interface GetVacationPoliciesResp {
   grant_time_str: string
   repeat_unit: string
   repeat_interval: number
-  grant_timing: string
   specific_months: number
   specific_days: number
+  effective_type: string
+  expiration_type: string
 }
 
 const useGetVacationPolicies = () => {
@@ -266,7 +386,7 @@ const useGetVacationPolicies = () => {
     queryFn: async (): Promise<GetVacationPoliciesResp[]> => {
       const resp: ApiResponse<GetVacationPoliciesResp[]> = await api.request({
         method: 'get',
-        url: `/vacation/policies`
+        url: `/vacation-policies`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -282,11 +402,16 @@ interface PostVacationPolicyReq {
   vacation_type: string
   grant_method: string
   grant_time: number
-  repeat_unit: string
-  repeat_interval: number
-  grant_timing: string
-  specific_months: number
-  specific_days: number
+  repeat_unit: string | null
+  repeat_interval: number | null
+  specific_months: number | null
+  specific_days: number | null
+  first_grant_date: string | null
+  is_recurring: string
+  max_grant_count: number | null
+  effective_type: string
+  expiration_type: string
+  approval_required_count: number
 }
 
 interface PostVacationPolicyResp {
@@ -300,7 +425,7 @@ const usePostVacationPolicy = () => {
     mutationFn: async (reqData: PostVacationPolicyReq) => {
       const resp: ApiResponse<PostVacationPolicyResp> = await api.request({
         method: 'post',
-        url: `/vacation/policies`,
+        url: `/vacation-policies`,
         data: reqData
       });
 
@@ -329,7 +454,7 @@ const useDeleteVacationPolicy = () => {
     mutationFn: async (vacationPolicyId: number) => {
       const resp: ApiResponse<DeleteVacationPolicyResp> = await api.request({
         method: 'delete',
-        url: `/vacation/policies/${vacationPolicyId}`
+        url: `/vacation-policies/${vacationPolicyId}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -398,9 +523,10 @@ interface GetUserVacationPoliciesResp {
   grant_time_str: string
   repeat_unit: string
   repeat_interval: number
-  grant_timing: string
   specific_months: number
   specific_days: number
+  effective_type: string
+  expiration_type: string
 }
 
 const useGetUserVacationPolicies = (reqData: GetUserVacationPoliciesReq) => {
@@ -492,30 +618,274 @@ const useDeleteRevokeVacationPoliciesFromUser = () => {
   });
 }
 
+interface PostManualGrantVacationReq {
+  user_id: string
+  vacation_policy_id: number
+  grant_time: number
+  grant_date: string
+  expiry_date: string
+  grant_desc: string
+}
+
+interface PostManualGrantVacationResp {
+  vacation_grant_id: number
+  user_id: string
+  vacation_policy_id: number
+  grant_time: number
+  grant_date: string
+  expiry_date: string
+}
+
+const usePostManualGrantVacation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PostManualGrantVacationReq) => {
+      const { user_id, ...data } = reqData;
+      const resp: ApiResponse<PostManualGrantVacationResp> = await api.request({
+        method: 'post',
+        url: `/users/${user_id}/vacation-grants`,
+        data
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY] });
+      toast.success('휴가가 부여되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface DeleteRevokeVacationGrantResp {
+  vacation_grant_id: number
+  user_id: string
+}
+
+const useDeleteRevokeVacationGrant = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (vacationGrantId: number) => {
+      const resp: ApiResponse<DeleteRevokeVacationGrantResp> = await api.request({
+        method: 'delete',
+        url: `/vacation-grants/${vacationGrantId}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY] });
+      toast.success('휴가 부여가 회수되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface PostRequestVacationReq {
+  user_id: string
+  policy_id: number
+  desc: string
+  approver_ids: string[]
+}
+
+interface PostRequestVacationResp {
+  vacation_grant_id: number
+}
+
+const usePostRequestVacation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PostRequestVacationReq) => {
+      const { user_id, ...data } = reqData;
+      const resp: ApiResponse<PostRequestVacationResp> = await api.request({
+        method: 'post',
+        url: `/users/${user_id}/vacation-requests`,
+        data
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY] });
+      toast.success('휴가 신청이 완료되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface PostApproveVacationReq {
+  approval_id: number
+  approver_id: string
+}
+
+interface PostApproveVacationResp {
+  approval_id: number
+}
+
+const usePostApproveVacation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PostApproveVacationReq) => {
+      const resp: ApiResponse<PostApproveVacationResp> = await api.request({
+        method: 'post',
+        url: `/vacation-approvals/${reqData.approval_id}/approve?approverId=${reqData.approver_id}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_PENDING_APPROVALS_BY_APPROVER] });
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY] });
+      toast.success('휴가가 승인되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface PostRejectVacationReq {
+  approval_id: number
+  approver_id: string
+  rejection_reason: string
+}
+
+interface PostRejectVacationResp {
+  approval_id: number
+}
+
+const usePostRejectVacation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PostRejectVacationReq) => {
+      const { approval_id, approver_id, rejection_reason } = reqData;
+      const resp: ApiResponse<PostRejectVacationResp> = await api.request({
+        method: 'post',
+        url: `/vacation-approvals/${approval_id}/reject?approverId=${approver_id}`,
+        data: { rejection_reason }
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_PENDING_APPROVALS_BY_APPROVER] });
+      toast.success('휴가가 거부되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
+interface GetPendingApprovalsByApproverReq {
+  approver_id: string
+}
+
+interface PendingApprovalInfo {
+  approval_id: number
+  vacation_grant_id: number
+  requester_id: string
+  requester_name: string
+  policy_id: number
+  policy_name: string
+  desc: string
+  request_date: string
+  grant_time: number
+  vacation_type: string
+  vacation_type_name: string
+  approval_status: string
+  approval_status_name: string
+}
+
+interface GetPendingApprovalsByApproverResp {
+  pending_approvals: PendingApprovalInfo[]
+}
+
+const useGetPendingApprovalsByApprover = (reqData: GetPendingApprovalsByApproverReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_PENDING_APPROVALS_BY_APPROVER, reqData.approver_id],
+    queryFn: async (): Promise<GetPendingApprovalsByApproverResp> => {
+      const resp: ApiResponse<GetPendingApprovalsByApproverResp> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.approver_id}/pending-approvals`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.approver_id
+  });
+}
+
 export {
-  useDeleteVacationHistory,
+  usePostUseVacation,
+  useDeleteVacationUsage,
+  useGetUserVacationHistory,
+  useGetAllUsersVacationHistory,
   useGetAvailableVacations,
-  useGetUserMonthStatsVacationUseHistories,
-  useGetUserPeriodVacationUseHistories,
-  useGetUserVacationUseStats,
+  useGetVacationUsagesByPeriod,
+  useGetUserVacationUsagesByPeriod,
+  useGetUserMonthlyVacationStats,
+  useGetUserVacationStats,
   useGetVacationPolicies,
   useGetVacationPolicy,
-  usePostUseVacation,
   usePostVacationPolicy,
   useDeleteVacationPolicy,
   usePostAssignVacationPoliciesToUser,
   useGetUserVacationPolicies,
   useDeleteRevokeVacationPolicyFromUser,
   useDeleteRevokeVacationPoliciesFromUser,
+  usePostManualGrantVacation,
+  useDeleteRevokeVacationGrant,
+  usePostRequestVacation,
+  usePostApproveVacation,
+  usePostRejectVacation,
+  useGetPendingApprovalsByApprover,
   VacationQueryKey
 };
 
 export type {
+  PostUseVacationReq,
+  PostUseVacationResp,
+  GetUserVacationHistoryReq,
+  GetUserVacationHistoryResp,
+  VacationGrantInfo,
+  VacationUsageInfo,
+  GetAllUsersVacationHistoryResp,
+  GetAvailableVacationsReq,
   GetAvailableVacationsResp,
-  GetUserMonthStatsVacationUseHistoriesResp,
-  GetUserPeriodVacationUseHistoriesResp,
-  GetUserVacationUseStatsResp,
+  GetVacationUsagesByPeriodReq,
+  GetVacationUsagesByPeriodResp,
+  GetUserVacationUsagesByPeriodReq,
+  GetUserVacationUsagesByPeriodResp,
+  GetUserMonthlyVacationStatsReq,
+  GetUserMonthlyVacationStatsResp,
+  GetUserVacationStatsReq,
+  GetUserVacationStatsResp,
   GetVacationPoliciesResp,
+  GetVacationPolicyReq,
   GetVacationPolicyResp,
   PostVacationPolicyReq,
   PostVacationPolicyResp,
@@ -527,6 +897,18 @@ export type {
   DeleteRevokeVacationPolicyFromUserReq,
   DeleteRevokeVacationPolicyFromUserResp,
   DeleteRevokeVacationPoliciesFromUserReq,
-  DeleteRevokeVacationPoliciesFromUserResp
+  DeleteRevokeVacationPoliciesFromUserResp,
+  PostManualGrantVacationReq,
+  PostManualGrantVacationResp,
+  DeleteRevokeVacationGrantResp,
+  PostRequestVacationReq,
+  PostRequestVacationResp,
+  PostApproveVacationReq,
+  PostApproveVacationResp,
+  PostRejectVacationReq,
+  PostRejectVacationResp,
+  GetPendingApprovalsByApproverReq,
+  PendingApprovalInfo,
+  GetPendingApprovalsByApproverResp
 };
 

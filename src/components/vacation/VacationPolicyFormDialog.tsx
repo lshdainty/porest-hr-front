@@ -59,8 +59,8 @@ const formSchema = z.object({
   description: z.string().optional(),
   vacationType: z.string().min(1, '휴가 타입을 선택해주세요'),
   grantMethod: z.string(),
-  grantTiming: z.string().min(1, '부여 시점을 선택해주세요'),
-  grantUnit: z.enum(['day', 'hour', 'minute']),
+  grantTiming: z.string().optional(),
+  grantUnit: z.enum(['DAY', 'HOUR', 'MINUTE']),
   grantAmount: z.number().min(1, '부여 수량을 입력해주세요'),
   requireApproval: z.boolean(),
   approvers: z.array(z.string()).optional(),
@@ -69,10 +69,71 @@ const formSchema = z.object({
   excludedOrganizations: z.array(z.string()).optional(),
   documentSubmission: z.enum(['before', 'after', 'none']),
   documentDescription: z.string().optional(),
-  recurringType: z.enum(['YEARLY', 'MONTHLY']).optional(),
+  recurringType: z.enum(['YEARLY', 'MONTHLY', 'DAYLY', 'HALF', 'QUARTERLY']).optional(),
   recurringInterval: z.number().min(1, '반복 간격을 입력해주세요').optional(),
-  recurringStartDate: z.string().optional(),
+  specificMonths: z.number().min(1, '1 이상의 값을 입력해주세요').max(12, '12 이하의 값을 입력해주세요').optional(),
+  specificDays: z.number().min(1, '1 이상의 값을 입력해주세요').max(31, '31 이하의 값을 입력해주세요').optional(),
   applyToExisting: z.boolean(),
+}).refine((data) => {
+  // 신청시 부여와 관리자 직접 부여가 아닐 경우 grantTiming은 필수
+  if (data.grantMethod !== 'ON_REQUEST' && data.grantMethod !== 'MANUAL_GRANT' && !data.grantTiming) {
+    return false;
+  }
+  return true;
+}, {
+  message: '부여 시점을 선택해주세요',
+  path: ['grantTiming'],
+}).refine((data) => {
+  // 반복 부여일 경우 반복 단위 필수
+  if (data.grantMethod === 'REPEAT_GRANT' && !data.recurringType) {
+    return false;
+  }
+  return true;
+}, {
+  message: '반복 단위를 선택해주세요',
+  path: ['recurringType'],
+}).refine((data) => {
+  // 반복 부여일 경우 반복 간격 필수
+  if (data.grantMethod === 'REPEAT_GRANT' && !data.recurringInterval) {
+    return false;
+  }
+  return true;
+}, {
+  message: '반복 간격을 입력해주세요',
+  path: ['recurringInterval'],
+}).refine((data) => {
+  // FIXED_DATE: 특정 월과 일 모두 필수
+  if (data.grantMethod === 'REPEAT_GRANT' && data.grantTiming === 'FIXED_DATE') {
+    if (!data.specificMonths || !data.specificDays) {
+      return false;
+    }
+  }
+  return true;
+}, {
+  message: '고정 날짜 부여는 특정 월과 일을 모두 입력해주세요',
+  path: ['specificMonths'],
+}).refine((data) => {
+  // SPECIFIC_MONTH: 특정 월 필수
+  if (data.grantMethod === 'REPEAT_GRANT' && data.grantTiming === 'SPECIFIC_MONTH') {
+    if (!data.specificMonths) {
+      return false;
+    }
+  }
+  return true;
+}, {
+  message: '특정 월을 입력해주세요',
+  path: ['specificMonths'],
+}).refine((data) => {
+  // SPECIFIC_DAY: 특정 일 필수
+  if (data.grantMethod === 'REPEAT_GRANT' && data.grantTiming === 'SPECIFIC_DAY') {
+    if (!data.specificDays) {
+      return false;
+    }
+  }
+  return true;
+}, {
+  message: '특정 일을 입력해주세요',
+  path: ['specificDays'],
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -113,7 +174,7 @@ export function VacationPolicyFormDialog({
       vacationType: '',
       grantMethod: '',
       grantTiming: '',
-      grantUnit: 'day',
+      grantUnit: 'DAY',
       grantAmount: 1,
       requireApproval: false,
       excludedOrganizations: [],
@@ -126,13 +187,59 @@ export function VacationPolicyFormDialog({
   });
 
   const watchGrantMethod = form.watch('grantMethod');
+  const watchGrantTiming = form.watch('grantTiming');
   const watchDocumentSubmission = form.watch('documentSubmission');
   const watchRequireApproval = form.watch('requireApproval');
   const watchGrantUnit = form.watch('grantUnit');
 
+  // 부여 방법에 따른 필드 처리 함수
+  const getGrantMethodFields = (grantMethod: string, data: FormData) => {
+    switch (grantMethod) {
+      case 'ON_REQUEST': // 신청시 부여
+        // 반복 단위, 반복 간격, 부여시점 지정 방식, 특정월, 특정일을 모두 null로 설정하여 강제 저장
+        // 직접 신청하는 휴가의 경우 스케줄러가 필요없음
+        return {
+          repeat_unit: null,
+          repeat_interval: null,
+          grant_timing: null,
+          specific_months: null,
+          specific_days: null,
+        };
+
+      case 'MANUAL_GRANT': // 관리자 직접 부여
+        // 반복 단위, 반복 간격, 부여시점 지정 방식, 특정월, 특정일을 모두 null로 설정하여 강제 저장
+        // 관리자가 부여하는 휴가 정책의 경우 스케줄러가 필요없음
+        return {
+          repeat_unit: null,
+          repeat_interval: null,
+          grant_timing: null,
+          specific_months: null,
+          specific_days: null,
+        };
+
+      case 'REPEAT_GRANT': // 반복 부여
+        return {
+          repeat_unit: data.recurringType || null,
+          repeat_interval: data.recurringInterval || null,
+          grant_timing: data.grantTiming || null,
+          specific_months: data.specificMonths || null,
+          specific_days: data.specificDays || null,
+        };
+
+      default: // 기타 부여 방법
+        return {
+          repeat_unit: null,
+          repeat_interval: null,
+          grant_timing: data.grantTiming || null,
+          specific_months: null,
+          specific_days: null,
+        };
+    }
+  };
+
   // 부여 단위가 '분'으로 변경되면 부여 수량을 30으로 고정
   useEffect(() => {
-    if (watchGrantUnit === 'minute') {
+    if (watchGrantUnit === 'MINUTE') {
       form.setValue('grantAmount', 30);
     }
   }, [watchGrantUnit, form]);
@@ -171,14 +278,17 @@ export function VacationPolicyFormDialog({
     // 부여 단위에 따른 grantAmount 값 변환
     let convertedGrantAmount = data.grantAmount;
 
-    if (data.grantUnit === 'hour') {
+    if (data.grantUnit === 'HOUR') {
       // 시간: 입력값 / 8 (1시간 = 0.125일)
       convertedGrantAmount = data.grantAmount / 8;
-    } else if (data.grantUnit === 'minute') {
+    } else if (data.grantUnit === 'MINUTE') {
       // 분: 항상 30분 = 0.0625일 (0.125 / 2)
       convertedGrantAmount = 0.0625;
     }
     // day는 그대로 사용
+
+    // 부여 방법에 따른 필드 처리
+    const grantMethodFields = getGrantMethodFields(data.grantMethod, data);
 
     // 백엔드 API 스펙에 맞게 데이터 매핑
     await postVacationPolicy({
@@ -187,11 +297,7 @@ export function VacationPolicyFormDialog({
       vacation_type: data.vacationType,
       grant_method: data.grantMethod,
       grant_time: convertedGrantAmount,
-      repeat_unit: data.recurringType || 'YEARLY',
-      repeat_interval: data.recurringInterval || 1,
-      grant_timing: data.grantTiming,
-      specific_months: data.recurringStartDate ? new Date(data.recurringStartDate).getMonth() + 1 : 1,
-      specific_days: data.recurringStartDate ? new Date(data.recurringStartDate).getDate() : 1,
+      ...grantMethodFields,
     });
 
     onOpenChange(false);
@@ -361,100 +467,153 @@ export function VacationPolicyFormDialog({
                 )}
               />
 
-              {/* 부여 시점 */}
-              <Controller
-                control={form.control}
-                name="grantTiming"
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={!!fieldState.error}>
-                    <FieldLabel>
-                      부여 시점
-                      <span className='text-destructive ml-0.5'>*</span>
-                    </FieldLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="부여 시점을 선택해주세요" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {grantTimingTypes.map((type) => (
-                          <SelectItem key={type.code} value={type.code}>
-                            {type.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <p className="text-sm text-muted-foreground">
-                      휴가를 언제 부여할지 시점을 선택해주세요.
-                    </p>
-                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                  </Field>
-                )}
-              />
+              {/* 부여 시점 - 신청시 부여와 관리자 직접 부여가 아닐 때만 표시 */}
+              {watchGrantMethod !== 'ON_REQUEST' && watchGrantMethod !== 'MANUAL_GRANT' && (
+                <Controller
+                  control={form.control}
+                  name="grantTiming"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>
+                        부여 시점
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="부여 시점을 선택해주세요" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {grantTimingTypes.map((type) => (
+                            <SelectItem key={type.code} value={type.code}>
+                              {type.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-sm text-muted-foreground">
+                        휴가를 언제 부여할지 시점을 선택해주세요.
+                      </p>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+              )}
 
               {/* 반복 부여 설정 (반복 부여일 때만 표시) */}
               {watchGrantMethod === 'REPEAT_GRANT' && (
-                <div className="grid grid-cols-2 gap-4 p-4 border rounded-lg bg-muted/30">
-                  <Controller
-                    control={form.control}
-                    name="recurringType"
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>반복 주기</FieldLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="주기 선택" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="YEARLY">매년</SelectItem>
-                            <SelectItem value="MONTHLY">매월</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <p className="text-sm text-muted-foreground">
-                          매년 부여 시 12월 31일에 소멸되고 1월 1일에 다시 부여돼요.
-                        </p>
-                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                      </Field>
-                    )}
-                  />
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Controller
+                      control={form.control}
+                      name="recurringType"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>
+                            반복 단위
+                            <span className='text-destructive ml-0.5'>*</span>
+                          </FieldLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="반복 단위 선택" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="YEARLY">매년</SelectItem>
+                              <SelectItem value="MONTHLY">매월</SelectItem>
+                              <SelectItem value="DAYLY">매일</SelectItem>
+                              <SelectItem value="QUARTERLY">분기</SelectItem>
+                              <SelectItem value="HALF">반기</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-sm text-muted-foreground">
+                            휴가를 얼마나 자주 부여할지 선택해주세요.
+                          </p>
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
 
-                  <Controller
-                    control={form.control}
-                    name="recurringInterval"
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>반복 간격</FieldLabel>
-                        <Input
-                          type="number"
-                          min="1"
-                          placeholder="1"
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                        />
-                        <p className="text-sm text-muted-foreground">
-                          반복 주기마다 몇 번째에 부여할지 설정해주세요 (예: 1 = 매번, 2 = 격번).
-                        </p>
-                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                      </Field>
-                    )}
-                  />
+                    <Controller
+                      control={form.control}
+                      name="recurringInterval"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>
+                            반복 간격
+                            <span className='text-destructive ml-0.5'>*</span>
+                          </FieldLabel>
+                          <Input
+                            type="number"
+                            min="1"
+                            placeholder="1"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                          <p className="text-sm text-muted-foreground">
+                            반복 주기마다 몇 번째에 부여할지 설정해주세요 (예: 1 = 매번, 2 = 격번).
+                          </p>
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
+                  </div>
 
-                  <Controller
-                    control={form.control}
-                    name="recurringStartDate"
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>첫 부여 시점</FieldLabel>
-                        <InputDatePicker
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        />
-                        <p className="text-sm text-muted-foreground">
-                          첫 번째 휴가가 부여될 날짜를 설정해주세요.
-                        </p>
-                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                      </Field>
-                    )}
-                  />
+                  {/* 특정 월 입력 - FIXED_DATE, SPECIFIC_MONTH일 때 표시 */}
+                  {(watchGrantTiming === 'FIXED_DATE' || watchGrantTiming === 'SPECIFIC_MONTH') && (
+                    <Controller
+                      control={form.control}
+                      name="specificMonths"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>
+                            특정 월
+                            <span className='text-destructive ml-0.5'>*</span>
+                          </FieldLabel>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="12"
+                            placeholder="예: 1 (1월)"
+                            {...field}
+                            value={field.value || ''}
+                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          />
+                          <p className="text-sm text-muted-foreground">
+                            휴가를 부여할 월을 입력해주세요 (1-12).
+                          </p>
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
+                  )}
+
+                  {/* 특정 일 입력 - FIXED_DATE, SPECIFIC_DAY일 때 표시 */}
+                  {(watchGrantTiming === 'FIXED_DATE' || watchGrantTiming === 'SPECIFIC_DAY') && (
+                    <Controller
+                      control={form.control}
+                      name="specificDays"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>
+                            특정 일
+                            <span className='text-destructive ml-0.5'>*</span>
+                          </FieldLabel>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="31"
+                            placeholder="예: 1 (1일)"
+                            {...field}
+                            value={field.value || ''}
+                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          />
+                          <p className="text-sm text-muted-foreground">
+                            휴가를 부여할 일을 입력해주세요 (1-31).
+                          </p>
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
+                  )}
                 </div>
               )}
 
@@ -478,9 +637,9 @@ export function VacationPolicyFormDialog({
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="day">일</SelectItem>
-                            <SelectItem value="hour">시간</SelectItem>
-                            <SelectItem value="minute">분</SelectItem>
+                            <SelectItem value="DAY">일</SelectItem>
+                            <SelectItem value="HOUR">시간</SelectItem>
+                            <SelectItem value="MINUTE">분</SelectItem>
                           </SelectContent>
                         </Select>
                         <p className="text-sm text-muted-foreground">
@@ -506,10 +665,10 @@ export function VacationPolicyFormDialog({
                           placeholder="1"
                           {...field}
                           onChange={(e) => field.onChange(Number(e.target.value))}
-                          disabled={watchGrantUnit === 'minute'}
+                          disabled={watchGrantUnit === 'MINUTE'}
                         />
                         <p className="text-sm text-muted-foreground">
-                          {watchGrantUnit === 'minute'
+                          {watchGrantUnit === 'MINUTE'
                             ? '분 단위 휴가는 30분으로 고정됩니다.'
                             : '부여할 휴가 수량을 설정해주세요.'}
                         </p>
