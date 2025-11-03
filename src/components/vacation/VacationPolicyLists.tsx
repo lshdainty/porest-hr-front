@@ -2,9 +2,11 @@
 
 import {
   useGetGrantMethodTypes,
-  useGetGrantTimingTypes,
+  useGetEffectiveTypes,
+  useGetExpirationTypes,
   useGetRepeatUnitTypes,
-  useGetVacationTypes
+  useGetVacationTypes,
+  useGetVacationTimeTypes
 } from '@/api/type';
 import { useGetVacationPolicies, type GetVacationPoliciesResp } from '@/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
@@ -38,9 +40,11 @@ import { useState } from 'react';
 export function VacationPolicyLists() {
   const { data: vacationPolicies, isLoading } = useGetVacationPolicies();
   const { data: grantMethodTypes } = useGetGrantMethodTypes();
-  const { data: grantTimingTypes } = useGetGrantTimingTypes();
+  const { data: effectiveTypes } = useGetEffectiveTypes();
+  const { data: expirationTypes } = useGetExpirationTypes();
   const { data: repeatUnitTypes } = useGetRepeatUnitTypes();
   const { data: vacationTypes } = useGetVacationTypes();
+  const { data: vacationTimeTypes } = useGetVacationTimeTypes();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [formDialog, setFormDialog] = useState<{ open: boolean; policy: GetVacationPoliciesResp | null }>({ open: false, policy: null });
@@ -165,13 +169,22 @@ export function VacationPolicyLists() {
                             </p>
                           </div>
                         )}
-                        {policy.grant_timing && (
-                          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950/30 dark:border-blue-900">
-                            <p className="text-sm text-blue-700 dark:text-blue-300">
-                              <span className="font-medium">부여 시점:</span> {getDisplayName(policy.grant_timing, grantTimingTypes)}
-                            </p>
-                          </div>
-                        )}
+                        <div className="flex gap-3">
+                          {policy.effective_type && (
+                            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950/30 dark:border-blue-900 flex-1">
+                              <p className="text-sm text-blue-700 dark:text-blue-300">
+                                <span className="font-medium">발효 타입:</span> {getDisplayName(policy.effective_type, effectiveTypes)}
+                              </p>
+                            </div>
+                          )}
+                          {policy.expiration_type && (
+                            <div className="p-3 bg-green-50 border border-green-200 rounded-lg dark:bg-green-950/30 dark:border-green-900 flex-1">
+                              <p className="text-sm text-green-700 dark:text-green-300">
+                                <span className="font-medium">만료 타입:</span> {getDisplayName(policy.expiration_type, expirationTypes)}
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -226,7 +239,10 @@ export function VacationPolicyLists() {
         isEditing={!!formDialog.policy}
         grantMethodTypes={grantMethodTypes}
         vacationTypes={vacationTypes}
-        grantTimingTypes={grantTimingTypes}
+        effectiveTypes={effectiveTypes}
+        expirationTypes={expirationTypes}
+        repeatUnitTypes={repeatUnitTypes}
+        vacationTimeTypes={vacationTimeTypes}
       />
     </div>
   );

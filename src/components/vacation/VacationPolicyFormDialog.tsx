@@ -1,5 +1,4 @@
 import { usePostVacationPolicy } from '@/api/vacation';
-import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import {
   Card,
@@ -8,11 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/shadcn/card';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/shadcn/collapsible';
 import {
   Dialog,
   DialogContent,
@@ -37,103 +31,185 @@ import { Separator } from '@/components/shadcn/separator';
 import { Spinner } from '@/components/shadcn/spinner';
 import { Switch } from '@/components/shadcn/switch';
 import { Textarea } from '@/components/shadcn/textarea';
-import type { VacationConfig, VacationPolicy } from '@/types/vacation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  AlertCircle,
   Calendar,
-  ChevronDown,
-  ChevronUp,
-  FileText,
-  Info,
-  Plus,
-  X
+  Info
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 // 폼 스키마 정의
 const formSchema = z.object({
-  name: z.string().min(1, '휴가 이름을 입력해주세요'),
+  name: z.string().min(1, '휴가 정책 이름을 입력해주세요'),
   description: z.string().optional(),
   vacationType: z.string().min(1, '휴가 타입을 선택해주세요'),
-  grantMethod: z.string(),
-  grantTiming: z.string().optional(),
-  grantUnit: z.enum(['DAY', 'HOUR', 'MINUTE']),
-  grantAmount: z.number().min(1, '부여 수량을 입력해주세요'),
-  requireApproval: z.boolean(),
-  approvers: z.array(z.string()).optional(),
-  references: z.array(z.string()).optional(),
-  expirationDate: z.string().optional(),
-  excludedOrganizations: z.array(z.string()).optional(),
-  documentSubmission: z.enum(['before', 'after', 'none']),
-  documentDescription: z.string().optional(),
-  recurringType: z.enum(['YEARLY', 'MONTHLY', 'DAYLY', 'HALF', 'QUARTERLY']).optional(),
-  recurringInterval: z.number().min(1, '반복 간격을 입력해주세요').optional(),
-  specificMonths: z.number().min(1, '1 이상의 값을 입력해주세요').max(12, '12 이하의 값을 입력해주세요').optional(),
-  specificDays: z.number().min(1, '1 이상의 값을 입력해주세요').max(31, '31 이하의 값을 입력해주세요').optional(),
-  applyToExisting: z.boolean(),
-}).refine((data) => {
-  // 신청시 부여와 관리자 직접 부여가 아닐 경우 grantTiming은 필수
-  if (data.grantMethod !== 'ON_REQUEST' && data.grantMethod !== 'MANUAL_GRANT' && !data.grantTiming) {
-    return false;
-  }
-  return true;
-}, {
-  message: '부여 시점을 선택해주세요',
-  path: ['grantTiming'],
-}).refine((data) => {
-  // 반복 부여일 경우 반복 단위 필수
-  if (data.grantMethod === 'REPEAT_GRANT' && !data.recurringType) {
-    return false;
-  }
-  return true;
-}, {
-  message: '반복 단위를 선택해주세요',
-  path: ['recurringType'],
-}).refine((data) => {
-  // 반복 부여일 경우 반복 간격 필수
-  if (data.grantMethod === 'REPEAT_GRANT' && !data.recurringInterval) {
-    return false;
-  }
-  return true;
-}, {
-  message: '반복 간격을 입력해주세요',
-  path: ['recurringInterval'],
-}).refine((data) => {
-  // FIXED_DATE: 특정 월과 일 모두 필수
-  if (data.grantMethod === 'REPEAT_GRANT' && data.grantTiming === 'FIXED_DATE') {
-    if (!data.specificMonths || !data.specificDays) {
-      return false;
+  grantMethod: z.string().min(1, '부여 방법을 선택해주세요'),
+  grantTime: z.number().optional(),
+  effectiveType: z.string().optional(),
+  expirationType: z.string().optional(),
+  approvalRequiredCount: z.number().optional(),
+  repeatUnit: z.string().optional(),
+  repeatInterval: z.number().optional(),
+  specificMonths: z.number().optional(),
+  specificDays: z.number().optional(),
+  firstGrantDate: z.string().optional(),
+  isRecurring: z.string().optional(),
+  maxGrantCount: z.number().optional(),
+}).superRefine((data, ctx) => {
+  // ON_REQUEST 검증
+  if (data.grantMethod === 'ON_REQUEST') {
+    if (!data.grantTime || data.grantTime <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '부여 시간을 입력해주세요 (0보다 큰 값)',
+        path: ['grantTime']
+      });
+    }
+    if (!data.effectiveType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '발효 타입을 선택해주세요',
+        path: ['effectiveType']
+      });
+    }
+    if (!data.expirationType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '만료 타입을 선택해주세요',
+        path: ['expirationType']
+      });
     }
   }
-  return true;
-}, {
-  message: '고정 날짜 부여는 특정 월과 일을 모두 입력해주세요',
-  path: ['specificMonths'],
-}).refine((data) => {
-  // SPECIFIC_MONTH: 특정 월 필수
-  if (data.grantMethod === 'REPEAT_GRANT' && data.grantTiming === 'SPECIFIC_MONTH') {
-    if (!data.specificMonths) {
-      return false;
+
+  // MANUAL_GRANT 검증
+  if (data.grantMethod === 'MANUAL_GRANT') {
+    if (data.grantTime && data.grantTime <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '부여 시간은 0보다 커야 합니다',
+        path: ['grantTime']
+      });
+    }
+    if (!data.effectiveType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '발효 타입을 선택해주세요',
+        path: ['effectiveType']
+      });
+    }
+    if (!data.expirationType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '만료 타입을 선택해주세요',
+        path: ['expirationType']
+      });
     }
   }
-  return true;
-}, {
-  message: '특정 월을 입력해주세요',
-  path: ['specificMonths'],
-}).refine((data) => {
-  // SPECIFIC_DAY: 특정 일 필수
-  if (data.grantMethod === 'REPEAT_GRANT' && data.grantTiming === 'SPECIFIC_DAY') {
-    if (!data.specificDays) {
-      return false;
+
+  // REPEAT_GRANT 검증
+  if (data.grantMethod === 'REPEAT_GRANT') {
+    if (!data.grantTime || data.grantTime <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '부여 시간을 입력해주세요 (0보다 큰 값)',
+        path: ['grantTime']
+      });
+    }
+    if (!data.effectiveType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '발효 타입을 선택해주세요',
+        path: ['effectiveType']
+      });
+    }
+    if (!data.expirationType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '만료 타입을 선택해주세요',
+        path: ['expirationType']
+      });
+    }
+    if (!data.repeatUnit) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '반복 단위를 선택해주세요',
+        path: ['repeatUnit']
+      });
+    }
+    if (!data.repeatInterval || data.repeatInterval <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '반복 간격을 입력해주세요 (0보다 큰 값)',
+        path: ['repeatInterval']
+      });
+    }
+    if (!data.firstGrantDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '첫 부여 날짜를 선택해주세요',
+        path: ['firstGrantDate']
+      });
+    }
+    if (!data.isRecurring) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '반복 여부를 선택해주세요',
+        path: ['isRecurring']
+      });
+    }
+
+    // isRecurring이 N이면 maxGrantCount 필수
+    if (data.isRecurring === 'N') {
+      if (!data.maxGrantCount || data.maxGrantCount <= 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '최대 부여 횟수를 입력해주세요 (0보다 큰 값)',
+          path: ['maxGrantCount']
+        });
+      }
+    }
+
+    // repeatUnit에 따른 검증
+    if (data.repeatUnit === 'YEARLY') {
+      // months는 선택, days도 선택이지만 days만 있으면 안됨
+      if (!data.specificMonths && data.specificDays) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'YEARLY는 특정 일만 지정할 수 없습니다. 특정 월을 함께 지정해주세요',
+          path: ['specificMonths']
+        });
+      }
+    } else if (data.repeatUnit === 'MONTHLY') {
+      // months 지정 불가
+      if (data.specificMonths) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'MONTHLY는 특정 월을 지정할 수 없습니다',
+          path: ['specificMonths']
+        });
+      }
+    } else if (data.repeatUnit === 'QUARTERLY' || data.repeatUnit === 'HALF') {
+      // months 지정 불가
+      if (data.specificMonths) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${data.repeatUnit}는 특정 월을 지정할 수 없습니다`,
+          path: ['specificMonths']
+        });
+      }
+    } else if (data.repeatUnit === 'DAILY') {
+      // months, days 둘 다 불가
+      if (data.specificMonths || data.specificDays) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'DAILY는 특정 월/일을 지정할 수 없습니다',
+          path: ['specificMonths']
+        });
+      }
     }
   }
-  return true;
-}, {
-  message: '특정 일을 입력해주세요',
-  path: ['specificDays'],
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -141,12 +217,15 @@ type FormData = z.infer<typeof formSchema>;
 interface VacationPolicyFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (data: VacationConfig) => void;
-  initialData?: VacationPolicy | null;
+  onSave: (data: any) => void;
+  initialData?: any | null;
   isEditing?: boolean;
   grantMethodTypes?: Array<{ code: string; name: string }>;
   vacationTypes?: Array<{ code: string; name: string }>;
-  grantTimingTypes?: Array<{ code: string; name: string }>;
+  effectiveTypes?: Array<{ code: string; name: string }>;
+  expirationTypes?: Array<{ code: string; name: string }>;
+  repeatUnitTypes?: Array<{ code: string; name: string }>;
+  vacationTimeTypes?: Array<{ code: string; name: string }>;
 }
 
 export function VacationPolicyFormDialog({
@@ -157,13 +236,11 @@ export function VacationPolicyFormDialog({
   isEditing = false,
   grantMethodTypes = [],
   vacationTypes = [],
-  grantTimingTypes = []
+  effectiveTypes = [],
+  expirationTypes = [],
+  repeatUnitTypes = [],
+  vacationTimeTypes = []
 }: VacationPolicyFormDialogProps) {
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [excludedOrganizations, setExcludedOrganizations] = useState<string[]>([]);
-  const [approvers, setApprovers] = useState<string[]>([]);
-  const [references, setReferences] = useState<string[]>([]);
-
   const { mutateAsync: postVacationPolicy, isPending } = usePostVacationPolicy();
 
   const form = useForm<FormData>({
@@ -173,181 +250,133 @@ export function VacationPolicyFormDialog({
       description: '',
       vacationType: '',
       grantMethod: '',
-      grantTiming: '',
-      grantUnit: 'DAY',
-      grantAmount: 1,
-      requireApproval: false,
-      excludedOrganizations: [],
-      approvers: [],
-      references: [],
-      documentSubmission: 'none',
-      recurringInterval: 1,
-      applyToExisting: false,
+      grantTime: undefined,
+      effectiveType: '',
+      expirationType: '',
+      approvalRequiredCount: 0,
+      repeatUnit: '',
+      repeatInterval: 1,
+      specificMonths: undefined,
+      specificDays: undefined,
+      firstGrantDate: '',
+      isRecurring: 'Y',
+      maxGrantCount: undefined,
     },
   });
 
   const watchGrantMethod = form.watch('grantMethod');
-  const watchGrantTiming = form.watch('grantTiming');
-  const watchDocumentSubmission = form.watch('documentSubmission');
-  const watchRequireApproval = form.watch('requireApproval');
-  const watchGrantUnit = form.watch('grantUnit');
-
-  // 부여 방법에 따른 필드 처리 함수
-  const getGrantMethodFields = (grantMethod: string, data: FormData) => {
-    switch (grantMethod) {
-      case 'ON_REQUEST': // 신청시 부여
-        // 반복 단위, 반복 간격, 부여시점 지정 방식, 특정월, 특정일을 모두 null로 설정하여 강제 저장
-        // 직접 신청하는 휴가의 경우 스케줄러가 필요없음
-        return {
-          repeat_unit: null,
-          repeat_interval: null,
-          grant_timing: null,
-          specific_months: null,
-          specific_days: null,
-        };
-
-      case 'MANUAL_GRANT': // 관리자 직접 부여
-        // 반복 단위, 반복 간격, 부여시점 지정 방식, 특정월, 특정일을 모두 null로 설정하여 강제 저장
-        // 관리자가 부여하는 휴가 정책의 경우 스케줄러가 필요없음
-        return {
-          repeat_unit: null,
-          repeat_interval: null,
-          grant_timing: null,
-          specific_months: null,
-          specific_days: null,
-        };
-
-      case 'REPEAT_GRANT': // 반복 부여
-        return {
-          repeat_unit: data.recurringType || null,
-          repeat_interval: data.recurringInterval || null,
-          grant_timing: data.grantTiming || null,
-          specific_months: data.specificMonths || null,
-          specific_days: data.specificDays || null,
-        };
-
-      default: // 기타 부여 방법
-        return {
-          repeat_unit: null,
-          repeat_interval: null,
-          grant_timing: data.grantTiming || null,
-          specific_months: null,
-          specific_days: null,
-        };
-    }
-  };
-
-  // 부여 단위가 '분'으로 변경되면 부여 수량을 30으로 고정
-  useEffect(() => {
-    if (watchGrantUnit === 'MINUTE') {
-      form.setValue('grantAmount', 30);
-    }
-  }, [watchGrantUnit, form]);
+  const watchRepeatUnit = form.watch('repeatUnit');
+  const watchIsRecurring = form.watch('isRecurring');
 
   useEffect(() => {
     if (isOpen) {
       if (isEditing && initialData) {
-        // 폼에 기존 데이터 설정
-        Object.keys(initialData).forEach((key) => {
-          if (key in form.getValues()) {
-            form.setValue(key as any, initialData[key as keyof VacationPolicy] as any);
-          }
-        });
-
-        if (initialData.excludedOrganizations) {
-          setExcludedOrganizations(initialData.excludedOrganizations);
-        }
-        if (initialData.approvers) {
-          setApprovers(initialData.approvers);
-        }
-        if (initialData.references) {
-          setReferences(initialData.references);
-        }
+        form.reset(initialData);
       } else {
-        // 새로 생성할 때 폼 초기화
-        form.reset();
-        setExcludedOrganizations([]);
-        setApprovers([]);
-        setReferences([]);
-        setShowAdvanced(false);
+        form.reset({
+          name: '',
+          description: '',
+          vacationType: '',
+          grantMethod: '',
+          grantTime: undefined,
+          effectiveType: '',
+          expirationType: '',
+          approvalRequiredCount: 0,
+          repeatUnit: '',
+          repeatInterval: 1,
+          specificMonths: undefined,
+          specificDays: undefined,
+          firstGrantDate: '',
+          isRecurring: 'Y',
+          maxGrantCount: undefined,
+        });
       }
     }
   }, [isOpen, isEditing, initialData, form]);
 
   const handleSubmit = async (data: FormData) => {
-    // 부여 단위에 따른 grantAmount 값 변환
-    let convertedGrantAmount = data.grantAmount;
+    try {
+      // 백엔드 API 스펙에 맞게 데이터 매핑
+      const payload: any = {
+        vacation_policy_name: data.name,
+        vacation_policy_desc: data.description || '',
+        vacation_type: data.vacationType,
+        grant_method: data.grantMethod,
+        grant_time: data.grantTime || 0,
+        effective_type: data.effectiveType || null,
+        expiration_type: data.expirationType || null,
+      };
 
-    if (data.grantUnit === 'HOUR') {
-      // 시간: 입력값 / 8 (1시간 = 0.125일)
-      convertedGrantAmount = data.grantAmount / 8;
-    } else if (data.grantUnit === 'MINUTE') {
-      // 분: 항상 30분 = 0.0625일 (0.125 / 2)
-      convertedGrantAmount = 0.0625;
+      // ON_REQUEST
+      if (data.grantMethod === 'ON_REQUEST') {
+        payload.approval_required_count = data.approvalRequiredCount || 0;
+        payload.repeat_unit = null;
+        payload.repeat_interval = null;
+        payload.specific_months = null;
+        payload.specific_days = null;
+        payload.first_grant_date = null;
+        payload.is_recurring = null;
+        payload.max_grant_count = null;
+      }
+      // MANUAL_GRANT
+      else if (data.grantMethod === 'MANUAL_GRANT') {
+        payload.repeat_unit = null;
+        payload.repeat_interval = null;
+        payload.specific_months = null;
+        payload.specific_days = null;
+        payload.first_grant_date = null;
+        payload.is_recurring = null;
+        payload.max_grant_count = null;
+        payload.approval_required_count = null;
+      }
+      // REPEAT_GRANT
+      else if (data.grantMethod === 'REPEAT_GRANT') {
+        payload.repeat_unit = data.repeatUnit || null;
+        payload.repeat_interval = data.repeatInterval || null;
+        payload.specific_months = data.specificMonths || null;
+        payload.specific_days = data.specificDays || null;
+        payload.first_grant_date = data.firstGrantDate || null;
+        payload.is_recurring = data.isRecurring || 'Y';
+        payload.max_grant_count = data.maxGrantCount || null;
+        payload.approval_required_count = null;
+      }
+
+      await postVacationPolicy(payload);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('휴가 정책 저장 실패:', error);
     }
-    // day는 그대로 사용
-
-    // 부여 방법에 따른 필드 처리
-    const grantMethodFields = getGrantMethodFields(data.grantMethod, data);
-
-    // 백엔드 API 스펙에 맞게 데이터 매핑
-    await postVacationPolicy({
-      vacation_policy_name: data.name,
-      vacation_policy_desc: data.description || '',
-      vacation_type: data.vacationType,
-      grant_method: data.grantMethod,
-      grant_time: convertedGrantAmount,
-      ...grantMethodFields,
-    });
-
-    onOpenChange(false);
-  };
-
-  const addExcludedOrganization = (org: string) => {
-    if (org && !excludedOrganizations.includes(org)) {
-      const newOrgs = [...excludedOrganizations, org];
-      setExcludedOrganizations(newOrgs);
-      form.setValue('excludedOrganizations', newOrgs);
-    }
-  };
-
-  const removeExcludedOrganization = (org: string) => {
-    const newOrgs = excludedOrganizations.filter(o => o !== org);
-    setExcludedOrganizations(newOrgs);
-    form.setValue('excludedOrganizations', newOrgs);
-  };
-
-  const addApprover = (approver: string) => {
-    if (approver && !approvers.includes(approver)) {
-      const newApprovers = [...approvers, approver];
-      setApprovers(newApprovers);
-      form.setValue('approvers', newApprovers);
-    }
-  };
-
-  const removeApprover = (approver: string) => {
-    const newApprovers = approvers.filter(a => a !== approver);
-    setApprovers(newApprovers);
-    form.setValue('approvers', newApprovers);
-  };
-
-  const addReference = (reference: string) => {
-    if (reference && !references.includes(reference)) {
-      const newReferences = [...references, reference];
-      setReferences(newReferences);
-      form.setValue('references', newReferences);
-    }
-  };
-
-  const removeReference = (reference: string) => {
-    const newReferences = references.filter(r => r !== reference);
-    setReferences(newReferences);
-    form.setValue('references', newReferences);
   };
 
   const getDialogTitle = () => {
     if (isEditing) return '휴가 정책 수정';
     return '휴가 정책 추가';
+  };
+
+  // 부여 방법에 따라 필요한 필드만 렌더링하는 헬퍼 함수
+  const shouldShowField = (fieldName: string): boolean => {
+    const method = watchGrantMethod;
+
+    const fieldsByMethod: Record<string, string[]> = {
+      'ON_REQUEST': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'effectiveType', 'expirationType', 'approvalRequiredCount'],
+      'MANUAL_GRANT': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'effectiveType', 'expirationType'],
+      'REPEAT_GRANT': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'effectiveType', 'expirationType', 'repeatUnit', 'repeatInterval', 'firstGrantDate', 'isRecurring', 'maxGrantCount', 'specificMonths', 'specificDays'],
+    };
+
+    if (!method) return ['name', 'description', 'vacationType', 'grantMethod'].includes(fieldName);
+
+    return fieldsByMethod[method]?.includes(fieldName) || false;
+  };
+
+  // repeatUnit에 따라 specificMonths/Days를 보여줄지 결정
+  const shouldShowSpecificMonths = (): boolean => {
+    if (watchGrantMethod !== 'REPEAT_GRANT') return false;
+    return watchRepeatUnit === 'YEARLY';
+  };
+
+  const shouldShowSpecificDays = (): boolean => {
+    if (watchGrantMethod !== 'REPEAT_GRANT') return false;
+    return ['YEARLY', 'MONTHLY', 'QUARTERLY', 'HALF'].includes(watchRepeatUnit);
   };
 
   return (
@@ -369,121 +398,62 @@ export function VacationPolicyFormDialog({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* 휴가 설명 */}
-              <div className="grid grid-cols-1 gap-4">
+              {/* 휴가 정책 이름 */}
+              {shouldShowField('name') && (
                 <Controller
                   control={form.control}
                   name="name"
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        휴가 이름
+                        휴가 정책 이름
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
-                      <Input placeholder="예: 리프레시 휴가" {...field} />
+                      <Input placeholder="예: 연차, 리프레시 휴가" {...field} />
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
                   )}
                 />
+              )}
 
+              {/* 휴가 정책 설명 */}
+              {shouldShowField('description') && (
                 <Controller
                   control={form.control}
                   name="description"
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
-                      <FieldLabel>휴가 설명</FieldLabel>
+                      <FieldLabel>휴가 정책 설명</FieldLabel>
                       <Textarea
-                        placeholder="구성원이 휴가 사용 시 확인할 수 있는 설명을 입력해주세요"
+                        placeholder="휴가 정책에 대한 설명을 입력해주세요"
                         className="min-h-[80px]"
                         {...field}
                       />
-                      <p className="text-sm text-muted-foreground">
-                        구성원이 휴가 사용 시 확인할 수 있어요.
-                      </p>
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
                   )}
                 />
-              </div>
+              )}
 
               <Separator />
 
               {/* 휴가 타입 */}
-              <Controller
-                control={form.control}
-                name="vacationType"
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={!!fieldState.error}>
-                    <FieldLabel>
-                      휴가 타입
-                      <span className='text-destructive ml-0.5'>*</span>
-                    </FieldLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="휴가 타입을 선택해주세요" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {vacationTypes.map((type) => (
-                          <SelectItem key={type.code} value={type.code}>
-                            {type.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <p className="text-sm text-muted-foreground">
-                      휴가의 종류를 선택해주세요 (연차, 출산, 결혼 등).
-                    </p>
-                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                  </Field>
-                )}
-              />
-
-              <Separator />
-
-              {/* 부여 방법 */}
-              <Controller
-                control={form.control}
-                name="grantMethod"
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={!!fieldState.error}>
-                    <FieldLabel>
-                      부여 방법
-                      <span className='text-destructive ml-0.5'>*</span>
-                    </FieldLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="부여 방법을 선택해주세요" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {grantMethodTypes.map((type) => (
-                          <SelectItem key={type.code} value={type.code}>
-                            {type.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                  </Field>
-                )}
-              />
-
-              {/* 부여 시점 - 신청시 부여와 관리자 직접 부여가 아닐 때만 표시 */}
-              {watchGrantMethod !== 'ON_REQUEST' && watchGrantMethod !== 'MANUAL_GRANT' && (
+              {shouldShowField('vacationType') && (
                 <Controller
                   control={form.control}
-                  name="grantTiming"
+                  name="vacationType"
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        부여 시점
+                        휴가 타입
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder="부여 시점을 선택해주세요" />
+                          <SelectValue placeholder="휴가 타입을 선택해주세요" />
                         </SelectTrigger>
                         <SelectContent>
-                          {grantTimingTypes.map((type) => (
+                          {vacationTypes.map((type) => (
                             <SelectItem key={type.code} value={type.code}>
                               {type.name}
                             </SelectItem>
@@ -491,7 +461,7 @@ export function VacationPolicyFormDialog({
                         </SelectContent>
                       </Select>
                       <p className="text-sm text-muted-foreground">
-                        휴가를 언제 부여할지 시점을 선택해주세요.
+                        휴가의 종류를 선택해주세요 (연차, 출산, 결혼 등).
                       </p>
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
@@ -499,13 +469,180 @@ export function VacationPolicyFormDialog({
                 />
               )}
 
-              {/* 반복 부여 설정 (반복 부여일 때만 표시) */}
-              {watchGrantMethod === 'REPEAT_GRANT' && (
-                <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                  <div className="grid grid-cols-2 gap-4">
+              <Separator />
+
+              {/* 부여 방법 */}
+              {shouldShowField('grantMethod') && (
+                <Controller
+                  control={form.control}
+                  name="grantMethod"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>
+                        부여 방법
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="부여 방법을 선택해주세요" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {grantMethodTypes.map((type) => (
+                            <SelectItem key={type.code} value={type.code}>
+                              {type.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+              )}
+
+              {/* 부여 시간 - ON_REQUEST, REPEAT_GRANT에서 필수, MANUAL_GRANT에서 선택 */}
+              {shouldShowField('grantTime') && (
+                <Controller
+                  control={form.control}
+                  name="grantTime"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>
+                        부여 시간 (일 단위)
+                        {(watchGrantMethod === 'ON_REQUEST' || watchGrantMethod === 'REPEAT_GRANT') && (
+                          <span className='text-destructive ml-0.5'>*</span>
+                        )}
+                      </FieldLabel>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="예: 1 (1일), 0.5 (0.5일)"
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        {watchGrantMethod === 'MANUAL_GRANT'
+                          ? '관리자 직접 부여 시 선택 사항입니다. 0보다 큰 값을 입력해주세요.'
+                          : '부여할 휴가 일수를 입력해주세요. (예: 1일, 0.5일, 0.125일 등)'}
+                      </p>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+              )}
+
+              {/* 발효 타입 & 만료 타입 */}
+              {(shouldShowField('effectiveType') || shouldShowField('expirationType')) && (
+                <div className="grid grid-cols-2 gap-4">
+                  {shouldShowField('effectiveType') && (
                     <Controller
                       control={form.control}
-                      name="recurringType"
+                      name="effectiveType"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>
+                            발효 타입
+                            <span className='text-destructive ml-0.5'>*</span>
+                          </FieldLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="발효 타입 선택" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {effectiveTypes.map((type) => (
+                                <SelectItem key={type.code} value={type.code}>
+                                  {type.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <p className="text-sm text-muted-foreground">
+                            휴가가 언제부터 유효한지 선택해주세요.
+                          </p>
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
+                  )}
+
+                  {shouldShowField('expirationType') && (
+                    <Controller
+                      control={form.control}
+                      name="expirationType"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>
+                            만료 타입
+                            <span className='text-destructive ml-0.5'>*</span>
+                          </FieldLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="만료 타입 선택" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {expirationTypes.map((type) => (
+                                <SelectItem key={type.code} value={type.code}>
+                                  {type.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <p className="text-sm text-muted-foreground">
+                            휴가가 언제까지 유효한지 선택해주세요.
+                          </p>
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* 승인 필요 횟수 - ON_REQUEST 전용 */}
+              {shouldShowField('approvalRequiredCount') && (
+                <Controller
+                  control={form.control}
+                  name="approvalRequiredCount"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>승인 필요 횟수</FieldLabel>
+                      <Input
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        {...field}
+                        value={field.value || 0}
+                        onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 0)}
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        신청 시 필요한 승인 횟수를 입력해주세요. (0은 승인 불필요)
+                      </p>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+              )}
+            </CardContent>
+          </Card>
+
+          {/* 반복 부여 설정 - REPEAT_GRANT 전용 */}
+          {watchGrantMethod === 'REPEAT_GRANT' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>반복 부여 설정</CardTitle>
+                <CardDescription>
+                  휴가를 자동으로 반복 부여하는 설정입니다.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* 반복 단위 & 반복 간격 */}
+                <div className="grid grid-cols-2 gap-4">
+                  {shouldShowField('repeatUnit') && (
+                    <Controller
+                      control={form.control}
+                      name="repeatUnit"
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>
@@ -517,11 +654,11 @@ export function VacationPolicyFormDialog({
                               <SelectValue placeholder="반복 단위 선택" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="YEARLY">매년</SelectItem>
-                              <SelectItem value="MONTHLY">매월</SelectItem>
-                              <SelectItem value="DAYLY">매일</SelectItem>
-                              <SelectItem value="QUARTERLY">분기</SelectItem>
-                              <SelectItem value="HALF">반기</SelectItem>
+                              {repeatUnitTypes.map((type) => (
+                                <SelectItem key={type.code} value={type.code}>
+                                  {type.name}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                           <p className="text-sm text-muted-foreground">
@@ -531,10 +668,12 @@ export function VacationPolicyFormDialog({
                         </Field>
                       )}
                     />
+                  )}
 
+                  {shouldShowField('repeatInterval') && (
                     <Controller
                       control={form.control}
-                      name="recurringInterval"
+                      name="repeatInterval"
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>
@@ -544,70 +683,14 @@ export function VacationPolicyFormDialog({
                           <Input
                             type="number"
                             min="1"
+                            max="100"
                             placeholder="1"
                             {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            value={field.value || 1}
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 1)}
                           />
                           <p className="text-sm text-muted-foreground">
-                            반복 주기마다 몇 번째에 부여할지 설정해주세요 (예: 1 = 매번, 2 = 격번).
-                          </p>
-                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                        </Field>
-                      )}
-                    />
-                  </div>
-
-                  {/* 특정 월 입력 - FIXED_DATE, SPECIFIC_MONTH일 때 표시 */}
-                  {(watchGrantTiming === 'FIXED_DATE' || watchGrantTiming === 'SPECIFIC_MONTH') && (
-                    <Controller
-                      control={form.control}
-                      name="specificMonths"
-                      render={({ field, fieldState }) => (
-                        <Field data-invalid={!!fieldState.error}>
-                          <FieldLabel>
-                            특정 월
-                            <span className='text-destructive ml-0.5'>*</span>
-                          </FieldLabel>
-                          <Input
-                            type="number"
-                            min="1"
-                            max="12"
-                            placeholder="예: 1 (1월)"
-                            {...field}
-                            value={field.value || ''}
-                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                          />
-                          <p className="text-sm text-muted-foreground">
-                            휴가를 부여할 월을 입력해주세요 (1-12).
-                          </p>
-                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                        </Field>
-                      )}
-                    />
-                  )}
-
-                  {/* 특정 일 입력 - FIXED_DATE, SPECIFIC_DAY일 때 표시 */}
-                  {(watchGrantTiming === 'FIXED_DATE' || watchGrantTiming === 'SPECIFIC_DAY') && (
-                    <Controller
-                      control={form.control}
-                      name="specificDays"
-                      render={({ field, fieldState }) => (
-                        <Field data-invalid={!!fieldState.error}>
-                          <FieldLabel>
-                            특정 일
-                            <span className='text-destructive ml-0.5'>*</span>
-                          </FieldLabel>
-                          <Input
-                            type="number"
-                            min="1"
-                            max="31"
-                            placeholder="예: 1 (1일)"
-                            {...field}
-                            value={field.value || ''}
-                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                          />
-                          <p className="text-sm text-muted-foreground">
-                            휴가를 부여할 일을 입력해주세요 (1-31).
+                            반복 주기마다 몇 번째에 부여할지 설정 (예: 1=매번, 2=격번)
                           </p>
                           <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                         </Field>
@@ -615,48 +698,123 @@ export function VacationPolicyFormDialog({
                     />
                   )}
                 </div>
-              )}
 
-              <Separator />
-
-              {/* 부여 시간 */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">부여 시간</h3>
-                <div className="grid grid-cols-2 gap-4">
+                {/* 특정 월 - YEARLY만 */}
+                {shouldShowSpecificMonths() && (
                   <Controller
                     control={form.control}
-                    name="grantUnit"
+                    name="specificMonths"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>
-                          부여 단위
-                          <span className='text-destructive ml-0.5'>*</span>
-                        </FieldLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="DAY">일</SelectItem>
-                            <SelectItem value="HOUR">시간</SelectItem>
-                            <SelectItem value="MINUTE">분</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <FieldLabel>특정 월 (선택)</FieldLabel>
+                        <Input
+                          type="number"
+                          min="1"
+                          max="12"
+                          placeholder="예: 1 (1월)"
+                          {...field}
+                          value={field.value || ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                        />
                         <p className="text-sm text-muted-foreground">
-                          관리자가 직접 지급하는 휴가 외의 휴가는 부여 단위를 선택할 수 있어요.
+                          매년 특정 월에 부여하려면 입력해주세요 (1-12). 미입력 시 첫 부여 날짜의 월 기준.
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
                     )}
                   />
+                )}
 
+                {/* 특정 일 - YEARLY, MONTHLY, QUARTERLY, HALF */}
+                {shouldShowSpecificDays() && (
                   <Controller
                     control={form.control}
-                    name="grantAmount"
+                    name="specificDays"
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel>특정 일 (선택)</FieldLabel>
+                        <Input
+                          type="number"
+                          min="1"
+                          max="31"
+                          placeholder="예: 1 (1일)"
+                          {...field}
+                          value={field.value || ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          특정 일에 부여하려면 입력해주세요 (1-31). 해당 월에 없는 날짜는 자동으로 마지막 날로 조정됩니다.
+                        </p>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
+                    )}
+                  />
+                )}
+
+                {/* 첫 부여 날짜 */}
+                {shouldShowField('firstGrantDate') && (
+                  <Controller
+                    control={form.control}
+                    name="firstGrantDate"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel>
-                          부여 수량
+                          첫 부여 날짜
+                          <span className='text-destructive ml-0.5'>*</span>
+                        </FieldLabel>
+                        <InputDatePicker
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          스케줄러가 반복 부여를 계산하기 위한 기준일입니다.
+                        </p>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
+                    )}
+                  />
+                )}
+
+                <Separator />
+
+                {/* 반복 여부 */}
+                {shouldShowField('isRecurring') && (
+                  <Controller
+                    control={form.control}
+                    name="isRecurring"
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel>
+                          반복 여부
+                          <span className='text-destructive ml-0.5'>*</span>
+                        </FieldLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="반복 여부 선택" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Y">반복 부여 (Y)</SelectItem>
+                            <SelectItem value="N">1회성 부여 (N)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <p className="text-sm text-muted-foreground">
+                          계속 반복할지, 1회만 부여할지 선택해주세요.
+                        </p>
+                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                      </Field>
+                    )}
+                  />
+                )}
+
+                {/* 최대 부여 횟수 - isRecurring=N일 때만 */}
+                {shouldShowField('maxGrantCount') && watchIsRecurring === 'N' && (
+                  <Controller
+                    control={form.control}
+                    name="maxGrantCount"
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={!!fieldState.error}>
+                        <FieldLabel>
+                          최대 부여 횟수
                           <span className='text-destructive ml-0.5'>*</span>
                         </FieldLabel>
                         <Input
@@ -664,322 +822,37 @@ export function VacationPolicyFormDialog({
                           min="1"
                           placeholder="1"
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                          disabled={watchGrantUnit === 'MINUTE'}
+                          value={field.value || ''}
+                          onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                         />
                         <p className="text-sm text-muted-foreground">
-                          {watchGrantUnit === 'MINUTE'
-                            ? '분 단위 휴가는 30분으로 고정됩니다.'
-                            : '부여할 휴가 수량을 설정해주세요.'}
+                          1회성 부여일 경우 최대 몇 번 부여할지 입력해주세요.
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
                     )}
                   />
-                </div>
-              </div>
+                )}
 
-
-              {/* 승인/참조 사용 */}
-              <div className="space-y-4">
-                <Controller
-                  control={form.control}
-                  name="requireApproval"
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
-                      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                        <div className="space-y-0.5">
-                          <FieldLabel className="text-base">승인/참조 사용</FieldLabel>
-                          <p className="text-sm text-muted-foreground">
-                            구성원이 휴가를 등록하거나 취소할 때 승인이 필요한지 설정해주세요.
-                          </p>
-                        </div>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </div>
-                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                    </Field>
-                  )}
-                />
-
-                {/* 승인자 설정 */}
-                {watchRequireApproval && (
-                  <div className="space-y-4 p-4 border rounded-lg bg-blue-50 border-blue-200">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">승인자</label>
-                      <div className="flex gap-2">
-                        <Input
-                          placeholder="승인자 입력 후 Enter"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              addApprover(e.currentTarget.value);
-                              e.currentTarget.value = '';
-                            }
-                          }}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                            addApprover(input.value);
-                            input.value = '';
-                          }}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      {approvers.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {approvers.map((approver, index) => (
-                            <Badge key={index} variant="default" className="gap-1">
-                              {approver}
-                              <X
-                                className="h-3 w-3 cursor-pointer"
-                                onClick={() => removeApprover(approver)}
-                              />
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">참조자</label>
-                      <div className="flex gap-2">
-                        <Input 
-                          placeholder="참조자 입력 후 Enter"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              addReference(e.currentTarget.value);
-                              e.currentTarget.value = '';
-                            }
-                          }}
-                        />
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          size="icon"
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                            addReference(input.value);
-                            input.value = '';
-                          }}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      {references.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {references.map((reference, index) => (
-                            <Badge key={index} variant="secondary" className="gap-1">
-                              {reference}
-                              <X 
-                                className="h-3 w-3 cursor-pointer" 
-                                onClick={() => removeReference(reference)}
-                              />
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
+                {/* 안내 메시지 */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-950/30 dark:border-blue-900">
+                  <div className="flex items-start gap-2">
+                    <Info className="h-5 w-5 text-blue-500 mt-0.5" />
+                    <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                      <p className="font-medium">반복 부여 안내:</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        <li>YEARLY: 매년 특정 월/일에 부여</li>
+                        <li>MONTHLY: 매월 특정 일에 부여 (특정 월 지정 불가)</li>
+                        <li>QUARTERLY: 분기별 (1,4,7,10월) 특정 일에 부여</li>
+                        <li>HALF: 반기별 (1,7월) 특정 일에 부여</li>
+                        <li>DAILY: 매일 부여 (특정 월/일 지정 불가)</li>
+                      </ul>
                     </div>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 추가 설정 */}
-          <Card>
-            <CardHeader>
-              <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-0">
-                    <div className="text-left">
-                      <CardTitle className="flex items-center gap-2">
-                        <FileText className="h-5 w-5" />
-                        추가 설정
-                      </CardTitle>
-                      <CardDescription>
-                        성별 제한, 증명자료 제출, 제외 대상 등을 설정할 수 있어요.
-                      </CardDescription>
-                    </div>
-                    {showAdvanced ? <ChevronUp /> : <ChevronDown />}
-                  </Button>
-                </CollapsibleTrigger>
-                
-                <CollapsibleContent>
-                  <CardContent className="space-y-6 pt-6">
-                    {/* 사용 만료 기한 */}
-                    <Controller
-                      control={form.control}
-                      name="expirationDate"
-                      render={({ field, fieldState }) => (
-                        <Field data-invalid={!!fieldState.error}>
-                          <FieldLabel>사용 만료 기한</FieldLabel>
-                          <InputDatePicker
-                            value={field.value}
-                            onValueChange={field.onChange}
-                          />
-                          <p className="text-sm text-muted-foreground">
-                            휴가 사용 만료 기한을 설정할 수 있어요.
-                          </p>
-                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                        </Field>
-                      )}
-                    />
-                    <Separator />
-
-                    {/* 제외 대상 설정 */}
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-base font-medium">제외 대상 설정</label>
-                        <p className="text-sm text-muted-foreground">
-                          구성원의 근로 유형, 조직에 따라 특정 맞춤휴가 부여에서 제외할 수 있어요.
-                          단, 특정 구성원을 선택하는 것은 어려워요.
-                        </p>
-                      </div>
-
-                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                        <div className="flex items-start gap-2">
-                          <AlertCircle className="h-5 w-5 text-orange-500 mt-0.5" />
-                          <div className="text-sm text-orange-700 space-y-2">
-                            <p className="font-medium">제외 대상 설정 시 주의사항:</p>
-                            <ul className="list-disc list-inside space-y-1">
-                              <li>설정 즉시 조건에 해당하는 구성원에게는 해당 휴가가 노출되거나 부여되지 않아요.</li>
-                              <li>근로 유형은 구성원 프로필 내 [근로 계약 정보]에 설정된 근로 유형을 따라가요.</li>
-                              <li>겸조직 구성원인 경우 하나의 조직이라도 제외 대상에 포함되면 제외 대상에 포함돼요.</li>
-                              <li>법정 필수 휴가에는 제외 대상을 설정할 수 없어요.</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 조직 제외 */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">제외할 조직</label>
-                        <p className="text-xs text-muted-foreground">
-                          제외 대상을 조직으로 설정할 경우, 조직을 개별로 선택해주세요.
-                          경영관리본부 및 하위 조직을 제외하려면 경영관리본부와 그 하위 조직을 개별 선택해주세요.
-                        </p>
-                        <div className="flex gap-2">
-                          <Input 
-                            placeholder="조직명 입력 후 Enter (예: 개발팀, 마케팅팀)"
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                addExcludedOrganization(e.currentTarget.value);
-                                e.currentTarget.value = '';
-                              }
-                            }}
-                          />
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            size="icon"
-                            onClick={(e) => {
-                              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                              addExcludedOrganization(input.value);
-                              input.value = '';
-                            }}
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        {excludedOrganizations.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {excludedOrganizations.map((org, index) => (
-                              <Badge key={index} variant="destructive" className="gap-1">
-                                {org}
-                                <X 
-                                  className="h-3 w-3 cursor-pointer" 
-                                  onClick={() => removeExcludedOrganization(org)}
-                                />
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    {/* 증명자료 제출 */}
-                    <div className="space-y-4">
-                      <Controller
-                        control={form.control}
-                        name="documentSubmission"
-                        render={({ field, fieldState }) => (
-                          <Field data-invalid={!!fieldState.error}>
-                            <FieldLabel>증명자료 제출</FieldLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="none">제출 안함</SelectItem>
-                                <SelectItem value="before">사전 제출 (휴가 신청 시 필수)</SelectItem>
-                                <SelectItem value="after">사후 제출 (휴가 사용 후 제출)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <p className="text-sm text-muted-foreground">
-                              휴가 신청 단계에서 사전에 증명자료를 필수 등록으로 지정하거나, 사후 등록할 수 있도록 설정할 수 있어요.
-                              증명자료는 최대 10개까지 업로드 가능해요.
-                            </p>
-                            <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                          </Field>
-                        )}
-                      />
-
-                      {watchDocumentSubmission !== 'none' && (
-                        <div className="p-4 border rounded-lg bg-blue-50 border-blue-200">
-                          <Controller
-                            control={form.control}
-                            name="documentDescription"
-                            render={({ field, fieldState }) => (
-                              <Field data-invalid={!!fieldState.error}>
-                                <FieldLabel>증명자료 설명</FieldLabel>
-                                <Textarea
-                                  placeholder="구성원이 제출해야 하는 증명자료에 대한 설명을 작성해주세요 (예: 진료 확인서 또는 처방전을 제출해주세요)"
-                                  className="min-h-[80px]"
-                                  {...field}
-                                />
-                                <p className="text-sm text-muted-foreground">
-                                  구성원이 어떤 증명자료를 제출해야 하는지 안내할 수 있어요.
-                                  이 설명은 구성원이 휴가 신청 시 확인할 수 있어요.
-                                </p>
-                                <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                              </Field>
-                            )}
-                          />
-                        </div>
-                      )}
-
-                      {watchDocumentSubmission === 'after' && (
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                          <div className="flex items-start gap-2">
-                            <Info className="h-5 w-5 text-amber-500 mt-0.5" />
-                            <div className="text-sm text-amber-700 space-y-1">
-                              <p className="font-medium">사후 제출 알림:</p>
-                              <ul className="list-disc list-inside space-y-1">
-                                <li>사후 제출로 설정한 경우 구성원이 증명자료 제출을 놓치지 않도록 [할 일] - [해야할 일]로 제출 요청 알림이 발송돼요.</li>
-                                <li>구성원이 증명자료를 제출한 경우 승인자에게 알림이 발송돼요.</li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </CollapsibleContent>
-              </Collapsible>
-            </CardHeader>
-          </Card>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* 제출 버튼 */}
           <div className="flex justify-end gap-4 pt-4">

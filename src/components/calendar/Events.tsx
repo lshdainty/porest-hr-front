@@ -1,15 +1,15 @@
+import { useDeleteSchedule } from '@/api/schedule';
+import { useDeleteVacationUsage } from '@/api/vacation';
+import { Button } from '@/components/shadcn/button';
+import { convertColorCode } from '@/hooks/useCalendarType';
+import { useIsMobile } from '@/hooks/useMobile';
+import { CalendarEvent, CustomEvent } from '@/store/CalendarEventStore';
+import { Circle } from '@mui/icons-material';
+import { Popover } from 'antd';
+import dayjs from 'dayjs';
+import { Clock4, FileText, Trash, UserRound } from 'lucide-react';
 import { useEffect } from 'react';
 import { EventProps } from 'react-big-calendar';
-import { convertColorCode } from '@/hooks/useCalendarType';
-import { CalendarEvent, CustomEvent } from '@/store/CalendarEventStore';
-import { useDeleteVacationHistory } from '@/api/vacation';
-import { useDeleteSchedule } from '@/api/schedule';
-import dayjs from 'dayjs';
-import { Popover } from 'antd';
-import { Button } from '@/components/shadcn/button';
-import { useIsMobile } from '@/hooks/useMobile';
-import { Circle } from '@mui/icons-material';
-import { Clock4, UserRound, FileText, Trash } from 'lucide-react';
 
 export const convertEventStyle = (event: CalendarEvent | any) => {
   return {
@@ -26,7 +26,7 @@ const EventPopup: React.FC<EventProps> = (props) => {
   const start = (resource.isAllDay === true) ? dayjs(event.start).format('YYYY-MM-DD') : dayjs(event.start).format('YYYY-MM-DD HH:mm');
   const end = (resource.isAllDay === true) ? dayjs(event.end).format('YYYY-MM-DD') : dayjs(event.end).format('HH:mm');
 
-  const {mutate: deleteVacationHistory} = useDeleteVacationHistory();
+  const {mutate: deleteVacationHistory} = useDeleteVacationUsage();
   const {mutate: deleteSchedule} = useDeleteSchedule();
 
   const onDeleteEvent = () => {

@@ -36,10 +36,6 @@ const useGetGrantMethodTypes = () => {
   return useGetTypes({ enum_name: 'grant-method' });
 };
 
-const useGetGrantTimingTypes = () => {
-  return useGetTypes({ enum_name: 'grant-timing' });
-};
-
 const useGetRepeatUnitTypes = () => {
   return useGetTypes({ enum_name: 'repeat-unit' });
 };
@@ -50,6 +46,22 @@ const useGetVacationTimeTypes = () => {
 
 const useGetVacationTypes = () => {
   return useGetTypes({ enum_name: 'vacation-type' });
+};
+
+const useGetEffectiveTypes = () => {
+  return useGetTypes({ enum_name: 'effective-type' });
+};
+
+const useGetExpirationTypes = () => {
+  return useGetTypes({ enum_name: 'expiration-type' });
+};
+
+const useGetApprovalStatusTypes = () => {
+  return useGetTypes({ enum_name: 'approval-status' });
+};
+
+const useGetGrantStatusTypes = () => {
+  return useGetTypes({ enum_name: 'grant-status' });
 };
 
 const useGetScheduleTypes = () => {
@@ -71,10 +83,13 @@ export {
   // API Hook
   useGetTypes,
   useGetGrantMethodTypes,
-  useGetGrantTimingTypes,
   useGetRepeatUnitTypes,
   useGetVacationTimeTypes,
   useGetVacationTypes,
+  useGetEffectiveTypes,
+  useGetExpirationTypes,
+  useGetApprovalStatusTypes,
+  useGetGrantStatusTypes,
   useGetScheduleTypes,
   useGetHolidayTypes,
   useGetOriginCompanyTypes
