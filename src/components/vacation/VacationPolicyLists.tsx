@@ -8,7 +8,7 @@ import {
   useGetVacationTypes,
   useGetVacationTimeTypes
 } from '@/api/type';
-import { useGetVacationPolicies, type GetVacationPoliciesResp } from '@/api/vacation';
+import { useGetVacationPolicies } from '@/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import {
@@ -47,8 +47,6 @@ export function VacationPolicyLists() {
   const { data: vacationTimeTypes } = useGetVacationTimeTypes();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [formDialog, setFormDialog] = useState<{ open: boolean; policy: GetVacationPoliciesResp | null }>({ open: false, policy: null });
-  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; policy: GetVacationPoliciesResp | null }>({ open: false, policy: null });
 
   const filteredPolicies = (vacationPolicies || []).filter(
     policy =>
@@ -61,24 +59,6 @@ export function VacationPolicyLists() {
     if (!code || !types) return code || '-';
     const type = types.find(t => t.code === code);
     return type ? type.name : code;
-  };
-
-  const openCreateForm = () => {
-    setFormDialog({ open: true, policy: null });
-  };
-
-  const openEditForm = (policy: GetVacationPoliciesResp) => {
-    setFormDialog({ open: true, policy });
-  };
-
-  const handleFormSave = (data: any) => {
-    // TODO: API 호출하여 저장
-    console.log('Form saved:', data);
-    setFormDialog({ open: false, policy: null });
-  };
-
-  const deletePolicy = (policy: GetVacationPoliciesResp) => {
-    setDeleteDialog({ open: true, policy });
   };
 
   if (isLoading) {
@@ -113,10 +93,21 @@ export function VacationPolicyLists() {
             </div>
             <div className="text-sm text-muted-foreground">총 {filteredPolicies.length}개 정책</div>
           </div>
-          <Button onClick={openCreateForm} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            새 휴가 정책 추가
-          </Button>
+          <VacationPolicyFormDialog
+            isEditing={false}
+            grantMethodTypes={grantMethodTypes}
+            vacationTypes={vacationTypes}
+            effectiveTypes={effectiveTypes}
+            expirationTypes={expirationTypes}
+            repeatUnitTypes={repeatUnitTypes}
+            vacationTimeTypes={vacationTimeTypes}
+            trigger={
+              <Button className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                새 휴가 정책 추가
+              </Button>
+            }
+          />
         </div>
 
         {/* 정책 리스트 */}
@@ -164,21 +155,47 @@ export function VacationPolicyLists() {
                       )}
                     </div>
 
-                  <DropdownMenu>
+                  <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted"
+                      >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => openEditForm(policy)}>
-                        <Edit className="h-4 w-4 mr-2" />
-                        수정
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => deletePolicy(policy)} className="text-destructive">
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        삭제
-                      </DropdownMenuItem>
+                    <DropdownMenuContent align="end" className="w-32">
+                      <VacationPolicyFormDialog
+                        isEditing={true}
+                        initialData={policy as any}
+                        grantMethodTypes={grantMethodTypes}
+                        vacationTypes={vacationTypes}
+                        effectiveTypes={effectiveTypes}
+                        expirationTypes={expirationTypes}
+                        repeatUnitTypes={repeatUnitTypes}
+                        vacationTimeTypes={vacationTimeTypes}
+                        trigger={
+                          <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()}
+                          >
+                            <Edit className="h-4 w-4" />
+                            <span>수정</span>
+                          </DropdownMenuItem>
+                        }
+                      />
+                      <VacationPolicyDeleteDialog
+                        policy={policy}
+                        trigger={
+                          <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()}
+                            className="text-destructive focus:text-destructive hover:!bg-destructive/20"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span>삭제</span>
+                          </DropdownMenuItem>
+                        }
+                      />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -199,26 +216,6 @@ export function VacationPolicyLists() {
           )}
         </div>
       </div>
-
-      <VacationPolicyDeleteDialog
-        open={deleteDialog.open}
-        onOpenChange={(open) => setDeleteDialog({ open, policy: null })}
-        policy={deleteDialog.policy}
-      />
-
-      <VacationPolicyFormDialog
-        isOpen={formDialog.open}
-        onOpenChange={(open) => setFormDialog({ open, policy: null })}
-        onSave={handleFormSave}
-        initialData={formDialog.policy as any}
-        isEditing={!!formDialog.policy}
-        grantMethodTypes={grantMethodTypes}
-        vacationTypes={vacationTypes}
-        effectiveTypes={effectiveTypes}
-        expirationTypes={expirationTypes}
-        repeatUnitTypes={repeatUnitTypes}
-        vacationTimeTypes={vacationTimeTypes}
-      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/shadcn/dialog';
 import {
   Field,
@@ -35,7 +36,7 @@ import {
   Calendar,
   Info
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -214,9 +215,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 interface VacationPolicyFormDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSave: (data: any) => void;
+  trigger: React.ReactNode;
   initialData?: any | null;
   isEditing?: boolean;
   grantMethodTypes?: Array<{ code: string; name: string }>;
@@ -228,9 +227,7 @@ interface VacationPolicyFormDialogProps {
 }
 
 export function VacationPolicyFormDialog({
-  isOpen,
-  onOpenChange,
-  onSave,
+  trigger,
   initialData = null,
   isEditing = false,
   grantMethodTypes = [],
@@ -240,6 +237,7 @@ export function VacationPolicyFormDialog({
   repeatUnitTypes = [],
   vacationTimeTypes = []
 }: VacationPolicyFormDialogProps) {
+  const [open, setOpen] = useState(false);
   const { mutateAsync: postVacationPolicy, isPending } = usePostVacationPolicy();
 
   const form = useForm<FormData>({
@@ -268,7 +266,7 @@ export function VacationPolicyFormDialog({
   const watchIsRecurring = form.watch('isRecurring');
 
   useEffect(() => {
-    if (isOpen) {
+    if (open) {
       if (isEditing && initialData) {
         form.reset(initialData);
       } else {
@@ -291,7 +289,7 @@ export function VacationPolicyFormDialog({
         });
       }
     }
-  }, [isOpen, isEditing, initialData, form]);
+  }, [open, isEditing, initialData, form]);
 
   const handleSubmit = async (data: FormData) => {
     try {
@@ -344,7 +342,7 @@ export function VacationPolicyFormDialog({
       }
 
       await postVacationPolicy(payload);
-      onOpenChange(false);
+      setOpen(false);
     } catch (error) {
       console.error('휴가 정책 저장 실패:', error);
     }
@@ -382,7 +380,8 @@ export function VacationPolicyFormDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className='max-w-4xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>{getDialogTitle()}</DialogTitle>
@@ -926,7 +925,7 @@ export function VacationPolicyFormDialog({
 
           {/* 제출 버튼 */}
           <div className='flex justify-end gap-4 pt-4'>
-            <Button type='button' variant='secondary' onClick={() => onOpenChange(false)}>
+            <Button type='button' variant='secondary' onClick={() => setOpen(false)}>
               취소
             </Button>
             <Button type='submit' disabled={isPending}>

@@ -8,19 +8,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/shadcn/alertDialog'
 import { TriangleAlert } from 'lucide-react'
 
 interface VacationPolicyDeleteDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  policy: GetVacationPoliciesResp | null
+  policy: GetVacationPoliciesResp
+  trigger: React.ReactNode
 }
 
 export function VacationPolicyDeleteDialog({
-  open,
-  onOpenChange,
-  policy
+  policy,
+  trigger
 }: VacationPolicyDeleteDialogProps) {
   const deleteVacationPolicy = useDeleteVacationPolicy()
 
@@ -28,17 +27,15 @@ export function VacationPolicyDeleteDialog({
     if (policy?.vacation_policy_id) {
       try {
         await deleteVacationPolicy.mutateAsync(policy.vacation_policy_id)
-        onOpenChange(false)
       } catch (error) {
         console.error('휴가 정책 삭제 실패:', error)
       }
     }
   }
 
-  if (!policy) return null
-
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent className="sm:max-w-lg">
         <div className="flex items-start space-x-4">
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
