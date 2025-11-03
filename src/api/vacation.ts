@@ -345,6 +345,7 @@ interface GetVacationPolicyResp {
   specific_days: number
   effective_type: string
   expiration_type: string
+  repeat_grant_desc: string
 }
 
 const useGetVacationPolicy = (reqData: GetVacationPolicyReq) => {
@@ -378,6 +379,7 @@ interface GetVacationPoliciesResp {
   specific_days: number
   effective_type: string
   expiration_type: string
+  repeat_grant_desc: string
 }
 
 const useGetVacationPolicies = () => {
@@ -527,6 +529,7 @@ interface GetUserVacationPoliciesResp {
   specific_days: number
   effective_type: string
   expiration_type: string
+  repeat_grant_desc: string
 }
 
 const useGetUserVacationPolicies = (reqData: GetUserVacationPoliciesReq) => {

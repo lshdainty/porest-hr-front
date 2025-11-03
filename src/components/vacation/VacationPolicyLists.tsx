@@ -26,12 +26,12 @@ import { VacationPolicyDeleteDialog } from '@/components/vacation/VacationPolicy
 import { VacationPolicyFormDialog } from '@/components/vacation/VacationPolicyFormDialog';
 import {
   Calendar,
-  Clock,
+  CalendarClock,
   Edit,
-  GripVertical,
   Loader2,
   MoreHorizontal,
   Plus,
+  Repeat,
   Search,
   Trash2,
 } from 'lucide-react';
@@ -123,13 +123,9 @@ export function VacationPolicyLists() {
         <div className="flex flex-col gap-4">
           {filteredPolicies.map(policy => (
             <Card key={policy.vacation_policy_id} className="transition-all hover:shadow-md">
-              <CardContent className="p-6">
+              <CardContent className="px-6">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4 flex-1">
-                    <div className="flex items-start pt-1">
-                      <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
-                    </div>
-                    <div className="flex flex-col gap-3 flex-1">
+                  <div className="flex flex-col gap-3 flex-1">
                       <div className="flex items-center gap-3">
                         <h3 className="font-semibold text-lg">{policy.vacation_policy_name}</h3>
                         <div className="flex flex-wrap items-center gap-2">
@@ -147,47 +143,26 @@ export function VacationPolicyLists() {
                       <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          <span>부여 시간: {policy.grant_time_str}</span>
+                          <span>부여 시간: {policy.grant_time_str === '0' || policy.grant_time_str === '0일' ? '제한없음' : policy.grant_time_str}</span>
                         </div>
-                        {policy.repeat_unit && policy.repeat_interval && (
+                        {policy.repeat_grant_desc && (
                           <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
+                            <Repeat className="h-4 w-4" />
+                            <span>{policy.repeat_grant_desc}</span>
+                          </div>
+                        )}
+                      </div>
+                      {(policy.effective_type || policy.expiration_type) && (
+                        <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <CalendarClock className="h-4 w-4" />
                             <span>
-                              {policy.repeat_interval} {getDisplayName(policy.repeat_unit, repeatUnitTypes)} 마다 반복
+                              유효기간: {getDisplayName(policy.effective_type, effectiveTypes)} ~ {getDisplayName(policy.expiration_type, expirationTypes)}
                             </span>
                           </div>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-3">
-                        {policy.grant_method === 'REPEAT_GRANT' && (
-                          <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg dark:bg-purple-950/30 dark:border-purple-900">
-                            <p className="text-sm text-purple-700 dark:text-purple-300">
-                              <span className="font-medium">반복 부여:</span>{' '}
-                              {policy.repeat_interval} {getDisplayName(policy.repeat_unit, repeatUnitTypes)} 마다
-                              {policy.specific_months && ` (${policy.specific_months}월)`}
-                              {policy.specific_days && ` (${policy.specific_days}일)`}
-                            </p>
-                          </div>
-                        )}
-                        <div className="flex gap-3">
-                          {policy.effective_type && (
-                            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-950/30 dark:border-blue-900 flex-1">
-                              <p className="text-sm text-blue-700 dark:text-blue-300">
-                                <span className="font-medium">발효 타입:</span> {getDisplayName(policy.effective_type, effectiveTypes)}
-                              </p>
-                            </div>
-                          )}
-                          {policy.expiration_type && (
-                            <div className="p-3 bg-green-50 border border-green-200 rounded-lg dark:bg-green-950/30 dark:border-green-900 flex-1">
-                              <p className="text-sm text-green-700 dark:text-green-300">
-                                <span className="font-medium">만료 타입:</span> {getDisplayName(policy.expiration_type, expirationTypes)}
-                              </p>
-                            </div>
-                          )}
                         </div>
-                      </div>
+                      )}
                     </div>
-                  </div>
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

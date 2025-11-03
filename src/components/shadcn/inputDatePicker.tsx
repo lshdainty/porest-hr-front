@@ -46,6 +46,8 @@ export function InputDatePicker({ value, onValueChange }: InputDatePickerProps) 
     setMonth(date);
   }, [date]);
 
+  // TODO: calendar select box 클릭 시 바로 닫히는 버그 있음, calendar에서 날짜 선택시 이전날짜가 선택되는 버그 있음
+
   return (
     <InputGroup>
       <InputGroupInput

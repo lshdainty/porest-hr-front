@@ -30,10 +30,13 @@ const EventPopup: React.FC<EventProps> = (props) => {
   const {mutate: deleteSchedule} = useDeleteSchedule();
 
   const onDeleteEvent = () => {
-    resource.domainType === 'vacation' ?
-    resource.historyIds.forEach(id => {
-      deleteVacationHistory(id);
-    }) : deleteSchedule(resource.scheduleId);
+    if (resource.domainType === 'vacation') {
+      resource.historyIds.forEach(id => {
+        deleteVacationHistory(id);
+      });
+    } else {
+      deleteSchedule(resource.scheduleId);
+    }
   }
 
   return (

@@ -1,9 +1,9 @@
 import { useGetUser } from '@/api/user';
 import {
   useGetAvailableVacations,
-  useGetUserMonthStatsVacationUseHistories,
-  useGetUserPeriodVacationUseHistories,
-  useGetUserVacationUseStats
+  useGetUserMonthlyVacationStats,
+  useGetUserVacationUsagesByPeriod,
+  useGetUserVacationStats
 } from '@/api/vacation';
 import UserInfoCard from '@/components/user/UserInfoCard';
 import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
@@ -29,16 +29,16 @@ export default function History() {
     user_id: user_id,
     start_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
   });
-  const { data: monthStats, isLoading: monthStatsLoading } = useGetUserMonthStatsVacationUseHistories({
+  const { data: monthStats, isLoading: monthStatsLoading } = useGetUserMonthlyVacationStats({
     user_id: user_id,
     year: dayjs().format('YYYY'),
   });
-  const { data: histories, isLoading: historiesLoading } = useGetUserPeriodVacationUseHistories({
+  const { data: histories, isLoading: historiesLoading } = useGetUserVacationUsagesByPeriod({
     user_id: user_id,
     start_date: `${dayjs().format('YYYY')}-01-01T00:00:00`,
     end_date: `${dayjs().format('YYYY')}-12-31T23:59:59`,
   });
-  const { data: vacationStats, isLoading: vacationStatsLoading } = useGetUserVacationUseStats({
+  const { data: vacationStats, isLoading: vacationStatsLoading } = useGetUserVacationStats({
     user_id: user_id,
     base_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
   });
