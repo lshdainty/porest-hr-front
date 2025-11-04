@@ -1,8 +1,8 @@
-import { useMemo, useEffect, useRef, useState } from 'react';
 import { GetAvailableVacationsResp } from '@/api/vacation';
-import { ResponsiveContainer, Tooltip, Pie, PieChart, Cell, Label } from 'recharts';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { cn } from '@/lib/utils';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Cell, Label, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 const renderChartColor = (type: string) => {
   switch (type) {
@@ -41,7 +41,7 @@ export default function VacationTypeStatsCard({ value, className }: VacationType
   }, [value]);
   
   const totalVacationDays = useMemo(() => {
-    return vacationTypes?.reduce((total, item) => total + item.remain_time, 0)
+    return vacationTypes?.reduce((total, item) => total + item.total_remain_time, 0)
   }, [vacationTypes]);
 
   // 차트 크기 계산 - 최소 크기 보장
@@ -105,6 +105,8 @@ export default function VacationTypeStatsCard({ value, className }: VacationType
     };
   }, []);
 
+  console.log(value);
+
   return (
     <Card className={cn(className, 'flex flex-col')}>
       <CardHeader className='items-center pb-0 flex-shrink-0'>
@@ -143,7 +145,7 @@ export default function VacationTypeStatsCard({ value, className }: VacationType
                         <div className='flex items-center gap-2'>
                           <div className='h-3 w-3 rounded-full' style={{ backgroundColor: data.fill }}></div>
                           <span className='text-[0.85rem] text-muted-foreground'>{data.vacation_type_name}</span>
-                          <span className='ml-auto font-bold'>{data.remain_time_str}</span>
+                          <span className='ml-auto font-bold'>{data.total_remain_time_str}</span>
                         </div>
                       </div>
                     )
@@ -153,7 +155,7 @@ export default function VacationTypeStatsCard({ value, className }: VacationType
               />
               <Pie
                 data={vacationTypes}
-                dataKey='remain_time'
+                dataKey='total_remain_time'
                 nameKey='vacation_type'
                 cx='50%'
                 cy='50%'

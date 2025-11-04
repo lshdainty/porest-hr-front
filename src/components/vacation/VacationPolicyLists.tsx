@@ -2,11 +2,7 @@
 
 import {
   useGetGrantMethodTypes,
-  useGetEffectiveTypes,
-  useGetExpirationTypes,
-  useGetRepeatUnitTypes,
   useGetVacationTypes,
-  useGetVacationTimeTypes
 } from '@/api/type';
 import { useGetVacationPolicies } from '@/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
@@ -15,22 +11,11 @@ import {
   Card,
   CardContent,
 } from '@/components/shadcn/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/shadcn/dropdownMenu';
 import { Input } from '@/components/shadcn/input';
 import { VacationPolicyDeleteDialog } from '@/components/vacation/VacationPolicyDeleteDialog';
-import { VacationPolicyFormDialog } from '@/components/vacation/VacationPolicyFormDialog';
 import {
   Calendar,
-  CalendarClock,
-  Edit,
   Loader2,
-  MoreHorizontal,
-  Plus,
   Repeat,
   Search,
   Trash2,
@@ -40,11 +25,7 @@ import { useState } from 'react';
 export function VacationPolicyLists() {
   const { data: vacationPolicies, isLoading } = useGetVacationPolicies();
   const { data: grantMethodTypes } = useGetGrantMethodTypes();
-  const { data: effectiveTypes } = useGetEffectiveTypes();
-  const { data: expirationTypes } = useGetExpirationTypes();
-  const { data: repeatUnitTypes } = useGetRepeatUnitTypes();
   const { data: vacationTypes } = useGetVacationTypes();
-  const { data: vacationTimeTypes } = useGetVacationTimeTypes();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -93,21 +74,6 @@ export function VacationPolicyLists() {
             </div>
             <div className="text-sm text-muted-foreground">총 {filteredPolicies.length}개 정책</div>
           </div>
-          <VacationPolicyFormDialog
-            isEditing={false}
-            grantMethodTypes={grantMethodTypes}
-            vacationTypes={vacationTypes}
-            effectiveTypes={effectiveTypes}
-            expirationTypes={expirationTypes}
-            repeatUnitTypes={repeatUnitTypes}
-            vacationTimeTypes={vacationTimeTypes}
-            trigger={
-              <Button className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                새 휴가 정책 추가
-              </Button>
-            }
-          />
         </div>
 
         {/* 정책 리스트 */}
@@ -143,61 +109,20 @@ export function VacationPolicyLists() {
                           </div>
                         )}
                       </div>
-                      {(policy.effective_type || policy.expiration_type) && (
-                        <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <CalendarClock className="h-4 w-4" />
-                            <span>
-                              유효기간: {getDisplayName(policy.effective_type, effectiveTypes)} ~ {getDisplayName(policy.expiration_type, expirationTypes)}
-                            </span>
-                          </div>
-                        </div>
-                      )}
                     </div>
 
-                  <DropdownMenu modal={false}>
-                    <DropdownMenuTrigger asChild>
+                  <VacationPolicyDeleteDialog
+                    policy={policy}
+                    trigger={
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted"
+                        className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive"
                       >
-                        <MoreHorizontal className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-32">
-                      <VacationPolicyFormDialog
-                        isEditing={true}
-                        initialData={policy as any}
-                        grantMethodTypes={grantMethodTypes}
-                        vacationTypes={vacationTypes}
-                        effectiveTypes={effectiveTypes}
-                        expirationTypes={expirationTypes}
-                        repeatUnitTypes={repeatUnitTypes}
-                        vacationTimeTypes={vacationTimeTypes}
-                        trigger={
-                          <DropdownMenuItem
-                            onSelect={(e) => e.preventDefault()}
-                          >
-                            <Edit className="h-4 w-4" />
-                            <span>수정</span>
-                          </DropdownMenuItem>
-                        }
-                      />
-                      <VacationPolicyDeleteDialog
-                        policy={policy}
-                        trigger={
-                          <DropdownMenuItem
-                            onSelect={(e) => e.preventDefault()}
-                            className="text-destructive focus:text-destructive hover:!bg-destructive/20"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span>삭제</span>
-                          </DropdownMenuItem>
-                        }
-                      />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                    }
+                  />
                 </div>
               </CardContent>
             </Card>
