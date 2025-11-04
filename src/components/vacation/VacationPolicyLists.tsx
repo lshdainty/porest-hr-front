@@ -2,6 +2,8 @@
 
 import {
   useGetGrantMethodTypes,
+  useGetEffectiveTypes,
+  useGetExpirationTypes,
   useGetVacationTypes,
 } from '@/api/type';
 import { useGetVacationPolicies } from '@/api/vacation';
@@ -15,6 +17,7 @@ import { Input } from '@/components/shadcn/input';
 import { VacationPolicyDeleteDialog } from '@/components/vacation/VacationPolicyDeleteDialog';
 import {
   Calendar,
+  CalendarClock,
   Loader2,
   Repeat,
   Search,
@@ -25,6 +28,8 @@ import { useState } from 'react';
 export function VacationPolicyLists() {
   const { data: vacationPolicies, isLoading } = useGetVacationPolicies();
   const { data: grantMethodTypes } = useGetGrantMethodTypes();
+  const { data: effectiveTypes } = useGetEffectiveTypes();
+  const { data: expirationTypes } = useGetExpirationTypes();
   const { data: vacationTypes } = useGetVacationTypes();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -109,6 +114,16 @@ export function VacationPolicyLists() {
                           </div>
                         )}
                       </div>
+                      {(policy.effective_type || policy.expiration_type) && (
+                        <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <CalendarClock className="h-4 w-4" />
+                            <span>
+                              유효기간: {getDisplayName(policy.effective_type, effectiveTypes)} ~ {getDisplayName(policy.expiration_type, expirationTypes)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                   <VacationPolicyDeleteDialog
