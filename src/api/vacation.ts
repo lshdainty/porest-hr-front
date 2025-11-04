@@ -26,7 +26,9 @@ const enum VacationQueryKey {
   POST_REQUEST_VACATION = 'postRequestVacation',
   POST_APPROVE_VACATION = 'postApproveVacation',
   POST_REJECT_VACATION = 'postRejectVacation',
-  GET_PENDING_APPROVALS_BY_APPROVER = 'getPendingApprovalsByApprover'
+  GET_PENDING_APPROVALS_BY_APPROVER = 'getPendingApprovalsByApprover',
+  GET_USER_REQUESTED_VACATIONS = 'getUserRequestedVacations',
+  GET_USER_REQUESTED_VACATION_STATS = 'getUserRequestedVacationStats'
 }
 
 interface PostUseVacationReq {
@@ -842,6 +844,80 @@ const useGetPendingApprovalsByApprover = (reqData: GetPendingApprovalsByApprover
   });
 }
 
+interface GetUserRequestedVacationsReq {
+  user_id: string
+}
+
+interface GetUserRequestedVacationsResp {
+  vacation_grant_id: number
+  policy_id: number
+  policy_name: string
+  vacation_type: string
+  vacation_type_name: string
+  desc: string
+  grant_time: number
+  grant_time_str: string
+  remain_time: number
+  remain_time_str: string
+  grant_date: string
+  expiry_date: string
+  request_date: string
+  grant_status: string
+  grant_status_name: string
+}
+
+const useGetUserRequestedVacations = (reqData: GetUserRequestedVacationsReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_REQUESTED_VACATIONS, reqData.user_id],
+    queryFn: async (): Promise<GetUserRequestedVacationsResp[]> => {
+      const resp: ApiResponse<GetUserRequestedVacationsResp[]> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.user_id}/vacation-requests`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.user_id
+  });
+}
+
+interface GetUserRequestedVacationStatsReq {
+  user_id: string
+}
+
+interface GetUserRequestedVacationStatsResp {
+  total_request_count: number
+  current_month_request_count: number
+  change_rate: number
+  pending_count: number
+  average_processing_days: number
+  progress_count: number
+  approved_count: number
+  approval_rate: number
+  rejected_count: number
+  acquired_vacation_time_str: string
+  acquired_vacation_time: number
+}
+
+const useGetUserRequestedVacationStats = (reqData: GetUserRequestedVacationStatsReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_REQUESTED_VACATION_STATS, reqData.user_id],
+    queryFn: async (): Promise<GetUserRequestedVacationStatsResp> => {
+      const resp: ApiResponse<GetUserRequestedVacationStatsResp> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.user_id}/vacation-requests/stats`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.user_id
+  });
+}
+
 export {
   usePostUseVacation,
   useDeleteVacationUsage,
@@ -866,6 +942,8 @@ export {
   usePostApproveVacation,
   usePostRejectVacation,
   useGetPendingApprovalsByApprover,
+  useGetUserRequestedVacations,
+  useGetUserRequestedVacationStats,
   VacationQueryKey
 };
 
@@ -912,6 +990,10 @@ export type {
   PostRejectVacationResp,
   GetPendingApprovalsByApproverReq,
   PendingApprovalInfo,
-  GetPendingApprovalsByApproverResp
+  GetPendingApprovalsByApproverResp,
+  GetUserRequestedVacationsReq,
+  GetUserRequestedVacationsResp,
+  GetUserRequestedVacationStatsReq,
+  GetUserRequestedVacationStatsResp
 };
 
