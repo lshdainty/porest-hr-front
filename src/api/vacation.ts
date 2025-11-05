@@ -514,6 +514,7 @@ const usePostAssignVacationPoliciesToUser = () => {
 
 interface GetUserVacationPoliciesReq {
   user_id: string
+  grant_method?: 'ON_REQUEST' | 'MANUAL_GRANT' | 'REPEAT_GRANT'
 }
 
 interface GetUserVacationPoliciesResp {
@@ -529,6 +530,10 @@ interface GetUserVacationPoliciesResp {
   repeat_interval: number
   specific_months: number
   specific_days: number
+  first_grant_date: string
+  is_recurring: string
+  approval_required_count: number
+  max_grant_count: number
   effective_type: string
   expiration_type: string
   repeat_grant_desc: string
@@ -536,11 +541,17 @@ interface GetUserVacationPoliciesResp {
 
 const useGetUserVacationPolicies = (reqData: GetUserVacationPoliciesReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_USER_VACATION_POLICIES, reqData.user_id],
+    queryKey: [VacationQueryKey.GET_USER_VACATION_POLICIES, reqData.user_id, reqData.grant_method],
     queryFn: async (): Promise<GetUserVacationPoliciesResp[]> => {
+      const params = new URLSearchParams()
+      if (reqData.grant_method) {
+        params.append('grantMethod', reqData.grant_method)
+      }
+      const queryString = params.toString() ? `?${params.toString()}` : ''
+
       const resp: ApiResponse<GetUserVacationPoliciesResp[]> = await api.request({
         method: 'get',
-        url: `/users/${reqData.user_id}/vacation-policies`
+        url: `/users/${reqData.user_id}/vacation-policies${queryString}`
       });
 
       if (resp.code !== 200) throw new Error(resp.message);
@@ -919,81 +930,36 @@ const useGetUserRequestedVacationStats = (reqData: GetUserRequestedVacationStats
 }
 
 export {
-  usePostUseVacation,
-  useDeleteVacationUsage,
-  useGetUserVacationHistory,
-  useGetAllUsersVacationHistory,
-  useGetAvailableVacations,
-  useGetVacationUsagesByPeriod,
-  useGetUserVacationUsagesByPeriod,
-  useGetUserMonthlyVacationStats,
-  useGetUserVacationStats,
-  useGetVacationPolicies,
-  useGetVacationPolicy,
-  usePostVacationPolicy,
-  useDeleteVacationPolicy,
-  usePostAssignVacationPoliciesToUser,
-  useGetUserVacationPolicies,
-  useDeleteRevokeVacationPolicyFromUser,
-  useDeleteRevokeVacationPoliciesFromUser,
-  usePostManualGrantVacation,
-  useDeleteRevokeVacationGrant,
-  usePostRequestVacation,
-  usePostApproveVacation,
-  usePostRejectVacation,
-  useGetPendingApprovalsByApprover,
-  useGetUserRequestedVacations,
-  useGetUserRequestedVacationStats,
-  VacationQueryKey
+  useDeleteRevokeVacationGrant, useDeleteRevokeVacationPoliciesFromUser, useDeleteRevokeVacationPolicyFromUser, useDeleteVacationPolicy, useDeleteVacationUsage, useGetAllUsersVacationHistory,
+  useGetAvailableVacations, useGetPendingApprovalsByApprover, useGetUserMonthlyVacationStats, useGetUserRequestedVacations,
+  useGetUserRequestedVacationStats, useGetUserVacationHistory, useGetUserVacationPolicies, useGetUserVacationStats, useGetUserVacationUsagesByPeriod, useGetVacationPolicies,
+  useGetVacationPolicy, useGetVacationUsagesByPeriod, usePostApproveVacation, usePostAssignVacationPoliciesToUser, usePostManualGrantVacation, usePostRejectVacation, usePostRequestVacation, usePostUseVacation, usePostVacationPolicy, VacationQueryKey
 };
 
-export type {
-  PostUseVacationReq,
-  PostUseVacationResp,
-  GetUserVacationHistoryReq,
-  GetUserVacationHistoryResp,
-  VacationGrantInfo,
-  VacationUsageInfo,
-  GetAllUsersVacationHistoryResp,
-  GetAvailableVacationsReq,
-  GetAvailableVacationsResp,
-  GetVacationUsagesByPeriodReq,
-  GetVacationUsagesByPeriodResp,
-  GetUserVacationUsagesByPeriodReq,
-  GetUserVacationUsagesByPeriodResp,
-  GetUserMonthlyVacationStatsReq,
-  GetUserMonthlyVacationStatsResp,
-  GetUserVacationStatsReq,
-  GetUserVacationStatsResp,
-  GetVacationPoliciesResp,
-  GetVacationPolicyReq,
-  GetVacationPolicyResp,
-  PostVacationPolicyReq,
-  PostVacationPolicyResp,
-  DeleteVacationPolicyResp,
-  PostAssignVacationPoliciesToUserReq,
-  PostAssignVacationPoliciesToUserResp,
-  GetUserVacationPoliciesReq,
-  GetUserVacationPoliciesResp,
-  DeleteRevokeVacationPolicyFromUserReq,
-  DeleteRevokeVacationPolicyFromUserResp,
-  DeleteRevokeVacationPoliciesFromUserReq,
-  DeleteRevokeVacationPoliciesFromUserResp,
-  PostManualGrantVacationReq,
-  PostManualGrantVacationResp,
-  DeleteRevokeVacationGrantResp,
-  PostRequestVacationReq,
-  PostRequestVacationResp,
-  PostApproveVacationReq,
-  PostApproveVacationResp,
-  PostRejectVacationReq,
-  PostRejectVacationResp,
-  GetPendingApprovalsByApproverReq,
-  PendingApprovalInfo,
-  GetPendingApprovalsByApproverResp,
-  GetUserRequestedVacationsReq,
-  GetUserRequestedVacationsResp,
-  GetUserRequestedVacationStatsReq,
-  GetUserRequestedVacationStatsResp
-};
+  export type {
+    DeleteRevokeVacationGrantResp, DeleteRevokeVacationPoliciesFromUserReq,
+    DeleteRevokeVacationPoliciesFromUserResp, DeleteRevokeVacationPolicyFromUserReq,
+    DeleteRevokeVacationPolicyFromUserResp, DeleteVacationPolicyResp, GetAllUsersVacationHistoryResp,
+    GetAvailableVacationsReq,
+    GetAvailableVacationsResp, GetPendingApprovalsByApproverReq, GetPendingApprovalsByApproverResp, GetUserMonthlyVacationStatsReq,
+    GetUserMonthlyVacationStatsResp, GetUserRequestedVacationsReq,
+    GetUserRequestedVacationsResp,
+    GetUserRequestedVacationStatsReq,
+    GetUserRequestedVacationStatsResp, GetUserVacationHistoryReq,
+    GetUserVacationHistoryResp, GetUserVacationPoliciesReq,
+    GetUserVacationPoliciesResp, GetUserVacationStatsReq,
+    GetUserVacationStatsResp, GetUserVacationUsagesByPeriodReq,
+    GetUserVacationUsagesByPeriodResp, GetVacationPoliciesResp,
+    GetVacationPolicyReq,
+    GetVacationPolicyResp, GetVacationUsagesByPeriodReq,
+    GetVacationUsagesByPeriodResp, PendingApprovalInfo, PostApproveVacationReq,
+    PostApproveVacationResp, PostAssignVacationPoliciesToUserReq,
+    PostAssignVacationPoliciesToUserResp, PostManualGrantVacationReq,
+    PostManualGrantVacationResp, PostRejectVacationReq,
+    PostRejectVacationResp, PostRequestVacationReq,
+    PostRequestVacationResp, PostUseVacationReq,
+    PostUseVacationResp, PostVacationPolicyReq,
+    PostVacationPolicyResp, VacationGrantInfo,
+    VacationUsageInfo
+  };
 
