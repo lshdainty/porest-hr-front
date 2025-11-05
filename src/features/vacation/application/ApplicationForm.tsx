@@ -1,6 +1,7 @@
+import type { GetUserApproversResp } from '@/api/user'
 import type { GetUserVacationPoliciesResp } from '@/api/vacation'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar'
-import { Badge } from '@/components/shadcn/badge'
+import { usePostRequestVacation } from '@/api/vacation'
+import { Avatar, AvatarFallback } from '@/components/shadcn/avatar'
 import { Button } from '@/components/shadcn/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import {
@@ -25,6 +26,7 @@ import {
 } from '@/components/shadcn/select'
 import { Separator } from '@/components/shadcn/separator'
 import { Textarea } from '@/components/shadcn/textarea'
+import { useLoginUserStore } from '@/store/LoginUser'
 import { zodResolver } from '@hookform/resolvers/zod'
 import dayjs from 'dayjs'
 import { AlertCircle, Calendar, CheckCircle2, Clock, Users } from 'lucide-react'
@@ -39,28 +41,23 @@ const formSchema = z.object({
   startTime: z.string().optional(),
   endTime: z.string().optional(),
   reason: z.string().min(1, '사유를 입력해주세요.'),
-  approver: z.string().min(1, '결재자를 선택해주세요.'),
-}).superRefine((data, ctx) => {
-  // overtime 타입인 경우 시작시간, 종료시간 필수
-  // 이 검증은 컴포넌트에서 vacation_type을 확인한 후에 수행됩니다
+  approvers: z.array(z.string()),
 })
 
 type OvertimeFormValues = z.infer<typeof formSchema>
-
-const approvers = [
-  { id: 'kim', name: '김팀장', department: 'IT팀', avatar: '/api/placeholder/32/32' },
-  { id: 'lee', name: '이부장', department: 'IT부', avatar: '/api/placeholder/32/32' },
-  { id: 'park', name: '박차장', department: 'IT부', avatar: '/api/placeholder/32/32' }
-]
 
 interface ApplicationFormDialogProps {
   open: boolean
   onClose: () => void
   onSubmitSuccess: () => void
   vacationPolicies: GetUserVacationPoliciesResp[]
+  approvers: GetUserApproversResp[]
 }
 
-export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, vacationPolicies }: ApplicationFormDialogProps) {
+export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, vacationPolicies, approvers }: ApplicationFormDialogProps) {
+  const { loginUser } = useLoginUserStore()
+  const { mutate: requestVacation } = usePostRequestVacation()
+
   const form = useForm<OvertimeFormValues>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
@@ -71,13 +68,16 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
       startTime: '',
       endTime: '',
       reason: '',
-      approver: ''
+      approvers: []
     }
   })
 
   const vacationPolicyId = form.watch('vacationPolicyId')
   const startTime = form.watch('startTime')
   const endTime = form.watch('endTime')
+  const selectedApprovers = form.watch('approvers')
+
+  console.log(vacationPolicies)
 
   // 선택된 정책 찾기
   const selectedPolicy = vacationPolicies.find(
@@ -87,12 +87,18 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
   // overtime 타입인지 확인 (대소문자 무관하게 체크)
   const isOvertimeType = selectedPolicy?.vacation_type?.toLowerCase() === 'overtime'
 
+  // 승인자 선택 완료 여부 확인
+  const approvalRequiredCount = selectedPolicy?.approval_required_count || 0
+  const isApproversValid = approvalRequiredCount === 0 ||
+    (selectedApprovers && selectedApprovers.filter(a => a).length === approvalRequiredCount)
+
   // 정책 변경 시 날짜와 시간 필드 초기화
   useEffect(() => {
     if (vacationPolicyId) {
       form.setValue('overtimeDate', '')
       form.setValue('startTime', '')
       form.setValue('endTime', '')
+      form.setValue('approvers', [])
     }
   }, [vacationPolicyId, form])
 
@@ -118,21 +124,41 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
         startTime: '',
         endTime: '',
         reason: '',
-        approver: ''
+        approvers: []
       })
     }
   }, [open, form])
 
   const onSubmit = (values: OvertimeFormValues) => {
-    // 제출 로직
-    console.log('Form submitted:', {
-      ...values,
-      overtimeHours,
-      compensationHours: overtimeHours
-    })
+    if (!loginUser?.user_id) {
+      console.error('User not logged in')
+      return
+    }
 
-    onSubmitSuccess()
-    onClose()
+    // 날짜와 시간을 LocalDateTime 형식으로 변환
+    // overtime 타입인 경우: 시작시간과 종료시간 포함
+    // 일반 휴가인 경우: 해당 날짜의 00:00:00, 종료시간은 null
+    const requestStartTime = isOvertimeType && values.startTime
+      ? `${values.overtimeDate}T${values.startTime}:00`
+      : `${values.overtimeDate}T00:00:00`
+    const requestEndTime = isOvertimeType && values.endTime
+      ? `${values.overtimeDate}T${values.endTime}:00`
+      : null
+
+    requestVacation({
+      user_id: loginUser.user_id,
+      policy_id: values.vacationPolicyId,
+      desc: values.title,
+      approver_ids: values.approvers.filter(a => a),
+      request_start_time: requestStartTime,
+      request_end_time: requestEndTime,
+      request_desc: values.reason
+    }, {
+      onSuccess: () => {
+        onSubmitSuccess()
+        onClose()
+      }
+    })
   }
 
   const handleClose = () => {
@@ -355,107 +381,65 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
                           </Field>
                         )}
                       />
-
-                      <Controller
-                        control={form.control}
-                        name='approver'
-                        render={({ field, fieldState }) => (
-                          <Field data-invalid={!!fieldState.error}>
-                            <FieldLabel>
-                              결재자 선택
-                              <span className='text-destructive ml-0.5'>*</span>
-                            </FieldLabel>
-                            <Select value={field.value} onValueChange={field.onChange}>
-                              <SelectTrigger>
-                                <SelectValue placeholder='결재자를 선택해주세요' />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {approvers.map((approver) => (
-                                  <SelectItem key={approver.id} value={approver.id}>
-                                    <div className='flex items-center gap-2'>
-                                      <Avatar className='w-6 h-6'>
-                                        <AvatarImage src={approver.avatar} />
-                                        <AvatarFallback>{approver.name.charAt(0)}</AvatarFallback>
-                                      </Avatar>
-                                      <div className='text-left'>
-                                        <div className='font-medium'>{approver.name}</div>
-                                        <div className='text-xs text-gray-500'>{approver.department}</div>
-                                      </div>
-                                    </div>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                          </Field>
-                        )}
-                      />
                     </CardContent>
                   </Card>
                 </div>
 
                 {/* 사이드바 */}
                 <div className='lg:col-span-1 space-y-4'>
-                  {/* 승인 현황 */}
+                  {/* 승인자 지정 */}
                   <Card>
                     <CardHeader>
                       <CardTitle className='text-lg flex items-center gap-2'>
                         <Users className='w-5 h-5' />
-                        승인 · 참조
+                        승인자 지정
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className='space-y-4'>
-                        <div>
-                          <h4 className='text-sm font-medium text-gray-700 mb-2'>참조</h4>
-                          <div className='space-y-2'>
-                            <div className='flex items-center gap-2 p-2 rounded-md bg-gray-50'>
-                              <Avatar className='w-8 h-8'>
-                                <AvatarFallback>송</AvatarFallback>
-                              </Avatar>
-                              <div className='flex-1'>
-                                <div className='text-sm font-medium'>송윤호</div>
-                                <div className='text-xs text-gray-500'>Brand & Comm Team</div>
+                        {selectedPolicy?.approval_required_count ? (
+                          Array.from({ length: selectedPolicy.approval_required_count }).map((_, index) => (
+                            <div key={index}>
+                              {index > 0 && <Separator className='my-4' />}
+                              <div className={index > 0 ? 'mt-4' : ''}>
+                                <h4 className='text-sm font-medium text-gray-700 mb-2'>
+                                  {index + 1}단계 인원 지정
+                                </h4>
+                                <Controller
+                                  control={form.control}
+                                  name={`approvers.${index}` as const}
+                                  rules={{ required: '승인자를 선택해주세요' }}
+                                  render={({ field }) => (
+                                    <Select value={field.value || ''} onValueChange={field.onChange}>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder='결재자를 선택해주세요' />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {approvers.map((approver) => (
+                                          <SelectItem key={approver.user_id} value={approver.user_id}>
+                                            <div className='flex items-center gap-2'>
+                                              <Avatar className='w-6 h-6'>
+                                                <AvatarFallback>{approver.user_name.charAt(0)}</AvatarFallback>
+                                              </Avatar>
+                                              <div className='text-left'>
+                                                <div className='font-medium'>{approver.user_name}</div>
+                                                <div className='text-xs text-gray-500'>{approver.department_name_kr}</div>
+                                              </div>
+                                            </div>
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  )}
+                                />
                               </div>
-                              <Badge variant='secondary' className='bg-green-100 text-green-800'>
-                                승인
-                              </Badge>
                             </div>
+                          ))
+                        ) : (
+                          <div className='p-3 rounded-md border border-dashed border-gray-300 bg-gray-50'>
+                            <p className='text-sm text-gray-500 text-center'>휴가 정책을 먼저 선택해주세요</p>
                           </div>
-                        </div>
-
-                        <Separator />
-
-                        <div>
-                          <h4 className='text-sm font-medium text-gray-700 mb-2'>1단계 진행 중</h4>
-                          <div className='space-y-2'>
-                            <div className='flex items-center gap-2 p-2 rounded-md bg-blue-50'>
-                              <Avatar className='w-8 h-8'>
-                                <AvatarFallback>이</AvatarFallback>
-                              </Avatar>
-                              <div className='flex-1'>
-                                <div className='text-sm font-medium'>이민서</div>
-                                <div className='text-xs text-gray-500'>HR Manager</div>
-                              </div>
-                              <Badge variant='secondary' className='bg-blue-100 text-blue-800'>
-                                대기중
-                              </Badge>
-                            </div>
-
-                            <div className='flex items-center gap-2 p-2 rounded-md bg-gray-50'>
-                              <Avatar className='w-8 h-8'>
-                                <AvatarFallback>김</AvatarFallback>
-                              </Avatar>
-                              <div className='flex-1'>
-                                <div className='text-sm font-medium'>김이준</div>
-                                <div className='text-xs text-gray-500'>HR Manager</div>
-                              </div>
-                              <Badge variant='secondary'>
-                                대기중
-                              </Badge>
-                            </div>
-                          </div>
-                        </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -531,7 +515,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
                 <Button
                   type='submit'
                   className='flex-1'
-                  disabled={!form.formState.isValid}
+                  disabled={!form.formState.isValid || !isApproversValid}
                 >
                   결재 요청
                 </Button>

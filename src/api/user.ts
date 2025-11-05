@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 const enum UserQueryKey {
   GET_USER = 'getUser',
   GET_USERS = 'getUsers',
+  GET_USER_APPROVERS = 'getUserApprovers',
   GET_USER_ID_DUPLICATE = 'getUserIdDuplicate',
   POST_USER = 'postUser',
   POST_USER_INVITE = 'postUserInvite',
@@ -90,6 +91,39 @@ const useGetUsers = () => {
 
       return resp.data;
     }
+  });
+};
+
+interface GetUserApproversReq {
+  user_id: string
+}
+
+interface GetUserApproversResp {
+  user_id: string
+  user_name: string
+  user_email: string
+  user_role_type: string
+  user_role_name: string
+  department_id: number
+  department_name: string
+  department_name_kr: string
+  department_level: number
+}
+
+const useGetUserApprovers = (reqData: GetUserApproversReq) => {
+  return useQuery({
+    queryKey: [UserQueryKey.GET_USER_APPROVERS, reqData.user_id],
+    queryFn: async (): Promise<GetUserApproversResp[]> => {
+      const resp: ApiResponse<GetUserApproversResp[]> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.user_id}/approvers`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.user_id
   });
 };
 
@@ -372,13 +406,15 @@ const usePostResendInvitation = () => {
 export {
   useDeleteUser,
   // API Hook
-  useGetUser, useGetUserIdDuplicate, useGetUsers, usePostResendInvitation, usePostUploadProfile, usePostUser,
+  useGetUser, useGetUserApprovers, useGetUserIdDuplicate, useGetUsers, usePostResendInvitation, usePostUploadProfile, usePostUser,
   usePostUserInvite, usePutInvitedUser, usePutUser,
   // QueryKey
   UserQueryKey
 };
 
 export type {
+  GetUserApproversReq,
+  GetUserApproversResp,
   GetUserIdDuplicateReq,
   GetUserIdDuplicateResp,
   // Interface

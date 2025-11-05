@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useGetUserApprovers } from '@/api/user'
 import { useGetUserVacationPolicies } from '@/api/vacation'
 import { useLoginUserStore } from '@/store/LoginUser'
 import ApplicationTable from '@/features/vacation/application/ApplicationTable'
@@ -11,6 +12,10 @@ export default function Application() {
   const { data: vacationPolicies = [] } = useGetUserVacationPolicies({
     user_id: loginUser?.user_id || '',
     grant_method: 'ON_REQUEST'
+  })
+
+  const { data: approvers = [] } = useGetUserApprovers({
+    user_id: loginUser?.user_id || ''
   })
 
   const handleCreateNew = () => {
@@ -34,6 +39,7 @@ export default function Application() {
         onClose={handleCloseDialog}
         onSubmitSuccess={handleSubmitSuccess}
         vacationPolicies={vacationPolicies}
+        approvers={approvers}
       />
     </div>
   )

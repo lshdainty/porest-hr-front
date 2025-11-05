@@ -712,6 +712,9 @@ interface PostRequestVacationReq {
   policy_id: number
   desc: string
   approver_ids: string[]
+  request_start_time: string
+  request_end_time: string | null
+  request_desc: string
 }
 
 interface PostRequestVacationResp {
@@ -826,7 +829,8 @@ interface PendingApprovalInfo {
   policy_id: number
   policy_name: string
   desc: string
-  request_date: string
+  request_start_time: string
+  request_end_time: string | null
   grant_time: number
   vacation_type: string
   vacation_type_name: string
@@ -870,9 +874,11 @@ interface GetUserRequestedVacationsResp {
   grant_time_str: string
   remain_time: number
   remain_time_str: string
-  grant_date: string
-  expiry_date: string
-  request_date: string
+  grant_date: string | null
+  expiry_date: string | null
+  request_start_time: string
+  request_end_time: string | null
+  request_desc: string
   grant_status: string
   grant_status_name: string
 }
