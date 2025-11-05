@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react';
 import { AuthQueryKey, usePostLogout } from '@/api/auth';
 import { useGetUser, usePutUser, type PutUserReq } from '@/api/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
@@ -12,6 +11,7 @@ import { useLoginUserStore } from '@/store/LoginUser';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { CircleUser, EllipsisVertical, LogOut } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const defaultUser = {
@@ -80,7 +80,7 @@ export function Footer() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size='lg'
