@@ -1,15 +1,18 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
-import { EllipsisVertical, CircleUser, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
-import { usePostLogout, AuthQueryKey } from '@/api/auth';
-import { useLoginUserStore } from '@/store/LoginUser';
+'use client'
+
+import { useState } from 'react';
+import { AuthQueryKey, usePostLogout } from '@/api/auth';
 import { useGetUser, usePutUser, type PutUserReq } from '@/api/user';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar';
 import UserEditDialog from '@/components/user/UserEditDialog';
 import config from '@/config/config';
+import { useLoginUserStore } from '@/store/LoginUser';
+import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { CircleUser, EllipsisVertical, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const defaultUser = {
   user_name: 'Guest',
@@ -27,6 +30,9 @@ export function Footer() {
   const logoutMutation = usePostLogout()
   const { loginUser, clearLoginUser } = useLoginUserStore()
   const { mutate: putUser } = usePutUser()
+
+  // Dialog 상태 관리
+  const [showEditDialog, setShowEditDialog] = useState(false)
 
   // 로그인한 사용자의 상세 정보 가져오기
   const { data: userData } = useGetUser({
@@ -56,6 +62,7 @@ export function Footer() {
       user_origin_company_type: user.user_origin_company_type,
       user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
+      user_role_type: user.user_role_type,
       lunar_yn: user.lunar_yn,
       profile_url: user.profile_url,
       profile_uuid: user.profile_uuid
@@ -115,16 +122,10 @@ export function Footer() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               {userData && (
-                <UserEditDialog
-                  user={userData}
-                  onSave={handleUpdateUser}
-                  trigger={
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                      <CircleUser />
-                      Account
-                    </DropdownMenuItem>
-                  }
-                />
+                <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
+                  <CircleUser />
+                  Account
+                </DropdownMenuItem>
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -134,6 +135,16 @@ export function Footer() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* 사용자 수정 Dialog */}
+        {userData && (
+          <UserEditDialog
+            open={showEditDialog}
+            onOpenChange={setShowEditDialog}
+            user={userData}
+            onSave={handleUpdateUser}
+          />
+        )}
       </SidebarMenuItem>
     </SidebarMenu>
   )

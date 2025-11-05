@@ -1,37 +1,32 @@
-import { ReactNode, useState } from 'react'
+import { usePostResendInvitation } from '@/api/user'
+import { Button } from '@/components/shadcn/button'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogClose,
-  DialogTrigger,
 } from '@/components/shadcn/dialog'
-import { Button } from '@/components/shadcn/button'
-import { usePostResendInvitation } from '@/api/user'
 import { Loader2 } from 'lucide-react'
 
 interface ResendEmailDialogProps {
-  trigger: ReactNode
+  open: boolean
+  onOpenChange: (open: boolean) => void
   userId: string
   userEmail: string
 }
 
-export default function ResendEmailDialog({ trigger, userId, userEmail }: ResendEmailDialogProps) {
-  const [open, setOpen] = useState(false)
+export default function ResendEmailDialog({ open, onOpenChange, userId, userEmail }: ResendEmailDialogProps) {
   const { mutateAsync: resendInvitation, isPending } = usePostResendInvitation()
 
   const handleConfirm = async () => {
     await resendInvitation(userId)
-    setOpen(false)
+    onOpenChange(false)
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>초대 메일 재전송</DialogTitle>

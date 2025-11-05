@@ -1,9 +1,9 @@
-'use client';
-
 import {
-  useGetGrantMethodTypes,
   useGetEffectiveTypes,
   useGetExpirationTypes,
+  useGetGrantMethodTypes,
+  useGetRepeatUnitTypes,
+  useGetVacationTimeTypes,
   useGetVacationTypes,
 } from '@/api/type';
 import { useGetVacationPolicies } from '@/api/vacation';
@@ -15,10 +15,12 @@ import {
 } from '@/components/shadcn/card';
 import { Input } from '@/components/shadcn/input';
 import { VacationPolicyDeleteDialog } from '@/components/vacation/VacationPolicyDeleteDialog';
+import { VacationPolicyFormDialog } from '@/components/vacation/VacationPolicyFormDialog';
 import {
   Calendar,
   CalendarClock,
   Loader2,
+  Plus,
   Repeat,
   Search,
   Trash2,
@@ -31,6 +33,8 @@ export function VacationPolicyLists() {
   const { data: effectiveTypes } = useGetEffectiveTypes();
   const { data: expirationTypes } = useGetExpirationTypes();
   const { data: vacationTypes } = useGetVacationTypes();
+  const { data: repeatUnitTypes } = useGetRepeatUnitTypes();
+  const { data: vacationTimeTypes } = useGetVacationTimeTypes();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -79,6 +83,22 @@ export function VacationPolicyLists() {
             </div>
             <div className="text-sm text-muted-foreground">총 {filteredPolicies.length}개 정책</div>
           </div>
+
+          <VacationPolicyFormDialog
+            isEditing={false}
+            grantMethodTypes={grantMethodTypes}
+            vacationTypes={vacationTypes}
+            effectiveTypes={effectiveTypes}
+            expirationTypes={expirationTypes}
+            repeatUnitTypes={repeatUnitTypes}
+            vacationTimeTypes={vacationTimeTypes}
+            trigger={
+              <Button className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                새 휴가 정책 추가
+              </Button>
+            }
+          />
         </div>
 
         {/* 정책 리스트 */}

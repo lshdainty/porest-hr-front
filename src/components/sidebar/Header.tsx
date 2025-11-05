@@ -1,13 +1,13 @@
 import Logo from '@/assets/img/porest.svg';
 import LogoDark from '@/assets/img/porest_dark.svg';
 import LogoIcon from '@/assets/img/porest_logo.svg';
-import { useTheme } from '@/components/shadcn/themeProvider';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from '@/components/shadcn/sidebar';
+import { useTheme } from '@/components/shadcn/themeProvider';
 
 export function Header() {
   const { theme } = useTheme();

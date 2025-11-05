@@ -1,7 +1,7 @@
 import type { TypeResp } from '@/api/type'
 import { useGetUserIdDuplicate, usePostUserInvite, usePutInvitedUser } from '@/api/user'
 import { Button } from '@/components/shadcn/button'
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog'
 import { Field, FieldError, FieldLabel } from '@/components/shadcn/field'
 import { Input } from '@/components/shadcn/input'
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker'
@@ -26,7 +26,8 @@ const formSchema = z.object({
 type UserInviteFormValues = z.infer<typeof formSchema>
 
 interface UserInviteDialogProps {
-  trigger: React.ReactNode
+  open: boolean
+  onOpenChange: (open: boolean) => void
   title: string
   companyOptions: TypeResp[]
   initialData?: {
@@ -39,8 +40,7 @@ interface UserInviteDialogProps {
   }
 }
 
-export default function UserInviteDialog({ trigger, title, companyOptions, initialData }: UserInviteDialogProps) {
-  const [open, setOpen] = useState(false)
+export default function UserInviteDialog({ open, onOpenChange, title, companyOptions, initialData }: UserInviteDialogProps) {
   const [userIdToCheck, setUserIdToCheck] = useState('')
   const { mutateAsync: inviteUser, isPending: isInvitePending } = usePostUserInvite()
   const { mutateAsync: updateInvitedUser, isPending: isUpdatePending } = usePutInvitedUser()
@@ -128,14 +128,11 @@ export default function UserInviteDialog({ trigger, title, companyOptions, initi
       // 신규 초대 모드: POST /users/invitations
       await inviteUser(values)
     }
-    setOpen(false)
+    onOpenChange(false)
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import { EllipsisVertical, MailPlus, Pencil, Trash2, UserRound, UserRoundCog } from 'lucide-react';
+import { useState } from 'react';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -25,6 +26,13 @@ export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: deleteUser } = useDeleteUser();
   const { data: companyTypes } = useGetOriginCompanyTypes();
 
+  // Dialog 상태 관리
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState<string | null>(null);
+  const [showResendDialog, setShowResendDialog] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
+  const [showInviteEditDialog, setShowInviteEditDialog] = useState<string | null>(null);
+
   const handleUpdateUser = (user: PutUserReq) => {
     putUser({
       user_id: user.user_id,
@@ -34,6 +42,7 @@ export default function UserTable({ value: users }: UserTableProps) {
       user_origin_company_type: user.user_origin_company_type,
       user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
+      user_role_type: user.user_role_type,
       lunar_yn: user.lunar_yn,
       profile_url: user.profile_url,
       profile_uuid: user.profile_uuid
@@ -50,11 +59,9 @@ export default function UserTable({ value: users }: UserTableProps) {
         <div className='flex items-center justify-between'>
           <CardTitle>사용자 목록</CardTitle>
           <div className='flex gap-2'>
-            <UserInviteDialog
-              title='사용자 초대'
-              trigger={<Button className='text-sm h-8' size='sm'>초대</Button>}
-              companyOptions={companyTypes || []}
-            />
+            <Button className='text-sm h-8' size='sm' onClick={() => setShowInviteDialog(true)}>
+              초대
+            </Button>
           </div>
         </div>
       </CardHeader>
@@ -166,78 +173,45 @@ export default function UserTable({ value: users }: UserTableProps) {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align='end' className='w-32'>
-                            <ResendEmailDialog
-                              userId={row.user_id}
-                              userEmail={row.user_email}
-                              trigger={
-                                <DropdownMenuItem
-                                  disabled={row.invitation_status !== 'EXPIRED' && row.invitation_status !== 'INACTIVE'}
-                                  onSelect={(e) => e.preventDefault()}
-                                >
-                                  <MailPlus className='h-4 w-4' />
-                                  <span>메일 재전송</span>
-                                </DropdownMenuItem>
-                              }
-                            />
+                            <DropdownMenuItem
+                              disabled={row.invitation_status !== 'EXPIRED' && row.invitation_status !== 'INACTIVE'}
+                              onSelect={() => setShowResendDialog(row.user_id)}
+                            >
+                              <MailPlus className='h-4 w-4' />
+                              <span>메일 재전송</span>
+                            </DropdownMenuItem>
                             {row.invitation_status === 'ACTIVE' && (
-                              <UserEditDialog
-                                user={row}
-                                onSave={handleUpdateUser}
-                                trigger={
-                                  <DropdownMenuItem
-                                    onSelect={(e) => e.preventDefault()}
-                                  >
-                                    <Pencil className='h-4 w-4' />
-                                    <span>수정</span>
-                                  </DropdownMenuItem>
-                                }
-                              />
+                              <DropdownMenuItem
+                                onSelect={() => setShowEditDialog(row.user_id)}
+                              >
+                                <Pencil className='h-4 w-4' />
+                                <span>수정</span>
+                              </DropdownMenuItem>
                             )}
                             {row.invitation_status === 'PENDING' && (
-                              <UserInviteDialog
-                                title='사용자 정보 수정'
-                                companyOptions={companyTypes || []}
-                                initialData={{
-                                  user_id: row.user_id,
-                                  user_name: row.user_name,
-                                  user_email: row.user_email,
-                                  user_origin_company_type: row.user_origin_company_type,
-                                  user_work_time: row.user_work_time,
-                                  join_date: row.join_date
-                                }}
-                                trigger={
-                                  <DropdownMenuItem
-                                    onSelect={(e) => e.preventDefault()}
-                                  >
-                                    <Pencil className='h-4 w-4' />
-                                    <span>수정</span>
-                                  </DropdownMenuItem>
-                                }
-                              />
+                              <DropdownMenuItem
+                                onSelect={() => setShowInviteEditDialog(row.user_id)}
+                              >
+                                <Pencil className='h-4 w-4' />
+                                <span>수정</span>
+                              </DropdownMenuItem>
                             )}
                             {row.invitation_status !== 'ACTIVE' && row.invitation_status !== 'PENDING' && (
                               <DropdownMenuItem
                                 disabled
-                                onSelect={(e) => e.preventDefault()}
                               >
                                 <Pencil className='h-4 w-4' />
                                 <span>수정</span>
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
-                            <UserDeleteDialog
-                              user={row}
-                              onDelete={handleDeleteUser}
-                              trigger={
-                                <DropdownMenuItem
-                                  onSelect={(e) => e.preventDefault()}
-                                  className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                                >
-                                  <Trash2 className='h-4 w-4' />
-                                  <span>삭제</span>
-                                </DropdownMenuItem>
-                              }
-                            />
+                            <DropdownMenuItem
+                              onSelect={() => setShowDeleteDialog(row.user_id)}
+                              className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                            >
+                              <Trash2 className='h-4 w-4' />
+                              <span>삭제</span>
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -251,6 +225,63 @@ export default function UserTable({ value: users }: UserTableProps) {
           <Empty />
         )}
       </CardContent>
+
+      {/* 사용자 초대 Dialog */}
+      <UserInviteDialog
+        open={showInviteDialog}
+        onOpenChange={setShowInviteDialog}
+        title='사용자 초대'
+        companyOptions={companyTypes || []}
+      />
+
+      {/* 각 행별 Dialog들 */}
+      {users.map((row) => (
+        <div key={row.user_id}>
+          {/* 메일 재전송 Dialog */}
+          <ResendEmailDialog
+            open={showResendDialog === row.user_id}
+            onOpenChange={(open) => setShowResendDialog(open ? row.user_id : null)}
+            userId={row.user_id}
+            userEmail={row.user_email}
+          />
+
+          {/* ACTIVE 상태 수정 Dialog */}
+          {row.invitation_status === 'ACTIVE' && (
+            <UserEditDialog
+              open={showEditDialog === row.user_id}
+              onOpenChange={(open) => setShowEditDialog(open ? row.user_id : null)}
+              user={row}
+              onSave={handleUpdateUser}
+            />
+          )}
+
+          {/* PENDING 상태 수정 Dialog */}
+          {row.invitation_status === 'PENDING' && (
+            <UserInviteDialog
+              open={showInviteEditDialog === row.user_id}
+              onOpenChange={(open) => setShowInviteEditDialog(open ? row.user_id : null)}
+              title='사용자 정보 수정'
+              companyOptions={companyTypes || []}
+              initialData={{
+                user_id: row.user_id,
+                user_name: row.user_name,
+                user_email: row.user_email,
+                user_origin_company_type: row.user_origin_company_type,
+                user_work_time: row.user_work_time,
+                join_date: row.join_date
+              }}
+            />
+          )}
+
+          {/* 삭제 Dialog */}
+          <UserDeleteDialog
+            open={showDeleteDialog === row.user_id}
+            onOpenChange={(open) => setShowDeleteDialog(open ? row.user_id : null)}
+            user={row}
+            onDelete={handleDeleteUser}
+          />
+        </div>
+      ))}
     </Card>
   )
 }

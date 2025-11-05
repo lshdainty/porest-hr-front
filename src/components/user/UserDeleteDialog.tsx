@@ -1,3 +1,4 @@
+import { GetUsersResp } from '@/api/user';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,27 +8,26 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/shadcn/alertDialog';
-import { GetUsersResp } from '@/api/user';
 import { TriangleAlert } from 'lucide-react';
 
 interface UserDeleteDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   user: GetUsersResp;
-  trigger: React.ReactNode;
   onDelete: (id: string) => void;
 }
 
-export default function UserDeleteDialog({ user, trigger, onDelete }: UserDeleteDialogProps) {
+export default function UserDeleteDialog({ open, onOpenChange, user, onDelete }: UserDeleteDialogProps) {
   const handleDelete = () => {
     if (user.user_id !== '') {
       onDelete(user.user_id);
     }
+    onOpenChange(false);
   };
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="sm:max-w-lg">
         <div className="flex items-start space-x-4">
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">

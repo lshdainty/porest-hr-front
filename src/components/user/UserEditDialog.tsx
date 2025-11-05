@@ -2,7 +2,7 @@ import { GetUsersResp, usePostUploadProfile, type PutUserReq } from '@/api/user'
 import { Alert, AlertDescription } from '@/components/shadcn/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Button } from '@/components/shadcn/button';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
 import { Field, FieldError, FieldLabel } from '@/components/shadcn/field';
 import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
@@ -51,8 +51,9 @@ const formSchema = z.object({
 type UserFormValues = z.infer<typeof formSchema>;
 
 interface UserEditDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   user: GetUsersResp;
-  trigger: React.ReactNode;
   onSave: (updatedUser: PutUserReq) => void;
 }
 
@@ -96,8 +97,7 @@ const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8
   });
 };
 
-export default function UserEditDialog({ user, trigger, onSave }: UserEditDialogProps) {
-  const [open, setOpen] = useState(false);
+export default function UserEditDialog({ open, onOpenChange, user, onSave }: UserEditDialogProps) {
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfile();
   
   // 이미지 업로드 관련 상태 관리 - 초기값부터 완전한 URL로 설정
@@ -209,7 +209,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
       profile_url: imagePathForSave, // 상대 경로로 저장
       profile_uuid: profileUUID
     });
-    setOpen(false);
+    onOpenChange(false);
   };
 
   const workTimeOptions = [
@@ -226,10 +226,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
   const selectedRole = roleOptions.find(option => option.value === form.watch('user_role_type'));
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>사용자 수정</DialogTitle>
