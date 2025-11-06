@@ -262,13 +262,12 @@ TableHead className='min-w-[200px]'>제목</TableHead>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className='min-w-[180px]'>정책명</TableHead>
+                  <TableHead className='min-w-[200px]'>제목</TableHead>
                   <TableHead>휴가 타입</TableHead>
                   <TableHead>신청일</TableHead>
-                  <TableHead>부여일</TableHead>
-                  <TableHead>만료일</TableHead>
-                  <TableHead>부여 시간</TableHead>
-                  <TableHead>잔여 시간</TableHead>
+                  <TableHead>초과근무일자</TableHead>
+                  <TableHead>보상일수</TableHead>
+                  <TableHead>현결재자</TableHead>
                   <TableHead>상태</TableHead>
                   <TableHead>액션</TableHead>
                 </TableRow>
@@ -276,7 +275,7 @@ TableHead className='min-w-[200px]'>제목</TableHead>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={9} className='text-center py-8'>
+                    <TableCell colSpan={8} className='text-center py-8'>
                       <div className='flex justify-center'>
                         <Clock className='w-6 h-6 animate-spin text-gray-400' />
                       </div>
@@ -284,7 +283,7 @@ TableHead className='min-w-[200px]'>제목</TableHead>
                   </TableRow>
                 ) : vacationRequests.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className='text-center py-8 text-gray-500'>
+                    <TableCell colSpan={8} className='text-center py-8 text-gray-500'>
                       신청한 휴가가 없습니다.
                     </TableCell>
                   </TableRow>
@@ -293,10 +292,10 @@ TableHead className='min-w-[200px]'>제목</TableHead>
                     <TableRow key={request.vacation_grant_id} className='hover:bg-gray-50'>
                       <TableCell>
                         <div className='max-w-[200px]'>
-                          <p className='font-medium'>{request.policy_name}</p>
-                          {request.desc && (
+                          <p className='font-medium'>{request.desc || request.policy_name}</p>
+                          {request.request_desc && (
                             <p className='text-xs text-gray-500 mt-1 line-clamp-2'>
-                              {request.desc}
+                              {request.request_desc}
                             </p>
                           )}
                         </div>
@@ -307,13 +306,20 @@ TableHead className='min-w-[200px]'>제목</TableHead>
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {dayjs(request.request_date).format('YYYY-MM-DD')}
+                        {dayjs(request.create_date).format('YYYY-MM-DD')}
                       </TableCell>
                       <TableCell>
-                        {dayjs(request.grant_date).format('YYYY-MM-DD')}
-                      </TableCell>
-                      <TableCell>
-                        {dayjs(request.expiry_date).format('YYYY-MM-DD')}
+                        {request.request_end_time ? (
+                          <div className='text-sm'>
+                            {dayjs(request.request_start_time).format('YYYY-MM-DD')}
+                            <br />
+                            <span className='text-xs text-gray-600'>
+                              {dayjs(request.request_start_time).format('HH:mm')} ~ {dayjs(request.request_end_time).format('HH:mm')}
+                            </span>
+                          </div>
+                        ) : (
+                          dayjs(request.request_start_time).format('YYYY-MM-DD')
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className='flex items-center gap-1'>
@@ -322,10 +328,15 @@ TableHead className='min-w-[200px]'>제목</TableHead>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className='flex items-center gap-1'>
-                          <CalendarDays className='w-3 h-3 text-purple-500' />
-                          {request.remain_time_str}
-                        </div>
+                        {request.current_approver_name ? (
+                          <div className='flex items-center gap-1'>
+                            <Badge variant='outline' className='bg-blue-50 text-blue-700'>
+                              {request.current_approver_name}
+                            </Badge>
+                          </div>
+                        ) : (
+                          <span className='text-xs text-gray-400'>-</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         {getStatusBadge(request.grant_status)}

@@ -444,21 +444,6 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
                     </CardContent>
                   </Card>
 
-                  {/* 진행 현황 */}
-                  <Card>
-                    <CardContent className='p-4'>
-                      <div className='space-y-3'>
-                        <div className='flex items-center gap-2 text-sm'>
-                          <CheckCircle2 className='w-4 h-4 text-green-600' />
-                          <div className='flex-1'>
-                            <span className='text-gray-600'>작성자가 신청서를 작성중입니다.</span>
-                            <div className='text-xs text-gray-400'>방금 전</div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
                   {/* 신청 요약 */}
                   {(form.watch('title') || (isOvertimeType && overtimeHours > 0)) && (
                     <Card>

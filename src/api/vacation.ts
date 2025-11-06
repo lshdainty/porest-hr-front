@@ -881,6 +881,9 @@ interface GetUserRequestedVacationsResp {
   request_desc: string
   grant_status: string
   grant_status_name: string
+  create_date: string
+  current_approver_id: string | null
+  current_approver_name: string | null
 }
 
 const useGetUserRequestedVacations = (reqData: GetUserRequestedVacationsReq) => {
