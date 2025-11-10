@@ -47,6 +47,8 @@ const formSchema = z.object({
   vacationType: z.string().min(1, '휴가 타입을 선택해주세요'),
   grantMethod: z.string().min(1, '부여 방법을 선택해주세요'),
   grantTime: z.number().optional(),
+  grantTimeExists: z.string().optional(),
+  minuteGrantYn: z.string().min(1, '분단위 부여 여부를 선택해주세요'),
   effectiveType: z.string().optional(),
   expirationType: z.string().optional(),
   approvalRequiredCount: z.number().optional(),
@@ -60,12 +62,15 @@ const formSchema = z.object({
 }).superRefine((data, ctx) => {
   // ON_REQUEST 검증
   if (data.grantMethod === 'ON_REQUEST') {
-    if (!data.grantTime || data.grantTime <= 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: '부여 시간을 입력해주세요 (0보다 큰 값)',
-        path: ['grantTime']
-      });
+    // grantTimeExists가 Y이면 grantTime 필수
+    if (data.grantTimeExists === 'Y') {
+      if (!data.grantTime || data.grantTime <= 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '고정 시간 부여 시 부여 시간을 입력해주세요 (0보다 큰 값)',
+          path: ['grantTime']
+        });
+      }
     }
     if (!data.effectiveType) {
       ctx.addIssue({
@@ -85,13 +90,18 @@ const formSchema = z.object({
 
   // MANUAL_GRANT 검증
   if (data.grantMethod === 'MANUAL_GRANT') {
-    if (data.grantTime && data.grantTime <= 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: '부여 시간은 0보다 커야 합니다',
-        path: ['grantTime']
-      });
+    // grantTimeExists가 Y이면 grantTime 필수, N이면 검증 안 함
+    if (data.grantTimeExists === 'Y') {
+      if (!data.grantTime || data.grantTime <= 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '고정 시간 부여 시 부여 시간을 입력해주세요 (0보다 큰 값)',
+          path: ['grantTime']
+        });
+      }
     }
+    // grantTimeExists가 N(가변 시간)일 때는 grantTime 검증 제외
+
     if (!data.effectiveType) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -223,7 +233,6 @@ interface VacationPolicyFormDialogProps {
   effectiveTypes?: Array<{ code: string; name: string }>;
   expirationTypes?: Array<{ code: string; name: string }>;
   repeatUnitTypes?: Array<{ code: string; name: string }>;
-  vacationTimeTypes?: Array<{ code: string; name: string }>;
 }
 
 export function VacationPolicyFormDialog({
@@ -234,8 +243,7 @@ export function VacationPolicyFormDialog({
   vacationTypes = [],
   effectiveTypes = [],
   expirationTypes = [],
-  repeatUnitTypes = [],
-  vacationTimeTypes = []
+  repeatUnitTypes = []
 }: VacationPolicyFormDialogProps) {
   const [open, setOpen] = useState(false);
   const { mutateAsync: postVacationPolicy, isPending } = usePostVacationPolicy();
@@ -248,6 +256,8 @@ export function VacationPolicyFormDialog({
       vacationType: '',
       grantMethod: '',
       grantTime: undefined,
+      grantTimeExists: 'Y',
+      minuteGrantYn: 'N',
       effectiveType: '',
       expirationType: '',
       approvalRequiredCount: 0,
@@ -262,8 +272,16 @@ export function VacationPolicyFormDialog({
   });
 
   const watchGrantMethod = form.watch('grantMethod');
+  const watchGrantTimeExists = form.watch('grantTimeExists');
   const watchRepeatUnit = form.watch('repeatUnit');
   const watchIsRecurring = form.watch('isRecurring');
+
+  // grantTimeExists가 N(가변)으로 변경되면 grantTime 초기화
+  useEffect(() => {
+    if (watchGrantTimeExists === 'N' && watchGrantMethod !== 'REPEAT_GRANT') {
+      form.setValue('grantTime', undefined);
+    }
+  }, [watchGrantTimeExists, watchGrantMethod, form]);
 
   useEffect(() => {
     if (open) {
@@ -276,6 +294,8 @@ export function VacationPolicyFormDialog({
           vacationType: '',
           grantMethod: '',
           grantTime: undefined,
+          grantTimeExists: 'Y',
+          minuteGrantYn: 'N',
           effectiveType: '',
           expirationType: '',
           approvalRequiredCount: 0,
@@ -299,7 +319,10 @@ export function VacationPolicyFormDialog({
         vacation_policy_desc: data.description || '',
         vacation_type: data.vacationType,
         grant_method: data.grantMethod,
-        grant_time: data.grantTime || 0,
+        // grant_time_exists가 N이면 grant_time을 null로, Y이면 입력값 사용
+        grant_time: data.grantTimeExists === 'N' ? null : (data.grantTime || 0),
+        grant_time_exists: data.grantTimeExists || 'Y',
+        minute_grant_yn: data.minuteGrantYn || 'N',
         effective_type: data.effectiveType || null,
         expiration_type: data.expirationType || null,
       };
@@ -358,9 +381,9 @@ export function VacationPolicyFormDialog({
     const method = watchGrantMethod;
 
     const fieldsByMethod: Record<string, string[]> = {
-      'ON_REQUEST': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'effectiveType', 'expirationType', 'approvalRequiredCount'],
-      'MANUAL_GRANT': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'effectiveType', 'expirationType'],
-      'REPEAT_GRANT': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'effectiveType', 'expirationType', 'repeatUnit', 'repeatInterval', 'firstGrantDate', 'isRecurring', 'maxGrantCount', 'specificMonths', 'specificDays'],
+      'ON_REQUEST': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'grantTimeExists', 'minuteGrantYn', 'effectiveType', 'expirationType', 'approvalRequiredCount'],
+      'MANUAL_GRANT': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'grantTimeExists', 'minuteGrantYn', 'effectiveType', 'expirationType'],
+      'REPEAT_GRANT': ['name', 'description', 'vacationType', 'grantMethod', 'grantTime', 'minuteGrantYn', 'effectiveType', 'expirationType', 'repeatUnit', 'repeatInterval', 'firstGrantDate', 'isRecurring', 'maxGrantCount', 'specificMonths', 'specificDays'],
     };
 
     if (!method) return ['name', 'description', 'vacationType', 'grantMethod'].includes(fieldName);
@@ -501,8 +524,38 @@ export function VacationPolicyFormDialog({
                 />
               )}
 
+              {/* 부여 시간 존재 여부 - ON_REQUEST, MANUAL_GRANT만 표시 */}
+              {shouldShowField('grantTimeExists') && (
+                <Controller
+                  control={form.control}
+                  name='grantTimeExists'
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>
+                        부여 시간 존재 여부
+                      </FieldLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder='선택해주세요' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='Y'>고정 시간 부여 (Y)</SelectItem>
+                          <SelectItem value='N'>가변 시간 부여 (N)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div className='text-sm text-muted-foreground space-y-1 mt-2'>
+                        <p><strong>고정 시간 부여 (Y):</strong> 정책 등록 시 입력한 부여 시간을 자동으로 사용합니다.</p>
+                        <p><strong>가변 시간 부여 (N):</strong> 휴가 부여 시 사용자 또는 관리자가 직접 시간을 입력합니다.</p>
+                      </div>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+              )}
+
               {/* 부여 시간 - ON_REQUEST, REPEAT_GRANT에서 필수, MANUAL_GRANT에서 선택 */}
-              {shouldShowField('grantTime') && (
+              {/* REPEAT_GRANT는 항상 표시, ON_REQUEST/MANUAL_GRANT는 grantTimeExists가 Y일 때만 표시 */}
+              {shouldShowField('grantTime') && (watchGrantMethod === 'REPEAT_GRANT' || watchGrantTimeExists === 'Y') && (
                 <Controller
                   control={form.control}
                   name='grantTime'
@@ -523,7 +576,9 @@ export function VacationPolicyFormDialog({
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel>
                           부여 시간
-                          {(watchGrantMethod === 'ON_REQUEST' || watchGrantMethod === 'REPEAT_GRANT') && (
+                          {/* REPEAT_GRANT는 항상 필수, ON_REQUEST/MANUAL_GRANT는 grantTimeExists가 Y일 때만 필수 */}
+                          {(watchGrantMethod === 'REPEAT_GRANT' ||
+                            ((watchGrantMethod === 'ON_REQUEST' || watchGrantMethod === 'MANUAL_GRANT') && watchGrantTimeExists === 'Y')) && (
                             <span className='text-destructive ml-0.5'>*</span>
                           )}
                         </FieldLabel>
@@ -582,9 +637,11 @@ export function VacationPolicyFormDialog({
                           </div>
                         </div>
                         <p className='text-sm text-muted-foreground mt-2'>
-                          {watchGrantMethod === 'MANUAL_GRANT'
-                            ? '관리자 직접 부여 시 선택 사항입니다. 일/시간/분을 선택하여 부여 시간을 설정하세요.'
-                            : '부여할 휴가를 일/시간/분 단위로 선택해주세요.'}
+                          {watchGrantTimeExists === 'Y'
+                            ? '고정 시간 부여: 휴가 부여 시 이 시간이 자동으로 적용됩니다.'
+                            : watchGrantTimeExists === 'N'
+                              ? '가변 시간 부여: 휴가 부여 시 사용자/관리자가 직접 입력하므로 이 값은 참고용입니다.'
+                              : '부여할 휴가를 일/시간/분 단위로 선택해주세요.'}
                           {field.value && field.value > 0 && (
                             <span className='block mt-1 font-medium text-primary'>
                               총 {[
@@ -599,6 +656,35 @@ export function VacationPolicyFormDialog({
                       </Field>
                     );
                   }}
+                />
+              )}
+
+              {/* 분단위 부여 여부 */}
+              {shouldShowField('minuteGrantYn') && (
+                <Controller
+                  control={form.control}
+                  name='minuteGrantYn'
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>
+                        분단위 부여 여부
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder='선택해주세요' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='Y'>허용 (Y)</SelectItem>
+                          <SelectItem value='N'>불허 (N)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className='text-sm text-muted-foreground'>
+                        휴가를 부여할 때 분단위(30분)로 부여할 수 있는지 설정합니다.
+                      </p>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
                 />
               )}
 
@@ -681,9 +767,11 @@ export function VacationPolicyFormDialog({
                         type='number'
                         min='0'
                         placeholder='0'
-                        {...field}
-                        value={field.value || 0}
-                        onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 0)}
+                        value={String(field.value ?? 0)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === '' ? 0 : parseInt(value) || 0);
+                        }}
                       />
                       <p className='text-sm text-muted-foreground'>
                         신청 시 필요한 승인 횟수를 입력해주세요. (0은 승인 불필요)
