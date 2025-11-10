@@ -341,7 +341,7 @@ interface GetVacationPolicyResp {
   grant_method: string
   grant_time: number
   grant_time_str: string
-  grant_time_exists: string
+  is_flexible_grant: string
   minute_grant_yn: string
   repeat_unit: string
   repeat_interval: number
@@ -377,7 +377,7 @@ interface GetVacationPoliciesResp {
   grant_method: string
   grant_time: number
   grant_time_str: string
-  grant_time_exists: string
+  is_flexible_grant: string
   minute_grant_yn: string
   repeat_unit: string
   repeat_interval: number
@@ -410,7 +410,7 @@ interface PostVacationPolicyReq {
   vacation_type: string
   grant_method: string
   grant_time: number
-  grant_time_exists: string
+  is_flexible_grant: string
   minute_grant_yn: string
   repeat_unit: string | null
   repeat_interval: number | null
@@ -532,7 +532,7 @@ interface GetUserVacationPoliciesResp {
   grant_method: string
   grant_time: number
   grant_time_str: string
-  grant_time_exists: string
+  is_flexible_grant: string
   minute_grant_yn: string
   repeat_unit: string
   repeat_interval: number
@@ -723,6 +723,7 @@ interface PostRequestVacationReq {
   request_start_time: string
   request_end_time: string | null
   request_desc: string
+  grant_time?: number
 }
 
 interface PostRequestVacationResp {
@@ -880,6 +881,8 @@ interface GetUserRequestedVacationsResp {
   desc: string
   grant_time: number
   grant_time_str: string
+  policy_grant_time: number
+  policy_grant_time_str: string
   remain_time: number
   remain_time_str: string
   grant_date: string | null

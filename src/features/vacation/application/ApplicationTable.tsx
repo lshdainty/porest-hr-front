@@ -1,4 +1,4 @@
-import { useGetUserRequestedVacations, useGetUserRequestedVacationStats } from '@/api/vacation';
+import { GetUserRequestedVacationsResp, useGetUserRequestedVacations, useGetUserRequestedVacationStats } from '@/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
@@ -25,6 +25,8 @@ import {
   TrendingUp,
   XCircle
 } from 'lucide-react';
+import { useState } from 'react';
+import VacationApprovalForm from './VacationApprovalForm';
 
 
 const getStatusBadge = (status: string) => {
@@ -69,6 +71,8 @@ interface OvertimeListPageProps {
 
 export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps) {
   const loginUser = useLoginUserStore((state) => state.loginUser);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
 
   // API 호출
   const { data: vacationRequests = [], isLoading: isLoadingRequests } = useGetUserRequestedVacations({
@@ -91,6 +95,36 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
   const averageProcessingDays = stats?.average_processing_days || 0;
 
   const isLoading = isLoadingRequests || isLoadingStats;
+
+  const mockApprovers = [
+    {
+      id: '1',
+      name: '김팀장',
+      position: '팀장',
+      department: '개발팀',
+      status: 'approved' as const,
+      approvalDate: '2025-01-08 10:30'
+    },
+    {
+      id: '2',
+      name: '박부장',
+      position: '부장',
+      department: '경영지원본부',
+      status: 'pending' as const
+    }
+  ];
+
+  const handleDetailView = (request: GetUserRequestedVacationsResp) => {
+    setSelectedRequest(request);
+    setDetailOpen(true);
+  };
+
+  const handleDetailClose = () => {
+    setDetailOpen(false);
+    setSelectedRequest(null);
+  };
+
+  console.log('test log : ' ,vacationRequests)
 
   return (
     <div className='h-full w-full'>
@@ -217,28 +251,6 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
         </Card>
       </div>
 
-{/* TODO
-TableHead className='min-w-[200px]'>제목</TableHead>
-       246 -                    <TableHead>부서</TableHead>
-       245 +                    <TableHead className='min-w-[180px]'>정책명</TableHead>
-       246 +                    <TableHead>휴가 타입</TableHead>
-       247                      <TableHead>신청일</TableHead>
-       248 -                    <TableHead>초과근무일</TableHead>
-       249 -                    <TableHead>시간</TableHead>
-       250 -                    <TableHead>보상일수</TableHead>
-       251 -                    <TableHead>결재자</TableHead>
-       248 +                    <TableHead>부여일</TableHead>
-       249 +                    <TableHead>만료일</TableHead>
-       250 +                    <TableHead>부여 시간</TableHead>
-       251 +                    <TableHead>잔여 시간</TableHead>
-       252                      <TableHead>상태</TableHead>
-       253                      <TableHead>액션</TableHead>
- 컬럼의 경우 기존에 목데이터를 통해 나타내는 정보가 더 활용도가 높음 
- 지금은 단순 db에 있는 데이터만 조회해서 보여지도록 했지만 휴가 신청 로직이 끝난 후
- 테스트를 통해 기존에 보여주던 컬럼으로 원복 및 데이터를 추가해서 기존 컬럼 데이터가
- 보여지도록 수정 필요
-*/}
-
       {/* 신청 내역 테이블 - 전체 너비 활용 */}
       <Card className='flex-1'>
         <CardHeader>
@@ -342,7 +354,12 @@ TableHead className='min-w-[200px]'>제목</TableHead>
                         {getStatusBadge(request.grant_status)}
                       </TableCell>
                       <TableCell>
-                        <Button variant='outline' size='sm' className='flex items-center gap-1'>
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          className='flex items-center gap-1'
+                          onClick={() => handleDetailView(request)}
+                        >
                           <Eye className='w-3 h-3' />
                           상세보기
                         </Button>
@@ -355,6 +372,16 @@ TableHead className='min-w-[200px]'>제목</TableHead>
           </div>
         </CardContent>
       </Card>
+
+      {/* 상세보기 다이얼로그 */}
+      <VacationApprovalForm
+        open={detailOpen}
+        onClose={handleDetailClose}
+        approvers={mockApprovers}
+        requestData={selectedRequest || undefined}
+        applicantName={loginUser?.user_name}
+        applicantDepartment="개발팀"
+      />
     </div>
   );
 }

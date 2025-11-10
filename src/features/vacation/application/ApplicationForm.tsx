@@ -40,6 +40,7 @@ const formSchema = z.object({
   overtimeDate: z.string().min(1, '날짜를 선택해주세요.'),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
+  grantTime: z.number().optional(),
   reason: z.string().min(1, '사유를 입력해주세요.'),
   approvers: z.array(z.string()),
 })
@@ -67,6 +68,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
       overtimeDate: '',
       startTime: '',
       endTime: '',
+      grantTime: undefined,
       reason: '',
       approvers: []
     }
@@ -98,6 +100,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
       form.setValue('overtimeDate', '')
       form.setValue('startTime', '')
       form.setValue('endTime', '')
+      form.setValue('grantTime', undefined)
       form.setValue('approvers', [])
     }
   }, [vacationPolicyId, form])
@@ -123,6 +126,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
         overtimeDate: '',
         startTime: '',
         endTime: '',
+        grantTime: undefined,
         reason: '',
         approvers: []
       })
@@ -145,7 +149,8 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
       ? `${values.overtimeDate}T${values.endTime}:00`
       : null
 
-    requestVacation({
+    // API 요청 데이터 생성
+    const baseRequestData = {
       user_id: loginUser.user_id,
       policy_id: values.vacationPolicyId,
       desc: values.title,
@@ -153,7 +158,14 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
       request_start_time: requestStartTime,
       request_end_time: requestEndTime,
       request_desc: values.reason
-    }, {
+    }
+
+    // is_flexible_grant가 Y이면 grant_time 추가
+    const requestData = selectedPolicy?.is_flexible_grant === 'Y' && values.grantTime
+      ? { ...baseRequestData, grant_time: values.grantTime }
+      : baseRequestData
+
+    requestVacation(requestData, {
       onSuccess: () => {
         onSubmitSuccess()
         onClose()
@@ -319,6 +331,104 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
                             />
                           </div>
 
+                          {/* is_flexible_grant가 Y이면 부여 시간 입력 */}
+                          {selectedPolicy?.is_flexible_grant === 'Y' && (
+                            <Controller
+                              control={form.control}
+                              name='grantTime'
+                              render={({ field, fieldState }) => {
+                                const totalValue = field.value || 0
+                                const days = Math.floor(totalValue)
+                                const remainder = totalValue - days
+                                const hours = Math.floor(remainder / 0.125)
+                                const minutes = (remainder - hours * 0.125) >= 0.0625 ? 30 : 0
+
+                                const handleTimeChange = (newDays: number, newHours: number, newMinutes: number) => {
+                                  const total = newDays + (newHours * 0.125) + (newMinutes === 30 ? 0.0625 : 0)
+                                  field.onChange(total > 0 ? total : undefined)
+                                }
+
+                                return (
+                                  <Field data-invalid={!!fieldState.error}>
+                                    <FieldLabel>
+                                      부여 시간
+                                      <span className='text-destructive ml-0.5'>*</span>
+                                    </FieldLabel>
+                                    <div className={`grid ${selectedPolicy?.minute_grant_yn === 'Y' ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
+                                      <div className='flex flex-col'>
+                                        <Input
+                                          type='number'
+                                          min='0'
+                                          max='365'
+                                          placeholder='일'
+                                          className='w-full'
+                                          value={days || ''}
+                                          onChange={(e) => {
+                                            const newDays = e.target.value ? parseInt(e.target.value) : 0
+                                            handleTimeChange(newDays, hours, minutes)
+                                          }}
+                                        />
+                                        <p className='text-xs text-muted-foreground mt-1'>일</p>
+                                      </div>
+                                      <div className='flex flex-col'>
+                                        <Select
+                                          value={hours.toString()}
+                                          onValueChange={(value) => {
+                                            handleTimeChange(days, parseInt(value), minutes)
+                                          }}
+                                        >
+                                          <SelectTrigger className='w-full'>
+                                            <SelectValue placeholder='시간' />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {[0, 1, 2, 3, 4, 5, 6, 7].map((h) => (
+                                              <SelectItem key={h} value={h.toString()}>
+                                                {h}시간
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                        <p className='text-xs text-muted-foreground mt-1'>시간</p>
+                                      </div>
+                                      {selectedPolicy?.minute_grant_yn === 'Y' && (
+                                        <div className='flex flex-col'>
+                                          <Select
+                                            value={minutes.toString()}
+                                            onValueChange={(value) => {
+                                              handleTimeChange(days, hours, parseInt(value))
+                                            }}
+                                          >
+                                            <SelectTrigger className='w-full'>
+                                              <SelectValue placeholder='분' />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value='0'>0분</SelectItem>
+                                              <SelectItem value='30'>30분</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                          <p className='text-xs text-muted-foreground mt-1'>분</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <p className='text-sm text-muted-foreground mt-2'>
+                                      부여할 휴가를 일/시간{selectedPolicy?.minute_grant_yn === 'Y' ? '/분' : ''} 단위로 선택해주세요.
+                                      {field.value && field.value > 0 && (
+                                        <span className='block mt-1 font-medium text-primary'>
+                                          총 {[
+                                            days > 0 ? `${days}일` : '',
+                                            hours > 0 ? `${hours}시간` : '',
+                                            minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}분` : ''
+                                          ].filter(Boolean).join(' ')}
+                                        </span>
+                                      )}
+                                    </p>
+                                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                                  </Field>
+                                )
+                              }}
+                            />
+                          )}
+
                           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             <div className='space-y-2'>
                               <FieldLabel>초과근무 시간</FieldLabel>
@@ -333,30 +443,143 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
                               <FieldLabel>예상 보상 시간</FieldLabel>
                               <div className='h-9 px-3 border rounded-md flex items-center bg-gray-50'>
                                 <span className='text-lg font-bold text-blue-600'>
-                                  {overtimeHours > 0 ? `${overtimeHours}시간` : '-'}
+                                  {selectedPolicy?.is_flexible_grant === 'Y' && form.watch('grantTime')
+                                    ? (() => {
+                                        const grantTime = form.watch('grantTime') || 0
+                                        const days = Math.floor(grantTime)
+                                        const remainder = grantTime - days
+                                        const hours = Math.floor(remainder / 0.125)
+                                        const minutes = (remainder - hours * 0.125) >= 0.0625 ? 30 : 0
+                                        return [
+                                          days > 0 ? `${days}일` : '',
+                                          hours > 0 ? `${hours}시간` : '',
+                                          minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}분` : ''
+                                        ].filter(Boolean).join(' ') || '-'
+                                      })()
+                                    : overtimeHours > 0 ? `${overtimeHours}시간` : '-'}
                                 </span>
                               </div>
                             </div>
                           </div>
                         </>
                       ) : (
-                        <Controller
-                          control={form.control}
-                          name='overtimeDate'
-                          render={({ field, fieldState }) => (
-                            <Field data-invalid={!!fieldState.error}>
-                              <FieldLabel>
-                                날짜
-                                <span className='text-destructive ml-0.5'>*</span>
-                              </FieldLabel>
-                              <InputDatePicker
-                                value={field.value}
-                                onValueChange={field.onChange}
-                              />
-                              <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                            </Field>
+                        <>
+                          <Controller
+                            control={form.control}
+                            name='overtimeDate'
+                            render={({ field, fieldState }) => (
+                              <Field data-invalid={!!fieldState.error}>
+                                <FieldLabel>
+                                  날짜
+                                  <span className='text-destructive ml-0.5'>*</span>
+                                </FieldLabel>
+                                <InputDatePicker
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                />
+                                <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                              </Field>
+                            )}
+                          />
+
+                          {/* is_flexible_grant가 Y이면 부여 시간 입력 */}
+                          {selectedPolicy?.is_flexible_grant === 'Y' && (
+                            <Controller
+                              control={form.control}
+                              name='grantTime'
+                              render={({ field, fieldState }) => {
+                                const totalValue = field.value || 0
+                                const days = Math.floor(totalValue)
+                                const remainder = totalValue - days
+                                const hours = Math.floor(remainder / 0.125)
+                                const minutes = (remainder - hours * 0.125) >= 0.0625 ? 30 : 0
+
+                                const handleTimeChange = (newDays: number, newHours: number, newMinutes: number) => {
+                                  const total = newDays + (newHours * 0.125) + (newMinutes === 30 ? 0.0625 : 0)
+                                  field.onChange(total > 0 ? total : undefined)
+                                }
+
+                                return (
+                                  <Field data-invalid={!!fieldState.error}>
+                                    <FieldLabel>
+                                      부여 시간
+                                      <span className='text-destructive ml-0.5'>*</span>
+                                    </FieldLabel>
+                                    <div className={`grid ${selectedPolicy?.minute_grant_yn === 'Y' ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
+                                      <div className='flex flex-col'>
+                                        <Input
+                                          type='number'
+                                          min='0'
+                                          max='365'
+                                          placeholder='일'
+                                          className='w-full'
+                                          value={days || ''}
+                                          onChange={(e) => {
+                                            const newDays = e.target.value ? parseInt(e.target.value) : 0
+                                            handleTimeChange(newDays, hours, minutes)
+                                          }}
+                                        />
+                                        <p className='text-xs text-muted-foreground mt-1'>일</p>
+                                      </div>
+                                      <div className='flex flex-col'>
+                                        <Select
+                                          value={hours.toString()}
+                                          onValueChange={(value) => {
+                                            handleTimeChange(days, parseInt(value), minutes)
+                                          }}
+                                        >
+                                          <SelectTrigger className='w-full'>
+                                            <SelectValue placeholder='시간' />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {[0, 1, 2, 3, 4, 5, 6, 7].map((h) => (
+                                              <SelectItem key={h} value={h.toString()}>
+                                                {h}시간
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                        <p className='text-xs text-muted-foreground mt-1'>시간</p>
+                                      </div>
+                                      {selectedPolicy?.minute_grant_yn === 'Y' && (
+                                        <div className='flex flex-col'>
+                                          <Select
+                                            value={minutes.toString()}
+                                            onValueChange={(value) => {
+                                              handleTimeChange(days, hours, parseInt(value))
+                                            }}
+                                          >
+                                            <SelectTrigger className='w-full'>
+                                              <SelectValue placeholder='분' />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value='0'>0분</SelectItem>
+                                              <SelectItem value='30'>30분</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                          <p className='text-xs text-muted-foreground mt-1'>분</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <p className='text-sm text-muted-foreground mt-2'>
+                                      부여할 휴가를 일/시간{selectedPolicy?.minute_grant_yn === 'Y' ? '/분' : ''} 단위로 선택해주세요.
+                                      {field.value && field.value > 0 && (
+                                        <span className='block mt-1 font-medium text-primary'>
+                                          총 {[
+                                            days > 0 ? `${days}일` : '',
+                                            hours > 0 ? `${hours}시간` : '',
+                                            minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}분` : ''
+                                          ].filter(Boolean).join(' ')}
+                                        </span>
+                                      )}
+                                    </p>
+                                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                                  </Field>
+                                )
+                              }}
+                            />
                           )}
-                        />
+                        </>
                       )}
 
                       <Controller
