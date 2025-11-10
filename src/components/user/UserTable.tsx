@@ -234,54 +234,56 @@ export default function UserTable({ value: users }: UserTableProps) {
         companyOptions={companyTypes || []}
       />
 
-      {/* 각 행별 Dialog들 */}
-      {users.map((row) => (
-        <div key={row.user_id}>
-          {/* 메일 재전송 Dialog */}
-          <ResendEmailDialog
-            open={showResendDialog === row.user_id}
-            onOpenChange={(open) => setShowResendDialog(open ? row.user_id : null)}
-            userId={row.user_id}
-            userEmail={row.user_email}
+      {/* 메일 재전송 Dialog */}
+      {showResendDialog && (
+        <ResendEmailDialog
+          open={true}
+          onOpenChange={(open) => !open && setShowResendDialog(null)}
+          userId={showResendDialog}
+          userEmail={users.find(u => u.user_id === showResendDialog)?.user_email || ''}
+        />
+      )}
+
+      {/* ACTIVE 상태 수정 Dialog */}
+      {showEditDialog && (
+        <UserEditDialog
+          open={true}
+          onOpenChange={(open) => !open && setShowEditDialog(null)}
+          user={users.find(u => u.user_id === showEditDialog)!}
+          onSave={handleUpdateUser}
+        />
+      )}
+
+      {/* PENDING 상태 수정 Dialog */}
+      {showInviteEditDialog && (() => {
+        const user = users.find(u => u.user_id === showInviteEditDialog)
+        return user ? (
+          <UserInviteDialog
+            open={true}
+            onOpenChange={(open) => !open && setShowInviteEditDialog(null)}
+            title='사용자 정보 수정'
+            companyOptions={companyTypes || []}
+            initialData={{
+              user_id: user.user_id,
+              user_name: user.user_name,
+              user_email: user.user_email,
+              user_origin_company_type: user.user_origin_company_type,
+              user_work_time: user.user_work_time,
+              join_date: user.join_date
+            }}
           />
+        ) : null
+      })()}
 
-          {/* ACTIVE 상태 수정 Dialog */}
-          {row.invitation_status === 'ACTIVE' && (
-            <UserEditDialog
-              open={showEditDialog === row.user_id}
-              onOpenChange={(open) => setShowEditDialog(open ? row.user_id : null)}
-              user={row}
-              onSave={handleUpdateUser}
-            />
-          )}
-
-          {/* PENDING 상태 수정 Dialog */}
-          {row.invitation_status === 'PENDING' && (
-            <UserInviteDialog
-              open={showInviteEditDialog === row.user_id}
-              onOpenChange={(open) => setShowInviteEditDialog(open ? row.user_id : null)}
-              title='사용자 정보 수정'
-              companyOptions={companyTypes || []}
-              initialData={{
-                user_id: row.user_id,
-                user_name: row.user_name,
-                user_email: row.user_email,
-                user_origin_company_type: row.user_origin_company_type,
-                user_work_time: row.user_work_time,
-                join_date: row.join_date
-              }}
-            />
-          )}
-
-          {/* 삭제 Dialog */}
-          <UserDeleteDialog
-            open={showDeleteDialog === row.user_id}
-            onOpenChange={(open) => setShowDeleteDialog(open ? row.user_id : null)}
-            user={row}
-            onDelete={handleDeleteUser}
-          />
-        </div>
-      ))}
+      {/* 삭제 Dialog */}
+      {showDeleteDialog && (
+        <UserDeleteDialog
+          open={true}
+          onOpenChange={(open) => !open && setShowDeleteDialog(null)}
+          user={users.find(u => u.user_id === showDeleteDialog)!}
+          onDelete={handleDeleteUser}
+        />
+      )}
     </Card>
   )
 }
