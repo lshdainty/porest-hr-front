@@ -28,7 +28,8 @@ const enum VacationQueryKey {
   POST_REJECT_VACATION = 'postRejectVacation',
   GET_PENDING_APPROVALS_BY_APPROVER = 'getPendingApprovalsByApprover',
   GET_USER_REQUESTED_VACATIONS = 'getUserRequestedVacations',
-  GET_USER_REQUESTED_VACATION_STATS = 'getUserRequestedVacationStats'
+  GET_USER_REQUESTED_VACATION_STATS = 'getUserRequestedVacationStats',
+  POST_CANCEL_VACATION_REQUEST = 'postCancelVacationRequest'
 }
 
 interface PostUseVacationReq {
@@ -872,6 +873,16 @@ interface GetUserRequestedVacationsReq {
   user_id: string
 }
 
+interface ApproverInfo {
+  approval_id: number
+  approver_id: string
+  approver_name: string
+  approval_order: number
+  approval_status: string
+  approval_status_name: string
+  approval_date: string | null
+}
+
 interface GetUserRequestedVacationsResp {
   vacation_grant_id: number
   policy_id: number
@@ -895,6 +906,7 @@ interface GetUserRequestedVacationsResp {
   create_date: string
   current_approver_id: string | null
   current_approver_name: string | null
+  approvers: ApproverInfo[] | null
 }
 
 const useGetUserRequestedVacations = (reqData: GetUserRequestedVacationsReq) => {
@@ -928,6 +940,7 @@ interface GetUserRequestedVacationStatsResp {
   approved_count: number
   approval_rate: number
   rejected_count: number
+  canceled_count: number
   acquired_vacation_time_str: string
   acquired_vacation_time: number
 }
@@ -949,15 +962,49 @@ const useGetUserRequestedVacationStats = (reqData: GetUserRequestedVacationStats
   });
 }
 
+interface PostCancelVacationRequestReq {
+  vacation_grant_id: number
+  user_id: string
+}
+
+interface PostCancelVacationRequestResp {
+  vacation_grant_id: number
+}
+
+const usePostCancelVacationRequest = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PostCancelVacationRequestReq) => {
+      const resp: ApiResponse<PostCancelVacationRequestResp> = await api.request({
+        method: 'post',
+        url: `/vacation-requests/${reqData.vacation_grant_id}/cancel?userId=${reqData.user_id}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_REQUESTED_VACATIONS] });
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_REQUESTED_VACATION_STATS] });
+      toast.success('휴가 신청이 취소되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
 export {
   useDeleteRevokeVacationGrant, useDeleteRevokeVacationPoliciesFromUser, useDeleteRevokeVacationPolicyFromUser, useDeleteVacationPolicy, useDeleteVacationUsage, useGetAllUsersVacationHistory,
   useGetAvailableVacations, useGetPendingApprovalsByApprover, useGetUserMonthlyVacationStats, useGetUserRequestedVacations,
   useGetUserRequestedVacationStats, useGetUserVacationHistory, useGetUserVacationPolicies, useGetUserVacationStats, useGetUserVacationUsagesByPeriod, useGetVacationPolicies,
-  useGetVacationPolicy, useGetVacationUsagesByPeriod, usePostApproveVacation, usePostAssignVacationPoliciesToUser, usePostManualGrantVacation, usePostRejectVacation, usePostRequestVacation, usePostUseVacation, usePostVacationPolicy, VacationQueryKey
+  useGetVacationPolicy, useGetVacationUsagesByPeriod, usePostApproveVacation, usePostAssignVacationPoliciesToUser, usePostCancelVacationRequest, usePostManualGrantVacation, usePostRejectVacation, usePostRequestVacation, usePostUseVacation, usePostVacationPolicy, VacationQueryKey
 };
 
   export type {
-    DeleteRevokeVacationGrantResp, DeleteRevokeVacationPoliciesFromUserReq,
+    ApproverInfo, DeleteRevokeVacationGrantResp, DeleteRevokeVacationPoliciesFromUserReq,
     DeleteRevokeVacationPoliciesFromUserResp, DeleteRevokeVacationPolicyFromUserReq,
     DeleteRevokeVacationPolicyFromUserResp, DeleteVacationPolicyResp, GetAllUsersVacationHistoryResp,
     GetAvailableVacationsReq,
@@ -974,7 +1021,8 @@ export {
     GetVacationPolicyResp, GetVacationUsagesByPeriodReq,
     GetVacationUsagesByPeriodResp, PendingApprovalInfo, PostApproveVacationReq,
     PostApproveVacationResp, PostAssignVacationPoliciesToUserReq,
-    PostAssignVacationPoliciesToUserResp, PostManualGrantVacationReq,
+    PostAssignVacationPoliciesToUserResp, PostCancelVacationRequestReq,
+    PostCancelVacationRequestResp, PostManualGrantVacationReq,
     PostManualGrantVacationResp, PostRejectVacationReq,
     PostRejectVacationResp, PostRequestVacationReq,
     PostRequestVacationResp, PostUseVacationReq,

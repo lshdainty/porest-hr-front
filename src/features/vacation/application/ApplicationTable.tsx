@@ -1,8 +1,9 @@
-import { GetUserRequestedVacationsResp, useGetUserRequestedVacations, useGetUserRequestedVacationStats } from '@/api/vacation';
+import { useGetGrantStatusTypes } from '@/api/type';
+import { GetUserRequestedVacationsResp, useGetUserRequestedVacations, usePostCancelVacationRequest } from '@/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
-import { Progress } from '@/components/shadcn/progress';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import {
   Table,
   TableBody,
@@ -14,62 +15,56 @@ import {
 import { useLoginUserStore } from '@/store/LoginUser';
 import dayjs from 'dayjs';
 import {
+  Ban,
   Calendar,
-  CalendarDays,
   CheckCircle,
   Clock,
+  EllipsisVertical,
   Eye,
-  FileText,
-  Plus,
   Timer,
-  TrendingUp,
   XCircle
 } from 'lucide-react';
 import { useState } from 'react';
 import VacationApprovalForm from './VacationApprovalForm';
 
 
-const getStatusBadge = (status: string) => {
+const getStatusBadge = (statusCode: string, statusName: string) => {
   const statusConfig = {
     PENDING: {
-      label: '검토중',
       color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
       icon: Timer
     },
     PROGRESS: {
-      label: '진행중',
       color: 'bg-blue-100 text-blue-800 border-blue-300',
       icon: Clock
     },
     APPROVED: {
-      label: '승인완료',
       color: 'bg-green-100 text-green-800 border-green-300',
       icon: CheckCircle
     },
     REJECTED: {
-      label: '반려',
       color: 'bg-red-100 text-red-800 border-red-300',
       icon: XCircle
+    },
+    CANCELED: {
+      color: 'bg-gray-100 text-gray-800 border-gray-300',
+      icon: Ban
     }
   };
 
-  const config = statusConfig[status as keyof typeof statusConfig];
+  const config = statusConfig[statusCode as keyof typeof statusConfig];
   if (!config) return null;
   const IconComponent = config.icon;
 
   return (
     <Badge className={`${config.color} border flex items-center gap-1`}>
       <IconComponent className='w-3 h-3' />
-      {config.label}
+      {statusName}
     </Badge>
   );
 };
 
-interface OvertimeListPageProps {
-  onCreateNew: () => void;
-}
-
-export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps) {
+export default function ApplicationTable() {
   const loginUser = useLoginUserStore((state) => state.loginUser);
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
@@ -79,40 +74,8 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
     user_id: loginUser?.user_id || ''
   });
 
-  const { data: stats, isLoading: isLoadingStats } = useGetUserRequestedVacationStats({
-    user_id: loginUser?.user_id || ''
-  });
-
-  // 통계 데이터
-  const totalRequests = stats?.total_request_count || 0;
-  const pendingRequests = stats?.pending_count || 0;
-  const inProgressRequests = stats?.progress_count || 0;
-  const approvedRequests = stats?.approved_count || 0;
-  const rejectedRequests = stats?.rejected_count || 0;
-  const approvalRate = stats?.approval_rate || 0;
-  const thisMonthRequests = stats?.current_month_request_count || 0;
-  const requestGrowth = stats?.change_rate || 0;
-  const averageProcessingDays = stats?.average_processing_days || 0;
-
-  const isLoading = isLoadingRequests || isLoadingStats;
-
-  const mockApprovers = [
-    {
-      id: '1',
-      name: '김팀장',
-      position: '팀장',
-      department: '개발팀',
-      status: 'approved' as const,
-      approvalDate: '2025-01-08 10:30'
-    },
-    {
-      id: '2',
-      name: '박부장',
-      position: '부장',
-      department: '경영지원본부',
-      status: 'pending' as const
-    }
-  ];
+  const { data: grantStatusTypes = [] } = useGetGrantStatusTypes();
+  const { mutate: cancelVacationRequest } = usePostCancelVacationRequest();
 
   const handleDetailView = (request: GetUserRequestedVacationsResp) => {
     setSelectedRequest(request);
@@ -124,150 +87,22 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
     setSelectedRequest(null);
   };
 
+  const handleCancelRequest = (requestId: number) => {
+    if (!loginUser?.user_id) return;
+
+    cancelVacationRequest({
+      vacation_grant_id: requestId,
+      user_id: loginUser.user_id
+    });
+  };
+
   console.log('test log : ' ,vacationRequests)
 
   return (
-    <div className='h-full w-full'>
-      <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8'>
-        <div>
-          <h1 className='text-3xl font-bold mb-2'>휴가 신청 관리</h1>
-          <p className='text-gray-600'>휴가를 신청하고 현황을 관리하세요</p>
-        </div>
-        <Button onClick={onCreateNew} className='flex items-center gap-2 mt-4 lg:mt-0'>
-          <Plus className='w-4 h-4' />
-          새 신청서 작성
-        </Button>
-      </div>
-
-      {/* 주요 지표 카드들 - 전체 화면 너비 활용 */}
-      <div className='grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8'>
-        <Card className='relative overflow-hidden'>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center'>
-                <FileText className='w-6 h-6 text-blue-600' />
-              </div>
-              <div className='flex items-center gap-1 text-xs'>
-                <TrendingUp className='w-3 h-3 text-green-600' />
-                <span className='text-green-600 font-medium'>+{requestGrowth.toFixed(1)}%</span>
-              </div>
-            </div>
-            <div>
-              <p className='text-sm text-gray-600 mb-1'>총 신청</p>
-              <p className='text-2xl font-bold text-blue-600'>{totalRequests}</p>
-              <p className='text-xs text-gray-500 mt-1'>이번 달 {thisMonthRequests}건</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center'>
-                <Timer className='w-6 h-6 text-yellow-600' />
-              </div>
-              <Badge variant='secondary' className='bg-yellow-100 text-yellow-800'>
-                대기
-              </Badge>
-            </div>
-            <div>
-              <p className='text-sm text-gray-600 mb-1'>대기</p>
-              <p className='text-2xl font-bold text-yellow-600'>{pendingRequests}</p>
-              <p className='text-xs text-gray-500 mt-1'>평균 처리시간 {averageProcessingDays.toFixed(1)}일</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center'>
-                <Clock className='w-6 h-6 text-blue-600' />
-              </div>
-              <Badge variant='secondary' className='bg-blue-100 text-blue-800'>
-                진행
-              </Badge>
-            </div>
-            <div>
-              <p className='text-sm text-gray-600 mb-1'>진행</p>
-              <p className='text-2xl font-bold text-blue-600'>{inProgressRequests}</p>
-              <p className='text-xs text-gray-500 mt-1'>처리중인 요청</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center'>
-                <CheckCircle className='w-6 h-6 text-green-600' />
-              </div>
-              <div className='text-right'>
-                <p className='text-xs text-gray-500'>승인율</p>
-                <p className='text-sm font-semibold text-green-600'>{approvalRate.toFixed(0)}%</p>
-              </div>
-            </div>
-            <div>
-              <p className='text-sm text-gray-600 mb-1'>승인</p>
-              <p className='text-2xl font-bold text-green-600'>{approvedRequests}</p>
-              <div className='mt-2'>
-                <Progress value={approvalRate} className='h-2' />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center'>
-                <XCircle className='w-6 h-6 text-red-600' />
-              </div>
-              <Badge variant='secondary' className='bg-red-100 text-red-800'>
-                반려
-              </Badge>
-            </div>
-            <div>
-              <p className='text-sm text-gray-600 mb-1'>반려</p>
-              <p className='text-2xl font-bold text-red-600'>{rejectedRequests}</p>
-              <p className='text-xs text-gray-500 mt-1'>재신청 필요</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center'>
-                <CalendarDays className='w-6 h-6 text-purple-600' />
-              </div>
-            </div>
-            <div>
-              <p className='text-sm text-gray-600 mb-1'>획득 휴가</p>
-              <p className='text-2xl font-bold text-purple-600'>{stats?.acquired_vacation_time_str || '0일'}</p>
-              <p className='text-xs text-gray-500 mt-1'>승인된 휴가</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 신청 내역 테이블 - 전체 너비 활용 */}
+    <>
       <Card className='flex-1'>
         <CardHeader>
-          <div className='flex items-center justify-between'>
-            <CardTitle>신청 내역</CardTitle>
-            <div className='flex gap-2'>
-              <Badge variant='outline' className='bg-blue-50 text-blue-700'>
-                전체 {totalRequests}건
-              </Badge>
-              <Badge variant='outline' className='bg-yellow-50 text-yellow-700'>
-                검토중 {pendingRequests}건
-              </Badge>
-              <Badge variant='outline' className='bg-green-50 text-green-700'>
-                승인 {approvedRequests}건
-              </Badge>
-            </div>
-          </div>
+          <CardTitle>신청 내역</CardTitle>
         </CardHeader>
         <CardContent>
           <div className='overflow-x-auto'>
@@ -277,15 +112,15 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
                   <TableHead className='min-w-[200px]'>제목</TableHead>
                   <TableHead>휴가 타입</TableHead>
                   <TableHead>신청일</TableHead>
-                  <TableHead>초과근무일자</TableHead>
+                  <TableHead>대상일자</TableHead>
                   <TableHead>보상일수</TableHead>
                   <TableHead>현결재자</TableHead>
                   <TableHead>상태</TableHead>
-                  <TableHead>액션</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoading ? (
+                {isLoadingRequests ? (
                   <TableRow>
                     <TableCell colSpan={8} className='text-center py-8'>
                       <div className='flex justify-center'>
@@ -340,7 +175,9 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
                         </div>
                       </TableCell>
                       <TableCell>
-                        {request.current_approver_name ? (
+                        {request.grant_status === 'CANCELED' ? (
+                          <span className='text-xs text-gray-400'>-</span>
+                        ) : request.current_approver_name ? (
                           <div className='flex items-center gap-1'>
                             <Badge variant='outline' className='bg-blue-50 text-blue-700'>
                               {request.current_approver_name}
@@ -351,18 +188,41 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
                         )}
                       </TableCell>
                       <TableCell>
-                        {getStatusBadge(request.grant_status)}
+                        {getStatusBadge(
+                          request.grant_status,
+                          grantStatusTypes.find(type => type.code === request.grant_status)?.name || request.grant_status
+                        )}
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant='outline'
-                          size='sm'
-                          className='flex items-center gap-1'
-                          onClick={() => handleDetailView(request)}
-                        >
-                          <Eye className='w-3 h-3' />
-                          상세보기
-                        </Button>
+                        <div className='flex justify-end'>
+                          <DropdownMenu modal={false}>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant='ghost'
+                                size='sm'
+                                className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted'
+                              >
+                                <EllipsisVertical className='w-4 h-4' />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align='end' className='w-32'>
+                              <DropdownMenuItem
+                                onSelect={() => handleDetailView(request)}
+                              >
+                                <Eye className='h-4 w-4' />
+                                <span>상세보기</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onSelect={() => handleCancelRequest(request.vacation_grant_id)}
+                                className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                              >
+                                <XCircle className='h-4 w-4' />
+                                <span>신청취소</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
@@ -377,11 +237,9 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
       <VacationApprovalForm
         open={detailOpen}
         onClose={handleDetailClose}
-        approvers={mockApprovers}
         requestData={selectedRequest || undefined}
         applicantName={loginUser?.user_name}
-        applicantDepartment="개발팀"
       />
-    </div>
+    </>
   );
 }

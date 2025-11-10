@@ -22,40 +22,27 @@ import {
 import { ScrollArea } from '@/components/shadcn/scrollArea';
 import { Separator } from '@/components/shadcn/separator';
 
-// 결재자 정보 타입
-interface Approver {
-  id: string;
-  name: string;
-  position: string;
-  department: string;
-  status: 'pending' | 'approved' | 'rejected';
-  approvalDate?: string;
-  avatarUrl?: string;
-}
-
 interface VacationApprovalFormProps {
   open: boolean;
   onClose: () => void;
-  approvers: Approver[];
   requestData?: GetUserRequestedVacationsResp;
   applicantName?: string;
-  applicantDepartment?: string;
 }
 
 export default function VacationApprovalForm({
   open,
   onClose,
-  approvers,
   requestData,
   applicantName,
-  applicantDepartment,
 }: VacationApprovalFormProps) {
+
+  const approvers = requestData?.approvers || [];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'approved':
+      case 'APPROVED':
         return <CheckCircle className='w-8 h-8 text-green-600' />;
-      case 'rejected':
+      case 'REJECTED':
         return <AlertCircle className='w-8 h-8 text-red-600' />;
       default:
         return <Clock className='w-8 h-8 text-yellow-600' />;
@@ -100,12 +87,6 @@ export default function VacationApprovalForm({
                               <td className='bg-gray-50 px-4 py-3 font-medium w-32'>신청자</td>
                               <td className='px-4 py-3'>
                                 {applicantName || '정보 없음'}
-                              </td>
-                            </tr>
-                            <tr className='border-b'>
-                              <td className='bg-gray-50 px-4 py-3 font-medium'>소속</td>
-                              <td className='px-4 py-3'>
-                                {applicantDepartment || '정보 없음'}
                               </td>
                             </tr>
                             <tr>
@@ -266,50 +247,57 @@ export default function VacationApprovalForm({
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className='border rounded-lg overflow-hidden'>
-                        <table className='w-full table-fixed'>
-                          <thead>
-                            <tr>
-                              {approvers.map((approver, index) => (
-                                <th
-                                  key={`header-${approver.id}`}
-                                  className='bg-gray-50 px-2 py-2 text-xs font-medium border-r last:border-r-0'
-                                >
-                                  {approvers.length > 1 ? `${index + 1}차 승인` : '승인'}
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              {approvers.map((approver) => (
-                                <td
-                                  key={approver.id}
-                                  className='border-r last:border-r-0 p-3'
-                                >
-                                  <div className='flex flex-col items-center gap-2 min-h-[100px] justify-center'>
-                                    {approver.status === 'approved' ? (
-                                      <>
-                                        {getStatusIcon(approver.status)}
-                                        {approver.approvalDate && (
-                                          <p className='text-xs text-gray-500'>
-                                            {dayjs(approver.approvalDate).format('YYYY/MM/DD')}
-                                          </p>
-                                        )}
-                                      </>
-                                    ) : (
-                                      <div className='h-8 w-8' />
-                                    )}
-                                    <p className='text-xs font-medium mt-1 text-center break-all'>
-                                      {approver.name}
-                                    </p>
-                                  </div>
-                                </td>
-                              ))}
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
+                      {approvers.length > 0 ? (
+                        <div className='border rounded-lg overflow-hidden'>
+                          <table className='w-full table-fixed'>
+                            <thead>
+                              <tr>
+                                {approvers.map((approver, index) => (
+                                  <th
+                                    key={`header-${approver.approval_id}`}
+                                    className='bg-gray-50 px-2 py-2 text-xs font-medium border-r last:border-r-0'
+                                  >
+                                    {approvers.length > 1 ? `${index + 1}차 승인` : '승인'}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                {approvers.map((approver) => (
+                                  <td
+                                    key={approver.approval_id}
+                                    className='border-r last:border-r-0 p-3'
+                                  >
+                                    <div className='flex flex-col items-center gap-2 min-h-[100px] justify-center'>
+                                      {approver.approval_status === 'APPROVED' ? (
+                                        <>
+                                          {getStatusIcon(approver.approval_status)}
+                                          {approver.approval_date && (
+                                            <p className='text-xs text-gray-500'>
+                                              {dayjs(approver.approval_date).format('YYYY/MM/DD')}
+                                            </p>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <div className='h-8 w-8' />
+                                      )}
+                                      <p className='text-xs font-medium mt-1 text-center break-all'>
+                                        {approver.approver_name}
+                                      </p>
+                                      <Badge variant='outline' className='text-xs'>
+                                        {approver.approval_status_name}
+                                      </Badge>
+                                    </div>
+                                  </td>
+                                ))}
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <p className='text-sm text-gray-500 text-center py-4'>결재자 정보가 없습니다.</p>
+                      )}
                     </CardContent>
                   </Card>
                 </div>

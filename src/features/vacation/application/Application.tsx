@@ -1,9 +1,12 @@
-import { useState } from 'react'
 import { useGetUserApprovers } from '@/api/user'
 import { useGetUserVacationPolicies } from '@/api/vacation'
-import { useLoginUserStore } from '@/store/LoginUser'
-import ApplicationTable from '@/features/vacation/application/ApplicationTable'
+import { Button } from '@/components/shadcn/button'
 import ApplicationFormDialog from '@/features/vacation/application/ApplicationForm'
+import ApplicationTable from '@/features/vacation/application/ApplicationTable'
+import VacationRequestStatsCards from '@/features/vacation/application/VacationRequestStatsCards'
+import { useLoginUserStore } from '@/store/LoginUser'
+import { Plus } from 'lucide-react'
+import { useState } from 'react'
 
 export default function Application() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -33,7 +36,25 @@ export default function Application() {
 
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <ApplicationTable onCreateNew={handleCreateNew} />
+      {/* 헤더 */}
+      <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8'>
+        <div>
+          <h1 className='text-3xl font-bold mb-2'>휴가 신청 관리</h1>
+          <p className='text-gray-600'>휴가를 신청하고 현황을 관리하세요</p>
+        </div>
+        <Button onClick={handleCreateNew} className='flex items-center gap-2 mt-4 lg:mt-0'>
+          <Plus className='w-4 h-4' />
+          새 신청서 작성
+        </Button>
+      </div>
+
+      {/* 통계 카드 */}
+      <VacationRequestStatsCards user_id={loginUser?.user_id || ''} />
+
+      {/* 신청 내역 테이블 */}
+      <ApplicationTable />
+
+      {/* 신청서 작성 다이얼로그 */}
       <ApplicationFormDialog
         open={isDialogOpen}
         onClose={handleCloseDialog}
