@@ -19,6 +19,7 @@ const enum VacationQueryKey {
   DELETE_VACATION_POLICY = 'deleteVacationPolicy',
   POST_ASSIGN_VACATION_POLICIES_TO_USER = 'postAssignVacationPoliciesToUser',
   GET_USER_VACATION_POLICIES = 'getUserVacationPolicies',
+  GET_USER_ASSIGNED_VACATION_POLICIES = 'getUserAssignedVacationPolicies',
   GET_USER_VACATION_POLICY_ASSIGNMENT_STATUS = 'getUserVacationPolicyAssignmentStatus',
   DELETE_REVOKE_VACATION_POLICY_FROM_USER = 'deleteRevokeVacationPolicyFromUser',
   DELETE_REVOKE_VACATION_POLICIES_FROM_USER = 'deleteRevokeVacationPoliciesFromUser',
@@ -572,6 +573,57 @@ const useGetUserVacationPolicies = (reqData: GetUserVacationPoliciesReq) => {
   });
 }
 
+interface GetUserAssignedVacationPoliciesReq {
+  user_id: string
+  vacation_type?: string
+  grant_method?: string
+}
+
+interface GetUserAssignedVacationPoliciesResp {
+  vacation_policy_id: number
+  vacation_policy_name: string
+  vacation_policy_desc: string
+  vacation_type: string
+  grant_method: string
+  grant_time: number
+  grant_time_str: string
+  is_flexible_grant: string
+  minute_grant_yn: string
+  repeat_unit: string | null
+  repeat_interval: number | null
+  specific_months: number | null
+  specific_days: number | null
+  effective_type: string
+  expiration_type: string
+  repeat_grant_desc: string | null
+}
+
+const useGetUserAssignedVacationPolicies = (reqData: GetUserAssignedVacationPoliciesReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_ASSIGNED_VACATION_POLICIES, reqData.user_id, reqData.vacation_type, reqData.grant_method],
+    queryFn: async (): Promise<GetUserAssignedVacationPoliciesResp[]> => {
+      const params = new URLSearchParams()
+      if (reqData.vacation_type) {
+        params.append('vacationType', reqData.vacation_type)
+      }
+      if (reqData.grant_method) {
+        params.append('grantMethod', reqData.grant_method)
+      }
+      const queryString = params.toString() ? `?${params.toString()}` : ''
+
+      const resp: ApiResponse<GetUserAssignedVacationPoliciesResp[]> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.user_id}/vacation-policies/assigned${queryString}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.user_id
+  });
+}
+
 interface VacationPolicyAssignmentInfo {
   vacation_policy_id: number
   vacation_policy_name: string
@@ -1030,7 +1082,7 @@ const usePostCancelVacationRequest = () => {
 
 export {
   useDeleteRevokeVacationGrant, useDeleteRevokeVacationPoliciesFromUser, useDeleteRevokeVacationPolicyFromUser, useDeleteVacationPolicy, useDeleteVacationUsage, useGetAllUsersVacationHistory,
-  useGetAllVacationsByApprover, useGetAvailableVacations, useGetUserMonthlyVacationStats, useGetUserRequestedVacations,
+  useGetAllVacationsByApprover, useGetAvailableVacations, useGetUserAssignedVacationPolicies, useGetUserMonthlyVacationStats, useGetUserRequestedVacations,
   useGetUserRequestedVacationStats, useGetUserVacationHistory, useGetUserVacationPolicies, useGetUserVacationPolicyAssignmentStatus, useGetUserVacationStats, useGetUserVacationUsagesByPeriod, useGetVacationPolicies,
   useGetVacationPolicy, useGetVacationUsagesByPeriod, usePostApproveVacation, usePostAssignVacationPoliciesToUser, usePostCancelVacationRequest, usePostManualGrantVacation, usePostRejectVacation, usePostRequestVacation, usePostUseVacation, usePostVacationPolicy, VacationQueryKey
 };
@@ -1041,7 +1093,8 @@ export {
     DeleteRevokeVacationPolicyFromUserResp, DeleteVacationPolicyResp, GetAllUsersVacationHistoryResp,
     GetAllVacationsByApproverReq,
     GetAvailableVacationsReq,
-    GetAvailableVacationsResp, GetUserMonthlyVacationStatsReq,
+    GetAvailableVacationsResp, GetUserAssignedVacationPoliciesReq,
+    GetUserAssignedVacationPoliciesResp, GetUserMonthlyVacationStatsReq,
     GetUserMonthlyVacationStatsResp, GetUserRequestedVacationsReq,
     GetUserRequestedVacationsResp,
     GetUserRequestedVacationStatsReq,

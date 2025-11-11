@@ -290,13 +290,6 @@ export default function VacationApprovalForm({
                                   <div className='whitespace-pre-wrap text-red-600 font-medium'>
                                     {rejectionInfo.rejection_reason}
                                   </div>
-                                  {rejectionInfo.approval_date && (
-                                    <p className='text-xs text-foreground/70 mt-2'>
-                                      반려일: {dayjs(rejectionInfo.approval_date).format('YYYY-MM-DD HH:mm')}
-                                      {' '}
-                                      (반려자: {rejectionInfo.approver_name})
-                                    </p>
-                                  )}
                                 </td>
                               </tr>
                             )}

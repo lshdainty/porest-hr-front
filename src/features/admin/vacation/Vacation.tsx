@@ -1,11 +1,11 @@
-import { useGetUsers } from '@/api/user';
 import { useGetGrantStatusTypes } from '@/api/type';
+import { useGetUsers } from '@/api/user';
 import {
+  useGetAllVacationsByApprover,
   useGetAvailableVacations,
   useGetUserMonthlyVacationStats,
   useGetUserVacationStats,
-  useGetUserVacationUsagesByPeriod,
-  useGetAllVacationsByApprover
+  useGetUserVacationUsagesByPeriod
 } from '@/api/vacation';
 import ApplicationTable from '@/components/application/ApplicationTable';
 import ApplicationTableSkeleton from '@/components/application/ApplicationTableSkeleton';
@@ -130,6 +130,7 @@ export default function Vacation() {
           grantStatusTypes={grantStatusTypes}
           userId={selectedUserId}
           userName={users?.find(user => user.user_id === selectedUserId)?.user_name}
+          showGrantButton={true}
         />
       </div>
     </div>

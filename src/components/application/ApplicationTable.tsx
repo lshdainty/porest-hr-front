@@ -1,6 +1,7 @@
 import { TypeResp } from '@/api/type';
 import { GetUserRequestedVacationsResp, usePostCancelVacationRequest } from '@/api/vacation';
 import VacationApprovalForm from '@/components/application/VacationApprovalForm';
+import VacationGrantDialog from '@/components/application/VacationGrantDialog';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
@@ -28,16 +29,19 @@ interface ApplicationTableProps {
   grantStatusTypes: TypeResp[]
   userId: string
   userName?: string
+  showGrantButton?: boolean
 }
 
 export default function ApplicationTable({
   vacationRequests,
   grantStatusTypes,
   userId,
-  userName
+  userName,
+  showGrantButton = false
 }: ApplicationTableProps) {
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
+  const [grantDialogOpen, setGrantDialogOpen] = useState(false);
 
   const { mutate: cancelVacationRequest } = usePostCancelVacationRequest();
 
@@ -64,7 +68,17 @@ export default function ApplicationTable({
     <>
       <Card className='flex-1'>
         <CardHeader>
-          <CardTitle>신청 내역</CardTitle>
+          <div className='flex items-center justify-between'>
+            <CardTitle>신청 내역</CardTitle>
+            {showGrantButton && (
+              <Button
+                onClick={() => setGrantDialogOpen(true)}
+                className='bg-blue-600 hover:bg-blue-700 text-white'
+              >
+                휴가 부여
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <div className='overflow-x-auto'>
@@ -196,6 +210,13 @@ export default function ApplicationTable({
         onClose={handleDetailClose}
         requestData={selectedRequest || undefined}
         applicantName={userName}
+      />
+
+      {/* 휴가 부여 다이얼로그 */}
+      <VacationGrantDialog
+        open={grantDialogOpen}
+        onClose={() => setGrantDialogOpen(false)}
+        userId={userId}
       />
     </>
   );
