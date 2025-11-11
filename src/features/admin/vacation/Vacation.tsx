@@ -1,10 +1,14 @@
 import { useGetUsers } from '@/api/user';
+import { useGetGrantStatusTypes } from '@/api/type';
 import {
   useGetAvailableVacations,
   useGetUserMonthlyVacationStats,
   useGetUserVacationStats,
-  useGetUserVacationUsagesByPeriod
+  useGetUserVacationUsagesByPeriod,
+  useGetAllVacationsByApprover
 } from '@/api/vacation';
+import ApplicationTable from '@/components/application/ApplicationTable';
+import ApplicationTableSkeleton from '@/components/application/ApplicationTableSkeleton';
 import UserInfoCard from '@/components/user/UserInfoCard';
 import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
 import MonthVacationStatsCard from '@/components/vacation/MonthVacationStatsCard';
@@ -41,6 +45,10 @@ export default function Vacation() {
     user_id: selectedUserId,
     base_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
   });
+  const { data: vacationRequests = [], isLoading: isLoadingRequests } = useGetAllVacationsByApprover({
+    approver_id: selectedUserId
+  });
+  const { data: grantStatusTypes = [] } = useGetGrantStatusTypes();
 
   useEffect(() => {
     if (loginUser && !selectedUserId) {
@@ -48,7 +56,7 @@ export default function Vacation() {
     }
   }, [loginUser, selectedUserId]);
 
-  if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading) {
+  if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading || isLoadingRequests) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
         <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
@@ -66,6 +74,9 @@ export default function Vacation() {
           <div className='xl:col-span-2 flex flex-col'>
             <VacationHistoryTableSkeleton />
           </div>
+        </div>
+        <div className='grid grid-cols-1 gap-6 mt-6'>
+          <ApplicationTableSkeleton />
         </div>
       </div>
     );
@@ -112,6 +123,14 @@ export default function Vacation() {
             canAdd={true}
           />
         </div>
+      </div>
+      <div className='grid grid-cols-1 gap-6 mt-6'>
+        <ApplicationTable
+          vacationRequests={vacationRequests}
+          grantStatusTypes={grantStatusTypes}
+          userId={selectedUserId}
+          userName={users?.find(user => user.user_id === selectedUserId)?.user_name}
+        />
       </div>
     </div>
   );

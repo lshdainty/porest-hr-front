@@ -2,12 +2,15 @@ import dayjs from 'dayjs';
 import {
   Ban,
   Calendar,
+  CheckCircle,
   FileText,
   User,
-  Users
+  Users,
+  XCircle
 } from 'lucide-react';
 
-import { GetUserRequestedVacationsResp } from '@/api/vacation';
+import { GetUserRequestedVacationsResp, usePostApproveVacation, usePostRejectVacation } from '@/api/vacation';
+import { toast } from '@/components/alert/toast';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
@@ -19,7 +22,10 @@ import {
 } from '@/components/shadcn/dialog';
 import { ScrollArea } from '@/components/shadcn/scrollArea';
 import { Separator } from '@/components/shadcn/separator';
-import { getStatusConfig, getStatusIcon } from '@/utils/vacationStatus';
+import { Textarea } from '@/components/shadcn/textarea';
+import { useLoginUserStore } from '@/store/LoginUser';
+import { getStatusBadge, getStatusConfig, getStatusIcon } from '@/utils/vacationStatus';
+import { useState } from 'react';
 
 interface VacationApprovalFormProps {
   open: boolean;
@@ -34,8 +40,60 @@ export default function VacationApprovalForm({
   requestData,
   applicantName,
 }: VacationApprovalFormProps) {
+  const { loginUser } = useLoginUserStore()
+  const [showRejectReason, setShowRejectReason] = useState(false)
+  const [rejectReason, setRejectReason] = useState('')
 
-  const approvers = requestData?.approvers || [];
+  const { mutate: approveVacation } = usePostApproveVacation()
+  const { mutate: rejectVacation } = usePostRejectVacation()
+
+  const approvers = requestData?.approvers || []
+
+  // 현재 로그인한 사용자가 현재 결재자인지 확인
+  const isCurrentApprover = loginUser?.user_id === requestData?.current_approver_id
+
+  // 현재 결재자의 approval_id 찾기
+  const currentApprovalId = approvers.find(
+    approver => approver.approver_id === requestData?.current_approver_id
+  )?.approval_id
+
+  // 반려 사유 찾기 (REJECTED 상태인 승인자의 반려 사유)
+  const rejectionInfo = approvers.find(
+    approver => approver.approval_status === 'REJECTED'
+  )
+
+  const handleApprove = () => {
+    if (!currentApprovalId || !loginUser?.user_id) return
+
+    approveVacation({
+      approval_id: currentApprovalId,
+      approver_id: loginUser.user_id
+    }, {
+      onSuccess: () => {
+        onClose()
+      }
+    })
+  }
+
+  const handleReject = () => {
+    if (!currentApprovalId || !loginUser?.user_id) return
+    if (!rejectReason.trim()) {
+      toast.error('반려 사유를 입력해주세요.')
+      return
+    }
+
+    rejectVacation({
+      approval_id: currentApprovalId,
+      approver_id: loginUser.user_id,
+      rejection_reason: rejectReason
+    }, {
+      onSuccess: () => {
+        setRejectReason('')
+        setShowRejectReason(false)
+        onClose()
+      }
+    })
+  }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -217,7 +275,7 @@ export default function VacationApprovalForm({
                                 </div>
                               </td>
                             </tr>
-                            <tr>
+                            <tr className={rejectionInfo?.rejection_reason ? 'border-b' : ''}>
                               <td className='bg-muted px-4 py-3 font-medium align-top'>신청 사유</td>
                               <td className='px-4 py-3'>
                                 <div className='whitespace-pre-wrap text-foreground'>
@@ -225,6 +283,23 @@ export default function VacationApprovalForm({
                                 </div>
                               </td>
                             </tr>
+                            {rejectionInfo?.rejection_reason && (
+                              <tr>
+                                <td className='bg-muted px-4 py-3 font-medium align-top'>반려 사유</td>
+                                <td className='px-4 py-3'>
+                                  <div className='whitespace-pre-wrap text-red-600 font-medium'>
+                                    {rejectionInfo.rejection_reason}
+                                  </div>
+                                  {rejectionInfo.approval_date && (
+                                    <p className='text-xs text-foreground/70 mt-2'>
+                                      반려일: {dayjs(rejectionInfo.approval_date).format('YYYY-MM-DD HH:mm')}
+                                      {' '}
+                                      (반려자: {rejectionInfo.approver_name})
+                                    </p>
+                                  )}
+                                </td>
+                              </tr>
+                            )}
                           </tbody>
                         </table>
                       </div>
@@ -292,9 +367,7 @@ export default function VacationApprovalForm({
                                       <p className='text-xs font-medium mt-1 text-center break-all'>
                                         {approver.approver_name}
                                       </p>
-                                      <Badge variant='outline' className='text-xs'>
-                                        {approver.approval_status_name}
-                                      </Badge>
+                                      {getStatusBadge(approver.approval_status, approver.approval_status_name)}
                                     </div>
                                   </td>
                                 ))}
@@ -307,6 +380,73 @@ export default function VacationApprovalForm({
                       )}
                     </CardContent>
                   </Card>
+
+                  {/* 결재 처리 카드 */}
+                  {isCurrentApprover && (requestData?.grant_status === 'PROGRESS' || requestData?.grant_status === 'PENDING') && (
+                    <Card className='mt-6'>
+                      <CardHeader>
+                        <CardTitle className='flex items-center gap-2'>
+                          <CheckCircle className='w-5 h-5 text-green-600' />
+                          결재 처리
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className='space-y-4'>
+                        {showRejectReason ? (
+                          <div className='space-y-4'>
+                            <div>
+                              <label className='text-sm font-medium mb-2 block'>
+                                반려 사유 <span className='text-red-500'>*</span>
+                              </label>
+                              <Textarea
+                                value={rejectReason}
+                                onChange={(e) => setRejectReason(e.target.value)}
+                                placeholder='반려 사유를 입력해주세요...'
+                                rows={4}
+                                className='resize-none'
+                              />
+                            </div>
+                            <div className='flex gap-2'>
+                              <Button
+                                variant='outline'
+                                onClick={() => {
+                                  setShowRejectReason(false)
+                                  setRejectReason('')
+                                }}
+                                className='flex-1'
+                              >
+                                취소
+                              </Button>
+                              <Button
+                                variant='destructive'
+                                onClick={handleReject}
+                                className='flex-1'
+                              >
+                                <XCircle className='w-4 h-4 mr-2' />
+                                반려 확정
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className='flex gap-2'>
+                            <Button
+                              onClick={() => setShowRejectReason(true)}
+                              className='flex-1 bg-red-600 hover:bg-red-700 text-white'
+                            >
+                              <XCircle className='w-4 h-4 mr-2' />
+                              반려
+                            </Button>
+                            <Button
+                              onClick={handleApprove}
+                              className='flex-1 bg-green-600 hover:bg-green-700 text-white'
+                            >
+                              <CheckCircle className='w-4 h-4 mr-2' />
+                              승인
+                            </Button>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </div>
             </div>

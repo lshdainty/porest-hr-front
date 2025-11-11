@@ -27,7 +27,7 @@ const enum VacationQueryKey {
   POST_REQUEST_VACATION = 'postRequestVacation',
   POST_APPROVE_VACATION = 'postApproveVacation',
   POST_REJECT_VACATION = 'postRejectVacation',
-  GET_PENDING_APPROVALS_BY_APPROVER = 'getPendingApprovalsByApprover',
+  GET_ALL_VACATIONS_BY_APPROVER = 'getAllVacationsByApprover',
   GET_USER_REQUESTED_VACATIONS = 'getUserRequestedVacations',
   GET_USER_REQUESTED_VACATION_STATS = 'getUserRequestedVacationStats',
   POST_CANCEL_VACATION_REQUEST = 'postCancelVacationRequest'
@@ -827,7 +827,7 @@ const usePostApproveVacation = () => {
       return resp.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_PENDING_APPROVALS_BY_APPROVER] });
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_ALL_VACATIONS_BY_APPROVER] });
       queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY] });
       toast.success('휴가가 승인되었습니다.');
     },
@@ -864,7 +864,7 @@ const usePostRejectVacation = () => {
       return resp.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_PENDING_APPROVALS_BY_APPROVER] });
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_ALL_VACATIONS_BY_APPROVER] });
       toast.success('휴가가 거부되었습니다.');
     },
     onError: (error) => {
@@ -873,46 +873,9 @@ const usePostRejectVacation = () => {
   });
 }
 
-interface GetPendingApprovalsByApproverReq {
+interface GetAllVacationsByApproverReq {
   approver_id: string
-}
-
-interface PendingApprovalInfo {
-  approval_id: number
-  vacation_grant_id: number
-  requester_id: string
-  requester_name: string
-  policy_id: number
-  policy_name: string
-  desc: string
-  request_start_time: string
-  request_end_time: string | null
-  grant_time: number
-  vacation_type: string
-  vacation_type_name: string
-  approval_status: string
-  approval_status_name: string
-}
-
-interface GetPendingApprovalsByApproverResp {
-  pending_approvals: PendingApprovalInfo[]
-}
-
-const useGetPendingApprovalsByApprover = (reqData: GetPendingApprovalsByApproverReq) => {
-  return useQuery({
-    queryKey: [VacationQueryKey.GET_PENDING_APPROVALS_BY_APPROVER, reqData.approver_id],
-    queryFn: async (): Promise<GetPendingApprovalsByApproverResp> => {
-      const resp: ApiResponse<GetPendingApprovalsByApproverResp> = await api.request({
-        method: 'get',
-        url: `/users/${reqData.approver_id}/pending-approvals`
-      });
-
-      if (resp.code !== 200) throw new Error(resp.message);
-
-      return resp.data;
-    },
-    enabled: !!reqData.approver_id
-  });
+  status?: string
 }
 
 interface GetUserRequestedVacationsReq {
@@ -953,6 +916,29 @@ interface GetUserRequestedVacationsResp {
   current_approver_id: string | null
   current_approver_name: string | null
   approvers: ApproverInfo[] | null
+}
+
+const useGetAllVacationsByApprover = (reqData: GetAllVacationsByApproverReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_ALL_VACATIONS_BY_APPROVER, reqData.approver_id, reqData.status],
+    queryFn: async (): Promise<GetUserRequestedVacationsResp[]> => {
+      const params = new URLSearchParams()
+      if (reqData.status) {
+        params.append('status', reqData.status)
+      }
+      const queryString = params.toString() ? `?${params.toString()}` : ''
+
+      const resp: ApiResponse<GetUserRequestedVacationsResp[]> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.approver_id}/vacation-approvals${queryString}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.approver_id
+  });
 }
 
 const useGetUserRequestedVacations = (reqData: GetUserRequestedVacationsReq) => {
@@ -1044,7 +1030,7 @@ const usePostCancelVacationRequest = () => {
 
 export {
   useDeleteRevokeVacationGrant, useDeleteRevokeVacationPoliciesFromUser, useDeleteRevokeVacationPolicyFromUser, useDeleteVacationPolicy, useDeleteVacationUsage, useGetAllUsersVacationHistory,
-  useGetAvailableVacations, useGetPendingApprovalsByApprover, useGetUserMonthlyVacationStats, useGetUserRequestedVacations,
+  useGetAllVacationsByApprover, useGetAvailableVacations, useGetUserMonthlyVacationStats, useGetUserRequestedVacations,
   useGetUserRequestedVacationStats, useGetUserVacationHistory, useGetUserVacationPolicies, useGetUserVacationPolicyAssignmentStatus, useGetUserVacationStats, useGetUserVacationUsagesByPeriod, useGetVacationPolicies,
   useGetVacationPolicy, useGetVacationUsagesByPeriod, usePostApproveVacation, usePostAssignVacationPoliciesToUser, usePostCancelVacationRequest, usePostManualGrantVacation, usePostRejectVacation, usePostRequestVacation, usePostUseVacation, usePostVacationPolicy, VacationQueryKey
 };
@@ -1053,8 +1039,9 @@ export {
     ApproverInfo, DeleteRevokeVacationGrantResp, DeleteRevokeVacationPoliciesFromUserReq,
     DeleteRevokeVacationPoliciesFromUserResp, DeleteRevokeVacationPolicyFromUserReq,
     DeleteRevokeVacationPolicyFromUserResp, DeleteVacationPolicyResp, GetAllUsersVacationHistoryResp,
+    GetAllVacationsByApproverReq,
     GetAvailableVacationsReq,
-    GetAvailableVacationsResp, GetPendingApprovalsByApproverReq, GetPendingApprovalsByApproverResp, GetUserMonthlyVacationStatsReq,
+    GetAvailableVacationsResp, GetUserMonthlyVacationStatsReq,
     GetUserMonthlyVacationStatsResp, GetUserRequestedVacationsReq,
     GetUserRequestedVacationsResp,
     GetUserRequestedVacationStatsReq,
@@ -1066,7 +1053,7 @@ export {
     GetUserVacationUsagesByPeriodResp, GetVacationPoliciesResp,
     GetVacationPolicyReq,
     GetVacationPolicyResp, GetVacationUsagesByPeriodReq,
-    GetVacationUsagesByPeriodResp, PendingApprovalInfo, PostApproveVacationReq,
+    GetVacationUsagesByPeriodResp, PostApproveVacationReq,
     PostApproveVacationResp, PostAssignVacationPoliciesToUserReq,
     PostAssignVacationPoliciesToUserResp, PostCancelVacationRequestReq,
     PostCancelVacationRequestResp, PostManualGrantVacationReq,

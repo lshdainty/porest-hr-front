@@ -1,6 +1,5 @@
 import { Badge } from '@/components/shadcn/badge'
 import {
-  AlertCircle,
   Ban,
   CheckCircle,
   Clock,
@@ -9,7 +8,7 @@ import {
   type LucideIcon
 } from 'lucide-react'
 
-export type VacationStatusCode = 'PENDING' | 'PROGRESS' | 'APPROVED' | 'REJECTED' | 'CANCELED'
+export type VacationStatusCode = 'PENDING' | 'PROGRESS' | 'ACTIVE' | 'APPROVED' | 'REJECTED' | 'CANCELED'
 
 export interface VacationStatusConfig {
   color: string
@@ -24,6 +23,10 @@ export const VACATION_STATUS_CONFIG: Record<VacationStatusCode, VacationStatusCo
   PROGRESS: {
     color: 'bg-blue-100 text-blue-800 border-blue-300',
     icon: Clock
+  },
+  ACTIVE: {
+    color: 'bg-green-100 text-green-800 border-green-300',
+    icon: CheckCircle
   },
   APPROVED: {
     color: 'bg-green-100 text-green-800 border-green-300',
@@ -65,6 +68,7 @@ export const getStatusIcon = (statusCode: string, className: string = 'w-8 h-8')
   const iconColorMap: Record<VacationStatusCode, string> = {
     PENDING: 'text-yellow-600',
     PROGRESS: 'text-blue-600',
+    ACTIVE: 'text-green-600',
     APPROVED: 'text-green-600',
     REJECTED: 'text-red-600',
     CANCELED: 'text-foreground'
