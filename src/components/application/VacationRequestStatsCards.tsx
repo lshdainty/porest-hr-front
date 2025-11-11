@@ -1,4 +1,4 @@
-import { useGetUserRequestedVacationStats } from '@/api/vacation';
+import { GetUserRequestedVacationStatsResp } from '@/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { Progress } from '@/components/shadcn/progress';
@@ -10,14 +10,10 @@ import {
 } from 'lucide-react';
 
 interface VacationRequestStatsCardsProps {
-  user_id: string;
+  stats: GetUserRequestedVacationStatsResp | undefined;
 }
 
-export default function VacationRequestStatsCards({ user_id }: VacationRequestStatsCardsProps) {
-  const { data: stats, isLoading: isLoadingStats } = useGetUserRequestedVacationStats({
-    user_id
-  });
-
+export default function VacationRequestStatsCards({ stats }: VacationRequestStatsCardsProps) {
   // 통계 데이터
   const totalRequests = stats?.total_request_count || 0;
   const pendingRequests = stats?.pending_count || 0;
@@ -29,20 +25,6 @@ export default function VacationRequestStatsCards({ user_id }: VacationRequestSt
   const thisMonthRequests = stats?.current_month_request_count || 0;
   const requestGrowth = stats?.change_rate || 0;
   const averageProcessingDays = stats?.average_processing_days || 0;
-
-  if (isLoadingStats) {
-    return (
-      <div className='grid grid-cols-2 lg:grid-cols-7 gap-4 mb-8'>
-        {[...Array(7)].map((_, i) => (
-          <Card key={i} className='animate-pulse'>
-            <CardContent className='p-6'>
-              <div className='h-20 bg-muted rounded'></div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className='grid grid-cols-2 lg:grid-cols-7 gap-4 mb-8'>

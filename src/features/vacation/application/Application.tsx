@@ -1,8 +1,11 @@
 import { useGetUserApprovers } from '@/api/user'
-import { useGetUserVacationPolicies } from '@/api/vacation'
+import { useGetGrantStatusTypes } from '@/api/type'
+import { useGetUserVacationPolicies, useGetUserRequestedVacations, useGetUserRequestedVacationStats } from '@/api/vacation'
 import ApplicationFormDialog from '@/components/application/ApplicationForm'
 import ApplicationTable from '@/components/application/ApplicationTable'
+import ApplicationTableSkeleton from '@/components/application/ApplicationTableSkeleton'
 import VacationRequestStatsCards from '@/components/application/VacationRequestStatsCards'
+import VacationRequestStatsCardsSkeleton from '@/components/application/VacationRequestStatsCardsSkeleton'
 import { Button } from '@/components/shadcn/button'
 import { useLoginUserStore } from '@/store/LoginUser'
 import { Plus } from 'lucide-react'
@@ -21,6 +24,16 @@ export default function Application() {
     user_id: loginUser?.user_id || ''
   })
 
+  const { data: vacationRequests = [], isLoading: isLoadingRequests } = useGetUserRequestedVacations({
+    user_id: loginUser?.user_id || ''
+  })
+
+  const { data: grantStatusTypes = [] } = useGetGrantStatusTypes()
+
+  const { data: stats, isLoading: isLoadingStats } = useGetUserRequestedVacationStats({
+    user_id: loginUser?.user_id || ''
+  })
+
   const handleCreateNew = () => {
     setIsDialogOpen(true)
   }
@@ -32,6 +45,17 @@ export default function Application() {
   const handleSubmitSuccess = () => {
     setIsDialogOpen(false)
     // 여기에 데이터 새로고침 로직 추가 가능
+  }
+
+  if (isLoadingRequests || isLoadingStats) {
+    return (
+      <div className='p-4 sm:p-6 md:p-8'>
+        <h1 className='text-3xl font-bold mb-2'>휴가 신청 관리</h1>
+        <p className='text-foreground/70 mb-8'>휴가를 신청하고 현황을 관리하세요</p>
+        <VacationRequestStatsCardsSkeleton />
+        <ApplicationTableSkeleton />
+      </div>
+    )
   }
 
   return (
@@ -49,10 +73,15 @@ export default function Application() {
       </div>
 
       {/* 통계 카드 */}
-      <VacationRequestStatsCards user_id={loginUser?.user_id || ''} />
+      <VacationRequestStatsCards stats={stats} />
 
       {/* 신청 내역 테이블 */}
-      <ApplicationTable />
+      <ApplicationTable
+        vacationRequests={vacationRequests}
+        grantStatusTypes={grantStatusTypes}
+        userId={loginUser?.user_id || ''}
+        userName={loginUser?.user_name}
+      />
 
       {/* 신청서 작성 다이얼로그 */}
       <ApplicationFormDialog

@@ -1,5 +1,5 @@
-import { useGetGrantStatusTypes } from '@/api/type';
-import { GetUserRequestedVacationsResp, useGetUserRequestedVacations, usePostCancelVacationRequest } from '@/api/vacation';
+import { TypeResp } from '@/api/type';
+import { GetUserRequestedVacationsResp, usePostCancelVacationRequest } from '@/api/vacation';
 import VacationApprovalForm from '@/components/application/VacationApprovalForm';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
@@ -13,29 +13,32 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/shadcn/table';
-import { useLoginUserStore } from '@/store/LoginUser';
 import { getStatusBadge } from '@/utils/vacationStatus';
 import dayjs from 'dayjs';
 import {
   Calendar,
-  Clock,
   EllipsisVertical,
   Eye,
   XCircle
 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function ApplicationTable() {
-  const loginUser = useLoginUserStore((state) => state.loginUser);
+interface ApplicationTableProps {
+  vacationRequests: GetUserRequestedVacationsResp[]
+  grantStatusTypes: TypeResp[]
+  userId: string
+  userName?: string
+}
+
+export default function ApplicationTable({
+  vacationRequests,
+  grantStatusTypes,
+  userId,
+  userName
+}: ApplicationTableProps) {
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
 
-  // API 호출
-  const { data: vacationRequests = [], isLoading: isLoadingRequests } = useGetUserRequestedVacations({
-    user_id: loginUser?.user_id || ''
-  });
-
-  const { data: grantStatusTypes = [] } = useGetGrantStatusTypes();
   const { mutate: cancelVacationRequest } = usePostCancelVacationRequest();
 
   const handleDetailView = (request: GetUserRequestedVacationsResp) => {
@@ -49,11 +52,11 @@ export default function ApplicationTable() {
   };
 
   const handleCancelRequest = (requestId: number) => {
-    if (!loginUser?.user_id) return;
+    if (!userId) return;
 
     cancelVacationRequest({
       vacation_grant_id: requestId,
-      user_id: loginUser.user_id
+      user_id: userId
     });
   };
 
@@ -79,15 +82,7 @@ export default function ApplicationTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoadingRequests ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className='text-center py-8'>
-                      <div className='flex justify-center'>
-                        <Clock className='w-6 h-6 animate-spin text-muted-foreground' />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : vacationRequests.length === 0 ? (
+                {vacationRequests.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className='text-center py-8 text-muted-foreground'>
                       신청한 휴가가 없습니다.
@@ -200,7 +195,7 @@ export default function ApplicationTable() {
         open={detailOpen}
         onClose={handleDetailClose}
         requestData={selectedRequest || undefined}
-        applicantName={loginUser?.user_name}
+        applicantName={userName}
       />
     </>
   );
