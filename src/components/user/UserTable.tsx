@@ -10,11 +10,12 @@ import ResendEmailDialog from '@/components/user/ResendEmailDialog';
 import UserDeleteDialog from '@/components/user/UserDeleteDialog';
 import UserEditDialog from '@/components/user/UserEditDialog';
 import UserInviteDialog from '@/components/user/UserInviteDialog';
+import UserVacationPolicyDialog from '@/components/user/UserVacationPolicyDialog';
 import config from '@/config/config';
 import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
-import { EllipsisVertical, MailPlus, Pencil, Trash2, UserRound, UserRoundCog } from 'lucide-react';
+import { EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2, UserRound, UserRoundCog } from 'lucide-react';
 import { useState } from 'react';
 
 interface UserTableProps {
@@ -30,6 +31,7 @@ export default function UserTable({ value: users }: UserTableProps) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState<string | null>(null);
   const [showResendDialog, setShowResendDialog] = useState<string | null>(null);
+  const [showPolicyDialog, setPolicyDialog] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
   const [showInviteEditDialog, setShowInviteEditDialog] = useState<string | null>(null);
 
@@ -185,7 +187,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                                 onSelect={() => setShowEditDialog(row.user_id)}
                               >
                                 <Pencil className='h-4 w-4' />
-                                <span>수정</span>
+                                <span>사용자 수정</span>
                               </DropdownMenuItem>
                             )}
                             {row.invitation_status === 'PENDING' && (
@@ -193,7 +195,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                                 onSelect={() => setShowInviteEditDialog(row.user_id)}
                               >
                                 <Pencil className='h-4 w-4' />
-                                <span>수정</span>
+                                <span>초대정보 수정</span>
                               </DropdownMenuItem>
                             )}
                             {row.invitation_status !== 'ACTIVE' && row.invitation_status !== 'PENDING' && (
@@ -201,7 +203,15 @@ export default function UserTable({ value: users }: UserTableProps) {
                                 disabled
                               >
                                 <Pencil className='h-4 w-4' />
-                                <span>수정</span>
+                                <span>사용자 수정</span>
+                              </DropdownMenuItem>
+                            )}
+                            {row.invitation_status === 'ACTIVE' && (
+                              <DropdownMenuItem
+                                onSelect={() => setPolicyDialog(row.user_id)}
+                              >
+                                <ShieldEllipsis className='h-4 w-4' />
+                                <span>휴가정책 설정</span>
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -251,6 +261,15 @@ export default function UserTable({ value: users }: UserTableProps) {
           onOpenChange={(open) => !open && setShowEditDialog(null)}
           user={users.find(u => u.user_id === showEditDialog)!}
           onSave={handleUpdateUser}
+        />
+      )}
+
+      {showPolicyDialog && (
+        <UserVacationPolicyDialog
+          open={true}
+          onOpenChange={(open) => !open && setPolicyDialog(null)}
+          userId={showPolicyDialog}
+          userName={users.find(u => u.user_id === showPolicyDialog)?.user_name}
         />
       )}
 

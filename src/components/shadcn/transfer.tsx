@@ -4,6 +4,7 @@ import { Button } from '@/components/shadcn/button'
 import { Checkbox } from '@/components/shadcn/checkbox'
 import { Input } from '@/components/shadcn/input'
 import { Label } from '@/components/shadcn/label'
+import { cn } from '@/lib/utils'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import React from 'react'
 
@@ -26,6 +27,7 @@ export interface TransferListProps {
   renderItem?: (item: TransferItem) => React.ReactNode
   renderRightItem?: (item: TransferItem) => React.ReactNode
   filterItem?: (item: TransferItem, search: string) => boolean
+  itemClassName?: string
 }
 
 export default function TransferList({
@@ -40,6 +42,7 @@ export default function TransferList({
   renderItem,
   renderRightItem,
   filterItem,
+  itemClassName,
 }: TransferListProps) {
   const [leftSearch, setLeftSearch] = React.useState('')
   const [rightSearch, setRightSearch] = React.useState('')
@@ -91,7 +94,7 @@ export default function TransferList({
   const defaultRenderItem = (item: TransferItem) => item.label
 
   return (
-    <div className='flex space-x-4 flex-1'>
+    <div className='flex space-x-4 flex-1 h-full'>
       <div className='w-1/2 bg-background rounded-sm flex flex-col'>
         <div className='flex items-center justify-between flex-shrink-0'>
           <Input
@@ -108,7 +111,7 @@ export default function TransferList({
           {leftItems
             .filter((item) => filterFn(item, leftSearch))
             .map((item) => (
-              <li className='flex items-center gap-2 text-sm hover:bg-muted rounded-sm p-2' key={item.key}>
+              <li className={cn('flex items-center gap-2 text-sm hover:bg-muted rounded-sm p-2 border-b border-border last:border-b-0', itemClassName)} key={item.key}>
                 <Checkbox
                   id={`left-${item.key}`}
                   checked={item.selected}
@@ -157,7 +160,7 @@ export default function TransferList({
           {rightItems
             .filter((item) => filterFn(item, rightSearch))
             .map((item) => (
-              <li className='flex items-center gap-2 text-sm hover:bg-muted rounded-sm p-2' key={item.key}>
+              <li className={cn('flex items-center gap-2 text-sm hover:bg-muted rounded-sm p-2 border-b border-border last:border-b-0', itemClassName)} key={item.key}>
                 <Checkbox
                   id={`right-${item.key}`}
                   checked={item.selected}

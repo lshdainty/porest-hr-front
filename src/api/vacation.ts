@@ -19,6 +19,7 @@ const enum VacationQueryKey {
   DELETE_VACATION_POLICY = 'deleteVacationPolicy',
   POST_ASSIGN_VACATION_POLICIES_TO_USER = 'postAssignVacationPoliciesToUser',
   GET_USER_VACATION_POLICIES = 'getUserVacationPolicies',
+  GET_USER_VACATION_POLICY_ASSIGNMENT_STATUS = 'getUserVacationPolicyAssignmentStatus',
   DELETE_REVOKE_VACATION_POLICY_FROM_USER = 'deleteRevokeVacationPolicyFromUser',
   DELETE_REVOKE_VACATION_POLICIES_FROM_USER = 'deleteRevokeVacationPoliciesFromUser',
   POST_MANUAL_GRANT_VACATION = 'postManualGrantVacation',
@@ -571,6 +572,51 @@ const useGetUserVacationPolicies = (reqData: GetUserVacationPoliciesReq) => {
   });
 }
 
+interface VacationPolicyAssignmentInfo {
+  vacation_policy_id: number
+  vacation_policy_name: string
+  vacation_policy_desc: string
+  vacation_type: string
+  grant_method: string
+  grant_time: number
+  grant_time_str: string
+  is_flexible_grant: string
+  minute_grant_yn: string
+  repeat_unit: string
+  repeat_interval: number
+  specific_months: number
+  specific_days: number
+  effective_type: string
+  expiration_type: string
+  repeat_grant_desc: string
+}
+
+interface GetUserVacationPolicyAssignmentStatusReq {
+  user_id: string
+}
+
+interface GetUserVacationPolicyAssignmentStatusResp {
+  assigned_policies: VacationPolicyAssignmentInfo[]
+  unassigned_policies: VacationPolicyAssignmentInfo[]
+}
+
+const useGetUserVacationPolicyAssignmentStatus = (reqData: GetUserVacationPolicyAssignmentStatusReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_VACATION_POLICY_ASSIGNMENT_STATUS, reqData.user_id],
+    queryFn: async (): Promise<GetUserVacationPolicyAssignmentStatusResp> => {
+      const resp: ApiResponse<GetUserVacationPolicyAssignmentStatusResp> = await api.request({
+        method: 'get',
+        url: `/users/${reqData.user_id}/vacation-policies/assignment-status`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    enabled: !!reqData.user_id
+  });
+}
+
 interface DeleteRevokeVacationPolicyFromUserReq {
   user_id: string
   vacation_policy_id: number
@@ -999,7 +1045,7 @@ const usePostCancelVacationRequest = () => {
 export {
   useDeleteRevokeVacationGrant, useDeleteRevokeVacationPoliciesFromUser, useDeleteRevokeVacationPolicyFromUser, useDeleteVacationPolicy, useDeleteVacationUsage, useGetAllUsersVacationHistory,
   useGetAvailableVacations, useGetPendingApprovalsByApprover, useGetUserMonthlyVacationStats, useGetUserRequestedVacations,
-  useGetUserRequestedVacationStats, useGetUserVacationHistory, useGetUserVacationPolicies, useGetUserVacationStats, useGetUserVacationUsagesByPeriod, useGetVacationPolicies,
+  useGetUserRequestedVacationStats, useGetUserVacationHistory, useGetUserVacationPolicies, useGetUserVacationPolicyAssignmentStatus, useGetUserVacationStats, useGetUserVacationUsagesByPeriod, useGetVacationPolicies,
   useGetVacationPolicy, useGetVacationUsagesByPeriod, usePostApproveVacation, usePostAssignVacationPoliciesToUser, usePostCancelVacationRequest, usePostManualGrantVacation, usePostRejectVacation, usePostRequestVacation, usePostUseVacation, usePostVacationPolicy, VacationQueryKey
 };
 
@@ -1014,7 +1060,8 @@ export {
     GetUserRequestedVacationStatsReq,
     GetUserRequestedVacationStatsResp, GetUserVacationHistoryReq,
     GetUserVacationHistoryResp, GetUserVacationPoliciesReq,
-    GetUserVacationPoliciesResp, GetUserVacationStatsReq,
+    GetUserVacationPoliciesResp, GetUserVacationPolicyAssignmentStatusReq,
+    GetUserVacationPolicyAssignmentStatusResp, GetUserVacationStatsReq,
     GetUserVacationStatsResp, GetUserVacationUsagesByPeriodReq,
     GetUserVacationUsagesByPeriodResp, GetVacationPoliciesResp,
     GetVacationPolicyReq,
@@ -1027,7 +1074,7 @@ export {
     PostRejectVacationResp, PostRequestVacationReq,
     PostRequestVacationResp, PostUseVacationReq,
     PostUseVacationResp, PostVacationPolicyReq,
-    PostVacationPolicyResp, VacationGrantInfo,
+    PostVacationPolicyResp, VacationGrantInfo, VacationPolicyAssignmentInfo,
     VacationUsageInfo
   };
 

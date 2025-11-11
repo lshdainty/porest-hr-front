@@ -197,6 +197,7 @@ export default function UserDepartmentTransfer({
         renderItem={renderLeftUserItem}
         renderRightItem={renderRightUserItem}
         filterItem={filterUserItem}
+        itemClassName='border-b-0'
       />
     </div>
   )

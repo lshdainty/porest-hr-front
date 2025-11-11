@@ -17,11 +17,10 @@ import {
   Settings,
   ShieldCheck,
   ShieldEllipsis,
-  ShieldPlus,
   ShieldUser,
   TreePalm,
   Users as UserIcon,
-  UserRoundCog,
+  UserRoundCog
 } from 'lucide-react';
 
 // 컴포넌트 직접 import
@@ -146,14 +145,7 @@ export const routesConfig: RouteGroup[] = [
                 icon: IdCardLanyard,
                 component: UsersDepartment,
                 isDefault: true,
-              },
-              {
-                id: 'admin-users-vacation-policy',
-                name: 'Vacation Policy',
-                path: '/admin/users/vacation/policy',
-                icon: ShieldPlus,
-                component: () => {return null},
-              },
+              }
             ],
           },
           {

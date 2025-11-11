@@ -3,8 +3,7 @@ import {
   useGetExpirationTypes,
   useGetGrantMethodTypes,
   useGetRepeatUnitTypes,
-  useGetVacationTimeTypes,
-  useGetVacationTypes,
+  useGetVacationTypes
 } from '@/api/type';
 import { useGetVacationPolicies } from '@/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
@@ -34,7 +33,6 @@ export function VacationPolicyLists() {
   const { data: expirationTypes } = useGetExpirationTypes();
   const { data: vacationTypes } = useGetVacationTypes();
   const { data: repeatUnitTypes } = useGetRepeatUnitTypes();
-  const { data: vacationTimeTypes } = useGetVacationTimeTypes();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -91,7 +89,6 @@ export function VacationPolicyLists() {
             effectiveTypes={effectiveTypes}
             expirationTypes={expirationTypes}
             repeatUnitTypes={repeatUnitTypes}
-            vacationTimeTypes={vacationTimeTypes}
             trigger={
               <Button className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
