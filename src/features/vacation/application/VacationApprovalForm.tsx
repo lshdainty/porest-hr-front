@@ -1,9 +1,7 @@
 import dayjs from 'dayjs';
 import {
-  AlertCircle,
+  Ban,
   Calendar,
-  CheckCircle,
-  Clock,
   FileText,
   User,
   Users
@@ -21,6 +19,7 @@ import {
 } from '@/components/shadcn/dialog';
 import { ScrollArea } from '@/components/shadcn/scrollArea';
 import { Separator } from '@/components/shadcn/separator';
+import { getStatusConfig, getStatusIcon } from '@/utils/vacationStatus';
 
 interface VacationApprovalFormProps {
   open: boolean;
@@ -37,17 +36,6 @@ export default function VacationApprovalForm({
 }: VacationApprovalFormProps) {
 
   const approvers = requestData?.approvers || [];
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'APPROVED':
-        return <CheckCircle className='w-8 h-8 text-green-600' />;
-      case 'REJECTED':
-        return <AlertCircle className='w-8 h-8 text-red-600' />;
-      default:
-        return <Clock className='w-8 h-8 text-yellow-600' />;
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -84,13 +72,13 @@ export default function VacationApprovalForm({
                         <table className='w-full text-sm'>
                           <tbody>
                             <tr className='border-b'>
-                              <td className='bg-gray-50 px-4 py-3 font-medium w-32'>신청자</td>
+                              <td className='bg-muted px-4 py-3 font-medium w-32'>신청자</td>
                               <td className='px-4 py-3'>
                                 {applicantName || '정보 없음'}
                               </td>
                             </tr>
                             <tr>
-                              <td className='bg-gray-50 px-4 py-3 font-medium'>신청일시</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>신청일시</td>
                               <td className='px-4 py-3'>
                                 {requestData?.create_date
                                   ? dayjs(requestData.create_date).format('YYYY-MM-DD HH:mm')
@@ -114,13 +102,13 @@ export default function VacationApprovalForm({
                         <table className='w-full text-sm'>
                           <tbody>
                             <tr className='border-b'>
-                              <td className='bg-gray-50 px-4 py-3 font-medium w-32'>정책명</td>
+                              <td className='bg-muted px-4 py-3 font-medium w-32'>정책명</td>
                               <td className='px-4 py-3 font-medium'>
                                 {requestData?.policy_name || '정보 없음'}
                               </td>
                             </tr>
                             <tr className='border-b'>
-                              <td className='bg-gray-50 px-4 py-3 font-medium'>휴가 종류</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>휴가 종류</td>
                               <td className='px-4 py-3'>
                                 <Badge variant='outline' className='bg-blue-50 text-blue-700'>
                                   {requestData?.vacation_type_name || '정보 없음'}
@@ -128,7 +116,7 @@ export default function VacationApprovalForm({
                               </td>
                             </tr>
                             <tr className='border-b'>
-                              <td className='bg-gray-50 px-4 py-3 font-medium'>부여 기준 시간</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>부여 기준 시간</td>
                               <td className='px-4 py-3'>
                                 <div className='flex items-center gap-2'>
                                   <Badge variant='outline' className='bg-green-50 text-green-700'>
@@ -139,15 +127,15 @@ export default function VacationApprovalForm({
                             </tr>
                             {requestData?.grant_date && (
                               <tr className='border-b'>
-                                <td className='bg-gray-50 px-4 py-3 font-medium'>부여일</td>
-                                <td className='px-4 py-3 text-gray-700'>
+                                <td className='bg-muted px-4 py-3 font-medium'>부여일</td>
+                                <td className='px-4 py-3 text-foreground'>
                                   {dayjs(requestData.grant_date).format('YYYY-MM-DD')}
                                 </td>
                               </tr>
                             )}
                             {requestData?.expiry_date && (
                               <tr>
-                                <td className='bg-gray-50 px-4 py-3 font-medium'>만료일</td>
+                                <td className='bg-muted px-4 py-3 font-medium'>만료일</td>
                                 <td className='px-4 py-3'>
                                   <span className='text-red-600 font-medium'>
                                     {dayjs(requestData.expiry_date).format('YYYY-MM-DD')}
@@ -172,13 +160,13 @@ export default function VacationApprovalForm({
                         <table className='w-full text-sm'>
                           <tbody>
                             <tr className='border-b'>
-                              <td className='bg-gray-50 px-4 py-3 font-medium w-32'>제목</td>
+                              <td className='bg-muted px-4 py-3 font-medium w-32'>제목</td>
                               <td className='px-4 py-3 font-medium'>
                                 {requestData?.desc || '정보 없음'}
                               </td>
                             </tr>
                             <tr className='border-b'>
-                              <td className='bg-gray-50 px-4 py-3 font-medium'>대상 일자</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>대상 일자</td>
                               <td className='px-4 py-3'>
                                 {requestData?.request_start_time && requestData?.request_end_time ? (
                                   <div className='space-y-1'>
@@ -208,14 +196,21 @@ export default function VacationApprovalForm({
                               </td>
                             </tr>
                             <tr className='border-b'>
-                              <td className='bg-gray-50 px-4 py-3 font-medium'>현재 상태</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>현재 상태</td>
                               <td className='px-4 py-3'>
                                 <div className='flex items-center gap-2'>
-                                  <Badge variant='outline' className='bg-yellow-50 text-yellow-800 border-yellow-300'>
-                                    {requestData?.grant_status_name || '정보 없음'}
-                                  </Badge>
+                                  {(() => {
+                                    const statusConfig = getStatusConfig(requestData?.grant_status || '');
+                                    const StatusIcon = statusConfig?.icon;
+                                    return (
+                                      <Badge variant='outline' className={`${statusConfig?.color || ''} border`}>
+                                        {StatusIcon && <StatusIcon className='w-3 h-3 mr-1' />}
+                                        {requestData?.grant_status_name || '정보 없음'}
+                                      </Badge>
+                                    );
+                                  })()}
                                   {requestData?.current_approver_name && (
-                                    <span className='text-xs text-gray-600'>
+                                    <span className='text-xs text-foreground/70'>
                                       현재 결재자: <span className='font-medium'>{requestData.current_approver_name}</span>
                                     </span>
                                   )}
@@ -223,9 +218,9 @@ export default function VacationApprovalForm({
                               </td>
                             </tr>
                             <tr>
-                              <td className='bg-gray-50 px-4 py-3 font-medium align-top'>신청 사유</td>
+                              <td className='bg-muted px-4 py-3 font-medium align-top'>신청 사유</td>
                               <td className='px-4 py-3'>
-                                <div className='whitespace-pre-wrap text-gray-700'>
+                                <div className='whitespace-pre-wrap text-foreground'>
                                   {requestData?.request_desc || '-'}
                                 </div>
                               </td>
@@ -247,7 +242,19 @@ export default function VacationApprovalForm({
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {approvers.length > 0 ? (
+                      {requestData?.grant_status === 'CANCELED' ? (
+                        <div className='border rounded-lg overflow-hidden p-8'>
+                          <div className='flex flex-col items-center gap-4'>
+                            <div className='w-16 h-16 rounded-lg bg-muted flex items-center justify-center'>
+                              <Ban className='w-10 h-10 text-foreground' />
+                            </div>
+                            <div className='text-center'>
+                              <p className='text-lg font-semibold text-foreground mb-1'>신청 취소됨</p>
+                              <p className='text-sm text-foreground/70'>결재 승인이 필요하지 않습니다</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : approvers.length > 0 ? (
                         <div className='border rounded-lg overflow-hidden'>
                           <table className='w-full table-fixed'>
                             <thead>
@@ -255,7 +262,7 @@ export default function VacationApprovalForm({
                                 {approvers.map((approver, index) => (
                                   <th
                                     key={`header-${approver.approval_id}`}
-                                    className='bg-gray-50 px-2 py-2 text-xs font-medium border-r last:border-r-0'
+                                    className='bg-muted px-2 py-2 text-xs font-medium border-r last:border-r-0'
                                   >
                                     {approvers.length > 1 ? `${index + 1}차 승인` : '승인'}
                                   </th>
@@ -270,11 +277,11 @@ export default function VacationApprovalForm({
                                     className='border-r last:border-r-0 p-3'
                                   >
                                     <div className='flex flex-col items-center gap-2 min-h-[100px] justify-center'>
-                                      {approver.approval_status === 'APPROVED' ? (
+                                      {approver.approval_status === 'APPROVED' || approver.approval_status === 'REJECTED' ? (
                                         <>
                                           {getStatusIcon(approver.approval_status)}
                                           {approver.approval_date && (
-                                            <p className='text-xs text-gray-500'>
+                                            <p className='text-xs text-foreground/70'>
                                               {dayjs(approver.approval_date).format('YYYY/MM/DD')}
                                             </p>
                                           )}
@@ -296,7 +303,7 @@ export default function VacationApprovalForm({
                           </table>
                         </div>
                       ) : (
-                        <p className='text-sm text-gray-500 text-center py-4'>결재자 정보가 없습니다.</p>
+                        <p className='text-sm text-foreground/70 text-center py-4'>결재자 정보가 없습니다.</p>
                       )}
                     </CardContent>
                   </Card>
@@ -307,7 +314,7 @@ export default function VacationApprovalForm({
         </ScrollArea>
 
         {/* 하단 버튼 */}
-        <div className='p-6 pt-4 border-t bg-gray-50/50'>
+        <div className='p-6 pt-4 border-t bg-muted/50'>
           <div className='flex justify-end gap-3'>
             <Button variant='outline' onClick={onClose} type='button'>
               닫기

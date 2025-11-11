@@ -40,7 +40,7 @@ export default function Application() {
       <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8'>
         <div>
           <h1 className='text-3xl font-bold mb-2'>휴가 신청 관리</h1>
-          <p className='text-gray-600'>휴가를 신청하고 현황을 관리하세요</p>
+          <p className='text-foreground/70'>휴가를 신청하고 현황을 관리하세요</p>
         </div>
         <Button onClick={handleCreateNew} className='flex items-center gap-2 mt-4 lg:mt-0'>
           <Plus className='w-4 h-4' />

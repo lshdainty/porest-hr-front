@@ -13,56 +13,17 @@ import {
   TableRow,
 } from '@/components/shadcn/table';
 import { useLoginUserStore } from '@/store/LoginUser';
+import { getStatusBadge } from '@/utils/vacationStatus';
 import dayjs from 'dayjs';
 import {
-  Ban,
   Calendar,
-  CheckCircle,
   Clock,
   EllipsisVertical,
   Eye,
-  Timer,
   XCircle
 } from 'lucide-react';
 import { useState } from 'react';
 import VacationApprovalForm from './VacationApprovalForm';
-
-
-const getStatusBadge = (statusCode: string, statusName: string) => {
-  const statusConfig = {
-    PENDING: {
-      color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      icon: Timer
-    },
-    PROGRESS: {
-      color: 'bg-blue-100 text-blue-800 border-blue-300',
-      icon: Clock
-    },
-    APPROVED: {
-      color: 'bg-green-100 text-green-800 border-green-300',
-      icon: CheckCircle
-    },
-    REJECTED: {
-      color: 'bg-red-100 text-red-800 border-red-300',
-      icon: XCircle
-    },
-    CANCELED: {
-      color: 'bg-gray-100 text-gray-800 border-gray-300',
-      icon: Ban
-    }
-  };
-
-  const config = statusConfig[statusCode as keyof typeof statusConfig];
-  if (!config) return null;
-  const IconComponent = config.icon;
-
-  return (
-    <Badge className={`${config.color} border flex items-center gap-1`}>
-      <IconComponent className='w-3 h-3' />
-      {statusName}
-    </Badge>
-  );
-};
 
 export default function ApplicationTable() {
   const loginUser = useLoginUserStore((state) => state.loginUser);
@@ -96,8 +57,6 @@ export default function ApplicationTable() {
     });
   };
 
-  console.log('test log : ' ,vacationRequests)
-
   return (
     <>
       <Card className='flex-1'>
@@ -124,24 +83,27 @@ export default function ApplicationTable() {
                   <TableRow>
                     <TableCell colSpan={8} className='text-center py-8'>
                       <div className='flex justify-center'>
-                        <Clock className='w-6 h-6 animate-spin text-gray-400' />
+                        <Clock className='w-6 h-6 animate-spin text-muted-foreground' />
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : vacationRequests.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className='text-center py-8 text-gray-500'>
+                    <TableCell colSpan={8} className='text-center py-8 text-muted-foreground'>
                       신청한 휴가가 없습니다.
                     </TableCell>
                   </TableRow>
                 ) : (
                   vacationRequests.map((request) => (
-                    <TableRow key={request.vacation_grant_id} className='hover:bg-gray-50'>
+                    <TableRow
+                      key={request.vacation_grant_id}
+                      className='hover:bg-muted/50 hover:text-foreground dark:hover:bg-muted/80 dark:hover:text-foreground'
+                    >
                       <TableCell>
                         <div className='max-w-[200px]'>
                           <p className='font-medium'>{request.desc || request.policy_name}</p>
                           {request.request_desc && (
-                            <p className='text-xs text-gray-500 mt-1 line-clamp-2'>
+                            <p className='text-xs text-muted-foreground mt-1 line-clamp-2'>
                               {request.request_desc}
                             </p>
                           )}
@@ -160,7 +122,7 @@ export default function ApplicationTable() {
                           <div className='text-sm'>
                             {dayjs(request.request_start_time).format('YYYY-MM-DD')}
                             <br />
-                            <span className='text-xs text-gray-600'>
+                            <span className='text-xs text-muted-foreground'>
                               {dayjs(request.request_start_time).format('HH:mm')} ~ {dayjs(request.request_end_time).format('HH:mm')}
                             </span>
                           </div>
@@ -176,15 +138,15 @@ export default function ApplicationTable() {
                       </TableCell>
                       <TableCell>
                         {request.grant_status === 'CANCELED' ? (
-                          <span className='text-xs text-gray-400'>-</span>
+                          <span className='text-xs text-muted-foreground'>-</span>
                         ) : request.current_approver_name ? (
                           <div className='flex items-center gap-1'>
-                            <Badge variant='outline' className='bg-blue-50 text-blue-700'>
+                            <Badge variant='outline' className='bg-sky-50 text-sky-700'>
                               {request.current_approver_name}
                             </Badge>
                           </div>
                         ) : (
-                          <span className='text-xs text-gray-400'>-</span>
+                          <span className='text-xs text-muted-foreground'>-</span>
                         )}
                       </TableCell>
                       <TableCell>
