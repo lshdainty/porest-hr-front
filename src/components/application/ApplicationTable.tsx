@@ -1,5 +1,6 @@
 import { useGetGrantStatusTypes } from '@/api/type';
 import { GetUserRequestedVacationsResp, useGetUserRequestedVacations, usePostCancelVacationRequest } from '@/api/vacation';
+import VacationApprovalForm from '@/components/application/VacationApprovalForm';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
@@ -23,7 +24,6 @@ import {
   XCircle
 } from 'lucide-react';
 import { useState } from 'react';
-import VacationApprovalForm from './VacationApprovalForm';
 
 export default function ApplicationTable() {
   const loginUser = useLoginUserStore((state) => state.loginUser);
