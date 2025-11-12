@@ -102,21 +102,21 @@ export const useCalendarType = () => {
       id: 'HEALTHCHECKHALF',
       name: '건강검진(반차)',
       colorCode: '#707bf5',
-      type: 'schedule',
+      type: 'vacation',
       isDate: false
     },
     {
       id: 'DEFENSE',
       name: '민방위',
       colorCode: '#a06549',
-      type: 'schedule',
+      type: 'vacation',
       isDate: true
     },
     {
       id: 'DEFENSEHALF',
       name: '민방위(반차)',
       colorCode: '#a06549',
-      type: 'schedule',
+      type: 'vacation',
       isDate: false
     }
   ];

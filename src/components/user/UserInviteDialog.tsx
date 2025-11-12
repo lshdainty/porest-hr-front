@@ -138,7 +138,7 @@ export default function UserInviteDialog({ open, onOpenChange, title, companyOpt
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="p-6 space-y-4">
+          <div className="py-6 space-y-4">
             <Controller
               control={form.control}
               name="user_name"

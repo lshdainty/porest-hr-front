@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/shadcn/dialog';
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/shadcn/form";
+import { Field, FieldError, FieldLabel } from '@/components/shadcn/field';
 import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import {
@@ -29,13 +29,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Circle } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const formSchema = z.object({
   calendarType: z.string().min(1, '일정 타입을 선택해주세요.'),
   vacationType: z.string().optional(),
-  desc: z.string().min(1, '일정 사유를 입력해주세요.'),
+  desc: z.string().optional(),
   startDate: z.string().min(1, '시작일을 입력해주세요.'),
   endDate: z.string().min(1, '종료일을 입력해주세요.'),
   startHour: z.string().optional(),
@@ -155,20 +155,22 @@ export const RegistEventDialog: React.FC = () => {
           <DialogTitle>일정 등록</DialogTitle>
           <DialogDescription>일정 정보를 입력해주세요.</DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="py-6 space-y-4">
             <div className='flex flex-row gap-2'>
-              <FormField
+              <Controller
                 control={form.control}
                 name="calendarType"
-                render={({ field }) => (
-                  <FormItem className='flex-1'>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error} className='flex-1'>
+                    <FieldLabel>
+                      일정 타입
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="일정 타입" />
-                        </SelectTrigger>
-                      </FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="일정 타입" />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>휴가</SelectLabel>
@@ -188,22 +190,24 @@ export const RegistEventDialog: React.FC = () => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
                 )}
               />
               {isVacation && (
-                <FormField
+                <Controller
                   control={form.control}
                   name="vacationType"
-                  render={({ field }) => (
-                    <FormItem className='flex-1'>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error} className='flex-1'>
+                      <FieldLabel>
+                        사용 휴가
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="사용 휴가" />
-                          </SelectTrigger>
-                        </FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="사용 휴가" />
+                        </SelectTrigger>
                         <SelectContent>
                           {vacations?.map(v => (
                             <SelectItem key={v.vacation_type} value={v.vacation_type}>
@@ -212,112 +216,121 @@ export const RegistEventDialog: React.FC = () => {
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
-                    </FormItem>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
                   )}
                 />
               )}
             </div>
-            <FormField
+            <Controller
               control={form.control}
               name="desc"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="일정 사유" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    일정 사유
+                  </FieldLabel>
+                  <Input placeholder="일정 사유" {...field} />
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
               )}
             />
-            <div className='flex flex-row gap-2 items-start'>
-              <FormField
+            <div className='flex flex-row gap-2 items-end'>
+              <Controller
                 control={form.control}
                 name="startDate"
-                render={({ field }) => (
-                  <FormItem className='flex-1'>
-                    <FormControl>
-                      <InputDatePicker
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        placeholder='시작일'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error} className='flex-1'>
+                    <FieldLabel>
+                      시작일
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
+                    <InputDatePicker
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder='시작일'
+                    />
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
                 )}
               />
-              <div className='flex items-center h-10'>~</div>
-              <FormField
+              <div className='pb-2'>~</div>
+              <Controller
                 control={form.control}
                 name="endDate"
-                render={({ field }) => (
-                  <FormItem className='flex-1'>
-                    <FormControl>
-                      <InputDatePicker
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        placeholder='종료일'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error} className='flex-1'>
+                    <FieldLabel>
+                      종료일
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
+                    <InputDatePicker
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder='종료일'
+                    />
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
                 )}
               />
             </div>
             {!isDate && watchedCalendarType && (
               <div className='flex flex-row gap-2'>
-                <FormField
+                <Controller
                   control={form.control}
                   name="startHour"
-                  render={({ field }) => (
-                    <FormItem className='flex-1'>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error} className='flex-1'>
+                      <FieldLabel>
+                        시
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="시" />
-                          </SelectTrigger>
-                        </FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="시" />
+                        </SelectTrigger>
                         <SelectContent>
                           {Array.from({ length: 11 }, (_, i) => (
                             <SelectItem key={i+8} value={(i+8).toString()}>{`${i+8} 시`}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
-                    </FormItem>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
                   )}
                 />
-                <FormField
+                <Controller
                   control={form.control}
                   name="startMinute"
-                  render={({ field }) => (
-                    <FormItem className='flex-1'>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error} className='flex-1'>
+                      <FieldLabel>
+                        분
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="분" />
-                          </SelectTrigger>
-                        </FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="분" />
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value={'0'}>{'0 분'}</SelectItem>
                           <SelectItem value={'30'}>{'30 분'}</SelectItem>
                         </SelectContent>
                       </Select>
-                      <FormMessage />
-                    </FormItem>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
                   )}
                 />
               </div>
             )}
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant='outline' type="button">취소</Button>
-              </DialogClose>
-              <Button type='submit'>등록</Button>
-            </DialogFooter>
-          </form>
-        </Form>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant='outline' type="button">취소</Button>
+            </DialogClose>
+            <Button type='submit' disabled={!form.formState.isValid}>등록</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
