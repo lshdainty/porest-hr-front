@@ -62,6 +62,14 @@ const formSchema = z.object({
 }).superRefine((data, ctx) => {
   // ON_REQUEST 검증
   if (data.grantMethod === 'ON_REQUEST') {
+    // isFlexibleGrant 필수
+    if (!data.isFlexibleGrant) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '가변 부여 여부를 선택해주세요',
+        path: ['isFlexibleGrant']
+      });
+    }
     // isFlexibleGrant가 N이면 고정 시간 부여 → grantTime 필수
     if (data.isFlexibleGrant === 'N') {
       if (!data.grantTime || data.grantTime <= 0) {
@@ -90,6 +98,14 @@ const formSchema = z.object({
 
   // MANUAL_GRANT 검증
   if (data.grantMethod === 'MANUAL_GRANT') {
+    // isFlexibleGrant 필수
+    if (!data.isFlexibleGrant) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '가변 부여 여부를 선택해주세요',
+        path: ['isFlexibleGrant']
+      });
+    }
     // isFlexibleGrant가 N이면 고정 시간 부여 → grantTime 필수, Y이면 가변 시간 부여 → 검증 안 함
     if (data.isFlexibleGrant === 'N') {
       if (!data.grantTime || data.grantTime <= 0) {
@@ -273,8 +289,17 @@ export function VacationPolicyFormDialog({
 
   const watchGrantMethod = form.watch('grantMethod');
   const watchIsFlexibleGrant = form.watch('isFlexibleGrant');
+  const watchMinuteGrantYn = form.watch('minuteGrantYn');
   const watchRepeatUnit = form.watch('repeatUnit');
   const watchIsRecurring = form.watch('isRecurring');
+  const watchName = form.watch('name');
+  const watchVacationType = form.watch('vacationType');
+  const watchGrantTime = form.watch('grantTime');
+  const watchEffectiveType = form.watch('effectiveType');
+  const watchExpirationType = form.watch('expirationType');
+  const watchRepeatInterval = form.watch('repeatInterval');
+  const watchFirstGrantDate = form.watch('firstGrantDate');
+  const watchMaxGrantCount = form.watch('maxGrantCount');
 
   // isFlexibleGrant가 Y(가변)로 변경되면 grantTime 초기화
   useEffect(() => {
@@ -282,6 +307,73 @@ export function VacationPolicyFormDialog({
       form.setValue('grantTime', undefined);
     }
   }, [watchIsFlexibleGrant, watchGrantMethod, form]);
+
+  // minuteGrantYn이 N(불허)로 변경되면 분 값 제거
+  useEffect(() => {
+    if (watchMinuteGrantYn === 'N') {
+      const currentValue = form.getValues('grantTime');
+      if (currentValue) {
+        const days = Math.floor(currentValue);
+        const remainder = currentValue - days;
+        const hours = Math.floor(remainder / 0.125);
+        // 분 값을 제외한 새로운 총 시간 계산
+        const newTotal = days + (hours * 0.125);
+        form.setValue('grantTime', newTotal > 0 ? newTotal : undefined);
+      }
+    }
+  }, [watchMinuteGrantYn, form]);
+
+  // 필수값 검증 함수
+  const isFormValid = () => {
+    // 기본 필수값
+    if (!watchName || !watchVacationType || !watchGrantMethod || !watchMinuteGrantYn) {
+      return false;
+    }
+
+    // ON_REQUEST 필수값
+    if (watchGrantMethod === 'ON_REQUEST') {
+      if (!watchIsFlexibleGrant || !watchEffectiveType || !watchExpirationType) {
+        return false;
+      }
+      // isFlexibleGrant가 N이면 grantTime 필수
+      if (watchIsFlexibleGrant === 'N' && (!watchGrantTime || watchGrantTime <= 0)) {
+        return false;
+      }
+    }
+
+    // MANUAL_GRANT 필수값
+    if (watchGrantMethod === 'MANUAL_GRANT') {
+      if (!watchIsFlexibleGrant || !watchEffectiveType || !watchExpirationType) {
+        return false;
+      }
+      // isFlexibleGrant가 N이면 grantTime 필수
+      if (watchIsFlexibleGrant === 'N' && (!watchGrantTime || watchGrantTime <= 0)) {
+        return false;
+      }
+    }
+
+    // REPEAT_GRANT 필수값
+    if (watchGrantMethod === 'REPEAT_GRANT') {
+      if (!watchGrantTime || watchGrantTime <= 0) {
+        return false;
+      }
+      if (!watchEffectiveType || !watchExpirationType) {
+        return false;
+      }
+      if (!watchRepeatUnit || !watchRepeatInterval || watchRepeatInterval <= 0) {
+        return false;
+      }
+      if (!watchFirstGrantDate || !watchIsRecurring) {
+        return false;
+      }
+      // isRecurring이 N이면 maxGrantCount 필수
+      if (watchIsRecurring === 'N' && (!watchMaxGrantCount || watchMaxGrantCount <= 0)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
 
   useEffect(() => {
     if (open) {
@@ -524,6 +616,35 @@ export function VacationPolicyFormDialog({
                 />
               )}
 
+              {/* 분단위 부여 여부 */}
+              {shouldShowField('minuteGrantYn') && (
+                <Controller
+                  control={form.control}
+                  name='minuteGrantYn'
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel>
+                        분단위 부여 여부
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder='선택해주세요' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='N'>N (불허)</SelectItem>
+                          <SelectItem value='Y'>Y (허용)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className='text-sm text-muted-foreground'>
+                        휴가를 부여할 때 분단위(30분)로 부여할 수 있는지 설정합니다.
+                      </p>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+              )}
+
               {/* 가변 부여 여부 - ON_REQUEST, MANUAL_GRANT만 표시 */}
               {shouldShowField('isFlexibleGrant') && (
                 <Controller
@@ -533,19 +654,20 @@ export function VacationPolicyFormDialog({
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
                         가변 부여 여부
+                        <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger>
                           <SelectValue placeholder='선택해주세요' />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value='N'>고정 시간 부여 (N)</SelectItem>
-                          <SelectItem value='Y'>가변 시간 부여 (Y)</SelectItem>
+                          <SelectItem value='N'>N (고정 시간)</SelectItem>
+                          <SelectItem value='Y'>Y (가변 시간)</SelectItem>
                         </SelectContent>
                       </Select>
                       <div className='text-sm text-muted-foreground space-y-1 mt-2'>
-                        <p><strong>고정 시간 부여 (N):</strong> 정책 등록 시 입력한 부여 시간을 자동으로 사용합니다.</p>
-                        <p><strong>가변 시간 부여 (Y):</strong> 휴가 부여 시 사용자 또는 관리자가 직접 시간을 입력합니다.</p>
+                        <p><strong>N (고정 시간):</strong> 정책에 등록된 부여 시간을 사용합니다.</p>
+                        <p><strong>Y (가변 시간):</strong> 사용자 또는 관리자가 입력한 시간 값으로 부여합니다.</p>
                       </div>
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
@@ -582,7 +704,7 @@ export function VacationPolicyFormDialog({
                             <span className='text-destructive ml-0.5'>*</span>
                           )}
                         </FieldLabel>
-                        <div className='grid grid-cols-3 gap-4'>
+                        <div className={`grid ${watchMinuteGrantYn === 'Y' ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
                           <div className='flex flex-col'>
                             <Input
                               type='number'
@@ -618,36 +740,38 @@ export function VacationPolicyFormDialog({
                             </Select>
                             <p className='text-xs text-muted-foreground mt-1'>시간 (1시간 = 0.125일)</p>
                           </div>
-                          <div className='flex flex-col'>
-                            <Select
-                              value={minutes.toString()}
-                              onValueChange={(value) => {
-                                handleTimeChange(days, hours, parseInt(value));
-                              }}
-                            >
-                              <SelectTrigger className='w-full'>
-                                <SelectValue placeholder='분' />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value='0'>0분</SelectItem>
-                                <SelectItem value='30'>30분</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <p className='text-xs text-muted-foreground mt-1'>분 (30분 = 0.0625일)</p>
-                          </div>
+                          {watchMinuteGrantYn === 'Y' && (
+                            <div className='flex flex-col'>
+                              <Select
+                                value={minutes.toString()}
+                                onValueChange={(value) => {
+                                  handleTimeChange(days, hours, parseInt(value));
+                                }}
+                              >
+                                <SelectTrigger className='w-full'>
+                                  <SelectValue placeholder='분' />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value='0'>0분</SelectItem>
+                                  <SelectItem value='30'>30분</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <p className='text-xs text-muted-foreground mt-1'>분 (30분 = 0.0625일)</p>
+                            </div>
+                          )}
                         </div>
                         <p className='text-sm text-muted-foreground mt-2'>
                           {watchIsFlexibleGrant === 'N'
-                            ? '고정 시간 부여: 휴가 부여 시 이 시간이 자동으로 적용됩니다.'
+                            ? '고정 시간 부여: 정책에 등록된 부여 시간을 사용합니다.'
                             : watchIsFlexibleGrant === 'Y'
-                              ? '가변 시간 부여: 휴가 부여 시 사용자/관리자가 직접 입력하므로 이 값은 참고용입니다.'
-                              : '부여할 휴가를 일/시간/분 단위로 선택해주세요.'}
+                              ? '가변 시간 부여: 사용자 또는 관리자가 입력한 시간 값으로 부여합니다. (이 값은 참고용입니다.)'
+                              : `부여할 휴가를 일/시간${watchMinuteGrantYn === 'Y' ? '/분' : ''} 단위로 선택해주세요.`}
                           {field.value && field.value > 0 && (
                             <span className='block mt-1 font-medium text-primary'>
                               총 {[
                                 days > 0 ? `${days}일` : '',
                                 hours > 0 ? `${hours}시간` : '',
-                                minutes > 0 ? `${minutes}분` : ''
+                                minutes > 0 && watchMinuteGrantYn === 'Y' ? `${minutes}분` : ''
                               ].filter(Boolean).join(' ')}
                             </span>
                           )}
@@ -656,35 +780,6 @@ export function VacationPolicyFormDialog({
                       </Field>
                     );
                   }}
-                />
-              )}
-
-              {/* 분단위 부여 여부 */}
-              {shouldShowField('minuteGrantYn') && (
-                <Controller
-                  control={form.control}
-                  name='minuteGrantYn'
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={!!fieldState.error}>
-                      <FieldLabel>
-                        분단위 부여 여부
-                        <span className='text-destructive ml-0.5'>*</span>
-                      </FieldLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder='선택해주세요' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value='Y'>허용 (Y)</SelectItem>
-                          <SelectItem value='N'>불허 (N)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <p className='text-sm text-muted-foreground'>
-                        휴가를 부여할 때 분단위(30분)로 부여할 수 있는지 설정합니다.
-                      </p>
-                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                    </Field>
-                  )}
                 />
               )}
 
@@ -950,12 +1045,13 @@ export function VacationPolicyFormDialog({
                             <SelectValue placeholder='반복 여부 선택' />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value='Y'>반복 부여 (Y)</SelectItem>
-                            <SelectItem value='N'>1회성 부여 (N)</SelectItem>
+                            <SelectItem value='Y'>Y (반복 부여)</SelectItem>
+                            <SelectItem value='N'>N (1회성 부여)</SelectItem>
                           </SelectContent>
                         </Select>
                         <p className='text-sm text-muted-foreground'>
-                          계속 반복할지, 1회만 부여할지 선택해주세요.
+                          <strong>Y (반복 부여):</strong> 계속 반복하여 부여합니다.<br />
+                          <strong>N (1회성 부여):</strong> 규칙에 따라 한번 부여된 뒤 더이상 부여되지 않습니다.
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -1016,7 +1112,7 @@ export function VacationPolicyFormDialog({
             <Button type='button' variant='secondary' onClick={() => setOpen(false)}>
               취소
             </Button>
-            <Button type='submit' disabled={isPending}>
+            <Button type='submit' disabled={isPending || !isFormValid()}>
               {isPending && <Spinner />}
               {isPending ? '저장 중...' : (isEditing ? '수정' : '저장')}
             </Button>
