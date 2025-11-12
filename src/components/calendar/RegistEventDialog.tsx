@@ -1,21 +1,22 @@
-import React, { useEffect } from 'react';
-import dayjs from 'dayjs';
-import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
-import { useLoginUserStore } from '@/store/LoginUser';
-import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
 import { usePostSchedule } from '@/api/schedule';
-import { CalendarIcon } from 'lucide-react';
-import { useCalendarType } from '@/hooks/useCalendarType';
+import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
+import { Button } from '@/components/shadcn/button';
+import { Calendar } from '@/components/shadcn/calendar';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/shadcn/dialog';
-import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shadcn/popover';
 import {
   Select,
   SelectContent,
@@ -25,14 +26,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select';
-import { Calendar } from '@/components/shadcn/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/shadcn/popover';
-import { Input } from '@/components/shadcn/input';
+import { useCalendarType } from '@/hooks/useCalendarType';
+import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
+import { useLoginUserStore } from '@/store/LoginUser';
 import { Circle } from '@mui/icons-material';
+import dayjs from 'dayjs';
+import { CalendarIcon } from 'lucide-react';
+import React, { useEffect } from 'react';
 
 export const RegistEventDialog: React.FC = () => {
   const { start, end, open } = useCalendarSlotStore();
@@ -53,6 +53,8 @@ export const RegistEventDialog: React.FC = () => {
   const [startHour, setStartHour] = React.useState('9');
   const [startMinute, setStartMinute] = React.useState('0');
 
+  // inputDatePicker 사용하는 로직으로 변경 진행해야함
+
   const {data: vacations} = useGetAvailableVacations({
     user_id: loginUser?.user_id || '',
     start_date: dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
@@ -64,7 +66,7 @@ export const RegistEventDialog: React.FC = () => {
   const onSubmit = () => {
     const calendar = calendarTypes.find(c => c.id === selectCalendarType);
     const format = 'YYYY-MM-DDTHH:mm:ss';
-    let data = Object();
+    const data = Object();
     data['user_id'] = loginUser?.user_id || '';
 
     if (calendar?.isDate) {
