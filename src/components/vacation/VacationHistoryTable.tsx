@@ -6,6 +6,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
 import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pencil, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { RegistEventDialog } from '@/components/calendar/RegistEventDialog';
+import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
+import dayjs from 'dayjs';
 
 interface VacationHistoryTableProps {
   value: GetUserPeriodVacationUseHistoriesResp[];
@@ -31,6 +34,7 @@ const formatDateTime = (dateTimeString: string) => {
 export default function VacationHistoryTable({ value: data, canAdd = false }: VacationHistoryTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
+  const { setSlots, setOpen } = useCalendarSlotStore(s => s.actions);
 
   useEffect(() => {
     const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -38,6 +42,12 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
       setCurrentPage(totalPages);
     }
   }, [data, currentPage, rowsPerPage]);
+
+  const handleAddVacation = () => {
+    const now = dayjs();
+    setSlots(now.toDate(), now.toDate());
+    setOpen(true);
+  };
 
   const handleEdit = (id: number) => {
     console.log(`Edit item with id: ${id}`);
@@ -54,17 +64,18 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
   );
 
   return (
-    <Card className='flex-1'>
-      <CardHeader>
-        <div className='flex items-center justify-between'>
-          <CardTitle>휴가 이력</CardTitle>
-          {canAdd && (
-            <div className='flex gap-2'>
-              <Button className='text-sm h-8' size='sm'>추가</Button>
-            </div>
-          )}
-        </div>
-      </CardHeader>
+    <>
+      <Card className='flex-1'>
+        <CardHeader>
+          <div className='flex items-center justify-between'>
+            <CardTitle>휴가 이력</CardTitle>
+            {canAdd && (
+              <div className='flex gap-2'>
+                <Button className='text-sm h-8' size='sm' onClick={handleAddVacation}>휴가 사용</Button>
+              </div>
+            )}
+          </div>
+        </CardHeader>
       <CardContent>
         <div className='overflow-x-auto relative'>
           <Table className='min-w-[800px]'>
@@ -182,5 +193,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
         </div>
       </CardContent>
     </Card>
+    <RegistEventDialog />
+    </>
   );
 }

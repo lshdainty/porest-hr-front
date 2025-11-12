@@ -1,24 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Calendar, dayjsLocalizer, Views } from 'react-big-calendar';
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
-import { Formats, MobileFormats } from '@/components/calendar/Formats';
-import Toolbar from '@/components/calendar/Toolbar';
-import Events, { convertEventStyle } from '@/components/calendar/Events';
-import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers';
-import { RegistEventDialog } from '@/components/calendar/RegistEventDialog';
-import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStore';
-import { useHolidayStore } from '@/store/HolidayStore';
-import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
-import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
 import { useGetEventsByPeriod } from '@/api/calendar';
 import { useGetHolidaysByStartEndDate } from '@/api/holiday';
+import Events, { convertEventStyle } from '@/components/calendar/Events';
+import { Formats, MobileFormats } from '@/components/calendar/Formats';
+import { MonthDateHeader, MonthHeader } from '@/components/calendar/Headers';
+import { RegistEventDialog } from '@/components/calendar/RegistEventDialog';
+import Toolbar from '@/components/calendar/Toolbar';
 import { useIsMobile } from '@/hooks/useMobile';
+import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStore';
+import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
+import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
+import { useHolidayStore } from '@/store/HolidayStore';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { useCallback, useEffect, useState } from 'react';
+import { Calendar, dayjsLocalizer, Views } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import '@/components/calendar/index.scss';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -93,6 +93,8 @@ const Content: React.FC = () => {
       });
     }
   }, [calendarData, range]);
+
+  console.log('test data : ', calendarData)
 
   return (
     <>

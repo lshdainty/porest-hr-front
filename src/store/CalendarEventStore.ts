@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import dayjs from 'dayjs';
 import { convertColorCode } from '@/hooks/useCalendarType';
+import dayjs from 'dayjs';
+import { create } from 'zustand';
 
 export interface CustomEvent {
   userId: string;
@@ -9,8 +9,7 @@ export interface CustomEvent {
   calendarType: string;
   calendarDesc: string;
   domainType: string;
-  historyIds: number[];
-  scheduleId: number;
+  calendarId: number;
 
   isUserVisible: boolean;
   isCalendarVisible: boolean;
@@ -39,8 +38,7 @@ export const useCalendarEventsStore = create<{
       start_date: Date;
       end_date: Date;
       domain_type: string;
-      history_ids: number[];
-      schedule_id: number;
+      calendar_id: number;
     }[], calendarRange: {start: Date, end: Date}, view: 'month' | 'week' | 'day') => void;
     setEventVisible: (id: number | string, isVisible: boolean, type: string) => void;
   }
@@ -56,8 +54,7 @@ export const useCalendarEventsStore = create<{
       start_date: Date;
       end_date: Date;
       domain_type: string;
-      history_ids: number[];
-      schedule_id: number;
+      calendar_id: number;
     }[], calendarRange: {start: Date, end: Date}, view: 'month' | 'week' | 'day') => {
       let idx = 0;
 
@@ -95,8 +92,7 @@ export const useCalendarEventsStore = create<{
           calendarType: c.calendar_type,
           calendarDesc: c.calendar_desc,
           domainType: c.domain_type,
-          historyIds: c.history_ids,
-          scheduleId: c.schedule_id,
+          calendarId: c.calendar_id,
           isUserVisible: true,
           isCalendarVisible: true,
           isOffDay: isOffDay(c.start_date, c.end_date),

@@ -31,11 +31,9 @@ const EventPopup: React.FC<EventProps> = (props) => {
 
   const onDeleteEvent = () => {
     if (resource.domainType === 'vacation') {
-      resource.historyIds.forEach(id => {
-        deleteVacationHistory(id);
-      });
+      deleteVacationHistory(resource.calendarId);
     } else {
-      deleteSchedule(resource.scheduleId);
+      deleteSchedule(resource.calendarId);
     }
   }
 

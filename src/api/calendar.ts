@@ -1,4 +1,4 @@
-import { api, type ApiResponse } from '@/api/index'
+import { api, type ApiResponse } from '@/api/index';
 import { useQuery } from '@tanstack/react-query';
 
 const enum CalendarQueryKey {
@@ -19,8 +19,7 @@ interface getEventsByPeriodResp {
   start_date: Date
   end_date: Date
   domain_type: string
-  history_ids: number[]
-  schedule_id: number
+  calendar_id: number
 }
 
 const useGetEventsByPeriod = (d: getEventsByPeriodReq) => {
@@ -45,4 +44,4 @@ export {
 
   // API Hook
   useGetEventsByPeriod
-}
+};
