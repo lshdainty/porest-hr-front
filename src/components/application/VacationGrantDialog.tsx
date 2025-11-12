@@ -1,6 +1,8 @@
+import { useGetEffectiveTypes, useGetExpirationTypes } from '@/api/type';
 import { useGetUsers } from '@/api/user';
 import { useGetUserAssignedVacationPolicies, usePostManualGrantVacation } from '@/api/vacation';
 import { Button } from '@/components/shadcn/button';
+import { Checkbox } from '@/components/shadcn/checkbox';
 import {
   Dialog,
   DialogClose,
@@ -22,17 +24,17 @@ import {
 import { Textarea } from '@/components/shadcn/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const formSchema = z.object({
   selectedUser: z.string().min(1, { message: '사용자를 선택해주세요.' }),
   vacationPolicy: z.string().min(1, { message: '휴가 정책을 선택해주세요.' }),
-  grantDate: z.string().min(1, { message: '부여일을 선택해주세요.' }),
-  expiryDate: z.string().min(1, { message: '만료일을 선택해주세요.' }),
+  grantDate: z.string().optional(),
+  expiryDate: z.string().optional(),
   grantTime: z.number().min(0.0625, { message: '부여 시간을 입력해주세요.' }),
-  description: z.string().optional(),
+  description: z.string().min(1, { message: '부여 사유를 입력해주세요.' }),
 });
 
 type VacationGrantFormValues = z.infer<typeof formSchema>;
@@ -40,24 +42,25 @@ type VacationGrantFormValues = z.infer<typeof formSchema>;
 interface VacationGrantDialogProps {
   open: boolean;
   onClose: () => void;
-  userId: string;
 }
 
 export default function VacationGrantDialog({
   open,
   onClose,
-  userId,
 }: VacationGrantDialogProps) {
   const { data: users, isLoading: isLoadingUsers } = useGetUsers();
   const { mutate: grantVacation, isPending } = usePostManualGrantVacation();
+  const { data: effectiveTypes = [] } = useGetEffectiveTypes();
+  const { data: expirationTypes = [] } = useGetExpirationTypes();
+  const [useCustomDates, setUseCustomDates] = useState(false);
 
   const form = useForm<VacationGrantFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       selectedUser: '',
       vacationPolicy: '',
-      grantDate: dayjs().format('YYYY-MM-DD'),
-      expiryDate: dayjs().format('YYYY-MM-DD'),
+      grantDate: undefined,
+      expiryDate: undefined,
       grantTime: undefined,
       description: '',
     },
@@ -65,6 +68,10 @@ export default function VacationGrantDialog({
 
   const selectedUser = form.watch('selectedUser');
   const vacationPolicyId = form.watch('vacationPolicy');
+  const grantTime = form.watch('grantTime');
+  const description = form.watch('description');
+  const grantDate = form.watch('grantDate');
+  const expiryDate = form.watch('expiryDate');
 
   // 선택된 사용자의 MANUAL_GRANT 휴가 정책 조회
   const { data: vacationPolicies, isLoading: isLoadingPolicies } = useGetUserAssignedVacationPolicies({
@@ -77,32 +84,87 @@ export default function VacationGrantDialog({
     policy => policy.vacation_policy_id.toString() === vacationPolicyId
   );
 
+  // 부여 시간이 유연한지 여부
+  const isFlexibleGrant = selectedPolicy?.is_flexible_grant === 'Y';
+
+  // effective_type과 expiration_type을 한글로 변환
+  const getEffectiveTypeName = (code: string) => {
+    return effectiveTypes.find(type => type.code === code)?.name || code;
+  };
+
+  const getExpirationTypeName = (code: string) => {
+    return expirationTypes.find(type => type.code === code)?.name || code;
+  };
+
+  // 저장 버튼 활성화 조건 체크
+  const isFormValid = () => {
+    // 기본 필수값 체크
+    if (!selectedUser || !vacationPolicyId || !grantTime || !description) {
+      return false;
+    }
+
+    // 직접 지정 옵션을 선택한 경우 날짜도 필수
+    if (useCustomDates) {
+      if (!grantDate || !expiryDate) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   // Dialog가 열릴 때 폼 초기화
   useEffect(() => {
     if (open) {
       form.reset({
         selectedUser: '',
         vacationPolicy: '',
-        grantDate: dayjs().format('YYYY-MM-DD'),
-        expiryDate: dayjs().format('YYYY-MM-DD'),
+        grantDate: undefined,
+        expiryDate: undefined,
         grantTime: undefined,
         description: '',
       });
+      setUseCustomDates(false);
     }
   }, [open, form]);
 
+  // 휴가 정책 선택 시 is_flexible_grant가 'N'이면 grant_time 자동 설정
+  useEffect(() => {
+    if (selectedPolicy) {
+      if (selectedPolicy.is_flexible_grant === 'N') {
+        // grant_time을 그대로 설정 (소수점 형식)
+        form.setValue('grantTime', selectedPolicy.grant_time);
+      } else {
+        // is_flexible_grant가 'Y'인 경우, 기존 값 유지 또는 초기화
+        form.setValue('grantTime', undefined);
+      }
+    }
+  }, [selectedPolicy, form]);
+
   const onSubmit = (values: VacationGrantFormValues) => {
-    // LocalDateTime 형식으로 변환 (YYYY-MM-DDTHH:mm:ss)
-    const grantDateTime = `${values.grantDate}T00:00:00`;
-    const expiryDateTime = `${values.expiryDate}T23:59:59`;
+    // 직접 지정을 선택한 경우 날짜 검증
+    if (useCustomDates) {
+      if (!values.grantDate) {
+        form.setError('grantDate', { message: '유효기간 시작일자를 선택해주세요.' });
+        return;
+      }
+      if (!values.expiryDate) {
+        form.setError('expiryDate', { message: '유효기간 만료일자를 선택해주세요.' });
+        return;
+      }
+    }
+
+    // LocalDateTime 형식으로 변환 (YYYY-MM-DDTHH:mm:ss) 또는 null
+    const grantDateTime = useCustomDates && values.grantDate ? `${values.grantDate}T00:00:00` : null;
+    const expiryDateTime = useCustomDates && values.expiryDate ? `${values.expiryDate}T23:59:59` : null;
 
     grantVacation({
       user_id: values.selectedUser,
       vacation_policy_id: parseInt(values.vacationPolicy),
-      grant_time: values.grantTime,
-      grant_date: grantDateTime,
-      expiry_date: expiryDateTime,
-      grant_desc: values.description || '',
+      grant_time: values.grantTime!,
+      grant_date: grantDateTime!,
+      expiry_date: expiryDateTime!,
+      grant_desc: values.description,
     }, {
       onSuccess: () => {
         form.reset();
@@ -188,43 +250,96 @@ export default function VacationGrantDialog({
                   )}
                 />
 
-                <div className='grid grid-cols-2 gap-4'>
-                  {/* 부여일 */}
-                  <Controller
-                    control={form.control}
-                    name='grantDate'
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>
-                          부여일 <span className='text-red-500'>*</span>
-                        </FieldLabel>
-                        <InputDatePicker
-                          value={field.value}
-                          onValueChange={(value) => field.onChange(value)}
-                        />
-                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                      </Field>
-                    )}
+                {/* 부여일, 만료일 직접 지정 옵션 */}
+                <div className='flex items-center space-x-2'>
+                  <Checkbox
+                    id='useCustomDates'
+                    checked={useCustomDates}
+                    onCheckedChange={(checked) => {
+                      setUseCustomDates(checked === true);
+                      if (!checked) {
+                        form.setValue('grantDate', undefined);
+                        form.setValue('expiryDate', undefined);
+                        form.clearErrors(['grantDate', 'expiryDate']);
+                      } else {
+                        form.setValue('grantDate', dayjs().format('YYYY-MM-DD'));
+                        form.setValue('expiryDate', dayjs().format('YYYY-MM-DD'));
+                      }
+                    }}
                   />
-
-                  {/* 만료일 */}
-                  <Controller
-                    control={form.control}
-                    name='expiryDate'
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>
-                          만료일 <span className='text-red-500'>*</span>
-                        </FieldLabel>
-                        <InputDatePicker
-                          value={field.value}
-                          onValueChange={(value) => field.onChange(value)}
-                        />
-                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                      </Field>
-                    )}
-                  />
+                  <label
+                    htmlFor='useCustomDates'
+                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer'
+                  >
+                    부여일, 만료일 직접 지정
+                  </label>
                 </div>
+
+                {!useCustomDates && selectedPolicy && (
+                  <div className='grid grid-cols-2 gap-4'>
+                    {/* 유효기간 시작일자 정책 표시 */}
+                    <Field>
+                      <FieldLabel>유효기간 시작일자</FieldLabel>
+                      <div className='flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm'>
+                        {selectedPolicy.effective_type ? getEffectiveTypeName(selectedPolicy.effective_type) : '정책 기본값'}
+                      </div>
+                      <p className='text-xs text-muted-foreground mt-1'>
+                        휴가 정책의 시작일자 규칙이 적용됩니다
+                      </p>
+                    </Field>
+
+                    {/* 유효기간 만료일자 정책 표시 */}
+                    <Field>
+                      <FieldLabel>유효기간 만료일자</FieldLabel>
+                      <div className='flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm'>
+                        {selectedPolicy.expiration_type ? getExpirationTypeName(selectedPolicy.expiration_type) : '정책 기본값'}
+                      </div>
+                      <p className='text-xs text-muted-foreground mt-1'>
+                        휴가 정책의 만료일자 규칙이 적용됩니다
+                      </p>
+                    </Field>
+                  </div>
+                )}
+
+                {useCustomDates && (
+                  <div className='grid grid-cols-2 gap-4'>
+                    {/* 유효기간 시작일자 */}
+                    <Controller
+                      control={form.control}
+                      name='grantDate'
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>
+                            유효기간 시작일자 <span className='text-red-500'>*</span>
+                          </FieldLabel>
+                          <InputDatePicker
+                            value={field.value}
+                            onValueChange={(value) => field.onChange(value)}
+                          />
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
+
+                    {/* 유효기간 만료일자 */}
+                    <Controller
+                      control={form.control}
+                      name='expiryDate'
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={!!fieldState.error}>
+                          <FieldLabel>
+                            유효기간 만료일자 <span className='text-red-500'>*</span>
+                          </FieldLabel>
+                          <InputDatePicker
+                            value={field.value}
+                            onValueChange={(value) => field.onChange(value)}
+                          />
+                          <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                        </Field>
+                      )}
+                    />
+                  </div>
+                )}
 
                 {/* 부여 시간 */}
                 <Controller
@@ -241,6 +356,8 @@ export default function VacationGrantDialog({
                       const total = newDays + (newHours * 0.125) + (newMinutes === 30 ? 0.0625 : 0);
                       field.onChange(total > 0 ? total : undefined);
                     };
+
+                    const isDisabled = !isFlexibleGrant;
 
                     return (
                       <Field data-invalid={!!fieldState.error}>
@@ -260,6 +377,7 @@ export default function VacationGrantDialog({
                                 const newDays = e.target.value ? parseInt(e.target.value) : 0;
                                 handleTimeChange(newDays, hours, minutes);
                               }}
+                              disabled={isDisabled}
                             />
                             <p className='text-xs text-muted-foreground mt-1'>일</p>
                           </div>
@@ -269,6 +387,7 @@ export default function VacationGrantDialog({
                               onValueChange={(value) => {
                                 handleTimeChange(days, parseInt(value), minutes);
                               }}
+                              disabled={isDisabled}
                             >
                               <SelectTrigger className='w-full'>
                                 <SelectValue placeholder='시간' />
@@ -290,6 +409,7 @@ export default function VacationGrantDialog({
                                 onValueChange={(value) => {
                                   handleTimeChange(days, hours, parseInt(value));
                                 }}
+                                disabled={isDisabled}
                               >
                                 <SelectTrigger className='w-full'>
                                   <SelectValue placeholder='분' />
@@ -304,7 +424,9 @@ export default function VacationGrantDialog({
                           )}
                         </div>
                         <p className='text-sm text-muted-foreground mt-2'>
-                          부여할 휴가를 일/시간{selectedPolicy?.minute_grant_yn === 'Y' ? '/분' : ''} 단위로 선택해주세요.
+                          {isDisabled
+                            ? '이 휴가 정책은 고정된 부여 시간을 사용합니다.'
+                            : `부여할 휴가를 일/시간${selectedPolicy?.minute_grant_yn === 'Y' ? '/분' : ''} 단위로 선택해주세요.`}
                           {field.value && field.value > 0 && (
                             <span className='block mt-1 font-medium text-primary'>
                               총 {[
@@ -321,16 +443,18 @@ export default function VacationGrantDialog({
                   }}
                 />
 
-                {/* 설명 */}
+                {/* 부여 사유 */}
                 <Controller
                   control={form.control}
                   name='description'
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
-                      <FieldLabel>설명</FieldLabel>
+                      <FieldLabel>
+                        부여 사유 <span className='text-red-500'>*</span>
+                      </FieldLabel>
                       <Textarea
                         {...field}
-                        placeholder='휴가 부여에 대한 설명을 입력하세요...'
+                        placeholder='휴가 부여 사유를 입력하세요...'
                         rows={4}
                         className='resize-none'
                       />
@@ -348,7 +472,7 @@ export default function VacationGrantDialog({
                 취소
               </Button>
             </DialogClose>
-            <Button type='submit' disabled={isPending}>
+            <Button type='submit' disabled={isPending || !isFormValid()}>
               {isPending ? '처리 중...' : '저장'}
             </Button>
           </DialogFooter>

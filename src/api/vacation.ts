@@ -745,8 +745,8 @@ interface PostManualGrantVacationReq {
   user_id: string
   vacation_policy_id: number
   grant_time: number
-  grant_date: string
-  expiry_date: string
+  grant_date: string | null
+  expiry_date: string | null
   grant_desc: string
 }
 

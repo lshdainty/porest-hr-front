@@ -216,7 +216,6 @@ export default function ApplicationTable({
       <VacationGrantDialog
         open={grantDialogOpen}
         onClose={() => setGrantDialogOpen(false)}
-        userId={userId}
       />
     </>
   );
