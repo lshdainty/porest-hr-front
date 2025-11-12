@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
 import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
+import { useLoginUserStore } from '@/store/LoginUser';
 import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
 import { usePostSchedule } from '@/api/schedule';
 import { CalendarIcon } from 'lucide-react';
@@ -36,6 +37,7 @@ import { Circle } from '@mui/icons-material';
 export const RegistEventDialog: React.FC = () => {
   const { start, end, open } = useCalendarSlotStore();
   const { setOpen } = useCalendarSlotStore(s => s.actions);
+  const { loginUser } = useLoginUserStore();
   const calendarTypes = useCalendarType();
   const [startOpen, setStartOpen] = React.useState(false);
   const [startDate, setStartDate] = React.useState<Date | undefined>(start);
@@ -46,13 +48,13 @@ export const RegistEventDialog: React.FC = () => {
   const [timeSelectOpen, setTimeSelectOpen] = React.useState(false);
   const [vacationSelectOpen, setVacationSelectOpen] = React.useState(false);
   const [selectCalendarType, setSelectCalendarType] = React.useState('');
-  const [selectVacationId, setSelectVacationId] = React.useState('');
+  const [selectVacationType, setSelectVacationType] = React.useState('');
   const [desc, setDesc] = React.useState('');
   const [startHour, setStartHour] = React.useState('9');
   const [startMinute, setStartMinute] = React.useState('0');
 
   const {data: vacations} = useGetAvailableVacations({
-    user_id: "user1",
+    user_id: loginUser?.user_id || '',
     start_date: dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
   });
 
@@ -63,7 +65,7 @@ export const RegistEventDialog: React.FC = () => {
     const calendar = calendarTypes.find(c => c.id === selectCalendarType);
     const format = 'YYYY-MM-DDTHH:mm:ss';
     let data = Object();
-    data['user_id'] = "user1";
+    data['user_id'] = loginUser?.user_id || '';
 
     if (calendar?.isDate) {
       data['start_date'] = dayjs(startDate).set('hour', 0).set('minute', 0).set('second', 0).format(format);
@@ -104,14 +106,12 @@ export const RegistEventDialog: React.FC = () => {
     }
 
     if (calendar?.type === 'vacation') {
+      data['vacation_type'] = selectVacationType;
       data['vacation_time_type'] = calendar?.id;
       data['vacation_desc'] = desc;
 
       setOpen(false);
-      postUseVacation({
-        vacation_id: Number(selectVacationId),
-        vacation_data: data
-      });
+      postUseVacation(data);
     } else {
       data['schedule_type'] = calendar?.id;
       data['schedule_desc'] = desc;
@@ -178,7 +178,7 @@ export const RegistEventDialog: React.FC = () => {
               {
                 vacationSelectOpen ? (
                   <Select
-                    onValueChange={(value) => {setSelectVacationId(value);}}
+                    onValueChange={(value) => {setSelectVacationType(value);}}
                   >
                     <SelectTrigger className='w-full'>
                       <SelectValue placeholder='사용 휴가' />
@@ -187,8 +187,8 @@ export const RegistEventDialog: React.FC = () => {
                       {
                         vacations && vacations.map(v => {
                           return (
-                            <SelectItem key={v.vacation_id} value={String(v.vacation_id)}>
-                              {`${v.vacation_type_name} (${v.remain_time_str})`}
+                            <SelectItem key={v.vacation_type} value={v.vacation_type}>
+                              {`${v.vacation_type_name} (${v.total_remain_time_str})`}
                             </SelectItem>
                           )
                         })
