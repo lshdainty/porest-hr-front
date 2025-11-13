@@ -1,3 +1,4 @@
+import { useCreateWorkHistory, useGetWorkDivision, useGetWorkGroups, useGetWorkPartLabel, useGetWorkParts, useUpdateWorkHistory, type WorkCodeResp } from '@/api/work';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Calendar } from '@/components/shadcn/calendar';
@@ -27,6 +28,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Textarea } from '@/components/shadcn/textarea';
 import { cn } from '@/lib/utils';
+import { useLoginUserStore } from '@/store/LoginUser';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import {
@@ -44,58 +46,54 @@ import {
   Trash2,
   X
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface WorkHistory {
   no: number;
+  work_history_seq?: number;
   date: string;
-  manager: string;
-  category: string;
-  part: string;
-  type: string;
+  manager_id: string;
+  manager_name: string;
+  work_group?: WorkCodeResp;
+  work_part?: WorkCodeResp;
+  work_division?: WorkCodeResp;
   hours: number;
   content: string;
 }
 
-// 목업 데이터
-const mockManagers = ['김철수', '이영희', '박민수', '최지영', '정대현'];
-const mockCategories = ['개발', '기획', '디자인', '마케팅', '운영'];
-const mockParts = ['프론트엔드', '백엔드', 'UI/UX', '콘텐츠', '고객지원'];
-const mockTypes = ['신규 개발', '유지보수', '버그 수정', '기능 개선', '문서 작성'];
-
 export default function Report() {
-  const [workHistories, setWorkHistories] = useState<WorkHistory[]>([
-    {
-      no: 1,
-      date: '2025-11-01',
-      manager: '김철수',
-      category: '개발',
-      part: '프론트엔드',
-      type: '신규 개발',
-      hours: 8,
-      content: '사용자 관리 페이지 UI 구현 및 API 연동 작업',
-    },
-    {
-      no: 2,
-      date: '2025-11-02',
-      manager: '이영희',
-      category: '기획',
-      part: 'UI/UX',
-      type: '기능 개선',
-      hours: 4,
-      content: '대시보드 레이아웃 개선 및 사용자 피드백 반영',
-    },
-    {
-      no: 3,
-      date: '2025-11-03',
-      manager: '박민수',
-      category: '개발',
-      part: '백엔드',
-      type: '버그 수정',
-      hours: 6,
-      content: '데이터베이스 쿼리 최적화 및 성능 이슈 해결',
-    },
-  ]);
+  const { loginUser } = useLoginUserStore();
+  const { data: workGroups, isLoading: isWorkGroupsLoading } = useGetWorkGroups();
+  const { data: workDivision, isLoading: isWorkDivisionLoading } = useGetWorkDivision();
+
+  const createWorkHistory = useCreateWorkHistory();
+  const updateWorkHistory = useUpdateWorkHistory();
+
+  // 선택된 업무 분류의 seq를 저장
+  const [selectedCategorySeq, setSelectedCategorySeq] = useState<number>(0);
+  // 조회된 work_part label의 seq를 저장
+  const [workPartLabelSeq, setWorkPartLabelSeq] = useState<number>(0);
+
+  // 1단계: 선택된 업무 분류의 하위 LABEL(work_part) 조회
+  const { data: workPartLabels } = useGetWorkPartLabel({
+    parent_work_code_seq: selectedCategorySeq
+  });
+
+  // 2단계: work_part label의 하위 OPTION 조회
+  const { data: workPartOptions, isLoading: isWorkPartOptionsLoading } = useGetWorkParts({
+    parent_work_code_seq: workPartLabelSeq
+  });
+
+  // workPartLabels가 조회되면 첫 번째 label의 seq를 저장
+  useEffect(() => {
+    if (workPartLabels && workPartLabels.length > 0) {
+      setWorkPartLabelSeq(workPartLabels[0].work_code_seq);
+    } else {
+      setWorkPartLabelSeq(0);
+    }
+  }, [workPartLabels]);
+
+  const [workHistories, setWorkHistories] = useState<WorkHistory[]>([]);
 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [editingRow, setEditingRow] = useState<number | null>(null);
@@ -125,13 +123,16 @@ export default function Report() {
   };
 
   const handleAddRow = () => {
+    const maxNo = workHistories.length > 0 ? Math.max(...workHistories.map((item) => item.no)) : 0;
     const newRow: WorkHistory = {
-      no: workHistories.length + 1,
+      no: maxNo + 1,
+      work_history_seq: undefined, // 신규 행
       date: dayjs().format('YYYY-MM-DD'),
-      manager: '',
-      category: '',
-      part: '',
-      type: '',
+      manager_id: loginUser?.user_id || '',
+      manager_name: loginUser?.user_name || '',
+      work_group: undefined,
+      work_part: undefined,
+      work_division: undefined,
       hours: 0,
       content: '',
     };
@@ -145,28 +146,92 @@ export default function Report() {
     setEditData({ ...row });
   };
 
-  const handleSave = () => {
-    if (editData) {
-      setWorkHistories(
-        workHistories.map((item) => (item.no === editData.no ? editData : item))
-      );
+  const handleSave = async () => {
+    if (!editData) return;
+
+    // 필수 값 검증 - 상세 메시지
+    const missingFields: string[] = [];
+
+    if (!editData.date) missingFields.push('일자');
+    if (!editData.work_group) missingFields.push('업무 분류');
+    if (!editData.work_part) missingFields.push('업무 파트');
+    if (!editData.work_division) missingFields.push('업무 구분');
+
+    if (missingFields.length > 0) {
+      alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
+      console.log('editData:', editData); // 디버깅용
+      return;
+    }
+
+    try {
+      const isNew = !editData.work_history_seq;
+
+      if (isNew) {
+        // 신규 등록 - 검증 완료 후이므로 non-null assertion 사용
+        const response = await createWorkHistory.mutateAsync({
+          work_date: editData.date,
+          work_user_id: editData.manager_id,
+          work_group_code: editData.work_group!.work_code,
+          work_part_code: editData.work_part!.work_code,
+          work_class_code: editData.work_division!.work_code,
+          work_hour: editData.hours,
+          work_content: editData.content,
+        });
+
+        // 성공 시 work_history_seq를 포함하여 목록 업데이트
+        setWorkHistories(
+          workHistories.map((item) =>
+            item.no === editData.no
+              ? { ...editData, work_history_seq: response.work_history_seq }
+              : item
+          )
+        );
+      } else {
+        // 수정 - 검증 완료 후이므로 non-null assertion 사용
+        await updateWorkHistory.mutateAsync({
+          work_history_seq: editData.work_history_seq!,
+          work_date: editData.date,
+          work_user_id: editData.manager_id,
+          work_group_code: editData.work_group!.work_code,
+          work_part_code: editData.work_part!.work_code,
+          work_class_code: editData.work_division!.work_code,
+          work_hour: editData.hours,
+          work_content: editData.content,
+        });
+
+        // 성공 시 목록 업데이트
+        setWorkHistories(
+          workHistories.map((item) => (item.no === editData.no ? editData : item))
+        );
+      }
+
       setEditingRow(null);
       setEditData(null);
+    } catch (error) {
+      console.error('저장 실패:', error);
+      alert('저장에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
   const handleCancel = () => {
+    // 신규 행이었다면 목록에서 제거
+    if (editData && !editData.work_history_seq) {
+      setWorkHistories(workHistories.filter((item) => item.no !== editData.no));
+    }
     setEditingRow(null);
     setEditData(null);
   };
 
   const handleDuplicate = (row: WorkHistory) => {
-    const maxNo = Math.max(...workHistories.map((item) => item.no));
+    const maxNo = workHistories.length > 0 ? Math.max(...workHistories.map((item) => item.no)) : 0;
     const newRow: WorkHistory = {
       ...row,
       no: maxNo + 1,
+      work_history_seq: undefined, // 복제된 행은 신규 행으로 처리
     };
     setWorkHistories([...workHistories, newRow]);
+    setEditingRow(newRow.no);
+    setEditData(newRow);
   };
 
   const handleDuplicateSelected = () => {
@@ -176,10 +241,11 @@ export default function Report() {
       selectedRows.includes(row.no)
     );
 
-    let maxNo = Math.max(...workHistories.map((item) => item.no));
+    let maxNo = workHistories.length > 0 ? Math.max(...workHistories.map((item) => item.no)) : 0;
     const duplicatedRows = selectedWorkHistories.map((row) => ({
       ...row,
       no: ++maxNo,
+      work_history_seq: undefined, // 복제된 행은 신규 행으로 처리
     }));
 
     setWorkHistories([...workHistories, ...duplicatedRows]);
@@ -192,9 +258,7 @@ export default function Report() {
   };
 
   const updateEditData = (field: keyof WorkHistory, value: any) => {
-    if (editData) {
-      setEditData({ ...editData, [field]: value });
-    }
+    setEditData((prev) => prev ? { ...prev, [field]: value } : null);
   };
 
   // 필터 및 정렬 함수
@@ -371,7 +435,6 @@ export default function Report() {
                             mode="single"
                             selected={startDate}
                             onSelect={setStartDate}
-                            initialFocus
                           />
                         </PopoverContent>
                       </Popover>
@@ -401,7 +464,6 @@ export default function Report() {
                             mode="single"
                             selected={endDate}
                             onSelect={setEndDate}
-                            initialFocus
                           />
                         </PopoverContent>
                       </Popover>
@@ -544,7 +606,6 @@ export default function Report() {
                                 onSelect={(date) =>
                                   updateEditData('date', date ? dayjs(date).format('YYYY-MM-DD') : '')
                                 }
-                                initialFocus
                               />
                             </PopoverContent>
                           </Popover>
@@ -556,23 +617,14 @@ export default function Report() {
                       {/* 담당자 */}
                       <TableCell>
                         {editingRow === row.no ? (
-                          <Select
-                            value={editData?.manager}
-                            onValueChange={(value) => updateEditData('manager', value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="담당자 선택" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {mockManagers.map((manager) => (
-                                <SelectItem key={manager} value={manager}>
-                                  {manager}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Input
+                            value={editData?.manager_name || ''}
+                            disabled
+                            className="bg-muted cursor-not-allowed"
+                            placeholder="담당자"
+                          />
                         ) : (
-                          <span className="text-sm">{row.manager}</span>
+                          <span className="text-sm">{row.manager_name}</span>
                         )}
                       </TableCell>
 
@@ -580,22 +632,40 @@ export default function Report() {
                       <TableCell>
                         {editingRow === row.no ? (
                           <Select
-                            value={editData?.category}
-                            onValueChange={(value) => updateEditData('category', value)}
+                            value={editData?.work_group?.work_code || undefined}
+                            onValueChange={(value) => {
+                              console.log('업무 분류 선택:', value);
+                              console.log('workGroups:', workGroups);
+                              // 업무 분류 선택 시 전체 객체 저장
+                              const selectedGroup = workGroups?.find((g) => g.work_code === value);
+                              console.log('selectedGroup:', selectedGroup);
+                              if (selectedGroup) {
+                                // 한 번에 여러 필드 업데이트
+                                setEditData((prev) => prev ? {
+                                  ...prev,
+                                  work_group: selectedGroup,
+                                  work_part: undefined // 업무 분류 변경 시 업무 파트 초기화
+                                } : null);
+                                setSelectedCategorySeq(selectedGroup.work_code_seq);
+                              } else {
+                                console.error('선택한 업무 분류를 찾을 수 없습니다:', value);
+                              }
+                            }}
+                            disabled={isWorkGroupsLoading}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="분류 선택" />
+                              <SelectValue placeholder={isWorkGroupsLoading ? "로딩 중..." : "업무 분류"} />
                             </SelectTrigger>
                             <SelectContent>
-                              {mockCategories.map((category) => (
-                                <SelectItem key={category} value={category}>
-                                  {category}
+                              {workGroups?.map((group) => (
+                                <SelectItem key={group.work_code} value={group.work_code}>
+                                  {group.work_code_name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         ) : (
-                          <Badge variant="outline">{row.category}</Badge>
+                          <Badge variant="outline">{row.work_group?.work_code_name}</Badge>
                         )}
                       </TableCell>
 
@@ -603,22 +673,39 @@ export default function Report() {
                       <TableCell>
                         {editingRow === row.no ? (
                           <Select
-                            value={editData?.part}
-                            onValueChange={(value) => updateEditData('part', value)}
+                            value={editData?.work_part?.work_code || undefined}
+                            onValueChange={(value) => {
+                              console.log('업무 파트 선택:', value);
+                              console.log('workPartOptions:', workPartOptions);
+                              const selectedPart = workPartOptions?.find((p) => p.work_code === value);
+                              console.log('selectedPart:', selectedPart);
+                              if (selectedPart) {
+                                updateEditData('work_part', selectedPart);
+                              } else {
+                                console.error('선택한 업무 파트를 찾을 수 없습니다:', value);
+                              }
+                            }}
+                            disabled={isWorkPartOptionsLoading || !workPartOptions || workPartOptions.length === 0}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="파트 선택" />
+                              <SelectValue placeholder={
+                                isWorkPartOptionsLoading
+                                  ? "로딩 중..."
+                                  : (!workPartOptions || workPartOptions.length === 0)
+                                    ? "업무 분류를 먼저 선택하세요"
+                                    : "업무 파트"
+                              } />
                             </SelectTrigger>
                             <SelectContent>
-                              {mockParts.map((part) => (
-                                <SelectItem key={part} value={part}>
-                                  {part}
+                              {workPartOptions?.map((part) => (
+                                <SelectItem key={part.work_code} value={part.work_code}>
+                                  {part.work_code_name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         ) : (
-                          <Badge variant="outline">{row.part}</Badge>
+                          <Badge variant="outline">{row.work_part?.work_code_name}</Badge>
                         )}
                       </TableCell>
 
@@ -626,22 +713,33 @@ export default function Report() {
                       <TableCell>
                         {editingRow === row.no ? (
                           <Select
-                            value={editData?.type}
-                            onValueChange={(value) => updateEditData('type', value)}
+                            value={editData?.work_division?.work_code || undefined}
+                            onValueChange={(value) => {
+                              console.log('업무 구분 선택:', value);
+                              console.log('workDivision:', workDivision);
+                              const selectedDivision = workDivision?.find((d) => d.work_code === value);
+                              console.log('selectedDivision:', selectedDivision);
+                              if (selectedDivision) {
+                                updateEditData('work_division', selectedDivision);
+                              } else {
+                                console.error('선택한 업무 구분을 찾을 수 없습니다:', value);
+                              }
+                            }}
+                            disabled={isWorkDivisionLoading}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="구분 선택" />
+                              <SelectValue placeholder={isWorkDivisionLoading ? "로딩 중..." : "업무 구분"} />
                             </SelectTrigger>
                             <SelectContent>
-                              {mockTypes.map((type) => (
-                                <SelectItem key={type} value={type}>
-                                  {type}
+                              {workDivision?.map((division) => (
+                                <SelectItem key={division.work_code} value={division.work_code}>
+                                  {division.work_code_name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         ) : (
-                          <Badge variant="secondary">{row.type}</Badge>
+                          <Badge variant="secondary">{row.work_division?.work_code_name}</Badge>
                         )}
                       </TableCell>
 
@@ -669,7 +767,7 @@ export default function Report() {
                           <Textarea
                             value={editData?.content}
                             onChange={(e) => updateEditData('content', e.target.value)}
-                            className="min-h-[80px] w-full resize-none"
+                            className="min-h-[80px] w-full resize-y"
                             placeholder="업무 내용을 입력하세요"
                           />
                         ) : (
