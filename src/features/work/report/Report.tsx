@@ -1,4 +1,5 @@
-import { useCreateWorkHistory, useGetWorkDivision, useGetWorkGroups, useGetWorkPartLabel, useGetWorkParts, useUpdateWorkHistory, type WorkCodeResp } from '@/api/work';
+import { useCreateWorkHistory, useGetWorkDivision, useGetWorkGroups, useGetWorkPartLabel, useGetWorkParts, useGetWorkHistories, useUpdateWorkHistory, useDeleteWorkHistory, type WorkCodeResp, type WorkHistoryResp } from '@/api/work';
+import { toast } from '@/components/alert/toast';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Calendar } from '@/components/shadcn/calendar';
@@ -65,9 +66,11 @@ export default function Report() {
   const { loginUser } = useLoginUserStore();
   const { data: workGroups, isLoading: isWorkGroupsLoading } = useGetWorkGroups();
   const { data: workDivision, isLoading: isWorkDivisionLoading } = useGetWorkDivision();
+  const { data: workHistoriesData, isLoading: isWorkHistoriesLoading, refetch: refetchWorkHistories } = useGetWorkHistories();
 
   const createWorkHistory = useCreateWorkHistory();
   const updateWorkHistory = useUpdateWorkHistory();
+  const deleteWorkHistory = useDeleteWorkHistory();
 
   // 선택된 업무 분류의 seq를 저장
   const [selectedCategorySeq, setSelectedCategorySeq] = useState<number>(0);
@@ -94,6 +97,25 @@ export default function Report() {
   }, [workPartLabels]);
 
   const [workHistories, setWorkHistories] = useState<WorkHistory[]>([]);
+
+  // 업무 이력 데이터를 받아와서 WorkHistory 형태로 변환
+  useEffect(() => {
+    if (workHistoriesData) {
+      const convertedData: WorkHistory[] = workHistoriesData.map((item: WorkHistoryResp, index: number) => ({
+        no: index + 1,
+        work_history_seq: item.work_history_seq,
+        date: item.work_date,
+        manager_id: item.work_user_id,
+        manager_name: item.work_user_name,
+        work_group: item.work_group,
+        work_part: item.work_part,
+        work_division: item.work_class, // 백엔드의 work_class를 프론트의 work_division으로 매핑
+        hours: item.work_hour,
+        content: item.work_content,
+      }));
+      setWorkHistories(convertedData);
+    }
+  }, [workHistoriesData]);
 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [editingRow, setEditingRow] = useState<number | null>(null);
@@ -142,6 +164,10 @@ export default function Report() {
   };
 
   const handleEdit = (row: WorkHistory) => {
+    // 수정 모드 진입 시 해당 row의 업무 분류에 해당하는 업무 파트 옵션 조회
+    if (row.work_group) {
+      setSelectedCategorySeq(row.work_group.work_code_seq);
+    }
     setEditingRow(row.no);
     setEditData({ ...row });
   };
@@ -158,7 +184,7 @@ export default function Report() {
     if (!editData.work_division) missingFields.push('업무 구분');
 
     if (missingFields.length > 0) {
-      alert(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
+      toast.error(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
       console.log('editData:', editData); // 디버깅용
       return;
     }
@@ -168,7 +194,7 @@ export default function Report() {
 
       if (isNew) {
         // 신규 등록 - 검증 완료 후이므로 non-null assertion 사용
-        const response = await createWorkHistory.mutateAsync({
+        await createWorkHistory.mutateAsync({
           work_date: editData.date,
           work_user_id: editData.manager_id,
           work_group_code: editData.work_group!.work_code,
@@ -177,15 +203,6 @@ export default function Report() {
           work_hour: editData.hours,
           work_content: editData.content,
         });
-
-        // 성공 시 work_history_seq를 포함하여 목록 업데이트
-        setWorkHistories(
-          workHistories.map((item) =>
-            item.no === editData.no
-              ? { ...editData, work_history_seq: response.work_history_seq }
-              : item
-          )
-        );
       } else {
         // 수정 - 검증 완료 후이므로 non-null assertion 사용
         await updateWorkHistory.mutateAsync({
@@ -198,18 +215,17 @@ export default function Report() {
           work_hour: editData.hours,
           work_content: editData.content,
         });
-
-        // 성공 시 목록 업데이트
-        setWorkHistories(
-          workHistories.map((item) => (item.no === editData.no ? editData : item))
-        );
       }
+
+      // 성공 시 서버에서 최신 데이터 다시 조회
+      await refetchWorkHistories();
 
       setEditingRow(null);
       setEditData(null);
+      toast.success('저장되었습니다.');
     } catch (error) {
       console.error('저장 실패:', error);
-      alert('저장에 실패했습니다. 다시 시도해주세요.');
+      toast.error('저장에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -222,39 +238,101 @@ export default function Report() {
     setEditData(null);
   };
 
-  const handleDuplicate = (row: WorkHistory) => {
-    const maxNo = workHistories.length > 0 ? Math.max(...workHistories.map((item) => item.no)) : 0;
-    const newRow: WorkHistory = {
-      ...row,
-      no: maxNo + 1,
-      work_history_seq: undefined, // 복제된 행은 신규 행으로 처리
-    };
-    setWorkHistories([...workHistories, newRow]);
-    setEditingRow(newRow.no);
-    setEditData(newRow);
+  const handleDuplicate = async (row: WorkHistory) => {
+    // 필수 값 검증
+    if (!row.work_group || !row.work_part || !row.work_division) {
+      toast.error('복제할 데이터가 유효하지 않습니다.');
+      return;
+    }
+
+    try {
+      // 오늘 날짜로 변경하여 바로 등록
+      await createWorkHistory.mutateAsync({
+        work_date: dayjs().format('YYYY-MM-DD'), // 오늘 날짜로 변경
+        work_user_id: loginUser?.user_id || row.manager_id,
+        work_group_code: row.work_group.work_code,
+        work_part_code: row.work_part.work_code,
+        work_class_code: row.work_division.work_code,
+        work_hour: row.hours,
+        work_content: row.content,
+      });
+
+      // 성공 시 서버에서 최신 데이터 다시 조회
+      await refetchWorkHistories();
+
+      toast.success('복제가 완료되었습니다.');
+    } catch (error) {
+      console.error('복제 실패:', error);
+      toast.error('복제에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
-  const handleDuplicateSelected = () => {
+  const handleDuplicateSelected = async () => {
     if (selectedRows.length === 0) return;
 
     const selectedWorkHistories = workHistories.filter((row) =>
       selectedRows.includes(row.no)
     );
 
-    let maxNo = workHistories.length > 0 ? Math.max(...workHistories.map((item) => item.no)) : 0;
-    const duplicatedRows = selectedWorkHistories.map((row) => ({
-      ...row,
-      no: ++maxNo,
-      work_history_seq: undefined, // 복제된 행은 신규 행으로 처리
-    }));
+    // 필수 값 검증
+    const invalidRows = selectedWorkHistories.filter(
+      (row) => !row.work_group || !row.work_part || !row.work_division
+    );
 
-    setWorkHistories([...workHistories, ...duplicatedRows]);
-    setSelectedRows([]);
+    if (invalidRows.length > 0) {
+      toast.error('복제할 데이터 중 유효하지 않은 항목이 있습니다.');
+      return;
+    }
+
+    try {
+      // 선택된 모든 행을 오늘 날짜로 변경하여 등록
+      const promises = selectedWorkHistories.map((row) =>
+        createWorkHistory.mutateAsync({
+          work_date: dayjs().format('YYYY-MM-DD'), // 오늘 날짜로 변경
+          work_user_id: loginUser?.user_id || row.manager_id,
+          work_group_code: row.work_group!.work_code,
+          work_part_code: row.work_part!.work_code,
+          work_class_code: row.work_division!.work_code,
+          work_hour: row.hours,
+          work_content: row.content,
+        })
+      );
+
+      await Promise.all(promises);
+
+      // 성공 시 서버에서 최신 데이터 다시 조회
+      await refetchWorkHistories();
+
+      setSelectedRows([]);
+      toast.success(`${selectedWorkHistories.length}개의 항목이 복제되었습니다.`);
+    } catch (error) {
+      console.error('복제 실패:', error);
+      toast.error('복제에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
-  const handleDelete = (no: number) => {
-    setWorkHistories(workHistories.filter((item) => item.no !== no));
-    setSelectedRows(selectedRows.filter((rowNo) => rowNo !== no));
+  const handleDelete = async (row: WorkHistory) => {
+    // 신규 행(아직 저장되지 않은 행)은 로컬에서만 제거
+    if (!row.work_history_seq) {
+      setWorkHistories(workHistories.filter((item) => item.no !== row.no));
+      setSelectedRows(selectedRows.filter((rowNo) => rowNo !== row.no));
+      return;
+    }
+
+    try {
+      // 서버에서 삭제
+      await deleteWorkHistory.mutateAsync({
+        work_history_seq: row.work_history_seq
+      });
+
+      // 성공 시 서버에서 최신 데이터 다시 조회
+      await refetchWorkHistories();
+
+      toast.success('삭제되었습니다.');
+    } catch (error) {
+      console.error('삭제 실패:', error);
+      toast.error('삭제에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   const updateEditData = (field: keyof WorkHistory, value: any) => {
@@ -540,7 +618,11 @@ export default function Report() {
           </div>
         </CardHeader>
         <CardContent>
-          {workHistories && workHistories.length > 0 ? (
+          {isWorkHistoriesLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-muted-foreground">로딩 중...</p>
+            </div>
+          ) : workHistories && workHistories.length > 0 ? (
             <div className="overflow-x-auto">
               <Table className="min-w-[1500px]">
                 <TableHeader>
@@ -815,7 +897,7 @@ export default function Report() {
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
-                                  onClick={() => handleDelete(row.no)}
+                                  onClick={() => handleDelete(row)}
                                   className="text-destructive focus:text-destructive"
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />

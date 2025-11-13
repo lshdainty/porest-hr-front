@@ -5,7 +5,8 @@ const enum WorkQueryKey {
   GET_WORK_GROUPS = 'getWorkGroups',
   GET_WORK_DIVISION = 'getWorkDivision',
   GET_WORK_PART_LABEL = 'getWorkPartLabel',
-  GET_WORK_PARTS = 'getWorkParts'
+  GET_WORK_PARTS = 'getWorkParts',
+  GET_WORK_HISTORIES = 'getWorkHistories'
 }
 
 interface WorkCodeResp {
@@ -160,6 +161,38 @@ interface UpdateWorkHistoryReq {
   work_content: string
 }
 
+/**
+ * 업무 이력 전체 조회
+ * GET /api/v1/work-histories
+ */
+interface WorkHistoryResp {
+  work_history_seq: number
+  work_date: string
+  work_user_id: string
+  work_user_name: string
+  work_group: WorkCodeResp
+  work_part: WorkCodeResp
+  work_class: WorkCodeResp
+  work_hour: number
+  work_content: string
+}
+
+const useGetWorkHistories = () => {
+  return useQuery({
+    queryKey: [WorkQueryKey.GET_WORK_HISTORIES],
+    queryFn: async (): Promise<WorkHistoryResp[]> => {
+      const resp: ApiResponse<WorkHistoryResp[]> = await api.request({
+        method: 'get',
+        url: `/work-histories`
+      })
+
+      if (resp.code !== 200) throw new Error(resp.message)
+
+      return resp.data
+    }
+  })
+}
+
 const useUpdateWorkHistory = () => {
   return useMutation({
     mutationFn: async (reqData: UpdateWorkHistoryReq): Promise<void> => {
@@ -175,14 +208,37 @@ const useUpdateWorkHistory = () => {
   })
 }
 
+/**
+ * 업무 이력 삭제
+ * DELETE /api/v1/work-histories/{workHistorySeq}
+ */
+interface DeleteWorkHistoryReq {
+  work_history_seq: number
+}
+
+const useDeleteWorkHistory = () => {
+  return useMutation({
+    mutationFn: async (reqData: DeleteWorkHistoryReq): Promise<void> => {
+      const resp: ApiResponse<void> = await api.request({
+        method: 'delete',
+        url: `/work-histories/${reqData.work_history_seq}`
+      })
+
+      if (resp.code !== 200) throw new Error(resp.message)
+    }
+  })
+}
+
 export {
   // API Hook
   useGetWorkGroups,
   useGetWorkDivision,
   useGetWorkPartLabel,
   useGetWorkParts,
+  useGetWorkHistories,
   useCreateWorkHistory,
   useUpdateWorkHistory,
+  useDeleteWorkHistory,
   // QueryKey
   WorkQueryKey
 }
@@ -192,8 +248,10 @@ export type {
   WorkCodeResp,
   GetWorkPartLabelReq,
   GetWorkPartsReq,
+  WorkHistoryResp,
   CreateWorkHistoryReq,
   CreateWorkHistoryResp,
-  UpdateWorkHistoryReq
+  UpdateWorkHistoryReq,
+  DeleteWorkHistoryReq
 }
 
