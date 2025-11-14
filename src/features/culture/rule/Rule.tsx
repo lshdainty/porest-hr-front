@@ -17,7 +17,7 @@ export default function Rule() {
         </h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_1_1.png' alt='rule_1_1' className='w-full h-48 object-cover' />
+            <img src='/rule_1_1.png' alt='rule_1_1' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>휴가 일수</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -26,7 +26,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_1_2.png' alt='rule_1_2' className='w-full h-48 object-cover' />
+            <img src='/rule_1_2.png' alt='rule_1_2' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>지급 시기</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -45,7 +45,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_1_3.png' alt='rule_1_3' className='w-full h-48 object-cover' />
+            <img src='/rule_1_3.png' alt='rule_1_3' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>경조 휴가</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -69,7 +69,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_1_4.png' alt='rule_1_4' className='w-full h-48 object-cover' />
+            <img src='/rule_1_4.png' alt='rule_1_4' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>기타 휴가</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -98,7 +98,7 @@ export default function Rule() {
         </h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_2_1.png' alt='rule_2_1' className='w-full h-48 object-cover' />
+            <img src='/rule_2_1.png' alt='rule_2_1' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>기본 복장</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -107,7 +107,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_2_2.png' alt='rule_2_2' className='w-full h-48 object-cover' />
+            <img src='/rule_2_2.png' alt='rule_2_2' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>외부 미팅</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -116,7 +116,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_2_3.png' alt='rule_2_3' className='w-full h-48 object-cover' />
+            <img src='/rule_2_3.png' alt='rule_2_3' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>현장 출장</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -125,7 +125,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_2_4.png' alt='rule_2_4' className='w-full h-48 object-cover' />
+            <img src='/rule_2_4.png' alt='rule_2_4' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>지양 복장</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -150,7 +150,7 @@ export default function Rule() {
         </h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_3_1.png' alt='rule_3_1' className='w-full h-48 object-cover' />
+            <img src='/rule_3_1.png' alt='rule_3_1' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>자기개발</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -159,7 +159,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_3_2.png' alt='rule_3_2' className='w-full h-48 object-cover' />
+            <img src='/rule_3_2.png' alt='rule_3_2' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>외부교육</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -174,7 +174,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_3_3.png' alt='rule_3_3' className='w-full h-48 object-cover' />
+            <img src='/rule_3_3.png' alt='rule_3_3' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>연장근무</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -183,7 +183,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_3_4.png' alt='rule_3_4' className='w-full h-48 object-cover' />
+            <img src='/rule_3_4.png' alt='rule_3_4' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>추가 휴가</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -213,7 +213,7 @@ export default function Rule() {
         </h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_4_1.png' alt='rule_4_1' className='w-full h-48 object-cover' />
+            <img src='/rule_4_1.png' alt='rule_4_1' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>생일</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -229,7 +229,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_4_2.png' alt='rule_4_2' className='w-full h-48 object-cover' />
+            <img src='/rule_4_2.png' alt='rule_4_2' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>생일파티</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -238,7 +238,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_4_3.png' alt='rule_4_3' className='w-full h-48 object-cover' />
+            <img src='/rule_4_3.png' alt='rule_4_3' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>가족기념일</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
@@ -254,7 +254,7 @@ export default function Rule() {
             </div>
           </div>
           <div className='bg-card rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg'>
-            <img src='/web/rule_4_4.png' alt='rule_4_4' className='w-full h-48 object-cover' />
+            <img src='/rule_4_4.png' alt='rule_4_4' className='w-full h-48 object-cover' />
             <div className='p-5'>
               <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>기타사항</h3>
               <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>

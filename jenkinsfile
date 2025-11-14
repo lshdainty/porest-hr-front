@@ -1,0 +1,93 @@
+pipeline {
+    agent any
+    
+    tools {
+        nodejs 'node20'
+    }
+    
+    environment {
+        NGINX_PATH = '/var/www/html'
+        BUILD_PATH = 'dist'  // Vite 사용 시 'dist'로 변경
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'github-credentials',
+                    url: 'https://github.com/lshdainty/porest-front.git'
+            }
+        }
+        
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                    echo "Node version:"
+                    node --version
+                    echo "NPM version:"
+                    npm --version
+                    npm ci
+                '''
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'npm run build:skip-check'
+            }
+        }
+        
+        stage('Deploy to Nginx') {
+            steps {
+                script {
+                    // 기존 파일 백업
+                    sh """
+                        if [ -d ${NGINX_PATH} ]; then
+                            sudo rm -rf ${NGINX_PATH}.backup
+                            sudo mv ${NGINX_PATH} ${NGINX_PATH}.backup
+                        fi
+                    """
+                    
+                    // 새 파일 배치
+                    sh """
+                        sudo mkdir -p ${NGINX_PATH}
+                        sudo cp -r ${BUILD_PATH}/* ${NGINX_PATH}/
+                    """
+                    
+                    // 권한 설정
+                    sh """
+                        sudo chown -R www-data:www-data ${NGINX_PATH}
+                        sudo chmod -R 755 ${NGINX_PATH}
+                    """
+                    
+                    // Nginx 재시작
+                    sh "sudo systemctl reload nginx"
+                    
+                    echo "✅ React 배포 완료!"
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo '✅ React 배포 성공!'
+        }
+        failure {
+            echo '❌ React 배포 실패! 백업 복구 중...'
+            script {
+                sh """
+                    if [ -d ${NGINX_PATH}.backup ]; then
+                        sudo rm -rf ${NGINX_PATH}
+                        sudo mv ${NGINX_PATH}.backup ${NGINX_PATH}
+                        sudo systemctl reload nginx
+                        echo "✅ 백업 복구 완료"
+                    fi
+                """
+            }
+        }
+        cleanup {
+            cleanWs()
+        }
+    }
+}
