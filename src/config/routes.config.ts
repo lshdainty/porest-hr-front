@@ -33,6 +33,7 @@ import Policy from '@/features/admin/vacation/Policy';
 import Vacation from '@/features/admin/vacation/Vacation';
 import Dues from '@/features/culture/dues/Dues';
 import Rule from '@/features/culture/rule/Rule';
+import BigCalendar from '@/features/home/bigcalendar/BigCalendar';
 import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
 import Application from '@/features/vacation/application/Application';
@@ -83,6 +84,13 @@ export const routesConfig: RouteGroup[] = [
             path: '/calendar',
             icon: CalendarDays,
             component: Calendar,
+          },
+          {
+            id: 'bigcalendar',
+            name: 'Calendar',
+            path: '/bigcalendar',
+            icon: CalendarDays,
+            component: BigCalendar,
           },
         ],
       },
