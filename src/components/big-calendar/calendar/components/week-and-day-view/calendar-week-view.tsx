@@ -43,11 +43,17 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
           <div className='relative z-20 flex border-b'>
             <div className='w-18'></div>
             <div className='grid flex-1 grid-cols-7 divide-x border-l'>
-              {weekDays.map((day, index) => (
-                <span key={index} className='py-2 text-center text-xs font-medium text-muted-foreground'>
-                  {format(day, 'EE')} <span className='ml-1 font-semibold text-foreground'>{format(day, 'd')}</span>
-                </span>
-              ))}
+              {weekDays.map((day, index) => {
+                const dayOfWeek = day.getDay();
+                const isSunday = dayOfWeek === 0;
+                const isSaturday = dayOfWeek === 6;
+
+                return (
+                  <span key={index} className='py-2 text-center text-xs font-medium' style={{ color: isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined }}>
+                    {format(day, 'EE')} <span className='ml-1 font-semibold' style={{ color: isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined }}>{format(day, 'd')}</span>
+                  </span>
+                );
+              })}
             </div>
           </div>
         </div>

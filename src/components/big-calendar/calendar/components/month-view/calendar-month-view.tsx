@@ -31,11 +31,18 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
     <div className='flex flex-col h-full'>
       {/* Fixed header with weekdays */}
       <div className='grid grid-cols-7 divide-x border-b flex-shrink-0'>
-        {WEEK_DAYS.map(day => (
-          <div key={day} className='flex items-center justify-center py-2'>
-            <span className='text-xs font-medium text-muted-foreground'>{day}</span>
-          </div>
-        ))}
+        {WEEK_DAYS.map((day, index) => {
+          const isSunday = index === 0;
+          const isSaturday = index === 6;
+
+          return (
+            <div key={day} className='flex items-center justify-center py-2'>
+              <span className='text-xs font-medium' style={{ color: isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined }}>
+                {day}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Scrollable calendar grid */}

@@ -27,6 +27,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
 
   const cellEvents = useMemo(() => getMonthCellEvents(date, events, eventPositions), [date, events, eventPositions]);
   const isSunday = date.getDay() === 0;
+  const isSaturday = date.getDay() === 6;
 
   const handleClick = () => {
     setSelectedDate(date);
@@ -45,6 +46,9 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
               !currentMonth && 'opacity-20',
               isToday(date) && 'bg-primary font-bold text-primary-foreground hover:bg-primary'
             )}
+            style={{
+              color: isToday(date) ? undefined : isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined
+            }}
           >
             {day}
           </button>

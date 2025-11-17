@@ -17,6 +17,8 @@ export function YearViewDayCell({ day, date, events }: IProps) {
 
   const maxIndicators = 3;
   const eventCount = events.length;
+  const isSunday = date.getDay() === 0;
+  const isSaturday = date.getDay() === 6;
 
   const handleClick = () => {
     setSelectedDate(date);
@@ -34,6 +36,9 @@ export function YearViewDayCell({ day, date, events }: IProps) {
           'flex size-6 items-center justify-center rounded-full text-xs font-medium',
           isToday(date) && 'bg-primary font-semibold text-primary-foreground'
         )}
+        style={{
+          color: isToday(date) ? undefined : isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined
+        }}
       >
         {day}
       </div>

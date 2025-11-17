@@ -49,8 +49,8 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
           {/* Day header */}
           <div className='relative z-20 flex border-b'>
             <div className='w-18'></div>
-            <span className='flex-1 border-l py-2 text-center text-xs font-medium text-muted-foreground'>
-              {format(selectedDate, 'EE')} <span className='font-semibold text-foreground'>{format(selectedDate, 'd')}</span>
+            <span className='flex-1 border-l py-2 text-center text-xs font-medium' style={{ color: selectedDate.getDay() === 0 ? '#ff6767' : selectedDate.getDay() === 6 ? '#6767ff' : undefined }}>
+              {format(selectedDate, 'EE')} <span className='font-semibold' style={{ color: selectedDate.getDay() === 0 ? '#ff6767' : selectedDate.getDay() === 6 ? '#6767ff' : undefined }}>{format(selectedDate, 'd')}</span>
             </span>
           </div>
         </div>

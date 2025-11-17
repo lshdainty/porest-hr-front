@@ -46,11 +46,16 @@ export function YearViewMonth({ month, events }: IProps) {
 
       <div className='flex-1 space-y-2 rounded-b-lg border border-t-0 p-3'>
         <div className='grid grid-cols-7 gap-x-0.5 text-center'>
-          {weekDays.map((day, index) => (
-            <div key={index} className='text-xs font-medium text-muted-foreground'>
-              {day}
-            </div>
-          ))}
+          {weekDays.map((day, index) => {
+            const isSunday = index === 0;
+            const isSaturday = index === 6;
+
+            return (
+              <div key={index} className='text-xs font-medium' style={{ color: isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined }}>
+                {day}
+              </div>
+            );
+          })}
         </div>
 
         <div className='grid grid-cols-7 gap-x-0.5 gap-y-2'>
