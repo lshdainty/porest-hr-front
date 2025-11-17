@@ -1,11 +1,11 @@
-import { useMemo } from "react";
-import { addMonths, startOfYear } from "date-fns";
+import { addMonths, startOfYear } from 'date-fns';
+import { useMemo } from 'react';
 
-import { useCalendar } from "@/components/big-calendar/calendar/contexts/calendar-context";
+import { useCalendar } from '@/components/big-calendar/calendar/contexts/calendar-context';
 
-import { YearViewMonth } from "@/components/big-calendar/calendar/components/year-view/year-view-month";
+import { YearViewMonth } from '@/components/big-calendar/calendar/components/year-view/year-view-month';
 
-import type { IEvent } from "@/components/big-calendar/calendar/interfaces";
+import type { IEvent } from '@/components/big-calendar/calendar/interfaces';
 
 interface IProps {
   allEvents: IEvent[];
@@ -20,8 +20,8 @@ export function CalendarYearView({ allEvents }: IProps) {
   }, [selectedDate]);
 
   return (
-    <div className="w-full h-full overflow-y-auto scrollbar-hide p-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className='w-full h-full overflow-y-auto scrollbar-hide p-4'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
         {months.map(month => (
           <YearViewMonth key={month.toString()} month={month} events={allEvents} />
         ))}

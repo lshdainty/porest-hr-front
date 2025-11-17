@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from 'react';
 
-import type { Dispatch, SetStateAction } from "react";
-import type { IEvent, IUser } from "@/components/big-calendar/calendar/interfaces";
-import type { TBadgeVariant, TCalendarView, TVisibleHours, TWorkingHours } from "@/components/big-calendar/calendar/types";
+import type { IEvent, IUser } from '@/components/big-calendar/calendar/interfaces';
+import type { TBadgeVariant, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
+import type { Dispatch, SetStateAction } from 'react';
 
 interface ICalendarContext {
   selectedDate: Date;
   setSelectedDate: (date: Date | undefined) => void;
-  selectedUserId: IUser["id"] | "all";
-  setSelectedUserId: (userId: IUser["id"] | "all") => void;
+  selectedUserId: IUser['id'] | 'all';
+  setSelectedUserId: (userId: IUser['id'] | 'all') => void;
   view: TCalendarView;
   setView: (view: TCalendarView) => void;
   badgeVariant: TBadgeVariant;
@@ -38,13 +38,13 @@ const WORKING_HOURS = {
 
 const VISIBLE_HOURS = { from: 7, to: 18 };
 
-export function CalendarProvider({ children, users, events, initialView = "month" }: { children: React.ReactNode; users: IUser[]; events: IEvent[]; initialView?: TCalendarView }) {
-  const [badgeVariant, setBadgeVariant] = useState<TBadgeVariant>("colored");
+export function CalendarProvider({ children, users, events, initialView = 'month' }: { children: React.ReactNode; users: IUser[]; events: IEvent[]; initialView?: TCalendarView }) {
+  const [badgeVariant, setBadgeVariant] = useState<TBadgeVariant>('colored');
   const [visibleHours, setVisibleHours] = useState<TVisibleHours>(VISIBLE_HOURS);
   const [workingHours, setWorkingHours] = useState<TWorkingHours>(WORKING_HOURS);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
+  const [selectedUserId, setSelectedUserId] = useState<IUser['id'] | 'all'>('all');
   const [view, setView] = useState<TCalendarView>(initialView);
 
   // This localEvents doesn't need to exists in a real scenario.
@@ -86,6 +86,6 @@ export function CalendarProvider({ children, users, events, initialView = "month
 
 export function useCalendar(): ICalendarContext {
   const context = useContext(CalendarContext);
-  if (!context) throw new Error("useCalendar must be used within a CalendarProvider.");
+  if (!context) throw new Error('useCalendar must be used within a CalendarProvider.');
   return context;
 }

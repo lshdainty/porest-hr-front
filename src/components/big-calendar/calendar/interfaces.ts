@@ -1,4 +1,4 @@
-import type { TEventColor } from "@/components/big-calendar/calendar/types";
+import type { TEventColor } from '@/components/big-calendar/calendar/types';
 
 export interface IUser {
   id: string;

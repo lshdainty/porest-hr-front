@@ -1,4 +1,4 @@
-import { CALENDAR_ITENS_MOCK, USERS_MOCK } from "@/components/big-calendar/calendar/mocks";
+import { CALENDAR_ITENS_MOCK, USERS_MOCK } from '@/components/big-calendar/calendar/mocks';
 
 export const getEvents = async () => {
   // TO DO: implement this

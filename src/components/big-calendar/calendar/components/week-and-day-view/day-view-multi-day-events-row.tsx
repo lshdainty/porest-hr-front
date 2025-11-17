@@ -1,8 +1,8 @@
-import { parseISO, isWithinInterval, differenceInDays, startOfDay, endOfDay } from "date-fns";
+import { differenceInDays, endOfDay, isWithinInterval, parseISO, startOfDay } from 'date-fns';
 
-import { MonthEventBadge } from "@/components/big-calendar/calendar/components/month-view/month-event-badge";
+import { MonthEventBadge } from '@/components/big-calendar/calendar/components/month-view/month-event-badge';
 
-import type { IEvent } from "@/components/big-calendar/calendar/interfaces";
+import type { IEvent } from '@/components/big-calendar/calendar/interfaces';
 
 interface IProps {
   selectedDate: Date;
@@ -34,9 +34,9 @@ export function DayViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IProp
   if (multiDayEventsInDay.length === 0) return null;
 
   return (
-    <div className="flex border-b">
-      <div className="w-18"></div>
-      <div className="flex flex-1 flex-col gap-1 border-l py-1">
+    <div className='flex border-b'>
+      <div className='w-18'></div>
+      <div className='flex flex-1 flex-col gap-1 border-l py-1'>
         {multiDayEventsInDay.map(event => {
           const eventStart = startOfDay(parseISO(event.startDate));
           const eventEnd = startOfDay(parseISO(event.endDate));

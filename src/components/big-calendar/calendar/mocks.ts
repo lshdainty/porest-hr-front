@@ -1,5 +1,5 @@
-import type { TEventColor } from "@/components/big-calendar/calendar/types";
 import type { IEvent, IUser } from "@/components/big-calendar/calendar/interfaces";
+import type { TEventColor } from "@/components/big-calendar/calendar/types";
 
 // ================================== //
 

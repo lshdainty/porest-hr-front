@@ -1,6 +1,6 @@
-import { useCalendar } from "@/components/big-calendar/calendar/contexts/calendar-context";
+import { useCalendar } from '@/components/big-calendar/calendar/contexts/calendar-context';
 
-import type { IEvent } from "@/components/big-calendar/calendar/interfaces";
+import type { IEvent } from '@/components/big-calendar/calendar/interfaces';
 
 export function useUpdateEvent() {
   const { setLocalEvents } = useCalendar();

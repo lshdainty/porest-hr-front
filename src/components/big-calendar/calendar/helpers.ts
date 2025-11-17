@@ -2,73 +2,73 @@ import {
   addDays,
   addMonths,
   addWeeks,
+  addYears,
+  differenceInDays,
+  differenceInMinutes,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  endOfYear,
+  format,
+  isSameDay,
+  isSameMonth,
+  isSameWeek,
+  isSameYear,
+  isWithinInterval,
+  parseISO,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  startOfYear,
   subDays,
   subMonths,
   subWeeks,
-  isSameWeek,
-  isSameDay,
-  isSameMonth,
-  startOfWeek,
-  startOfMonth,
-  endOfMonth,
-  endOfWeek,
-  format,
-  parseISO,
-  differenceInMinutes,
-  eachDayOfInterval,
-  startOfDay,
-  differenceInDays,
-  endOfYear,
-  startOfYear,
   subYears,
-  addYears,
-  isSameYear,
-  isWithinInterval,
-} from "date-fns";
+} from 'date-fns';
 
-import type { ICalendarCell, IEvent } from "@/components/big-calendar/calendar/interfaces";
-import type { TCalendarView, TVisibleHours, TWorkingHours } from "@/components/big-calendar/calendar/types";
+import type { ICalendarCell, IEvent } from '@/components/big-calendar/calendar/interfaces';
+import type { TCalendarView, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
 
 // ================ Header helper functions ================ //
 
 export function rangeText(view: TCalendarView, date: Date) {
-  const formatString = "MMM d, yyyy";
+  const formatString = 'MMM d, yyyy';
   let start: Date;
   let end: Date;
 
   switch (view) {
-    case "agenda":
+    case 'agenda':
       start = startOfMonth(date);
       end = endOfMonth(date);
       break;
-    case "year":
+    case 'year':
       start = startOfYear(date);
       end = endOfYear(date);
       break;
-    case "month":
+    case 'month':
       start = startOfMonth(date);
       end = endOfMonth(date);
       break;
-    case "week":
+    case 'week':
       start = startOfWeek(date);
       end = endOfWeek(date);
       break;
-    case "day":
+    case 'day':
       return format(date, formatString);
     default:
-      return "Error while formatting ";
+      return 'Error while formatting ';
   }
 
   return `${format(start, formatString)} - ${format(end, formatString)}`;
 }
 
-export function navigateDate(date: Date, view: TCalendarView, direction: "previous" | "next"): Date {
+export function navigateDate(date: Date, view: TCalendarView, direction: 'previous' | 'next'): Date {
   const operations = {
-    agenda: direction === "next" ? addMonths : subMonths,
-    year: direction === "next" ? addYears : subYears,
-    month: direction === "next" ? addMonths : subMonths,
-    week: direction === "next" ? addWeeks : subWeeks,
-    day: direction === "next" ? addDays : subDays,
+    agenda: direction === 'next' ? addMonths : subMonths,
+    year: direction === 'next' ? addYears : subYears,
+    month: direction === 'next' ? addMonths : subMonths,
+    week: direction === 'next' ? addWeeks : subWeeks,
+    day: direction === 'next' ? addDays : subDays,
   };
 
   return operations[view](date, 1);
