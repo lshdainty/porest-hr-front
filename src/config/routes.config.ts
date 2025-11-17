@@ -91,7 +91,7 @@ export const routesConfig: RouteGroup[] = [
             path: '/bigcalendar',
             icon: CalendarDays,
             component: BigCalendar,
-          },
+          }
         ],
       },
       {

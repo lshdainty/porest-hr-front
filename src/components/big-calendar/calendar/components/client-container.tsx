@@ -1,18 +1,18 @@
 "use client";
 
-import { useMemo } from "react";
 import { isSameDay, parseISO } from "date-fns";
+import { useMemo } from "react";
 
 import { useCalendar } from "@/components/big-calendar/calendar/contexts/calendar-context";
 
 import { DndProviderWrapper } from "@/components/big-calendar/calendar/components/dnd/dnd-provider";
 
-import { CalendarHeader } from "@/components/big-calendar/calendar/components/header/calendar-header";
-import { CalendarYearView } from "@/components/big-calendar/calendar/components/year-view/calendar-year-view";
-import { CalendarMonthView } from "@/components/big-calendar/calendar/components/month-view/calendar-month-view";
 import { CalendarAgendaView } from "@/components/big-calendar/calendar/components/agenda-view/calendar-agenda-view";
+import { CalendarHeader } from "@/components/big-calendar/calendar/components/header/calendar-header";
+import { CalendarMonthView } from "@/components/big-calendar/calendar/components/month-view/calendar-month-view";
 import { CalendarDayView } from "@/components/big-calendar/calendar/components/week-and-day-view/calendar-day-view";
 import { CalendarWeekView } from "@/components/big-calendar/calendar/components/week-and-day-view/calendar-week-view";
+import { CalendarYearView } from "@/components/big-calendar/calendar/components/year-view/calendar-year-view";
 
 export function ClientContainer() {
   const { selectedDate, selectedUserId, events, view } = useCalendar();
@@ -84,16 +84,18 @@ export function ClientContainer() {
   }, [filteredEvents]);
 
   return (
-    <div className="overflow-hidden rounded-xl border">
+    <div className="w-full h-full flex flex-col overflow-hidden">
       <CalendarHeader events={filteredEvents} />
 
-      <DndProviderWrapper>
-        {view === "day" && <CalendarDayView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
-        {view === "month" && <CalendarMonthView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
-        {view === "week" && <CalendarWeekView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
-        {view === "year" && <CalendarYearView allEvents={eventStartDates} />}
-        {view === "agenda" && <CalendarAgendaView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
-      </DndProviderWrapper>
+      <div className="flex-1 overflow-hidden">
+        <DndProviderWrapper>
+          {view === "day" && <CalendarDayView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
+          {view === "month" && <CalendarMonthView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
+          {view === "week" && <CalendarWeekView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
+          {view === "year" && <CalendarYearView allEvents={eventStartDates} />}
+          {view === "agenda" && <CalendarAgendaView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
+        </DndProviderWrapper>
+      </div>
     </div>
   );
 }

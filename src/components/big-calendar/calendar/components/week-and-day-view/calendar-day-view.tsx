@@ -41,8 +41,8 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
   const groupedEvents = groupEvents(dayEvents);
 
   return (
-    <div className="flex">
-      <div className="flex flex-1 flex-col">
+    <div className="w-full h-full flex">
+      <div className="flex flex-1 flex-col h-full">
         <div>
           <DayViewMultiDayEventsRow selectedDate={selectedDate} multiDayEvents={multiDayEvents} />
 
@@ -55,7 +55,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
           </div>
         </div>
 
-        <ScrollArea className="h-[800px]" type="always">
+        <ScrollArea className="flex-1" type="always" hideScrollbar>
           <div className="flex">
             {/* Hours column */}
             <div className="relative w-18">
@@ -156,7 +156,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
           )}
 
           {currentEvents.length > 0 && (
-            <ScrollArea className="h-[422px] px-4" type="always">
+            <ScrollArea className="h-[422px] px-4" type="always" hideScrollbar>
               <div className="space-y-6 pb-4">
                 {currentEvents.map(event => {
                   const user = users.find(user => user.id === event.user.id);

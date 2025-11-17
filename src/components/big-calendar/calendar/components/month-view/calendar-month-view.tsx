@@ -28,8 +28,9 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
   );
 
   return (
-    <div>
-      <div className="grid grid-cols-7 divide-x">
+    <div className="flex flex-col h-full">
+      {/* Fixed header with weekdays */}
+      <div className="grid grid-cols-7 divide-x border-b flex-shrink-0">
         {WEEK_DAYS.map(day => (
           <div key={day} className="flex items-center justify-center py-2">
             <span className="text-xs font-medium text-muted-foreground">{day}</span>
@@ -37,10 +38,13 @@ export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 overflow-hidden">
-        {cells.map(cell => (
-          <DayCell key={cell.date.toISOString()} cell={cell} events={allEvents} eventPositions={eventPositions} />
-        ))}
+      {/* Scrollable calendar grid */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
+        <div className="grid grid-cols-7 auto-rows-fr h-full">
+          {cells.map(cell => (
+            <DayCell key={cell.date.toISOString()} cell={cell} events={allEvents} eventPositions={eventPositions} />
+          ))}
+        </div>
       </div>
     </div>
   );

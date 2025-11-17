@@ -29,13 +29,13 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   return (
-    <>
+    <div className="w-full h-full">
       <div className="flex flex-col items-center justify-center border-b py-4 text-sm text-muted-foreground sm:hidden">
         <p>Weekly view is not available on smaller devices.</p>
         <p>Please switch to daily or monthly view.</p>
       </div>
 
-      <div className="hidden flex-col sm:flex">
+      <div className="hidden h-full flex-col sm:flex">
         <div>
           <WeekViewMultiDayEventsRow selectedDate={selectedDate} multiDayEvents={multiDayEvents} />
 
@@ -52,7 +52,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
           </div>
         </div>
 
-        <ScrollArea className="h-[736px]" type="always">
+        <ScrollArea className="flex-1" type="always" hideScrollbar>
           <div className="flex overflow-hidden">
             {/* Hours column */}
             <div className="relative w-18">
@@ -143,6 +143,6 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
           </div>
         </ScrollArea>
       </div>
-    </>
+    </div>
   );
 }

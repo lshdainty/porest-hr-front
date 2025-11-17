@@ -150,6 +150,16 @@
   }
 }
 
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 @layer components {
   .gsi-material-button {
     @apply select-none appearance-none bg-white border border-[#747775] rounded cursor-pointer;
