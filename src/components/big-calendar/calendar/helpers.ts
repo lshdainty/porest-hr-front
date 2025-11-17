@@ -26,8 +26,8 @@ import {
   subYears,
 } from 'date-fns';
 
-import type { ICalendarCell, IEvent } from '@/components/big-calendar/calendar/interfaces';
-import type { TCalendarView, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
+import type { ICalendarCell, IEvent, IUser } from '@/components/big-calendar/calendar/interfaces';
+import type { TCalendarView, TEventColor, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
 
 // ================ Header helper functions ================ //
 
@@ -273,4 +273,89 @@ export function getMonthCellEvents(date: Date, events: IEvent[], eventPositions:
       if (!a.isMultiDay && b.isMultiDay) return 1;
       return a.position - b.position;
     });
+}
+
+// ================ Data transformation functions ================ //
+
+/**
+ * API 응답 타입 정의
+ */
+export interface ApiEventResponse {
+  user_id: string;
+  user_name: string;
+  calendar_name: string;
+  calendar_type: string;
+  calendar_desc: string;
+  start_date: Date;
+  end_date: Date;
+  domain_type: string;
+  calendar_id: number;
+}
+
+export interface ApiUserResponse {
+  user_id: string;
+  user_name: string;
+  profile_url: string;
+}
+
+/**
+ * calendar_type이나 domain_type을 기반으로 이벤트 색상 매핑
+ */
+function mapEventColor(calendarType: string, domainType: string): TEventColor {
+  const colorMap: Record<string, TEventColor> = {
+    'MEETING': 'blue',
+    'APPOINTMENT': 'green',
+    'TASK': 'yellow',
+    'DEADLINE': 'red',
+    'PERSONAL': 'purple',
+    'WORK': 'blue',
+    'OTHER': 'gray',
+  };
+
+  return colorMap[calendarType.toUpperCase()] || colorMap[domainType.toUpperCase()] || 'blue';
+}
+
+/**
+ * API 사용자 응답을 IUser 인터페이스로 변환
+ */
+export function convertApiUserToIUser(apiUser: ApiUserResponse): IUser {
+  return {
+    id: apiUser.user_id,
+    name: apiUser.user_name,
+    picturePath: apiUser.profile_url || null,
+  };
+}
+
+/**
+ * API 이벤트 응답을 IEvent 인터페이스로 변환
+ */
+export function convertApiEventToIEvent(apiEvent: ApiEventResponse, users: IUser[]): IEvent {
+  const user = users.find(u => u.id === apiEvent.user_id);
+
+  if (!user) {
+    throw new Error(`User not found for event: ${apiEvent.calendar_id}`);
+  }
+
+  return {
+    id: apiEvent.calendar_id,
+    startDate: new Date(apiEvent.start_date).toISOString(),
+    endDate: new Date(apiEvent.end_date).toISOString(),
+    title: apiEvent.calendar_name,
+    color: mapEventColor(apiEvent.calendar_type, apiEvent.domain_type),
+    description: apiEvent.calendar_desc || '',
+    user: user,
+  };
+}
+
+/**
+ * API 응답 배열을 변환
+ */
+export function convertApiEvents(
+  apiEvents: ApiEventResponse[],
+  apiUsers: ApiUserResponse[]
+): { events: IEvent[], users: IUser[] } {
+  const users = apiUsers.map(convertApiUserToIUser);
+  const events = apiEvents.map(apiEvent => convertApiEventToIEvent(apiEvent, users));
+
+  return { events, users };
 }

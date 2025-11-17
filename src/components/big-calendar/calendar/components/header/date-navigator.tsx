@@ -1,4 +1,3 @@
-import { formatDate } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo } from 'react';
 

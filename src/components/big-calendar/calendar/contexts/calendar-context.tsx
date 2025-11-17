@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 import type { IEvent, IUser } from '@/components/big-calendar/calendar/interfaces';
 import type { TBadgeVariant, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
@@ -52,6 +52,11 @@ export function CalendarProvider({ children, users, events, initialView = 'month
   // In a real scenario, the events would be updated in the backend
   // and the request that fetches the events should be refetched
   const [localEvents, setLocalEvents] = useState<IEvent[]>(events);
+
+  // props로 받은 events가 변경될 때 localEvents 업데이트
+  useEffect(() => {
+    setLocalEvents(events);
+  }, [events]);
 
   const handleSelectDate = (date: Date | undefined) => {
     if (!date) return;
