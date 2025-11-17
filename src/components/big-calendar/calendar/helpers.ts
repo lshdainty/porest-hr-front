@@ -303,13 +303,32 @@ export interface ApiUserResponse {
  */
 function mapEventColor(calendarType: string, domainType: string): TEventColor {
   const colorMap: Record<string, TEventColor> = {
-    'MEETING': 'blue',
-    'APPOINTMENT': 'green',
-    'TASK': 'yellow',
-    'DEADLINE': 'red',
-    'PERSONAL': 'purple',
-    'WORK': 'blue',
-    'OTHER': 'gray',
+    // 휴가/휴무 관련
+    'DAYOFF': 'purple',
+    'MORNINGOFF': 'blue',
+    'AFTERNOONOFF': 'pink',
+    'ONETIMEOFF': 'yellow',
+    'TWOTIMEOFF': 'yellow',
+    'THREETIMEOFF': 'yellow',
+    'FIVETIMEOFF': 'yellow',
+    'SIXTIMEOFF': 'yellow',
+    'SEVENTIMEOFF': 'yellow',
+    'HALFTIMEOFF': 'yellow',
+
+    // 출장/교육
+    'BUSINESSTRIP': 'green',
+    'EDUCATION': 'red',
+
+    // 경조사
+    'BIRTHDAY': 'orange',
+    'BIRTHPARTY': 'orange',
+
+    // 건강검진
+    'HEALTHCHECKHALF': 'gray',
+
+    // 예비군
+    'DEFENSE': 'stone',
+    'DEFENSEHALF': 'stone'
   };
 
   return colorMap[calendarType.toUpperCase()] || colorMap[domainType.toUpperCase()] || 'blue';
