@@ -9,9 +9,9 @@ import { useCalendar } from '@/components/big-calendar/calendar/contexts/calenda
 import { useUpdateEvent } from '@/components/big-calendar/calendar/hooks/use-update-event';
 import { useDisclosure } from '@/components/big-calendar/hooks/use-disclosure';
 
-import { SingleDayPicker } from '@/components/big-calendar/components/ui/single-day-picker';
 import { TimeInput } from '@/components/big-calendar/components/ui/time-input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
@@ -149,7 +149,7 @@ export function EditEventDialog({ children, event }: IProps) {
                     <FormLabel htmlFor='startDate'>Start Date</FormLabel>
 
                     <FormControl>
-                      <SingleDayPicker
+                      <InputDatePicker
                         id='startDate'
                         value={field.value}
                         onSelect={date => field.onChange(date as Date)}
@@ -188,7 +188,7 @@ export function EditEventDialog({ children, event }: IProps) {
                   <FormItem className='flex-1'>
                     <FormLabel>End Date</FormLabel>
                     <FormControl>
-                      <SingleDayPicker
+                      <InputDatePicker
                         value={field.value}
                         onSelect={date => field.onChange(date as Date)}
                         placeholder='Select a date'

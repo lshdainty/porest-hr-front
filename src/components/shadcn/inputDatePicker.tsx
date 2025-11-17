@@ -39,20 +39,28 @@ function isValidDate(date: Date | undefined) {
 }
 
 interface InputDatePickerProps {
-  value?: string // yyyy-mm-dd 형식
+  value?: string | Date // yyyy-mm-dd 형식 또는 Date 객체
   onValueChange?: (value: string) => void
+  onSelect?: (value: Date | undefined) => void
   placeholder?: string
   disabled?: boolean
+  id?: string
+  'data-invalid'?: boolean
 }
 
 export function InputDatePicker({
   value,
   onValueChange,
+  onSelect,
   placeholder = "yyyy-mm-dd",
-  disabled = false
+  disabled = false,
+  id,
+  'data-invalid': dataInvalid
 }: InputDatePickerProps) {
   const [open, setOpen] = React.useState(false)
-  const date = parseDate(value)
+
+  // value가 Date 객체인 경우와 문자열인 경우 모두 처리
+  const date = value instanceof Date ? value : parseDate(value)
   const [month, setMonth] = React.useState<Date | undefined>(date || new Date())
 
   React.useEffect(() => {
@@ -62,8 +70,13 @@ export function InputDatePicker({
   }, [date])
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
-    if (selectedDate && onValueChange) {
-      onValueChange(formatDate(selectedDate))
+    if (selectedDate) {
+      if (onValueChange) {
+        onValueChange(formatDate(selectedDate))
+      }
+      if (onSelect) {
+        onSelect(selectedDate)
+      }
     }
     setOpen(false)
   }
@@ -74,20 +87,25 @@ export function InputDatePicker({
       onValueChange(inputValue)
     }
 
-    // 유효한 날짜인 경우 month 업데이트
+    // 유효한 날짜인 경우 month 업데이트 및 onSelect 호출
     const parsedDate = parseDate(inputValue)
     if (parsedDate) {
       setMonth(parsedDate)
+      if (onSelect) {
+        onSelect(parsedDate)
+      }
     }
   }
 
   return (
     <div className="relative flex gap-2">
       <Input
-        value={value || ""}
+        id={id}
+        value={value instanceof Date ? formatDate(value) : (value || "")}
         placeholder={placeholder}
         className="bg-background pr-10"
         disabled={disabled}
+        data-invalid={dataInvalid}
         onChange={handleInputChange}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown") {

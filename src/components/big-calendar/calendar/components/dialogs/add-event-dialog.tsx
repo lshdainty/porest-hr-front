@@ -8,13 +8,13 @@ import { useForm } from 'react-hook-form';
 import { useCalendar } from '@/components/big-calendar/calendar/contexts/calendar-context';
 import { useDisclosure } from '@/components/big-calendar/hooks/use-disclosure';
 
-import { SingleDayPicker } from '@/components/big-calendar/components/ui/single-day-picker';
 import { TimeInput } from '@/components/big-calendar/components/ui/time-input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
 import { Input } from '@/components/shadcn/input';
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { Textarea } from '@/components/shadcn/textarea';
 
@@ -131,7 +131,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                     <FormLabel htmlFor='startDate'>Start Date</FormLabel>
 
                     <FormControl>
-                      <SingleDayPicker
+                      <InputDatePicker
                         id='startDate'
                         value={field.value}
                         onSelect={date => field.onChange(date as Date)}
@@ -170,7 +170,7 @@ export function AddEventDialog({ children, startDate, startTime }: IProps) {
                   <FormItem className='flex-1'>
                     <FormLabel>End Date</FormLabel>
                     <FormControl>
-                      <SingleDayPicker
+                      <InputDatePicker
                         value={field.value}
                         onSelect={date => field.onChange(date as Date)}
                         placeholder='Select a date'
