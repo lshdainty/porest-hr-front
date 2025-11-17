@@ -57,7 +57,9 @@ export function YearViewDayCell({ day, date, events }: IProps) {
                   event.color === 'yellow' && 'bg-yellow-600',
                   event.color === 'purple' && 'bg-purple-600',
                   event.color === 'orange' && 'bg-orange-600',
-                  event.color === 'gray' && 'bg-neutral-600'
+                  event.color === 'pink' && 'bg-pink-600',
+                  event.color === 'gray' && 'bg-neutral-600',
+                  event.color === 'stone' && 'bg-stone-600'
                 )}
               />
             ))
@@ -71,7 +73,10 @@ export function YearViewDayCell({ day, date, events }: IProps) {
                   events[0].color === 'red' && 'bg-red-600',
                   events[0].color === 'yellow' && 'bg-yellow-600',
                   events[0].color === 'purple' && 'bg-purple-600',
-                  events[0].color === 'orange' && 'bg-orange-600'
+                  events[0].color === 'orange' && 'bg-orange-600',
+                  events[0].color === 'pink' && 'bg-pink-600',
+                  events[0].color === 'gray' && 'bg-neutral-600',
+                  events[0].color === 'stone' && 'bg-stone-600'
                 )}
               />
               <span className='text-[7px] text-muted-foreground'>+{eventCount - 1}</span>

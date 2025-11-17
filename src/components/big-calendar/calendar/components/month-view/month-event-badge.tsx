@@ -23,7 +23,9 @@ const eventBadgeVariants = cva(
         yellow: 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-300 [&_.event-dot]:fill-yellow-600',
         purple: 'border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-300 [&_.event-dot]:fill-purple-600',
         orange: 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950 dark:text-orange-300 [&_.event-dot]:fill-orange-600',
+        pink: 'border-pink-200 bg-pink-50 text-pink-700 dark:border-pink-800 dark:bg-pink-950 dark:text-pink-300 [&_.event-dot]:fill-pink-600',
         gray: 'border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 [&_.event-dot]:fill-neutral-600',
+        stone: 'border-stone-200 bg-stone-50 text-stone-700 dark:border-stone-800 dark:bg-stone-950 dark:text-stone-300 [&_.event-dot]:fill-stone-600',
 
         // Dot variants
         'blue-dot': 'bg-neutral-50 dark:bg-neutral-900 [&_.event-dot]:fill-blue-600',
@@ -32,7 +34,9 @@ const eventBadgeVariants = cva(
         'yellow-dot': 'bg-neutral-50 dark:bg-neutral-900 [&_.event-dot]:fill-yellow-600',
         'purple-dot': 'bg-neutral-50 dark:bg-neutral-900 [&_.event-dot]:fill-purple-600',
         'orange-dot': 'bg-neutral-50 dark:bg-neutral-900 [&_.event-dot]:fill-orange-600',
+        'pink-dot': 'bg-neutral-50 dark:bg-neutral-900 [&_.event-dot]:fill-pink-600',
         'gray-dot': 'bg-neutral-50 dark:bg-neutral-900 [&_.event-dot]:fill-neutral-600',
+        'stone-dot': 'bg-neutral-50 dark:bg-neutral-900 [&_.event-dot]:fill-stone-600',
       },
       multiDayPosition: {
         first: 'relative z-10 mr-0 w-[calc(100%_-_3px)] rounded-r-none border-r-0 [&>span]:mr-2.5',
@@ -81,6 +85,8 @@ export function MonthEventBadge({ event, cellDate, eventCurrentDay, eventTotalDa
   }
 
   const renderBadgeText = ['first', 'none'].includes(position);
+  // 단일 이벤트(none)일 때만 시간 표시, 연속 이벤트는 마지막 셀에만 표시
+  const isMultiDay = !isSameDay(itemStart, itemEnd);
 
   const color = (badgeVariant === 'dot' ? `${event.color}-dot` : event.color) as VariantProps<typeof eventBadgeVariants>['color'];
 
@@ -97,26 +103,39 @@ export function MonthEventBadge({ event, cellDate, eventCurrentDay, eventTotalDa
     <DraggableEvent event={event}>
       <EventDetailsDialog event={event}>
         <div role='button' tabIndex={0} className={eventBadgeClasses} onKeyDown={handleKeyDown}>
-          <div className='flex items-center gap-1.5 truncate'>
-            {!['middle', 'last'].includes(position) && ['mixed', 'dot'].includes(badgeVariant) && (
-              <svg width='8' height='8' viewBox='0 0 8 8' className='event-dot shrink-0'>
-                <circle cx='4' cy='4' r='4' />
-              </svg>
-            )}
+          {/* 마지막 위치인 경우 시간만 오른쪽 정렬로 표시 */}
+          {position === 'last' && (
+            <div className='ml-auto'>
+              <span>{format(new Date(event.startDate), 'h:mm a')}</span>
+            </div>
+          )}
 
-            {renderBadgeText && (
-              <p className='flex-1 truncate font-semibold'>
-                {eventCurrentDay && (
-                  <span className='text-xs'>
-                    Day {eventCurrentDay} of {eventTotalDays} •{' '}
-                  </span>
+          {/* 첫 번째 또는 단일 이벤트인 경우 제목 표시 */}
+          {position !== 'last' && (
+            <>
+              <div className='flex items-center gap-1.5 truncate'>
+                {!['middle', 'last'].includes(position) && ['mixed', 'dot'].includes(badgeVariant) && (
+                  <svg width='8' height='8' viewBox='0 0 8 8' className='event-dot shrink-0'>
+                    <circle cx='4' cy='4' r='4' />
+                  </svg>
                 )}
-                {event.title}
-              </p>
-            )}
-          </div>
 
-          {renderBadgeText && <span>{format(new Date(event.startDate), 'h:mm a')}</span>}
+                {renderBadgeText && (
+                  <p className='flex-1 truncate font-semibold'>
+                    {eventCurrentDay && (
+                      <span className='text-xs'>
+                        Day {eventCurrentDay} of {eventTotalDays} •{' '}
+                      </span>
+                    )}
+                    {event.title}
+                  </p>
+                )}
+              </div>
+
+              {/* 단일 이벤트일 때만 시간 표시 */}
+              {renderBadgeText && !isMultiDay && <span>{format(new Date(event.startDate), 'h:mm a')}</span>}
+            </>
+          )}
         </div>
       </EventDetailsDialog>
     </DraggableEvent>
