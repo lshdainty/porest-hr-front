@@ -36,17 +36,34 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
   return (
     <DroppableDayCell cell={cell}>
       <div className={cn("flex h-full flex-col gap-1 border-l border-t py-1.5 lg:pb-2 lg:pt-1", isSunday && "border-l-0")}>
-        <button
-          onClick={handleClick}
-          className={cn(
-            "flex size-6 translate-x-1 items-center justify-center rounded-full text-xs font-semibold hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring lg:px-2 flex-shrink-0",
-            !currentMonth && "opacity-20",
-            isToday(date) && "bg-primary font-bold text-primary-foreground hover:bg-primary"
-          )}
-        >
-          {day}
-        </button>
+        {/* 첫 번째 줄: 날짜와 more */}
+        <div className="flex items-center justify-between px-1">
+          <button
+            onClick={handleClick}
+            className={cn(
+              "flex size-6 items-center justify-center rounded-full text-xs font-semibold hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring flex-shrink-0",
+              !currentMonth && "opacity-20",
+              isToday(date) && "bg-primary font-bold text-primary-foreground hover:bg-primary"
+            )}
+          >
+            {day}
+          </button>
 
+          {cellEvents.length > MAX_VISIBLE_EVENTS && (
+            <button
+              onClick={handleClick}
+              className={cn(
+                "text-xs font-semibold text-muted-foreground flex-shrink-0 px-0.5 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded",
+                !currentMonth && "opacity-50"
+              )}
+            >
+              <span className="sm:hidden">+{cellEvents.length - MAX_VISIBLE_EVENTS}</span>
+              <span className="hidden sm:inline">{cellEvents.length - MAX_VISIBLE_EVENTS} more</span>
+            </button>
+          )}
+        </div>
+
+        {/* 두 번째 줄: 이벤트들 */}
         <div className={cn("flex flex-1 h-6 gap-1 px-2 lg:flex-col lg:gap-2 lg:px-0", !currentMonth && "opacity-50")}>
           {[0, 1, 2].map(position => {
             const event = cellEvents.find(e => e.position === position);
@@ -64,13 +81,6 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
             );
           })}
         </div>
-
-        {cellEvents.length > MAX_VISIBLE_EVENTS && (
-          <p className={cn("h-4.5 px-1.5 text-xs font-semibold text-muted-foreground flex-shrink-0", !currentMonth && "opacity-50")}>
-            <span className="sm:hidden">+{cellEvents.length - MAX_VISIBLE_EVENTS}</span>
-            <span className="hidden sm:inline"> {cellEvents.length - MAX_VISIBLE_EVENTS} more...</span>
-          </p>
-        )}
       </div>
     </DroppableDayCell>
   );
