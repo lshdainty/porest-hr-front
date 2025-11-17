@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { CustomDragLayer } from "@/components/big-calendar/calendar/components/dnd/custom-drag-layer";
+import { CustomDragLayer } from '@/components/big-calendar/calendar/components/dnd/custom-drag-layer';
 
 interface DndProviderWrapperProps {
   children: React.ReactNode;

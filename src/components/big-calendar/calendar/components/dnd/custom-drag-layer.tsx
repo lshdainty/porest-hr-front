@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useDragLayer } from "react-dnd";
+import { useDragLayer } from 'react-dnd';
 
-import type { IEvent } from "@/components/big-calendar/calendar/interfaces";
+import type { IEvent } from '@/components/big-calendar/calendar/interfaces';
 
 interface IDragItem {
   event: IEvent;
@@ -29,8 +29,8 @@ export function CustomDragLayer() {
   const offsetY = initialClientOffset.y - initialOffset.y;
 
   const layerStyles: React.CSSProperties = {
-    position: "fixed",
-    pointerEvents: "none",
+    position: 'fixed',
+    pointerEvents: 'none',
     zIndex: 100,
     left: currentOffset.x - offsetX,
     top: currentOffset.y - offsetY,
@@ -39,7 +39,7 @@ export function CustomDragLayer() {
   return (
     <div style={layerStyles}>
       <div
-        className=""
+        className=''
         style={{
           width: item.width,
           height: item.height,

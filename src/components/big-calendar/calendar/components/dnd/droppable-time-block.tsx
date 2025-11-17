@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useDrop } from "react-dnd";
-import { parseISO, differenceInMilliseconds } from "date-fns";
+import { differenceInMilliseconds, parseISO } from 'date-fns';
+import { useDrop } from 'react-dnd';
 
-import { useUpdateEvent } from "@/components/big-calendar/calendar/hooks/use-update-event";
+import { useUpdateEvent } from '@/components/big-calendar/calendar/hooks/use-update-event';
 
-import { cn } from "@/lib/utils";
-import { ItemTypes } from "@/components/big-calendar/calendar/components/dnd/draggable-event";
+import { ItemTypes } from '@/components/big-calendar/calendar/components/dnd/draggable-event';
+import { cn } from '@/lib/utils';
 
-import type { IEvent } from "@/components/big-calendar/calendar/interfaces";
+import type { IEvent } from '@/components/big-calendar/calendar/interfaces';
 
 interface DroppableTimeBlockProps {
   date: Date;
@@ -52,7 +52,7 @@ export function DroppableTimeBlock({ date, hour, minute, children }: DroppableTi
   );
 
   return (
-    <div ref={drop as unknown as React.RefObject<HTMLDivElement>} className={cn("h-[24px]", isOver && canDrop && "bg-accent/50")}>
+    <div ref={drop as unknown as React.RefObject<HTMLDivElement>} className={cn('h-[24px]', isOver && canDrop && 'bg-accent/50')}>
       {children}
     </div>
   );
