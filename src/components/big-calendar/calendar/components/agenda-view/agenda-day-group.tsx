@@ -1,8 +1,8 @@
-import { differenceInDays, format, parseISO, startOfDay } from "date-fns";
+import { differenceInDays, format, parseISO, startOfDay } from 'date-fns';
 
-import { AgendaEventCard } from "@/components/big-calendar/calendar/components/agenda-view/agenda-event-card";
+import { AgendaEventCard } from '@/components/big-calendar/calendar/components/agenda-view/agenda-event-card';
 
-import type { IEvent } from "@/components/big-calendar/calendar/interfaces";
+import type { IEvent } from '@/components/big-calendar/calendar/interfaces';
 
 interface IProps {
   date: Date;
@@ -14,12 +14,12 @@ export function AgendaDayGroup({ date, events, multiDayEvents }: IProps) {
   const sortedEvents = [...events].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
   return (
-    <div className="space-y-4">
-      <div className="sticky top-0 flex items-center gap-4 bg-background py-2">
-        <p className="text-sm font-semibold">{format(date, "EEEE, MMMM d, yyyy")}</p>
+    <div className='space-y-4'>
+      <div className='sticky top-0 flex items-center gap-4 bg-background py-2'>
+        <p className='text-sm font-semibold'>{format(date, 'EEEE, MMMM d, yyyy')}</p>
       </div>
 
-      <div className="space-y-2">
+      <div className='space-y-2'>
         {multiDayEvents.length > 0 &&
           multiDayEvents.map(event => {
             const eventStart = startOfDay(parseISO(event.startDate));

@@ -1,13 +1,13 @@
-import { useMemo } from "react";
-import { CalendarX2 } from "lucide-react";
-import { parseISO, format, endOfDay, startOfDay, isSameMonth } from "date-fns";
+import { endOfDay, format, isSameMonth, parseISO, startOfDay } from 'date-fns';
+import { CalendarX2 } from 'lucide-react';
+import { useMemo } from 'react';
 
-import { useCalendar } from "@/components/big-calendar/calendar/contexts/calendar-context";
+import { useCalendar } from '@/components/big-calendar/calendar/contexts/calendar-context';
 
-import { ScrollArea } from "@/components/big-calendar/components/ui/scroll-area";
-import { AgendaDayGroup } from "@/components/big-calendar/calendar/components/agenda-view/agenda-day-group";
+import { AgendaDayGroup } from '@/components/big-calendar/calendar/components/agenda-view/agenda-day-group';
+import { ScrollArea } from '@/components/shadcn/scrollArea';
 
-import type { IEvent } from "@/components/big-calendar/calendar/interfaces";
+import type { IEvent } from '@/components/big-calendar/calendar/interfaces';
 
 interface IProps {
   singleDayEvents: IEvent[];
@@ -24,7 +24,7 @@ export function CalendarAgendaView({ singleDayEvents, multiDayEvents }: IProps) 
       const eventDate = parseISO(event.startDate);
       if (!isSameMonth(eventDate, selectedDate)) return;
 
-      const dateKey = format(eventDate, "yyyy-MM-dd");
+      const dateKey = format(eventDate, 'yyyy-MM-dd');
 
       if (!allDates.has(dateKey)) {
         allDates.set(dateKey, { date: startOfDay(eventDate), events: [], multiDayEvents: [] });
@@ -42,7 +42,7 @@ export function CalendarAgendaView({ singleDayEvents, multiDayEvents }: IProps) 
 
       while (currentDate <= lastDate) {
         if (isSameMonth(currentDate, selectedDate)) {
-          const dateKey = format(currentDate, "yyyy-MM-dd");
+          const dateKey = format(currentDate, 'yyyy-MM-dd');
 
           if (!allDates.has(dateKey)) {
             allDates.set(dateKey, { date: new Date(currentDate), events: [], multiDayEvents: [] });
@@ -60,17 +60,17 @@ export function CalendarAgendaView({ singleDayEvents, multiDayEvents }: IProps) 
   const hasAnyEvents = singleDayEvents.length > 0 || multiDayEvents.length > 0;
 
   return (
-    <div className="w-full h-full">
-      <ScrollArea className="h-full" type="always" hideScrollbar>
-        <div className="space-y-6 p-4">
+    <div className='w-full h-full'>
+      <ScrollArea className='h-full' type='always'>
+        <div className='space-y-6 p-4'>
           {eventsByDay.map(dayGroup => (
-            <AgendaDayGroup key={format(dayGroup.date, "yyyy-MM-dd")} date={dayGroup.date} events={dayGroup.events} multiDayEvents={dayGroup.multiDayEvents} />
+            <AgendaDayGroup key={format(dayGroup.date, 'yyyy-MM-dd')} date={dayGroup.date} events={dayGroup.events} multiDayEvents={dayGroup.multiDayEvents} />
           ))}
 
           {!hasAnyEvents && (
-            <div className="flex flex-col items-center justify-center gap-2 py-20 text-muted-foreground">
-              <CalendarX2 className="size-10" />
-              <p className="text-sm md:text-base">No events scheduled for the selected month</p>
+            <div className='flex flex-col items-center justify-center gap-2 py-20 text-muted-foreground'>
+              <CalendarX2 className='size-10' />
+              <p className='text-sm md:text-base'>No events scheduled for the selected month</p>
             </div>
           )}
         </div>
