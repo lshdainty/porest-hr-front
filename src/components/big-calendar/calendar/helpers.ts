@@ -26,8 +26,9 @@ import {
   subYears,
 } from 'date-fns';
 
-import type { ICalendarCell, IEvent, IUser } from '@/components/big-calendar/calendar/interfaces';
+import type { ICalendarCell, IEvent, IUser, ICalendarType } from '@/components/big-calendar/calendar/interfaces';
 import type { TCalendarView, TEventColor, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
+import { calendarTypes } from '@/components/big-calendar/calendar/types';
 
 // ================ Header helper functions ================ //
 
@@ -299,6 +300,20 @@ export interface ApiUserResponse {
 }
 
 /**
+ * calendar_type 문자열로 ICalendarType 객체 찾기
+ */
+export function getCalendarType(calendarTypeId: string): ICalendarType {
+  const foundType = calendarTypes.find(type => type.id === calendarTypeId.toUpperCase());
+
+  if (!foundType) {
+    // 기본값 반환 (연차)
+    return calendarTypes[0];
+  }
+
+  return foundType;
+}
+
+/**
  * calendar_type이나 domain_type을 기반으로 이벤트 색상 매핑
  */
 function mapEventColor(calendarType: string, domainType: string): TEventColor {
@@ -363,6 +378,7 @@ export function convertApiEventToIEvent(apiEvent: ApiEventResponse, users: IUser
     color: mapEventColor(apiEvent.calendar_type, apiEvent.domain_type),
     description: apiEvent.calendar_desc || '',
     user: user,
+    type: getCalendarType(apiEvent.calendar_type),
   };
 }
 

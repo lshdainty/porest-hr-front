@@ -6,7 +6,7 @@ import { Button } from '@/components/shadcn/button';
 import { AddEventDialog } from '@/components/big-calendar/calendar/components/dialogs/add-event-dialog';
 import { DateNavigator } from '@/components/big-calendar/calendar/components/header/date-navigator';
 import { TodayButton } from '@/components/big-calendar/calendar/components/header/today-button';
-import { UserSelect } from '@/components/big-calendar/calendar/components/header/user-select';
+import { EventFilter } from '@/components/big-calendar/calendar/components/header/event-filter';
 
 import type { IEvent } from '@/components/big-calendar/calendar/interfaces';
 
@@ -77,7 +77,7 @@ export function CalendarHeader({ events }: IProps) {
             </Button>
           </div>
 
-          <UserSelect />
+          <EventFilter />
         </div>
 
         <AddEventDialog>

@@ -6,6 +6,13 @@ export interface IUser {
   picturePath: string | null;
 }
 
+export interface ICalendarType {
+  id: string
+  name: string
+  type: 'vacation' | 'schedule'
+  isDate: boolean
+}
+
 export interface IEvent {
   id: number;
   startDate: string;
@@ -14,6 +21,7 @@ export interface IEvent {
   color: TEventColor;
   description: string;
   user: IUser;
+  type: ICalendarType;
 }
 
 export interface ICalendarCell {

@@ -2,15 +2,17 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import type { IEvent, IUser } from '@/components/big-calendar/calendar/interfaces';
+import type { IEvent, IUser, ICalendarType } from '@/components/big-calendar/calendar/interfaces';
 import type { TBadgeVariant, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface ICalendarContext {
   selectedDate: Date;
   setSelectedDate: (date: Date | undefined) => void;
-  selectedUserId: IUser['id'] | 'all';
-  setSelectedUserId: (userId: IUser['id'] | 'all') => void;
+  selectedUserIds: IUser['id'][] | 'all';
+  setSelectedUserIds: (userIds: IUser['id'][] | 'all') => void;
+  selectedTypeIds: ICalendarType['id'][] | 'all';
+  setSelectedTypeIds: (typeIds: ICalendarType['id'][] | 'all') => void;
   view: TCalendarView;
   setView: (view: TCalendarView) => void;
   badgeVariant: TBadgeVariant;
@@ -44,7 +46,8 @@ export function CalendarProvider({ children, users, events, initialView = 'month
   const [workingHours, setWorkingHours] = useState<TWorkingHours>(WORKING_HOURS);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedUserId, setSelectedUserId] = useState<IUser['id'] | 'all'>('all');
+  const [selectedUserIds, setSelectedUserIds] = useState<IUser['id'][] | 'all'>('all');
+  const [selectedTypeIds, setSelectedTypeIds] = useState<ICalendarType['id'][] | 'all'>('all');
   const [view, setView] = useState<TCalendarView>(initialView);
 
   // This localEvents doesn't need to exists in a real scenario.
@@ -68,8 +71,10 @@ export function CalendarProvider({ children, users, events, initialView = 'month
       value={{
         selectedDate,
         setSelectedDate: handleSelectDate,
-        selectedUserId,
-        setSelectedUserId,
+        selectedUserIds,
+        setSelectedUserIds,
+        selectedTypeIds,
+        setSelectedTypeIds,
         view,
         setView,
         badgeVariant,
