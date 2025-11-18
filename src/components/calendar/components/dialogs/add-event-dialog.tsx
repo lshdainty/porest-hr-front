@@ -24,12 +24,11 @@ import {
   SelectValue,
 } from '@/components/shadcn/select';
 import { useCalendarType } from '@/hooks/useCalendarType';
-import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
 import { useLoginUserStore } from '@/store/LoginUser';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Circle } from '@mui/icons-material';
 import dayjs from 'dayjs';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -62,18 +61,17 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   endDate: propEndDate,
   startTime
 }) => {
-  const { start: storeStart, end: storeEnd, open: storeOpen } = useCalendarSlotStore();
-  const { setOpen: setStoreOpen } = useCalendarSlotStore(s => s.actions);
+  const [internalOpen, setInternalOpen] = React.useState(false);
   const { loginUser } = useLoginUserStore();
   const calendarTypes = useCalendarType();
 
-  // props가 있으면 props 사용, 없으면 store 사용
-  const open = propOpen !== undefined ? propOpen : storeOpen;
-  const setOpen = onOpenChange || setStoreOpen;
+  // open 상태 관리: props가 있으면 props 사용, 없으면 내부 상태 사용
+  const open = propOpen !== undefined ? propOpen : internalOpen;
+  const setOpen = onOpenChange || setInternalOpen;
 
-  // 날짜 기본값 설정: props > store > 오늘 날짜
-  const start = propStartDate || storeStart || new Date();
-  const end = propEndDate || storeEnd || new Date();
+  // 날짜 기본값 설정: props로 받은 날짜가 있으면 사용, 없으면 오늘 날짜 (useMemo로 메모이제이션)
+  const start = useMemo(() => propStartDate || new Date(), [propStartDate]);
+  const end = useMemo(() => propEndDate || new Date(), [propEndDate]);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -171,7 +169,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
         startMinute: startTime?.minute.toString() || '0',
       });
     }
-  }, [open, start, end, startTime, form]);
+  }, [open, start, end, startTime]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

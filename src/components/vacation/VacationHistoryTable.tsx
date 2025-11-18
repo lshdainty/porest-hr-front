@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { cn } from '@/lib/utils';
-import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
-import dayjs from 'dayjs';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -33,8 +31,8 @@ const formatDateTime = (dateTimeString: string) => {
 
 export default function VacationHistoryTable({ value: data, canAdd = false }: VacationHistoryTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const rowsPerPage = 5;
-  const { setSlots, setOpen } = useCalendarSlotStore(s => s.actions);
 
   useEffect(() => {
     const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -44,9 +42,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
   }, [data, currentPage, rowsPerPage]);
 
   const handleAddVacation = () => {
-    const now = dayjs();
-    setSlots(now.toDate(), now.toDate());
-    setOpen(true);
+    setDialogOpen(true);
   };
 
   const handleEdit = (id: number) => {
@@ -193,7 +189,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
         </div>
       </CardContent>
     </Card>
-    <AddEventDialog />
+    <AddEventDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </>
   );
 }

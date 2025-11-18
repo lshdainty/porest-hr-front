@@ -71,9 +71,6 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 
   const groupedEvents = groupEvents(dayEvents);
 
-  console.log('public log : ', publicHolidays)
-  console.log('etc log : ', etcHolidays)
-
   return (
     <div className='w-full h-full flex'>
       <div className='flex flex-1 flex-col h-full'>
