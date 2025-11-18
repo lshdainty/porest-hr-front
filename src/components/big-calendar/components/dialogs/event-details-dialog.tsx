@@ -3,6 +3,8 @@
 import { format, parseISO } from 'date-fns';
 import { Calendar, Clock, Text, User } from 'lucide-react';
 
+import { useDeleteSchedule } from '@/api/schedule';
+import { useDeleteVacationUsage } from '@/api/vacation';
 import { EditEventDialog } from '@/components/big-calendar/components/dialogs/edit-event-dialog';
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
@@ -18,21 +20,32 @@ export function EventDetailsDialog({ event, children }: IProps) {
   const startDate = parseISO(event.startDate);
   const endDate = parseISO(event.endDate);
 
+  const { mutate: deleteVacationHistory } = useDeleteVacationUsage();
+  const { mutate: deleteSchedule } = useDeleteSchedule();
+
+  const handleDelete = () => {
+    if (event.type.type === 'vacation') {
+      deleteVacationHistory(event.id);
+    } else {
+      deleteSchedule(event.id);
+    }
+  };
+
   return (
     <>
       <Dialog>
         <DialogTrigger asChild>{children}</DialogTrigger>
 
-        <DialogContent>
+        <DialogContent className='sm:max-w-sm'>
           <DialogHeader>
-            <DialogTitle>{event.title}</DialogTitle>
+            <DialogTitle>{event.user.name} {event.title}</DialogTitle>
           </DialogHeader>
 
           <div className='space-y-4'>
             <div className='flex items-start gap-2'>
               <User className='mt-1 size-4 shrink-0' />
               <div>
-                <p className='text-sm font-medium'>Responsible</p>
+                <p className='text-sm font-medium'>사용자</p>
                 <p className='text-sm text-muted-foreground'>{event.user.name}</p>
               </div>
             </div>
@@ -40,23 +53,23 @@ export function EventDetailsDialog({ event, children }: IProps) {
             <div className='flex items-start gap-2'>
               <Calendar className='mt-1 size-4 shrink-0' />
               <div>
-                <p className='text-sm font-medium'>Start Date</p>
-                <p className='text-sm text-muted-foreground'>{format(startDate, 'MMM d, yyyy h:mm a')}</p>
+                <p className='text-sm font-medium'>시작일</p>
+                <p className='text-sm text-muted-foreground'>{format(startDate, 'yyyy.MM.dd hh:mm a')}</p>
               </div>
             </div>
 
             <div className='flex items-start gap-2'>
               <Clock className='mt-1 size-4 shrink-0' />
               <div>
-                <p className='text-sm font-medium'>End Date</p>
-                <p className='text-sm text-muted-foreground'>{format(endDate, 'MMM d, yyyy h:mm a')}</p>
+                <p className='text-sm font-medium'>종료일</p>
+                <p className='text-sm text-muted-foreground'>{format(endDate, 'yyyy.MM.dd hh:mm a')}</p>
               </div>
             </div>
 
             <div className='flex items-start gap-2'>
               <Text className='mt-1 size-4 shrink-0' />
               <div>
-                <p className='text-sm font-medium'>Description</p>
+                <p className='text-sm font-medium'>내용</p>
                 <p className='text-sm text-muted-foreground'>{event.description}</p>
               </div>
             </div>
@@ -65,9 +78,12 @@ export function EventDetailsDialog({ event, children }: IProps) {
           <DialogFooter>
             <EditEventDialog event={event}>
               <Button type='button' variant='outline'>
-                Edit
+                수정
               </Button>
             </EditEventDialog>
+            <Button type='button' variant='destructive' onClick={handleDelete}>
+              삭제
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

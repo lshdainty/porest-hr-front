@@ -1,9 +1,9 @@
 import { useGetEventsByPeriod } from '@/api/calendar';
 import { useGetHolidaysByStartEndDate } from '@/api/holiday';
+import { RegistEventDialog } from '@/components/big-calendar/components/dialogs/add-event-dialog';
 import Events, { convertEventStyle } from '@/components/calendar/Events';
 import { Formats, MobileFormats } from '@/components/calendar/Formats';
 import { MonthDateHeader, MonthHeader } from '@/components/calendar/Headers';
-import { RegistEventDialog } from '@/components/calendar/RegistEventDialog';
 import Toolbar from '@/components/calendar/Toolbar';
 import { useIsMobile } from '@/hooks/useMobile';
 import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStore';

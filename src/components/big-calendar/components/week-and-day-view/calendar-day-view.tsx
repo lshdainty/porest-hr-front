@@ -80,13 +80,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 
                       <DroppableTimeBlock date={selectedDate} hour={hour} minute={0}>
                         <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 0 }}>
-                          <div className='absolute inset-x-0 top-0 h-[24px] cursor-pointer transition-colors hover:bg-accent' />
-                        </AddEventDialog>
-                      </DroppableTimeBlock>
-
-                      <DroppableTimeBlock date={selectedDate} hour={hour} minute={15}>
-                        <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 15 }}>
-                          <div className='absolute inset-x-0 top-[24px] h-[24px] cursor-pointer transition-colors hover:bg-accent' />
+                          <div className='absolute inset-x-0 top-0 h-[48px] cursor-pointer transition-colors hover:bg-accent' />
                         </AddEventDialog>
                       </DroppableTimeBlock>
 
@@ -94,13 +88,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 
                       <DroppableTimeBlock date={selectedDate} hour={hour} minute={30}>
                         <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 30 }}>
-                          <div className='absolute inset-x-0 top-[48px] h-[24px] cursor-pointer transition-colors hover:bg-accent' />
-                        </AddEventDialog>
-                      </DroppableTimeBlock>
-
-                      <DroppableTimeBlock date={selectedDate} hour={hour} minute={45}>
-                        <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 45 }}>
-                          <div className='absolute inset-x-0 top-[72px] h-[24px] cursor-pointer transition-colors hover:bg-accent' />
+                          <div className='absolute inset-x-0 top-[48px] h-[48px] cursor-pointer transition-colors hover:bg-accent' />
                         </AddEventDialog>
                       </DroppableTimeBlock>
                     </div>

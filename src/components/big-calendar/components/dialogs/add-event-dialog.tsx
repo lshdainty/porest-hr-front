@@ -1,317 +1,363 @@
-'use client';
-
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertTriangle } from 'lucide-react';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-
-import { useCalendar } from '@/components/big-calendar/contexts/calendar-context';
-import { useDisclosure } from '@/components/big-calendar/hooks/use-disclosure';
-
-import { TimeInput } from '@/components/big-calendar/components/ui/time-input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import { usePostSchedule } from '@/api/schedule';
+import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
 import { Button } from '@/components/shadcn/button';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/shadcn/dialog';
+import { Field, FieldError, FieldLabel } from '@/components/shadcn/field';
 import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
-import { Textarea } from '@/components/shadcn/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/shadcn/select';
+import { useCalendarType } from '@/hooks/useCalendarType';
+import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
+import { useLoginUserStore } from '@/store/LoginUser';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Circle } from '@mui/icons-material';
+import dayjs from 'dayjs';
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { eventSchema } from '@/components/big-calendar/schemas';
+const formSchema = z.object({
+  calendarType: z.string().min(1, '일정 타입을 선택해주세요.'),
+  vacationType: z.string().optional(),
+  desc: z.string().optional(),
+  startDate: z.string().min(1, '시작일을 입력해주세요.'),
+  endDate: z.string().min(1, '종료일을 입력해주세요.'),
+  startHour: z.string().optional(),
+  startMinute: z.string().optional(),
+});
 
-import type { TEventFormData } from '@/components/big-calendar/schemas';
-import type { TimeValue } from 'react-aria-components';
+type AddEventFormValues = z.infer<typeof formSchema>;
 
-interface IProps {
-  children: React.ReactNode;
+interface AddEventDialogProps {
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   startDate?: Date;
+  endDate?: Date;
   startTime?: { hour: number; minute: number };
 }
 
-export function AddEventDialog({ children, startDate, startTime }: IProps) {
-  const { users } = useCalendar();
+export const AddEventDialog: React.FC<AddEventDialogProps> = ({
+  children,
+  open: propOpen,
+  onOpenChange,
+  startDate: propStartDate,
+  endDate: propEndDate,
+  startTime
+}) => {
+  const { start: storeStart, end: storeEnd, open: storeOpen } = useCalendarSlotStore();
+  const { setOpen: setStoreOpen } = useCalendarSlotStore(s => s.actions);
+  const { loginUser } = useLoginUserStore();
+  const calendarTypes = useCalendarType();
 
-  const { isOpen, onClose, onToggle } = useDisclosure();
+  // props가 있으면 props 사용, 없으면 store 사용
+  const open = propOpen !== undefined ? propOpen : storeOpen;
+  const setOpen = onOpenChange || setStoreOpen;
 
-  const form = useForm<TEventFormData>({
-    resolver: zodResolver(eventSchema),
+  // 날짜 기본값 설정: props > store > 오늘 날짜
+  const start = propStartDate || storeStart || new Date();
+  const end = propEndDate || storeEnd || new Date();
+
+  const form = useForm<AddEventFormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      startDate: typeof startDate !== 'undefined' ? startDate : undefined,
-      startTime: typeof startTime !== 'undefined' ? startTime : undefined,
-    },
+      calendarType: '',
+      vacationType: '',
+      desc: '',
+      startDate: dayjs(start).format('YYYY-MM-DD'),
+      endDate: dayjs(end).format('YYYY-MM-DD'),
+      startHour: startTime?.hour.toString() || '9',
+      startMinute: startTime?.minute.toString() || '0',
+    }
   });
 
-  const onSubmit = (_values: TEventFormData) => {
-    // TO DO: Create use-add-event hook
-    onClose();
-    form.reset();
-  };
+  const watchedCalendarType = form.watch('calendarType');
+  const selectedCalendar = calendarTypes.find(c => c.id === watchedCalendarType);
+  const isVacation = selectedCalendar?.type === 'vacation';
+  const isDate = selectedCalendar?.isDate;
+
+  const {data: vacations} = useGetAvailableVacations({
+    user_id: loginUser?.user_id || '',
+    start_date: dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
+  });
+
+  const { mutate: postUseVacation } = usePostUseVacation();
+  const { mutate: postSchedule } = usePostSchedule();
+
+  const onSubmit = (values: AddEventFormValues) => {
+    const format = 'YYYY-MM-DDTHH:mm:ss';
+    const { calendarType, vacationType, desc, startDate, endDate, startHour, startMinute } = values;
+    
+    const payload: any = {
+      user_id: loginUser?.user_id || '',
+    };
+
+    if (isDate) {
+      payload.start_date = dayjs(startDate).startOf('day').format(format);
+      payload.end_date = dayjs(endDate).endOf('day').format(format);
+    } else {
+      let plusHour = 0;
+      switch(calendarType) {
+        case 'MORNINGOFF':
+        case 'AFTERNOONOFF':
+        case 'HEALTHCHECKHALF':
+        case 'DEFENSEHALF':
+          plusHour = 4;
+          break;
+        case 'ONETIMEOFF':
+          plusHour = 1;
+          break;
+        case 'TWOTIMEOFF':
+          plusHour = 2;
+          break;
+        case 'THREETIMEOFF':
+          plusHour = 3;
+          break;
+        case 'FIVETIMEOFF':
+          plusHour = 5;
+          break;
+        case 'SIXTIMEOFF':
+          plusHour = 6;
+          break;
+        case 'SEVENTIMEOFF':
+          plusHour = 7;
+          break;
+        default:
+          break;
+      }
+      payload.start_date = dayjs(startDate).hour(Number(startHour)).minute(Number(startMinute)).second(0).format(format);
+      payload.end_date = dayjs(endDate).hour(Number(startHour) + plusHour).minute(Number(startMinute)).second(0).format(format);
+    }
+
+    if (isVacation) {
+      payload.vacation_type = vacationType;
+      payload.vacation_time_type = calendarType;
+      payload.vacation_desc = desc;
+      postUseVacation(payload);
+    } else {
+      payload.schedule_type = calendarType;
+      payload.schedule_desc = desc;
+      postSchedule(payload);
+    }
+    setOpen(false);
+  }
 
   useEffect(() => {
-    form.reset({
-      startDate,
-      startTime,
-    });
-  }, [startDate, startTime, form]);
+    if(open) {
+      form.reset({
+        calendarType: '',
+        vacationType: '',
+        desc: '',
+        startDate: dayjs(start).format('YYYY-MM-DD'),
+        endDate: dayjs(end).format('YYYY-MM-DD'),
+        startHour: startTime?.hour.toString() || '9',
+        startMinute: startTime?.minute.toString() || '0',
+      });
+    }
+  }, [open, start, end, startTime, form]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onToggle}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-
-      <DialogContent>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Add New Event</DialogTitle>
-          <DialogDescription>
-            <AlertTriangle className='mr-1 inline-block size-4 text-yellow-500' />
-            This form is for demonstration purposes only and will not actually create an event. In a real application, submit the form to the backend API to
-            save the event.
-          </DialogDescription>
+          <DialogTitle>일정 등록</DialogTitle>
+          <DialogDescription>일정 정보를 입력해주세요.</DialogDescription>
         </DialogHeader>
-
-        <Form {...form}>
-          <form id='event-form' onSubmit={form.handleSubmit(onSubmit)} className='grid gap-4 py-4'>
-            <FormField
-              control={form.control}
-              name='user'
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Responsible</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger data-invalid={fieldState.invalid}>
-                        <SelectValue placeholder='Select an option' />
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="py-6 space-y-4">
+            <div className='flex flex-row gap-2'>
+              <Controller
+                control={form.control}
+                name="calendarType"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error} className='flex-1'>
+                    <FieldLabel>
+                      일정 타입
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="일정 타입" />
                       </SelectTrigger>
-
                       <SelectContent>
-                        {users.map(user => (
-                          <SelectItem key={user.id} value={user.id} className='flex-1'>
-                            <div className='flex items-center gap-2'>
-                              <Avatar key={user.id} className='size-6'>
-                                <AvatarImage src={user.picturePath ?? undefined} alt={user.name} />
-                                <AvatarFallback className='text-xxs'>{user.name[0]}</AvatarFallback>
-                              </Avatar>
-
-                              <p className='truncate'>{user.name}</p>
-                            </div>
-                          </SelectItem>
-                        ))}
+                        <SelectGroup>
+                          <SelectLabel>휴가</SelectLabel>
+                          {calendarTypes.filter(c => c.type === 'vacation').map(ct => (
+                            <SelectItem key={ct.id} value={ct.id}>
+                              <Circle sx={{fontSize: 16, color: ct.colorCode}} />{ct.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel>스케줄</SelectLabel>
+                          {calendarTypes.filter(c => c.type === 'schedule').map(ct => (
+                            <SelectItem key={ct.id} value={ct.id}>
+                              <Circle sx={{fontSize: 16, color: ct.colorCode}} />{ct.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='title'
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel htmlFor='title'>Title</FormLabel>
-
-                  <FormControl>
-                    <Input id='title' placeholder='Enter a title' data-invalid={fieldState.invalid} {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className='flex items-start gap-2'>
-              <FormField
-                control={form.control}
-                name='startDate'
-                render={({ field, fieldState }) => (
-                  <FormItem className='flex-1'>
-                    <FormLabel htmlFor='startDate'>Start Date</FormLabel>
-
-                    <FormControl>
-                      <InputDatePicker
-                        id='startDate'
-                        value={field.value}
-                        onSelect={date => field.onChange(date as Date)}
-                        placeholder='Select a date'
-                        data-invalid={fieldState.invalid}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
                 )}
               />
-
-              <FormField
+              {isVacation && (
+                <Controller
+                  control={form.control}
+                  name="vacationType"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error} className='flex-1'>
+                      <FieldLabel>
+                        사용 휴가
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="사용 휴가" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {vacations?.map(v => (
+                            <SelectItem key={v.vacation_type} value={v.vacation_type}>
+                              {`${v.vacation_type_name} (${v.total_remain_time_str})`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+              )}
+            </div>
+            <Controller
+              control={form.control}
+              name="desc"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    일정 사유
+                  </FieldLabel>
+                  <Input placeholder="일정 사유" {...field} />
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
+              )}
+            />
+            <div className='flex flex-row gap-2 items-end'>
+              <Controller
                 control={form.control}
-                name='startTime'
+                name="startDate"
                 render={({ field, fieldState }) => (
-                  <FormItem className='flex-1'>
-                    <FormLabel>Start Time</FormLabel>
-
-                    <FormControl>
-                      <TimeInput value={field.value as TimeValue} onChange={field.onChange} hourCycle={12} data-invalid={fieldState.invalid} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
+                  <Field data-invalid={!!fieldState.error} className='flex-1'>
+                    <FieldLabel>
+                      시작일
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
+                    <InputDatePicker
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder='시작일'
+                    />
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
+                )}
+              />
+              <div className='pb-2'>~</div>
+              <Controller
+                control={form.control}
+                name="endDate"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error} className='flex-1'>
+                    <FieldLabel>
+                      종료일
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
+                    <InputDatePicker
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder='종료일'
+                    />
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
                 )}
               />
             </div>
-
-            <div className='flex items-start gap-2'>
-              <FormField
-                control={form.control}
-                name='endDate'
-                render={({ field, fieldState }) => (
-                  <FormItem className='flex-1'>
-                    <FormLabel>End Date</FormLabel>
-                    <FormControl>
-                      <InputDatePicker
-                        value={field.value}
-                        onSelect={date => field.onChange(date as Date)}
-                        placeholder='Select a date'
-                        data-invalid={fieldState.invalid}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='endTime'
-                render={({ field, fieldState }) => (
-                  <FormItem className='flex-1'>
-                    <FormLabel>End Time</FormLabel>
-
-                    <FormControl>
-                      <TimeInput value={field.value as TimeValue} onChange={field.onChange} hourCycle={12} data-invalid={fieldState.invalid} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name='color'
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Color</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger data-invalid={fieldState.invalid}>
-                        <SelectValue placeholder='Select an option' />
-                      </SelectTrigger>
-
-                      <SelectContent>
-                        <SelectItem value='blue'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-blue-600' />
-                            Blue
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='green'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-green-600' />
-                            Green
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='red'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-red-600' />
-                            Red
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='yellow'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-yellow-600' />
-                            Yellow
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='purple'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-purple-600' />
-                            Purple
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='orange'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-orange-600' />
-                            Orange
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='pink'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-pink-600' />
-                            Pink
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='gray'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-neutral-600' />
-                            Gray
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='teal'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-teal-600' />
-                            Teal
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='description'
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-
-                  <FormControl>
-                    <Textarea {...field} value={field.value} data-invalid={fieldState.invalid} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
-
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type='button' variant='outline'>
-              Cancel
-            </Button>
-          </DialogClose>
-
-          <Button form='event-form' type='submit'>
-            Create Event
-          </Button>
-        </DialogFooter>
+            {!isDate && watchedCalendarType && (
+              <div className='flex flex-row gap-2'>
+                <Controller
+                  control={form.control}
+                  name="startHour"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error} className='flex-1'>
+                      <FieldLabel>
+                        시
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="시" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 11 }, (_, i) => (
+                            <SelectItem key={i+8} value={(i+8).toString()}>{`${i+8} 시`}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+                <Controller
+                  control={form.control}
+                  name="startMinute"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error} className='flex-1'>
+                      <FieldLabel>
+                        분
+                        <span className='text-destructive ml-0.5'>*</span>
+                      </FieldLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="분" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={'0'}>{'0 분'}</SelectItem>
+                          <SelectItem value={'30'}>{'30 분'}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant='outline' type="button">취소</Button>
+            </DialogClose>
+            <Button type='submit' disabled={!form.formState.isValid}>등록</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
