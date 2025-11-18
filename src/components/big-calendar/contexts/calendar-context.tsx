@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
+import type { GetHolidaysResp } from '@/api/holiday';
 import type { ICalendarType, IEvent, IUser } from '@/components/big-calendar/interfaces';
 import type { TBadgeVariant, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/big-calendar/types';
 import type { Dispatch, SetStateAction } from 'react';
@@ -24,6 +25,9 @@ interface ICalendarContext {
   setVisibleHours: Dispatch<SetStateAction<TVisibleHours>>;
   events: IEvent[];
   setLocalEvents: Dispatch<SetStateAction<IEvent[]>>;
+  holidays: GetHolidaysResp[];
+  setHolidays: Dispatch<SetStateAction<GetHolidaysResp[]>>;
+  findHolidayByDate: (date: string) => GetHolidaysResp | undefined;
 }
 
 const CalendarContext = createContext({} as ICalendarContext);
@@ -55,6 +59,7 @@ export function CalendarProvider({ children, users, events, initialView = 'month
   // In a real scenario, the events would be updated in the backend
   // and the request that fetches the events should be refetched
   const [localEvents, setLocalEvents] = useState<IEvent[]>(events);
+  const [holidays, setHolidays] = useState<GetHolidaysResp[]>([]);
 
   // props로 받은 events가 변경될 때 localEvents 업데이트
   useEffect(() => {
@@ -64,6 +69,10 @@ export function CalendarProvider({ children, users, events, initialView = 'month
   const handleSelectDate = (date: Date | undefined) => {
     if (!date) return;
     setSelectedDate(date);
+  };
+
+  const findHolidayByDate = (date: string) => {
+    return holidays.find(holiday => holiday.holiday_date === date);
   };
 
   return (
@@ -87,6 +96,9 @@ export function CalendarProvider({ children, users, events, initialView = 'month
         // If you go to the refetch approach, you can remove the localEvents and pass the events directly
         events: localEvents,
         setLocalEvents,
+        holidays,
+        setHolidays,
+        findHolidayByDate,
       }}
     >
       {children}

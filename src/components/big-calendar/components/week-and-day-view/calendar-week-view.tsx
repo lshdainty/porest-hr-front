@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { addDays, areIntervalsOverlapping, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
 
 import { useCalendar } from '@/components/big-calendar/contexts/calendar-context';
@@ -21,7 +22,7 @@ interface IProps {
 }
 
 export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
-  const { selectedDate, workingHours, visibleHours } = useCalendar();
+  const { selectedDate, workingHours, visibleHours, findHolidayByDate } = useCalendar();
 
   const { hours, earliestEventHour, latestEventHour } = getVisibleHours(visibleHours, singleDayEvents);
 
@@ -48,10 +49,32 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                 const isSunday = dayOfWeek === 0;
                 const isSaturday = dayOfWeek === 6;
 
+                // 공휴일 정보 가져오기
+                const holiday = findHolidayByDate(dayjs(day).format('YYYYMMDD'));
+
+                // 공휴일 색상 결정
+                let holidayColor = '';
+                if (holiday) {
+                  if (holiday.holiday_type === 'PUBLIC' || holiday.holiday_type === 'SUBSTITUTE') {
+                    holidayColor = '#ff6767'; // 빨강
+                  } else if (holiday.holiday_type === 'ETC') {
+                    holidayColor = '#6767ff'; // 파랑
+                  }
+                }
+
+                const textColor = holidayColor || (isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined);
+
                 return (
-                  <span key={index} className='py-2 text-center text-xs font-medium' style={{ color: isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined }}>
-                    {format(day, 'EE')} <span className='ml-1 font-semibold' style={{ color: isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined }}>{format(day, 'd')}</span>
-                  </span>
+                  <div key={index} className='py-2 text-center text-xs font-medium'>
+                    <div style={{ color: textColor }}>
+                      {format(day, 'EE')} <span className='ml-1 font-semibold'>{format(day, 'd')}</span>
+                    </div>
+                    {holiday && (
+                      <div className='text-xs mt-0.5' style={{ color: holidayColor }}>
+                        {holiday.holiday_name}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>

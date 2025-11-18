@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { isToday, startOfDay } from 'date-fns';
 import { useMemo } from 'react';
 
@@ -21,13 +22,26 @@ interface IProps {
 const MAX_VISIBLE_EVENTS = 3;
 
 export function DayCell({ cell, events, eventPositions }: IProps) {
-  const { setSelectedDate, setView } = useCalendar();
+  const { setSelectedDate, setView, findHolidayByDate } = useCalendar();
 
   const { day, currentMonth, date } = cell;
 
   const cellEvents = useMemo(() => getMonthCellEvents(date, events, eventPositions), [date, events, eventPositions]);
   const isSunday = date.getDay() === 0;
   const isSaturday = date.getDay() === 6;
+
+  // 공휴일 정보 가져오기
+  const holiday = findHolidayByDate(dayjs(date).format('YYYYMMDD'));
+
+  // 공휴일 색상 결정
+  let holidayColor = '';
+  if (holiday) {
+    if (holiday.holiday_type === 'PUBLIC' || holiday.holiday_type === 'SUBSTITUTE') {
+      holidayColor = '#ff6767'; // 빨강
+    } else if (holiday.holiday_type === 'ETC') {
+      holidayColor = '#6767ff'; // 파랑
+    }
+  }
 
   const handleClick = () => {
     setSelectedDate(date);
@@ -37,21 +51,32 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
   return (
     <DroppableDayCell cell={cell}>
       <div className={cn('flex h-full flex-col gap-1 border-l border-t py-1.5 lg:pb-2 lg:pt-1', isSunday && 'border-l-0')}>
-        {/* 첫 번째 줄: 날짜와 more */}
+        {/* 첫 번째 줄: 날짜와 공휴일 */}
         <div className='flex items-center justify-between px-1'>
-          <button
-            onClick={handleClick}
-            className={cn(
-              'flex size-6 items-center justify-center rounded-full text-xs font-semibold hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring flex-shrink-0',
-              !currentMonth && 'opacity-20',
-              isToday(date) && 'bg-primary font-bold text-primary-foreground hover:bg-primary'
+          <div className='flex items-center gap-1 flex-1 min-w-0'>
+            <button
+              onClick={handleClick}
+              className={cn(
+                'flex size-6 items-center justify-center rounded-full text-xs font-semibold hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring flex-shrink-0',
+                !currentMonth && 'opacity-20',
+                isToday(date) && 'bg-primary font-bold text-primary-foreground hover:bg-primary'
+              )}
+              style={{
+                color: isToday(date) ? undefined : holidayColor || (isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined)
+              }}
+            >
+              {day}
+            </button>
+
+            {holiday && (
+              <span
+                className={cn('hidden lg:block text-xs truncate', !currentMonth && 'opacity-20')}
+                style={{ color: holidayColor }}
+              >
+                {holiday.holiday_name}
+              </span>
             )}
-            style={{
-              color: isToday(date) ? undefined : isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined
-            }}
-          >
-            {day}
-          </button>
+          </div>
 
           {cellEvents.length > MAX_VISIBLE_EVENTS && (
             <button

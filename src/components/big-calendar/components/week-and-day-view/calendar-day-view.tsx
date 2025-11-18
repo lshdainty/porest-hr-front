@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { areIntervalsOverlapping, format, parseISO } from 'date-fns';
 import { Calendar as CalendarIcon, Clock, User } from 'lucide-react';
 
@@ -23,11 +24,24 @@ interface IProps {
 }
 
 export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
-  const { selectedDate, setSelectedDate, users, visibleHours, workingHours } = useCalendar();
+  const { selectedDate, setSelectedDate, users, visibleHours, workingHours, findHolidayByDate } = useCalendar();
 
   const { hours, earliestEventHour, latestEventHour } = getVisibleHours(visibleHours, singleDayEvents);
 
   const currentEvents = getCurrentEvents(singleDayEvents);
+
+  // 공휴일 정보 가져오기
+  const holiday = findHolidayByDate(dayjs(selectedDate).format('YYYYMMDD'));
+
+  // 공휴일 색상 결정
+  let holidayColor = '';
+  if (holiday) {
+    if (holiday.holiday_type === 'PUBLIC' || holiday.holiday_type === 'SUBSTITUTE') {
+      holidayColor = '#ff6767'; // 빨강
+    } else if (holiday.holiday_type === 'ETC') {
+      holidayColor = '#6767ff'; // 파랑
+    }
+  }
 
   const dayEvents = singleDayEvents.filter(event => {
     const eventDate = parseISO(event.startDate);
@@ -49,9 +63,16 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
           {/* Day header */}
           <div className='relative z-20 flex border-b'>
             <div className='w-18'></div>
-            <span className='flex-1 border-l py-2 text-center text-xs font-medium' style={{ color: selectedDate.getDay() === 0 ? '#ff6767' : selectedDate.getDay() === 6 ? '#6767ff' : undefined }}>
-              {format(selectedDate, 'EE')} <span className='font-semibold' style={{ color: selectedDate.getDay() === 0 ? '#ff6767' : selectedDate.getDay() === 6 ? '#6767ff' : undefined }}>{format(selectedDate, 'd')}</span>
-            </span>
+            <div className='flex-1 border-l py-2 text-center text-xs font-medium'>
+              <div style={{ color: holidayColor || (selectedDate.getDay() === 0 ? '#ff6767' : selectedDate.getDay() === 6 ? '#6767ff' : undefined) }}>
+                {format(selectedDate, 'EE')} <span className='font-semibold'>{format(selectedDate, 'd')}</span>
+              </div>
+              {holiday && (
+                <div className='text-xs mt-0.5' style={{ color: holidayColor }}>
+                  {holiday.holiday_name}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

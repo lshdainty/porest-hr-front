@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { isToday } from 'date-fns';
 
 import { useCalendar } from '@/components/big-calendar/contexts/calendar-context';
@@ -13,12 +14,25 @@ interface IProps {
 }
 
 export function YearViewDayCell({ day, date, events }: IProps) {
-  const { setSelectedDate, setView } = useCalendar();
+  const { setSelectedDate, setView, findHolidayByDate } = useCalendar();
 
   const maxIndicators = 3;
   const eventCount = events.length;
   const isSunday = date.getDay() === 0;
   const isSaturday = date.getDay() === 6;
+
+  // 공휴일 정보 가져오기
+  const holiday = findHolidayByDate(dayjs(date).format('YYYYMMDD'));
+
+  // 공휴일 색상 결정
+  let holidayColor = '';
+  if (holiday) {
+    if (holiday.holiday_type === 'PUBLIC' || holiday.holiday_type === 'SUBSTITUTE') {
+      holidayColor = '#ff6767'; // 빨강
+    } else if (holiday.holiday_type === 'ETC') {
+      holidayColor = '#6767ff'; // 파랑
+    }
+  }
 
   const handleClick = () => {
     setSelectedDate(date);
@@ -37,7 +51,7 @@ export function YearViewDayCell({ day, date, events }: IProps) {
           isToday(date) && 'bg-primary font-semibold text-primary-foreground'
         )}
         style={{
-          color: isToday(date) ? undefined : isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined
+          color: isToday(date) ? undefined : holidayColor || (isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined)
         }}
       >
         {day}

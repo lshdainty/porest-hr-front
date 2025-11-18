@@ -4,16 +4,18 @@ import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 
 import { useGetEventsByPeriod } from "@/api/calendar";
+import { useGetHolidaysByStartEndDate } from "@/api/holiday";
 import { useGetUsers } from "@/api/user";
 import { ClientContainer } from "@/components/big-calendar/components/client-container";
 import { CalendarProvider, useCalendar } from "@/components/big-calendar/contexts/calendar-context";
 import { convertApiEvents } from "@/components/big-calendar/helpers";
 
 import type { IEvent, IUser } from "@/components/big-calendar/interfaces";
+import type { GetHolidaysResp } from "@/api/holiday";
 
 // CalendarProvider 내부에서 동작하는 컴포넌트
 function BigCalendarContent() {
-  const { selectedDate, view, users, setLocalEvents } = useCalendar();
+  const { selectedDate, view, users, setLocalEvents, setHolidays } = useCalendar();
 
   // selectedDate와 view에 따라 날짜 범위 계산
   const range = useMemo(() => {
@@ -61,6 +63,15 @@ function BigCalendarContent() {
 
   console.log('BigCalendar - API 호출 결과:', { apiEvents, eventsLoading });
 
+  // 공휴일 API 호출
+  const { data: apiHolidays, isLoading: holidaysLoading } = useGetHolidaysByStartEndDate({
+    start_date: dayjs(range.start).format('YYYYMMDD'),
+    end_date: dayjs(range.end).format('YYYYMMDD'),
+    country_code: 'KR'
+  });
+
+  console.log('BigCalendar - 공휴일 API 호출 결과:', { apiHolidays, holidaysLoading });
+
   // API 응답을 받아서 변환 후 context 업데이트
   useEffect(() => {
     if (apiEvents && !eventsLoading && users.length > 0) {
@@ -79,6 +90,14 @@ function BigCalendarContent() {
       }
     }
   }, [apiEvents, eventsLoading, users, setLocalEvents]);
+
+  // 공휴일 응답을 받아서 context 업데이트
+  useEffect(() => {
+    if (apiHolidays && !holidaysLoading) {
+      console.log('BigCalendar - 공휴일 데이터 업데이트:', apiHolidays.length);
+      setHolidays(apiHolidays);
+    }
+  }, [apiHolidays, holidaysLoading, setHolidays]);
 
   return <ClientContainer />;
 }
