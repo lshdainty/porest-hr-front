@@ -1,5 +1,5 @@
 import { GetUserVacationUsagesByPeriodResp } from '@/api/vacation';
-import { AddEventDialog } from '@/components/big-calendar/components/dialogs/add-event-dialog';
+import { AddEventDialog } from '@/components/calendar/components/dialogs/add-event-dialog';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
