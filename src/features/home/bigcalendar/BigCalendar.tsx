@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
+import { useEffect, useMemo, useState } from "react";
 
 import { useGetEventsByPeriod } from "@/api/calendar";
 import { useGetUsers } from "@/api/user";
-import { ClientContainer } from "@/components/big-calendar/calendar/components/client-container";
-import { CalendarProvider, useCalendar } from "@/components/big-calendar/calendar/contexts/calendar-context";
-import { convertApiEvents } from "@/components/big-calendar/calendar/helpers";
+import { ClientContainer } from "@/components/big-calendar/components/client-container";
+import { CalendarProvider, useCalendar } from "@/components/big-calendar/contexts/calendar-context";
+import { convertApiEvents } from "@/components/big-calendar/helpers";
 
-import type { IEvent, IUser } from "@/components/big-calendar/calendar/interfaces";
+import type { IEvent, IUser } from "@/components/big-calendar/interfaces";
 
 // CalendarProvider 내부에서 동작하는 컴포넌트
 function BigCalendarContent() {
