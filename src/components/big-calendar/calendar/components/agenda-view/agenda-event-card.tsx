@@ -85,7 +85,7 @@ export function AgendaEventCard({ event, eventCurrentDay, eventTotalDays }: IPro
                   Day {eventCurrentDay} of {eventTotalDays} •{' '}
                 </span>
               )}
-              {event.title}
+              {event.user.name} {event.title}
             </p>
           </div>
 

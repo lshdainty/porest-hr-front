@@ -127,7 +127,7 @@ export function MonthEventBadge({ event, cellDate, eventCurrentDay, eventTotalDa
                         Day {eventCurrentDay} of {eventTotalDays} •{' '}
                       </span>
                     )}
-                    {event.title}
+                    {event.user.name} {event.title}
                   </p>
                 )}
               </div>
