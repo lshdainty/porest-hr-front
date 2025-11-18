@@ -1,9 +1,9 @@
 import { areIntervalsOverlapping, format, parseISO } from 'date-fns';
-import { Calendar, Clock, User } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User } from 'lucide-react';
 
 import { useCalendar } from '@/components/big-calendar/calendar/contexts/calendar-context';
 
-import { SingleCalendar } from '@/components/big-calendar/components/ui/single-calendar';
+import { Calendar } from '@/components/shadcn/calendar';
 import { ScrollArea } from '@/components/shadcn/scrollArea';
 
 import { AddEventDialog } from '@/components/big-calendar/calendar/components/dialogs/add-event-dialog';
@@ -139,7 +139,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
       </div>
 
       <div className='hidden w-64 divide-y border-l md:block'>
-        <SingleCalendar className='mx-auto w-fit' mode='single' selected={selectedDate} onSelect={setSelectedDate} initialFocus />
+        <Calendar className='mx-auto w-fit' mode='single' selected={selectedDate} onSelect={setSelectedDate} initialFocus />
 
         <div className='flex-1 space-y-3'>
           {currentEvents.length > 0 ? (
@@ -173,7 +173,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                       )}
 
                       <div className='flex items-center gap-1.5 text-muted-foreground'>
-                        <Calendar className='size-3.5' />
+                        <CalendarIcon className='size-3.5' />
                         <span className='text-sm'>{format(new Date(), 'MMM d, yyyy')}</span>
                       </div>
 

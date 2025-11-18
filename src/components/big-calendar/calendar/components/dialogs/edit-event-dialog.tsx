@@ -284,10 +284,10 @@ export function EditEventDialog({ children, event }: IProps) {
                           </div>
                         </SelectItem>
 
-                        <SelectItem value='stone'>
+                        <SelectItem value='teal'>
                           <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-stone-600' />
-                            Stone
+                            <div className='size-3.5 rounded-full bg-teal-600' />
+                            Teal
                           </div>
                         </SelectItem>
                       </SelectContent>

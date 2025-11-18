@@ -11,6 +11,7 @@ export interface ICalendarType {
   name: string
   type: 'vacation' | 'schedule'
   isDate: boolean
+  color: TEventColor
 }
 
 export interface IEvent {

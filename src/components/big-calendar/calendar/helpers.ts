@@ -26,8 +26,8 @@ import {
   subYears,
 } from 'date-fns';
 
-import type { ICalendarCell, IEvent, IUser, ICalendarType } from '@/components/big-calendar/calendar/interfaces';
-import type { TCalendarView, TEventColor, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
+import type { ICalendarCell, ICalendarType, IEvent, IUser } from '@/components/big-calendar/calendar/interfaces';
+import type { TCalendarView, TVisibleHours, TWorkingHours } from '@/components/big-calendar/calendar/types';
 import { calendarTypes } from '@/components/big-calendar/calendar/types';
 
 // ================ Header helper functions ================ //
@@ -314,42 +314,6 @@ export function getCalendarType(calendarTypeId: string): ICalendarType {
 }
 
 /**
- * calendar_type이나 domain_type을 기반으로 이벤트 색상 매핑
- */
-function mapEventColor(calendarType: string, domainType: string): TEventColor {
-  const colorMap: Record<string, TEventColor> = {
-    // 휴가/휴무 관련
-    'DAYOFF': 'purple',
-    'MORNINGOFF': 'blue',
-    'AFTERNOONOFF': 'pink',
-    'ONETIMEOFF': 'yellow',
-    'TWOTIMEOFF': 'yellow',
-    'THREETIMEOFF': 'yellow',
-    'FIVETIMEOFF': 'yellow',
-    'SIXTIMEOFF': 'yellow',
-    'SEVENTIMEOFF': 'yellow',
-    'HALFTIMEOFF': 'yellow',
-
-    // 출장/교육
-    'BUSINESSTRIP': 'green',
-    'EDUCATION': 'red',
-
-    // 경조사
-    'BIRTHDAY': 'orange',
-    'BIRTHPARTY': 'orange',
-
-    // 건강검진
-    'HEALTHCHECKHALF': 'gray',
-
-    // 예비군
-    'DEFENSE': 'stone',
-    'DEFENSEHALF': 'stone'
-  };
-
-  return colorMap[calendarType.toUpperCase()] || colorMap[domainType.toUpperCase()] || 'blue';
-}
-
-/**
  * API 사용자 응답을 IUser 인터페이스로 변환
  */
 export function convertApiUserToIUser(apiUser: ApiUserResponse): IUser {
@@ -370,15 +334,17 @@ export function convertApiEventToIEvent(apiEvent: ApiEventResponse, users: IUser
     throw new Error(`User not found for event: ${apiEvent.calendar_id}`);
   }
 
+  const calendarType = getCalendarType(apiEvent.calendar_type);
+
   return {
     id: apiEvent.calendar_id,
     startDate: new Date(apiEvent.start_date).toISOString(),
     endDate: new Date(apiEvent.end_date).toISOString(),
     title: apiEvent.calendar_name,
-    color: mapEventColor(apiEvent.calendar_type, apiEvent.domain_type),
+    color: calendarType.color,
     description: apiEvent.calendar_desc || '',
     user: user,
-    type: getCalendarType(apiEvent.calendar_type),
+    type: calendarType,
   };
 }
 

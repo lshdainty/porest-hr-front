@@ -1,13 +1,26 @@
-import { Check, Filter as FilterIcon } from 'lucide-react';
 import { useCalendar } from '@/components/big-calendar/calendar/contexts/calendar-context';
 import { calendarTypes } from '@/components/big-calendar/calendar/types';
+import { Filter as FilterIcon } from 'lucide-react';
 
-import { AvatarGroup } from '@/components/big-calendar/components/ui/avatar-group';
+import type { TEventColor } from '@/components/big-calendar/calendar/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
+import { Checkbox } from '@/components/shadcn/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
-import { cn } from '@/lib/utils';
+
+const colorClassMap: Record<TEventColor, string> = {
+  blue: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300',
+  green: 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300',
+  red: 'border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300',
+  yellow: 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-300',
+  purple: 'border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-300',
+  orange: 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950 dark:text-orange-300',
+  pink: 'border-pink-200 bg-pink-50 text-pink-700 dark:border-pink-800 dark:bg-pink-950 dark:text-pink-300',
+  gray: 'border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300',
+  teal: 'border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800 dark:bg-teal-950 dark:text-teal-300',
+};
 
 export function EventFilter() {
   const { users, selectedUserIds, setSelectedUserIds, selectedTypeIds, setSelectedTypeIds } = useCalendar();
@@ -95,28 +108,17 @@ export function EventFilter() {
             <TabsTrigger value='types'>Types ({selectedTypeCount})</TabsTrigger>
           </TabsList>
 
-          <TabsContent value='users' className='p-2 space-y-1'>
+          <TabsContent value='users' className='p-2 space-y-1 max-h-[400px] overflow-y-auto'>
             <div
-              className={cn(
-                'flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-accent',
-                isAllUsersSelected && 'bg-accent'
-              )}
+              className='flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-accent'
               onClick={handleToggleAllUsers}
             >
-              <div className='flex items-center justify-center w-4 h-4 border rounded-sm border-primary'>
-                {isAllUsersSelected && <Check className='w-3 h-3' />}
-              </div>
-              <div className='flex items-center gap-2 flex-1'>
-                <AvatarGroup max={2}>
-                  {users.slice(0, 3).map(user => (
-                    <Avatar key={user.id} className='size-6 text-xxs'>
-                      <AvatarImage src={user.picturePath ?? undefined} alt={user.name} />
-                      <AvatarFallback className='text-xxs'>{user.name[0]}</AvatarFallback>
-                    </Avatar>
-                  ))}
-                </AvatarGroup>
-                <span className='text-sm'>All Users</span>
-              </div>
+              <Checkbox
+                checked={isAllUsersSelected}
+                onCheckedChange={handleToggleAllUsers}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <span className='text-sm flex-1'>All Users</span>
             </div>
 
             {users.map(user => {
@@ -124,15 +126,14 @@ export function EventFilter() {
               return (
                 <div
                   key={user.id}
-                  className={cn(
-                    'flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-accent',
-                    isSelected && !isAllUsersSelected && 'bg-accent'
-                  )}
+                  className='flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-accent'
                   onClick={() => handleToggleUser(user.id)}
                 >
-                  <div className='flex items-center justify-center w-4 h-4 border rounded-sm border-primary'>
-                    {isSelected && <Check className='w-3 h-3' />}
-                  </div>
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => handleToggleUser(user.id)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
                   <div className='flex items-center gap-2 flex-1'>
                     <Avatar className='size-6'>
                       <AvatarImage src={user.picturePath ?? undefined} alt={user.name} />
@@ -145,37 +146,36 @@ export function EventFilter() {
             })}
           </TabsContent>
 
-          <TabsContent value='types' className='p-2 space-y-1'>
+          <TabsContent value='types' className='p-2 space-y-1 max-h-[400px] overflow-y-auto'>
             <div
-              className={cn(
-                'flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-accent',
-                isAllTypesSelected && 'bg-accent'
-              )}
+              className='flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-accent'
               onClick={handleToggleAllTypes}
             >
-              <div className='flex items-center justify-center w-4 h-4 border rounded-sm border-primary'>
-                {isAllTypesSelected && <Check className='w-3 h-3' />}
-              </div>
+              <Checkbox
+                checked={isAllTypesSelected}
+                onCheckedChange={handleToggleAllTypes}
+                onClick={(e) => e.stopPropagation()}
+              />
               <span className='text-sm flex-1'>All Types</span>
             </div>
 
             {calendarTypes.map(type => {
               const isSelected = isAllTypesSelected || selectedTypeIds.includes(type.id);
+
               return (
                 <div
                   key={type.id}
-                  className={cn(
-                    'flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-accent',
-                    isSelected && !isAllTypesSelected && 'bg-accent'
-                  )}
+                  className='flex items-center gap-2 px-2 py-2 rounded-md cursor-pointer hover:bg-accent'
                   onClick={() => handleToggleType(type.id)}
                 >
-                  <div className='flex items-center justify-center w-4 h-4 border rounded-sm border-primary'>
-                    {isSelected && <Check className='w-3 h-3' />}
-                  </div>
-                  <div className='flex items-center gap-2 flex-1'>
-                    <p className='truncate text-sm'>{type.name}</p>
-                  </div>
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => handleToggleType(type.id)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <Badge className={`flex-1 ${colorClassMap[type.color]}`}>
+                    {type.name}
+                  </Badge>
                 </div>
               );
             })}
