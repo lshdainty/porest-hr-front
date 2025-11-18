@@ -47,7 +47,6 @@ export function EditEventDialog({ children, event }: IProps) {
       startTime: { hour: parseISO(event.startDate).getHours(), minute: parseISO(event.startDate).getMinutes() },
       endDate: parseISO(event.endDate),
       endTime: { hour: parseISO(event.endDate).getHours(), minute: parseISO(event.endDate).getMinutes() },
-      color: event.color,
     },
   });
 
@@ -66,7 +65,6 @@ export function EditEventDialog({ children, event }: IProps) {
       ...event,
       user,
       title: values.title,
-      color: values.color,
       description: values.description,
       startDate: startDateTime.toISOString(),
       endDate: endDateTime.toISOString(),
@@ -214,89 +212,6 @@ export function EditEventDialog({ children, event }: IProps) {
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name='color'
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>Color</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger data-invalid={fieldState.invalid}>
-                        <SelectValue placeholder='Select an option' />
-                      </SelectTrigger>
-
-                      <SelectContent>
-                        <SelectItem value='blue'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-blue-600' />
-                            Blue
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='green'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-green-600' />
-                            Green
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='red'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-red-600' />
-                            Red
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='yellow'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-yellow-600' />
-                            Yellow
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='purple'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-purple-600' />
-                            Purple
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='orange'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-orange-600' />
-                            Orange
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='pink'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-pink-600' />
-                            Pink
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='gray'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-neutral-600' />
-                            Gray
-                          </div>
-                        </SelectItem>
-
-                        <SelectItem value='teal'>
-                          <div className='flex items-center gap-2'>
-                            <div className='size-3.5 rounded-full bg-teal-600' />
-                            Teal
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <FormField
               control={form.control}

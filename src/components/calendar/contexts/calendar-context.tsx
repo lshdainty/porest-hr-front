@@ -3,8 +3,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import type { GetHolidaysResp } from '@/api/holiday';
-import type { ICalendarType, IEvent, IUser } from '@/components/calendar/interfaces';
-import type { TBadgeVariant, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/calendar/types';
+import type { IEvent, IUser } from '@/components/calendar/interfaces';
+import type { TBadgeVariant, TCalendarType, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/calendar/types';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface ICalendarContext {
@@ -12,8 +12,8 @@ interface ICalendarContext {
   setSelectedDate: (date: Date | undefined) => void;
   selectedUserIds: IUser['id'][] | 'all';
   setSelectedUserIds: (userIds: IUser['id'][] | 'all') => void;
-  selectedTypeIds: ICalendarType['id'][] | 'all';
-  setSelectedTypeIds: (typeIds: ICalendarType['id'][] | 'all') => void;
+  selectedTypeIds: TCalendarType['id'][] | 'all';
+  setSelectedTypeIds: (typeIds: TCalendarType['id'][] | 'all') => void;
   view: TCalendarView;
   setView: (view: TCalendarView) => void;
   badgeVariant: TBadgeVariant;
@@ -51,7 +51,7 @@ export function CalendarProvider({ children, users, events, initialView = 'month
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedUserIds, setSelectedUserIds] = useState<IUser['id'][] | 'all'>('all');
-  const [selectedTypeIds, setSelectedTypeIds] = useState<ICalendarType['id'][] | 'all'>('all');
+  const [selectedTypeIds, setSelectedTypeIds] = useState<TCalendarType['id'][] | 'all'>('all');
   const [view, setView] = useState<TCalendarView>(initialView);
 
   // This localEvents doesn't need to exists in a real scenario.

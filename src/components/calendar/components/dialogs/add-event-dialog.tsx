@@ -1,5 +1,8 @@
 import { usePostSchedule } from '@/api/schedule';
 import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
+import { calendarTypes } from '@/components/calendar/types';
+import type { TEventColor } from '@/components/calendar/types';
+import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import {
   Dialog,
@@ -23,14 +26,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select';
-import { useCalendarType } from '@/hooks/useCalendarType';
 import { useLoginUserStore } from '@/store/LoginUser';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Circle } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+
+const colorClassMap: Record<TEventColor, string> = {
+  blue: 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300',
+  green: 'border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-300',
+  red: 'border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300',
+  yellow: 'border-yellow-200 bg-yellow-50 text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-300',
+  purple: 'border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-300',
+  orange: 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950 dark:text-orange-300',
+  pink: 'border-pink-200 bg-pink-50 text-pink-700 dark:border-pink-800 dark:bg-pink-950 dark:text-pink-300',
+  gray: 'border-neutral-200 bg-neutral-50 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300',
+  teal: 'border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800 dark:bg-teal-950 dark:text-teal-300',
+};
 
 const formSchema = z.object({
   calendarType: z.string().min(1, '일정 타입을 선택해주세요.'),
@@ -63,7 +76,6 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
 }) => {
   const [internalOpen, setInternalOpen] = React.useState(false);
   const { loginUser } = useLoginUserStore();
-  const calendarTypes = useCalendarType();
 
   // open 상태 관리: props가 있으면 props 사용, 없으면 내부 상태 사용
   const open = propOpen !== undefined ? propOpen : internalOpen;
@@ -200,7 +212,9 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                           <SelectLabel>휴가</SelectLabel>
                           {calendarTypes.filter(c => c.type === 'vacation').map(ct => (
                             <SelectItem key={ct.id} value={ct.id}>
-                              <Circle sx={{fontSize: 16, color: ct.colorCode}} />{ct.name}
+                              <Badge className={colorClassMap[ct.color]}>
+                                {ct.name}
+                              </Badge>
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -208,7 +222,9 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                           <SelectLabel>스케줄</SelectLabel>
                           {calendarTypes.filter(c => c.type === 'schedule').map(ct => (
                             <SelectItem key={ct.id} value={ct.id}>
-                              <Circle sx={{fontSize: 16, color: ct.colorCode}} />{ct.name}
+                              <Badge className={colorClassMap[ct.color]}>
+                                {ct.name}
+                              </Badge>
                             </SelectItem>
                           ))}
                         </SelectGroup>

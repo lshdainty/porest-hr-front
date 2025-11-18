@@ -58,7 +58,7 @@ export function EventBlock({ event, className }: IProps) {
   const durationInMinutes = differenceInMinutes(end, start);
   const heightInPixels = (durationInMinutes / 60) * 96 - 8;
 
-  const color = (badgeVariant === 'dot' ? `${event.color}-dot` : event.color) as VariantProps<typeof calendarWeekEventCardVariants>['color'];
+  const color = (badgeVariant === 'dot' ? `${event.type.color}-dot` : event.type.color) as VariantProps<typeof calendarWeekEventCardVariants>['color'];
 
   const calendarWeekEventCardClasses = cn(calendarWeekEventCardVariants({ color, className }), durationInMinutes < 35 && 'py-0 justify-center');
 

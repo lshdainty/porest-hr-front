@@ -57,7 +57,7 @@ export function AgendaEventCard({ event, eventCurrentDay, eventTotalDays }: IPro
   const startDate = parseISO(event.startDate);
   const endDate = parseISO(event.endDate);
 
-  const color = (badgeVariant === 'dot' ? `${event.color}-dot` : event.color) as VariantProps<typeof agendaEventCardVariants>['color'];
+  const color = (badgeVariant === 'dot' ? `${event.type.color}-dot` : event.type.color) as VariantProps<typeof agendaEventCardVariants>['color'];
 
   const agendaEventCardClasses = agendaEventCardVariants({ color });
 

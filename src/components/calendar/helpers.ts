@@ -26,8 +26,8 @@ import {
   subYears,
 } from 'date-fns';
 
-import type { ICalendarCell, ICalendarType, IEvent, IUser } from '@/components/calendar/interfaces';
-import type { TCalendarView, TVisibleHours, TWorkingHours } from '@/components/calendar/types';
+import type { ICalendarCell, IEvent, IUser } from '@/components/calendar/interfaces';
+import type { TCalendarType, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/calendar/types';
 import { calendarTypes } from '@/components/calendar/types';
 
 // ================ Header helper functions ================ //
@@ -300,9 +300,9 @@ export interface ApiUserResponse {
 }
 
 /**
- * calendar_type 문자열로 ICalendarType 객체 찾기
+ * calendar_type 문자열로 TCalendarType 객체 찾기
  */
-export function getCalendarType(calendarTypeId: string): ICalendarType {
+export function getCalendarType(calendarTypeId: string): TCalendarType {
   const foundType = calendarTypes.find(type => type.id === calendarTypeId.toUpperCase());
 
   if (!foundType) {
@@ -341,7 +341,6 @@ export function convertApiEventToIEvent(apiEvent: ApiEventResponse, users: IUser
     startDate: new Date(apiEvent.start_date).toISOString(),
     endDate: new Date(apiEvent.end_date).toISOString(),
     title: apiEvent.calendar_name,
-    color: calendarType.color,
     description: apiEvent.calendar_desc || '',
     user: user,
     type: calendarType,

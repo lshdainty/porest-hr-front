@@ -1,12 +1,19 @@
-import type { ICalendarType } from '@/components/calendar/interfaces';
-
 export type TCalendarView = 'day' | 'week' | 'month' | 'year' | 'agenda';
 export type TEventColor = 'blue' | 'green' | 'red' | 'yellow' | 'purple' | 'orange' | 'pink' | 'gray' | 'teal';
+
+export type TCalendarType = {
+  id: string
+  name: string
+  type: 'vacation' | 'schedule'
+  isDate: boolean
+  color: TEventColor
+}
+
 export type TBadgeVariant = 'dot' | 'colored' | 'mixed';
 export type TWorkingHours = { [key: number]: { from: number; to: number } };
 export type TVisibleHours = { from: number; to: number };
 
-export const calendarTypes: ICalendarType[] = [
+export const calendarTypes: TCalendarType[] = [
   {
     id: 'DAYOFF',
     name: '연차',

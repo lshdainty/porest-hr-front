@@ -65,15 +65,15 @@ export function YearViewDayCell({ day, date, events }: IProps) {
                 key={event.id}
                 className={cn(
                   'size-1.5 rounded-full',
-                  event.color === 'blue' && 'bg-blue-600',
-                  event.color === 'green' && 'bg-green-600',
-                  event.color === 'red' && 'bg-red-600',
-                  event.color === 'yellow' && 'bg-yellow-600',
-                  event.color === 'purple' && 'bg-purple-600',
-                  event.color === 'orange' && 'bg-orange-600',
-                  event.color === 'pink' && 'bg-pink-600',
-                  event.color === 'gray' && 'bg-neutral-600',
-                  event.color === 'teal' && 'bg-teal-600'
+                  event.type.color === 'blue' && 'bg-blue-600',
+                  event.type.color === 'green' && 'bg-green-600',
+                  event.type.color === 'red' && 'bg-red-600',
+                  event.type.color === 'yellow' && 'bg-yellow-600',
+                  event.type.color === 'purple' && 'bg-purple-600',
+                  event.type.color === 'orange' && 'bg-orange-600',
+                  event.type.color === 'pink' && 'bg-pink-600',
+                  event.type.color === 'gray' && 'bg-neutral-600',
+                  event.type.color === 'teal' && 'bg-teal-600'
                 )}
               />
             ))
@@ -82,15 +82,15 @@ export function YearViewDayCell({ day, date, events }: IProps) {
               <div
                 className={cn(
                   'size-1.5 rounded-full',
-                  events[0].color === 'blue' && 'bg-blue-600',
-                  events[0].color === 'green' && 'bg-green-600',
-                  events[0].color === 'red' && 'bg-red-600',
-                  events[0].color === 'yellow' && 'bg-yellow-600',
-                  events[0].color === 'purple' && 'bg-purple-600',
-                  events[0].color === 'orange' && 'bg-orange-600',
-                  events[0].color === 'pink' && 'bg-pink-600',
-                  events[0].color === 'gray' && 'bg-neutral-600',
-                  events[0].color === 'teal' && 'bg-teal-600'
+                  events[0].type.color === 'blue' && 'bg-blue-600',
+                  events[0].type.color === 'green' && 'bg-green-600',
+                  events[0].type.color === 'red' && 'bg-red-600',
+                  events[0].type.color === 'yellow' && 'bg-yellow-600',
+                  events[0].type.color === 'purple' && 'bg-purple-600',
+                  events[0].type.color === 'orange' && 'bg-orange-600',
+                  events[0].type.color === 'pink' && 'bg-pink-600',
+                  events[0].type.color === 'gray' && 'bg-neutral-600',
+                  events[0].type.color === 'teal' && 'bg-teal-600'
                 )}
               />
               <span className='text-[7px] text-muted-foreground'>+{eventCount - 1}</span>

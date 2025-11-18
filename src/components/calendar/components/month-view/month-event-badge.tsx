@@ -88,7 +88,7 @@ export function MonthEventBadge({ event, cellDate, eventCurrentDay, eventTotalDa
   // 단일 이벤트(none)일 때만 시간 표시, 연속 이벤트는 마지막 셀에만 표시
   const isMultiDay = !isSameDay(itemStart, itemEnd);
 
-  const color = (badgeVariant === 'dot' ? `${event.color}-dot` : event.color) as VariantProps<typeof eventBadgeVariants>['color'];
+  const color = (badgeVariant === 'dot' ? `${event.type.color}-dot` : event.type.color) as VariantProps<typeof eventBadgeVariants>['color'];
 
   const eventBadgeClasses = cn(eventBadgeVariants({ color, multiDayPosition: position, className }));
 
