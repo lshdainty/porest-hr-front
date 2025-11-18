@@ -1,5 +1,5 @@
-import { GetUserPeriodVacationUseHistoriesResp } from '@/api/vacation';
-import { RegistEventDialog } from '@/components/big-calendar/components/dialogs/add-event-dialog';
+import { GetUserVacationUsagesByPeriodResp } from '@/api/vacation';
+import { AddEventDialog } from '@/components/big-calendar/components/dialogs/add-event-dialog';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
@@ -11,7 +11,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertica
 import { useEffect, useState } from 'react';
 
 interface VacationHistoryTableProps {
-  value: GetUserPeriodVacationUseHistoriesResp[];
+  value: GetUserVacationUsagesByPeriodResp[];
   canAdd?: boolean;
 }
 
@@ -90,7 +90,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
             <TableBody>
               {paginatedData.map((item) => (
                 <TableRow
-                  key={item.vacation_history_id}
+                  key={item.vacation_usage_id}
                   className={cn(
                     'hover:bg-muted/50 hover:text-foreground',
                     'dark:hover:bg-muted/80 dark:hover:text-foreground'
@@ -104,7 +104,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
                   </TableCell>
                   <TableCell>
                     <div className='max-w-[300px]'>
-                      <p className='font-medium'>{item.vacation_desc}</p>
+                      <p className='font-medium'>{item.vacation_usage_desc}</p>
                     </div>
                   </TableCell>
                   <TableCell className='pr-4'>
@@ -120,14 +120,14 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align='end' className='w-32'>
-                          <DropdownMenuItem onClick={() => handleEdit(item.vacation_history_id)}>
+                          <DropdownMenuItem onClick={() => handleEdit(item.vacation_usage_id)}>
                             <Pencil className='h-4 w-4' />
                             <span>수정</span>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                            onClick={() => handleDelete(item.vacation_history_id)}
+                            onClick={() => handleDelete(item.vacation_usage_id)}
                           >
                             <Trash2 className='h-4 w-4' />
                             <span>삭제</span>
@@ -193,7 +193,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
         </div>
       </CardContent>
     </Card>
-    <RegistEventDialog />
+    <AddEventDialog />
     </>
   );
 }

@@ -24,7 +24,7 @@ interface IProps {
 }
 
 export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
-  const { selectedDate, setSelectedDate, users, visibleHours, workingHours, findHolidayByDate } = useCalendar();
+  const { selectedDate, setSelectedDate, users, visibleHours, workingHours, findHolidayByDate, holidays } = useCalendar();
 
   const { hours, earliestEventHour, latestEventHour } = getVisibleHours(visibleHours, singleDayEvents);
 
@@ -42,6 +42,23 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
       holidayColor = '#6767ff'; // 파랑
     }
   }
+
+  // Calendar 컴포넌트를 위한 공휴일 modifiers 생성
+  const publicHolidays = holidays
+    .filter(h => h.holiday_type === 'PUBLIC' || h.holiday_type === 'SUBSTITUTE')
+    .map(h => new Date(
+      parseInt(h.holiday_date.substring(0, 4)),
+      parseInt(h.holiday_date.substring(4, 6)) - 1,
+      parseInt(h.holiday_date.substring(6, 8))
+    ));
+
+  const etcHolidays = holidays
+    .filter(h => h.holiday_type === 'ETC')
+    .map(h => new Date(
+      parseInt(h.holiday_date.substring(0, 4)),
+      parseInt(h.holiday_date.substring(4, 6)) - 1,
+      parseInt(h.holiday_date.substring(6, 8))
+    ));
 
   const dayEvents = singleDayEvents.filter(event => {
     const eventDate = parseISO(event.startDate);
@@ -148,7 +165,21 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
       </div>
 
       <div className='hidden w-64 divide-y border-l md:block'>
-        <Calendar className='mx-auto w-fit' mode='single' selected={selectedDate} onSelect={setSelectedDate} initialFocus />
+        <Calendar
+          className='mx-auto w-fit'
+          mode='single'
+          selected={selectedDate}
+          onSelect={setSelectedDate}
+          initialFocus
+          modifiers={{
+            publicHoliday: publicHolidays,
+            etcHoliday: etcHolidays
+          }}
+          modifiersClassNames={{
+            publicHoliday: '[&_button]:text-[#ff6767]',
+            etcHoliday: '[&_button]:text-[#6767ff]'
+          }}
+        />
 
         <div className='flex-1 space-y-3'>
           {currentEvents.length > 0 ? (

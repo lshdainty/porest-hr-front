@@ -1,6 +1,6 @@
 import { useGetEventsByPeriod } from '@/api/calendar';
 import { useGetHolidaysByStartEndDate } from '@/api/holiday';
-import { RegistEventDialog } from '@/components/big-calendar/components/dialogs/add-event-dialog';
+import { AddEventDialog } from '@/components/big-calendar/components/dialogs/add-event-dialog';
 import Events, { convertEventStyle } from '@/components/calendar/Events';
 import { Formats, MobileFormats } from '@/components/calendar/Formats';
 import { MonthDateHeader, MonthHeader } from '@/components/calendar/Headers';
@@ -63,7 +63,8 @@ const Content: React.FC = () => {
 
   const {data: holidays, isLoading: holidaysLoading} = useGetHolidaysByStartEndDate({
     start_date: `${baseYear}0101`,
-    end_date: `${baseYear}1231`
+    end_date: `${baseYear}1231`,
+    country_code: 'KR'
   });
 
   const {data: calendarData, isLoading: calendarLoading} = useGetEventsByPeriod({
@@ -136,7 +137,7 @@ const Content: React.FC = () => {
 
         onSelectSlot={handleSelectSlot}
       />
-      <RegistEventDialog />
+      <AddEventDialog />
     </>
   );
 };
