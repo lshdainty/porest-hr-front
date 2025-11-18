@@ -234,6 +234,3 @@
     @apply bg-white opacity-10;
   }
 }
-
-/* components css */
-@import './components/calendar/index.scss'
