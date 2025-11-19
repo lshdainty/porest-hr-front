@@ -402,6 +402,7 @@ export interface ApproverInfo {
   approval_status: string
   approval_status_name: string
   approval_date: string | null
+  rejection_reason?: string
 }
 
 export interface GetUserRequestedVacationsResp {

@@ -16,7 +16,7 @@ import {
   type PostCompleteSignupResp
 } from '@/lib/api/auth'
 
-const authKeys = createQueryKeys('auth')
+export const authKeys = createQueryKeys('auth')
 
 // 로그인 상태 체크 훅
 export const useLoginCheckQuery = () => {

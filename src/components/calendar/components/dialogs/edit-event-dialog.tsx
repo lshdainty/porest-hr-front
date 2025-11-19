@@ -1,4 +1,4 @@
-import { useGetAvailableVacations } from '@/api/vacation';
+import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations';
 import { useUpdateEvent } from '@/components/calendar/hooks/use-update-event';
 import type { TEventColor } from '@/components/calendar/types';
 import { calendarTypes } from '@/components/calendar/types';
@@ -101,10 +101,10 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   const isVacation = selectedCalendar?.type === 'vacation';
   const isDate = selectedCalendar?.isDate;
 
-  const {data: vacations} = useGetAvailableVacations({
-    user_id: loginUser?.user_id || '',
-    start_date: dayjs(eventStartDate).format('YYYY-MM-DDTHH:mm:ss')
-  });
+  const {data: vacations} = useAvailableVacationsQuery(
+    loginUser?.user_id || '',
+    dayjs(eventStartDate).format('YYYY-MM-DDTHH:mm:ss')
+  );
 
   const { updateEvent } = useUpdateEvent();
 

@@ -1,10 +1,10 @@
-import { GetUserMonthStatsVacationUseHistoriesResp } from '@/api/vacation';
+import type { GetUserMonthlyVacationStatsResp } from '@/lib/api/vacation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { cn } from '@/lib/utils';
 
-interface MonthVacationStatsCardProps { 
-  value: GetUserMonthStatsVacationUseHistoriesResp[] | undefined
+interface MonthVacationStatsCardProps {
+  value: GetUserMonthlyVacationStatsResp[] | undefined
   className: string | undefined;
 }
 

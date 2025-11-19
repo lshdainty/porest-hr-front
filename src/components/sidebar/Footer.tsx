@@ -1,7 +1,8 @@
 'use client'
 
-import { AuthQueryKey, usePostLogout } from '@/api/auth';
-import { useGetUser, usePutUser, type PutUserReq } from '@/api/user';
+import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths';
+import { useUserQuery, usePutUserMutation } from '@/hooks/queries/useUsers';
+import type { PutUserReq } from '@/lib/api/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar';
@@ -27,17 +28,15 @@ export function Footer() {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const logoutMutation = usePostLogout()
+  const logoutMutation = usePostLogoutMutation()
   const { loginUser, clearLoginUser } = useUser()
-  const { mutate: putUser } = usePutUser()
+  const { mutate: putUser } = usePutUserMutation()
 
   // Dialog 상태 관리
   const [showEditDialog, setShowEditDialog] = useState(false)
 
   // 로그인한 사용자의 상세 정보 가져오기
-  const { data: userData } = useGetUser({
-    user_id: loginUser?.user_id || ''
-  })
+  const { data: userData } = useUserQuery(loginUser?.user_id || '')
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
@@ -46,7 +45,7 @@ export function Footer() {
         clearLoginUser()
         // React Query 캐시 제거 (재요청 없이 캐시만 삭제)
         queryClient.removeQueries({
-          queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
+          queryKey: authKeys.detail('login-check')
         })
         navigate('/login')
       }

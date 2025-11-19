@@ -1,6 +1,6 @@
-import { useGetUserApprovers } from '@/api/user'
-import { useGetGrantStatusTypes } from '@/api/type'
-import { useGetUserVacationPolicies, useGetUserRequestedVacations, useGetUserRequestedVacationStats } from '@/api/vacation'
+import { useUserApproversQuery } from '@/hooks/queries/useUsers'
+import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes'
+import { useUserVacationPoliciesQuery, useUserRequestedVacationsQuery, useUserRequestedVacationStatsQuery } from '@/hooks/queries/useVacations'
 import ApplicationFormDialog from '@/components/application/ApplicationForm'
 import ApplicationTable from '@/components/application/ApplicationTable'
 import ApplicationTableSkeleton from '@/components/application/ApplicationTableSkeleton'
@@ -15,24 +15,22 @@ export default function Application() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const { loginUser } = useUser()
 
-  const { data: vacationPolicies = [] } = useGetUserVacationPolicies({
-    user_id: loginUser?.user_id || '',
-    grant_method: 'ON_REQUEST'
-  })
+  const { data: vacationPolicies = [] } = useUserVacationPoliciesQuery(
+    loginUser?.user_id || '',
+    'ON_REQUEST'
+  )
 
-  const { data: approvers = [] } = useGetUserApprovers({
-    user_id: loginUser?.user_id || ''
-  })
+  const { data: approvers = [] } = useUserApproversQuery(loginUser?.user_id || '')
 
-  const { data: vacationRequests = [], isLoading: isLoadingRequests } = useGetUserRequestedVacations({
-    user_id: loginUser?.user_id || ''
-  })
+  const { data: vacationRequests = [], isLoading: isLoadingRequests } = useUserRequestedVacationsQuery(
+    loginUser?.user_id || ''
+  )
 
-  const { data: grantStatusTypes = [] } = useGetGrantStatusTypes()
+  const { data: grantStatusTypes = [] } = useGrantStatusTypesQuery()
 
-  const { data: stats, isLoading: isLoadingStats } = useGetUserRequestedVacationStats({
-    user_id: loginUser?.user_id || ''
-  })
+  const { data: stats, isLoading: isLoadingStats } = useUserRequestedVacationStatsQuery(
+    loginUser?.user_id || ''
+  )
 
   const handleCreateNew = () => {
     setIsDialogOpen(true)

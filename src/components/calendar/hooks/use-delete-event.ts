@@ -1,5 +1,5 @@
-import { useDeleteSchedule } from '@/api/schedule';
-import { useDeleteVacationUsage } from '@/api/vacation';
+import { useDeleteScheduleMutation } from '@/hooks/queries/useSchedules';
+import { useDeleteVacationUsageMutation } from '@/hooks/queries/useVacations';
 import type { IEvent } from '@/components/calendar/interfaces';
 
 interface UseDeleteEventOptions {
@@ -7,8 +7,8 @@ interface UseDeleteEventOptions {
 }
 
 export const useDeleteEvent = () => {
-  const { mutate: deleteVacation } = useDeleteVacationUsage();
-  const { mutate: deleteSchedule } = useDeleteSchedule();
+  const { mutate: deleteVacation } = useDeleteVacationUsageMutation();
+  const { mutate: deleteSchedule } = useDeleteScheduleMutation();
 
   const deleteEvent = (event: IEvent, options?: UseDeleteEventOptions) => {
     const isVacation = event.type.type === 'vacation';

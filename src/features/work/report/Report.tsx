@@ -1,4 +1,14 @@
-import { useCreateWorkHistory, useGetWorkDivision, useGetWorkGroups, useGetWorkPartLabel, useGetWorkParts, useGetWorkHistories, useUpdateWorkHistory, useDeleteWorkHistory, type WorkCodeResp, type WorkHistoryResp } from '@/api/work';
+import {
+  usePostCreateWorkHistoryMutation,
+  useWorkDivisionQuery,
+  useWorkGroupsQuery,
+  useWorkPartLabelQuery,
+  useWorkPartsQuery,
+  useWorkHistoriesQuery,
+  usePutUpdateWorkHistoryMutation,
+  useDeleteWorkHistoryMutation
+} from '@/hooks/queries/useWorks';
+import type { WorkCodeResp, WorkHistoryResp } from '@/lib/api/work';
 import { toast } from '@/components/alert/toast';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
@@ -64,13 +74,13 @@ interface WorkHistory {
 
 export default function Report() {
   const { loginUser } = useUser()
-  const { data: workGroups, isLoading: isWorkGroupsLoading } = useGetWorkGroups();
-  const { data: workDivision, isLoading: isWorkDivisionLoading } = useGetWorkDivision();
-  const { data: workHistoriesData, isLoading: isWorkHistoriesLoading, refetch: refetchWorkHistories } = useGetWorkHistories();
+  const { data: workGroups, isLoading: isWorkGroupsLoading } = useWorkGroupsQuery();
+  const { data: workDivision, isLoading: isWorkDivisionLoading } = useWorkDivisionQuery();
+  const { data: workHistoriesData, isLoading: isWorkHistoriesLoading, refetch: refetchWorkHistories } = useWorkHistoriesQuery();
 
-  const createWorkHistory = useCreateWorkHistory();
-  const updateWorkHistory = useUpdateWorkHistory();
-  const deleteWorkHistory = useDeleteWorkHistory();
+  const createWorkHistory = usePostCreateWorkHistoryMutation();
+  const updateWorkHistory = usePutUpdateWorkHistoryMutation();
+  const deleteWorkHistory = useDeleteWorkHistoryMutation();
 
   // 선택된 업무 분류의 seq를 저장
   const [selectedCategorySeq, setSelectedCategorySeq] = useState<number>(0);
@@ -78,14 +88,10 @@ export default function Report() {
   const [workPartLabelSeq, setWorkPartLabelSeq] = useState<number>(0);
 
   // 1단계: 선택된 업무 분류의 하위 LABEL(work_part) 조회
-  const { data: workPartLabels } = useGetWorkPartLabel({
-    parent_work_code_seq: selectedCategorySeq
-  });
+  const { data: workPartLabels } = useWorkPartLabelQuery(selectedCategorySeq);
 
   // 2단계: work_part label의 하위 OPTION 조회
-  const { data: workPartOptions, isLoading: isWorkPartOptionsLoading } = useGetWorkParts({
-    parent_work_code_seq: workPartLabelSeq
-  });
+  const { data: workPartOptions, isLoading: isWorkPartOptionsLoading } = useWorkPartsQuery(workPartLabelSeq);
 
   // workPartLabels가 조회되면 첫 번째 label의 seq를 저장
   useEffect(() => {
@@ -321,9 +327,7 @@ export default function Report() {
 
     try {
       // 서버에서 삭제
-      await deleteWorkHistory.mutateAsync({
-        work_history_seq: row.work_history_seq
-      });
+      await deleteWorkHistory.mutateAsync(row.work_history_seq);
 
       // 성공 시 서버에서 최신 데이터 다시 조회
       await refetchWorkHistories();

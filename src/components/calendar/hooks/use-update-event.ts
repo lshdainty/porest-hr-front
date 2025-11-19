@@ -1,5 +1,5 @@
-import { usePutUpdateSchedule } from '@/api/schedule';
-import { usePutUpdateVacationUsage } from '@/api/vacation';
+import { usePutUpdateScheduleMutation } from '@/hooks/queries/useSchedules';
+import { usePutUpdateVacationUsageMutation } from '@/hooks/queries/useVacations';
 import type { IEvent } from '@/components/calendar/interfaces';
 import { calendarTypes } from '@/components/calendar/types';
 import dayjs from 'dayjs';
@@ -21,8 +21,8 @@ interface UseUpdateEventOptions {
 }
 
 export const useUpdateEvent = () => {
-  const { mutate: updateVacation } = usePutUpdateVacationUsage();
-  const { mutate: updateSchedule } = usePutUpdateSchedule();
+  const { mutate: updateVacation } = usePutUpdateVacationUsageMutation();
+  const { mutate: updateSchedule } = usePutUpdateScheduleMutation();
 
   // Drag & Drop에서 사용하는 IEvent 기반 업데이트 (날짜만 변경)
   function updateEvent(event: IEvent, options?: UseUpdateEventOptions): void;

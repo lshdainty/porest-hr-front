@@ -1,10 +1,10 @@
-import { useGetUser } from '@/api/user';
+import { useUserQuery } from '@/hooks/queries/useUsers';
 import {
-  useGetAvailableVacations,
-  useGetUserMonthlyVacationStats,
-  useGetUserVacationUsagesByPeriod,
-  useGetUserVacationStats
-} from '@/api/vacation';
+  useAvailableVacationsQuery,
+  useUserMonthlyVacationStatsQuery,
+  useUserVacationUsagesByPeriodQuery,
+  useUserVacationStatsQuery
+} from '@/hooks/queries/useVacations';
 import UserInfoCard from '@/components/user/UserInfoCard';
 import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
 import VacationStatsCard from '@/components/vacation/VacationStatsCard';
@@ -22,26 +22,24 @@ export default function History() {
   const { loginUser } = useUser()
   const user_id = loginUser?.user_id || ''
 
-  const { data: user, isLoading: userLoading } = useGetUser({
-    user_id: user_id,
-  });
-  const { data: vacationTypes, isLoading: vacationTypesLoading } = useGetAvailableVacations({
-    user_id: user_id,
-    start_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
-  });
-  const { data: monthStats, isLoading: monthStatsLoading } = useGetUserMonthlyVacationStats({
-    user_id: user_id,
-    year: dayjs().format('YYYY'),
-  });
-  const { data: histories, isLoading: historiesLoading } = useGetUserVacationUsagesByPeriod({
-    user_id: user_id,
-    start_date: `${dayjs().format('YYYY')}-01-01T00:00:00`,
-    end_date: `${dayjs().format('YYYY')}-12-31T23:59:59`,
-  });
-  const { data: vacationStats, isLoading: vacationStatsLoading } = useGetUserVacationStats({
-    user_id: user_id,
-    base_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
-  });
+  const { data: user, isLoading: userLoading } = useUserQuery(user_id);
+  const { data: vacationTypes, isLoading: vacationTypesLoading } = useAvailableVacationsQuery(
+    user_id,
+    dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  );
+  const { data: monthStats, isLoading: monthStatsLoading } = useUserMonthlyVacationStatsQuery(
+    user_id,
+    dayjs().format('YYYY')
+  );
+  const { data: histories, isLoading: historiesLoading } = useUserVacationUsagesByPeriodQuery(
+    user_id,
+    `${dayjs().format('YYYY')}-01-01T00:00:00`,
+    `${dayjs().format('YYYY')}-12-31T23:59:59`
+  );
+  const { data: vacationStats, isLoading: vacationStatsLoading } = useUserVacationStatsQuery(
+    user_id,
+    dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  );
 
   if (userLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading) {
       return (

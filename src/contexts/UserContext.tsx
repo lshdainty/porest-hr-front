@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import type { GetLoginCheck } from '@/api/auth'
-import { useGetLoginCheck } from '@/api/auth'
+import type { GetLoginCheck } from '@/lib/api/auth'
+import { useLoginCheckQuery } from '@/hooks/queries/useAuths'
 
 // Context 타입 정의
 interface UserContextType {
@@ -25,7 +25,7 @@ export function UserProvider({ children }: UserProviderProps) {
   const [loginUser, setLoginUserState] = useState<GetLoginCheck | null>(null)
 
   // 세션 확인 쿼리 - 항상 enabled로 설정하여 refetch 가능하도록
-  const { data, isLoading, refetch } = useGetLoginCheck()
+  const { data, isLoading, refetch } = useLoginCheckQuery()
 
   // 세션 데이터가 변경되면 상태 업데이트
   useEffect(() => {

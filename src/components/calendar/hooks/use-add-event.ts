@@ -1,5 +1,5 @@
-import { usePostSchedule } from '@/api/schedule'
-import { usePostUseVacation } from '@/api/vacation'
+import { usePostScheduleMutation } from '@/hooks/queries/useSchedules'
+import { usePostUseVacationMutation } from '@/hooks/queries/useVacations'
 import { calendarTypes } from '@/components/calendar/types'
 import dayjs from 'dayjs'
 
@@ -19,8 +19,8 @@ interface UseAddEventOptions {
 }
 
 export const useAddEvent = () => {
-  const { mutate: postUseVacation } = usePostUseVacation()
-  const { mutate: postSchedule } = usePostSchedule()
+  const { mutate: postUseVacation } = usePostUseVacationMutation()
+  const { mutate: postSchedule } = usePostScheduleMutation()
 
   const addEvent = (params: AddEventParams, options?: UseAddEventOptions) => {
     const {

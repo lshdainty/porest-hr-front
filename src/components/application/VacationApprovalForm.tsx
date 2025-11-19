@@ -9,7 +9,8 @@ import {
   XCircle
 } from 'lucide-react';
 
-import { GetUserRequestedVacationsResp, usePostApproveVacation, usePostRejectVacation } from '@/api/vacation';
+import { usePostApproveVacationMutation, usePostRejectVacationMutation } from '@/hooks/queries/useVacations';
+import type { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
 import { toast } from '@/components/alert/toast';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
@@ -44,8 +45,8 @@ export default function VacationApprovalForm({
   const [showRejectReason, setShowRejectReason] = useState(false)
   const [rejectReason, setRejectReason] = useState('')
 
-  const { mutate: approveVacation } = usePostApproveVacation()
-  const { mutate: rejectVacation } = usePostRejectVacation()
+  const { mutate: approveVacation } = usePostApproveVacationMutation()
+  const { mutate: rejectVacation } = usePostRejectVacationMutation()
 
   const approvers = requestData?.approvers || []
 
@@ -66,8 +67,8 @@ export default function VacationApprovalForm({
     if (!currentApprovalId || !loginUser?.user_id) return
 
     approveVacation({
-      approval_id: currentApprovalId,
-      approver_id: loginUser.user_id
+      approvalId: currentApprovalId,
+      approverId: loginUser.user_id
     }, {
       onSuccess: () => {
         onClose()
@@ -83,9 +84,9 @@ export default function VacationApprovalForm({
     }
 
     rejectVacation({
-      approval_id: currentApprovalId,
-      approver_id: loginUser.user_id,
-      rejection_reason: rejectReason
+      approvalId: currentApprovalId,
+      approverId: loginUser.user_id,
+      rejectionReason: rejectReason
     }, {
       onSuccess: () => {
         setRejectReason('')

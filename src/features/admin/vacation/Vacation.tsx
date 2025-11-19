@@ -1,12 +1,12 @@
-import { useGetGrantStatusTypes } from '@/api/type';
-import { useGetUsers } from '@/api/user';
+import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
 import {
-  useGetAllVacationsByApprover,
-  useGetAvailableVacations,
-  useGetUserMonthlyVacationStats,
-  useGetUserVacationStats,
-  useGetUserVacationUsagesByPeriod
-} from '@/api/vacation';
+  useAllVacationsByApproverQuery,
+  useAvailableVacationsQuery,
+  useUserMonthlyVacationStatsQuery,
+  useUserVacationStatsQuery,
+  useUserVacationUsagesByPeriodQuery
+} from '@/hooks/queries/useVacations';
 import ApplicationTable from '@/components/application/ApplicationTable';
 import ApplicationTableSkeleton from '@/components/application/ApplicationTableSkeleton';
 import UserInfoCard from '@/components/user/UserInfoCard';
@@ -27,28 +27,28 @@ export default function Vacation() {
   const { loginUser } = useUser()
   const [selectedUserId, setSelectedUserId] = useState<string>(loginUser?.user_id || '')
 
-  const { data: users, isLoading: usersLoading } = useGetUsers();
-  const { data: vacationTypes, isLoading: vacationTypesLoading } = useGetAvailableVacations({
-    user_id: selectedUserId,
-    start_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
-  });
-  const { data: monthStats, isLoading: monthStatsLoading } = useGetUserMonthlyVacationStats({
-    user_id: selectedUserId,
-    year: dayjs().format('YYYY'),
-  });
-  const { data: histories, isLoading: historiesLoading } = useGetUserVacationUsagesByPeriod({
-    user_id: selectedUserId,
-    start_date: `${dayjs().format('YYYY')}-01-01T00:00:00`,
-    end_date: `${dayjs().format('YYYY')}-12-31T23:59:59`,
-  });
-  const { data: vacationStats, isLoading: vacationStatsLoading } = useGetUserVacationStats({
-    user_id: selectedUserId,
-    base_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
-  });
-  const { data: vacationRequests = [], isLoading: isLoadingRequests } = useGetAllVacationsByApprover({
-    approver_id: selectedUserId
-  });
-  const { data: grantStatusTypes = [] } = useGetGrantStatusTypes();
+  const { data: users, isLoading: usersLoading } = useUsersQuery();
+  const { data: vacationTypes, isLoading: vacationTypesLoading } = useAvailableVacationsQuery(
+    selectedUserId,
+    dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  );
+  const { data: monthStats, isLoading: monthStatsLoading } = useUserMonthlyVacationStatsQuery(
+    selectedUserId,
+    dayjs().format('YYYY')
+  );
+  const { data: histories, isLoading: historiesLoading } = useUserVacationUsagesByPeriodQuery(
+    selectedUserId,
+    `${dayjs().format('YYYY')}-01-01T00:00:00`,
+    `${dayjs().format('YYYY')}-12-31T23:59:59`
+  );
+  const { data: vacationStats, isLoading: vacationStatsLoading } = useUserVacationStatsQuery(
+    selectedUserId,
+    dayjs().format('YYYY-MM-DDTHH:mm:ss')
+  );
+  const { data: vacationRequests = [], isLoading: isLoadingRequests } = useAllVacationsByApproverQuery(
+    selectedUserId
+  );
+  const { data: grantStatusTypes = [] } = useGrantStatusTypesQuery();
 
   useEffect(() => {
     if (loginUser && !selectedUserId) {

@@ -1,6 +1,6 @@
-import type { GetUserApproversResp } from '@/api/user'
-import type { GetUserVacationPoliciesResp } from '@/api/vacation'
-import { usePostRequestVacation } from '@/api/vacation'
+import type { GetUserApproversResp } from '@/lib/api/user'
+import type { GetUserVacationPoliciesResp } from '@/lib/api/vacation'
+import { usePostRequestVacationMutation } from '@/hooks/queries/useVacations'
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar'
 import { Button } from '@/components/shadcn/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
@@ -57,7 +57,7 @@ interface ApplicationFormDialogProps {
 
 export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, vacationPolicies, approvers }: ApplicationFormDialogProps) {
   const { loginUser } = useUser()
-  const { mutate: requestVacation } = usePostRequestVacation()
+  const { mutate: requestVacation } = usePostRequestVacationMutation()
 
   const form = useForm<OvertimeFormValues>({
     resolver: zodResolver(formSchema),

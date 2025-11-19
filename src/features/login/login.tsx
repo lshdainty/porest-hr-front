@@ -1,4 +1,4 @@
-import { AuthQueryKey, usePostLogin } from '@/api/auth';
+import { authKeys, usePostLoginMutation } from '@/hooks/queries/useAuths';
 import loginBG from '@/assets/img/login_bg.jpg';
 import Logo from '@/assets/img/porest.svg';
 import LogoDark from '@/assets/img/porest_dark.svg';
@@ -21,7 +21,7 @@ export default function Login({
   const navigate = useNavigate();
   const { theme } = useTheme();
   const queryClient = useQueryClient();
-  const loginMutation = usePostLogin();
+  const loginMutation = usePostLoginMutation();
 
   // OAuth2 로그인 성공/실패 처리
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function Login({
     if (status === 'success') {
       // 유저 정보 다시 가져오기
       queryClient.invalidateQueries({
-        queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
+        queryKey: authKeys.detail('login-check')
       }).then(() => {
         // URL 파라미터 제거 후 대시보드로 이동
         window.history.replaceState({}, '', window.location.pathname);
@@ -70,7 +70,7 @@ export default function Login({
       onSuccess: async () => {
         // 유저 정보 다시 가져오기
         await queryClient.invalidateQueries({
-          queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
+          queryKey: authKeys.detail('login-check')
         })
         navigate('/dashboard')
       }

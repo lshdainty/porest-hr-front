@@ -1,10 +1,10 @@
-import { GetUserVacationUseStatsResp } from '@/api/vacation';
+import type { GetUserVacationStatsResp } from '@/lib/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
 
 interface VacationStatsCardProps {
-  value: GetUserVacationUseStatsResp | undefined
+  value: GetUserVacationStatsResp | undefined
 }
 
 export default function VacationStatsCard({ value: data }: VacationStatsCardProps) {
