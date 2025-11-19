@@ -1,6 +1,5 @@
 import { api, type ApiResponse } from '@/api/index'
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { toast } from '@/components/alert/toast';
 
 const enum AuthQueryKey {
   POST_LOGIN = 'postLogin',
@@ -37,13 +36,12 @@ const usePostLogin = () => {
       return resp.data;
     },
     onSuccess: () => {
-      toast.success('로그인에 성공했습니다.');
+      console.log('로그인에 성공했습니다.');
     },
     onError: (error: any) => {
       // 서버에서 반환한 에러 메시지를 표시
       const errorMessage = error?.message || '로그인에 실패했습니다.';
-      toast.error(errorMessage);
-      console.error('Login failed:', error);
+      console.error('Login failed:', errorMessage, error);
     }
   });
 }
@@ -57,10 +55,9 @@ const usePostLogout = () => {
       });
     },
     onSuccess: () => {
-      toast.success('로그아웃 되었습니다.');
+      console.log('로그아웃 되었습니다.');
     },
     onError: (error) => {
-      toast.error('로그아웃에 실패했습니다.');
       console.error('Logout failed:', error);
     }
   });
@@ -153,12 +150,11 @@ const usePostCompleteSignup = () => {
       return resp.data;
     },
     onSuccess: () => {
-      toast.success('회원가입이 완료되었습니다!');
+      console.log('회원가입이 완료되었습니다!');
     },
     onError: (error: any) => {
       const errorMessage = error?.message || '회원가입에 실패했습니다.';
-      toast.error(errorMessage);
-      console.error('Signup failed:', error);
+      console.error('Signup failed:', errorMessage, error);
     }
   });
 };

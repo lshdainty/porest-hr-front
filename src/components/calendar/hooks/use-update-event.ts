@@ -1,7 +1,7 @@
-import { usePutUpdateVacationUsage } from '@/api/vacation';
 import { usePutUpdateSchedule } from '@/api/schedule';
-import { calendarTypes } from '@/components/calendar/types';
+import { usePutUpdateVacationUsage } from '@/api/vacation';
 import type { IEvent } from '@/components/calendar/interfaces';
+import { calendarTypes } from '@/components/calendar/types';
 import dayjs from 'dayjs';
 
 export interface UpdateEventParams {
@@ -54,6 +54,7 @@ export const useUpdateEvent = () => {
           onSuccess: options?.onSuccess
         });
       } else {
+        console.log('testsetestesttsetesteste')
         payload.schedule_id = event.id;
         payload.schedule_type = event.type.id;
         payload.schedule_desc = event.description;

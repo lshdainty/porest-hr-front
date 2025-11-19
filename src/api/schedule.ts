@@ -1,7 +1,7 @@
-import { api, type ApiResponse } from '@/api/index'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarQueryKey } from '@/api/calendar';
+import { api, type ApiResponse } from '@/api/index';
 import { toast } from '@/components/alert/toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const enum ScheduleQueryKey {
   POST_SCHEDULE = 'postSchedule',
@@ -24,6 +24,10 @@ interface PutUpdateScheduleReq {
   end_date: string
   schedule_type: string
   schedule_desc: string
+}
+
+interface PutUpdateScheduleResp {
+  schedule_id: number
 }
 
 const usePostSchedule = () => {
@@ -55,9 +59,9 @@ const usePutUpdateSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (reqData: PutUpdateScheduleReq) => {
+    mutationFn: async (reqData: PutUpdateScheduleReq): Promise<PutUpdateScheduleResp> => {
       const { schedule_id, ...data } = reqData;
-      const resp: ApiResponse = await api.request({
+      const resp: ApiResponse<PutUpdateScheduleResp> = await api.request({
         method: 'put',
         url: `/schedule/${schedule_id}`,
         data: data
@@ -81,24 +85,24 @@ const useDeleteSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-      mutationFn: async (scheduleId: Number) => {
-        const resp: ApiResponse = await api.request({
-          method: 'delete',
-          url: `/schedule/${scheduleId}`,
-        });
+    mutationFn: async (scheduleId: Number) => {
+      const resp: ApiResponse = await api.request({
+        method: 'delete',
+        url: `/schedule/${scheduleId}`,
+      });
 
-        if (resp.code !== 200) throw new Error(resp.message);
+      if (resp.code !== 200) throw new Error(resp.message);
 
-        return resp.data;
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
-        toast.success('일정이 삭제되었습니다.');
-      },
-      onError: (error) => {
-        toast.error(error.message);
-      }
-    });
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
+      toast.success('일정이 삭제되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
 }
 
 export {
@@ -109,4 +113,4 @@ export {
   usePostSchedule,
   usePutUpdateSchedule,
   useDeleteSchedule
-}
+};

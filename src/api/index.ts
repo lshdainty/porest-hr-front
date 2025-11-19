@@ -1,7 +1,6 @@
-import axios, { type AxiosError, type AxiosResponse } from 'axios'
 import config from '@/config/config'
-import { toast } from '@/components/alert/toast'
 import globalRouter from '@/lib/globalRouter'
+import axios, { type AxiosError, type AxiosResponse } from 'axios'
 
 const baseURL = config.apiBaseUrl
 
@@ -71,14 +70,14 @@ api.interceptors.response.use(
       if (err.config?.url !== '/login' && err.config?.url !== '/logout') {
 
         if (window.location.pathname !== '/login' && !window.location.pathname.includes('/login')) {
-          toast.error('서버 연결이 끊어졌습니다. 다시 로그인해주세요.')
+          console.error('서버 연결이 끊어졌습니다. 다시 로그인해주세요.')
           if (globalRouter.navigate) {
             globalRouter.navigate('/login')
           }
         }
       }
 
-      toast.error('네트워크 오류가 발생했습니다.')
+      console.error('네트워크 오류가 발생했습니다.')
       return Promise.reject(new Error('네트워크 오류가 발생했습니다.'))
     }
 
@@ -100,21 +99,21 @@ api.interceptors.response.use(
         }
       }
 
-      toast.error('세션이 만료되었습니다. 다시 로그인해주세요.')
-      return Promise.reject(new Error('세션이 만료되었습니다.'))
+      console.error('세션이 만료되었습니다. 다시 로그인해주세요.')
+      return Promise.reject(new Error('세션이 만료되었습니다. 다시 로그인해주세요.'))
     }
 
     // 기타 HTTP 에러 처리
     if (status >= 400) {
       // Java에서 온 에러 응답 구조에 따라 메시지 추출
       const errorMessage = data?.data?.message || data?.message || '서버 오류가 발생했습니다.'
-      toast.error(errorMessage)
+      console.error(errorMessage)
       return Promise.reject(new Error(errorMessage))
     }
 
     // 기본 에러 처리
     const errorMessage = err.message || '알 수 없는 오류가 발생했습니다.'
-    toast.error(errorMessage)
+    console.error(errorMessage)
     return Promise.reject(new Error(errorMessage))
   }
 )

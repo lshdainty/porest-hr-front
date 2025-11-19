@@ -3,8 +3,7 @@
 import { format, parseISO } from 'date-fns';
 import { Calendar, Clock, Text, User } from 'lucide-react';
 
-import { useDeleteSchedule } from '@/api/schedule';
-import { useDeleteVacationUsage } from '@/api/vacation';
+import { useDeleteEvent } from '@/components/calendar/hooks/use-delete-event';
 import { EditEventDialog } from '@/components/calendar/components/dialogs/edit-event-dialog';
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
@@ -20,15 +19,10 @@ export function EventDetailsDialog({ event, children }: IProps) {
   const startDate = parseISO(event.startDate);
   const endDate = parseISO(event.endDate);
 
-  const { mutate: deleteVacationHistory } = useDeleteVacationUsage();
-  const { mutate: deleteSchedule } = useDeleteSchedule();
+  const { deleteEvent } = useDeleteEvent();
 
   const handleDelete = () => {
-    if (event.type.type === 'vacation') {
-      deleteVacationHistory(event.id);
-    } else {
-      deleteSchedule(event.id);
-    }
+    deleteEvent(event);
   };
 
   return (

@@ -54,10 +54,6 @@ export function CalendarProvider({ children, users, events, initialView = 'month
   const [selectedTypeIds, setSelectedTypeIds] = useState<TCalendarType['id'][] | 'all'>('all');
   const [view, setView] = useState<TCalendarView>(initialView);
 
-  // This localEvents doesn't need to exists in a real scenario.
-  // It's used here just to simulate the update of the events.
-  // In a real scenario, the events would be updated in the backend
-  // and the request that fetches the events should be refetched
   const [localEvents, setLocalEvents] = useState<IEvent[]>(events);
   const [holidays, setHolidays] = useState<GetHolidaysResp[]>([]);
 
@@ -93,7 +89,6 @@ export function CalendarProvider({ children, users, events, initialView = 'month
         setVisibleHours,
         workingHours,
         setWorkingHours,
-        // If you go to the refetch approach, you can remove the localEvents and pass the events directly
         events: localEvents,
         setLocalEvents,
         holidays,
