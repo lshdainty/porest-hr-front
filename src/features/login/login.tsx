@@ -1,18 +1,18 @@
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { AuthQueryKey, usePostLogin } from '@/api/auth';
+import loginBG from '@/assets/img/login_bg.jpg';
+import Logo from '@/assets/img/porest.svg';
+import LogoDark from '@/assets/img/porest_dark.svg';
 import { toast } from '@/components/alert/toast';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { useTheme } from '@/components/shadcn/themeProvider';
-import { usePostLogin, AuthQueryKey } from '@/api/auth';
-import loginBG from '@/assets/img/login_bg.jpg';
-import Logo from '@/assets/img/porest.svg';
-import LogoDark from '@/assets/img/porest_dark.svg';
 import config from '@/config/config';
+import { cn } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login({
   className,
@@ -35,7 +35,6 @@ export default function Login({
       queryClient.invalidateQueries({
         queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
       }).then(() => {
-        toast.success('로그인에 성공했습니다.');
         // URL 파라미터 제거 후 대시보드로 이동
         window.history.replaceState({}, '', window.location.pathname);
         navigate('/dashboard');
@@ -73,7 +72,6 @@ export default function Login({
         await queryClient.invalidateQueries({
           queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
         })
-        toast.success('로그인에 성공했습니다.')
         navigate('/dashboard')
       }
     })

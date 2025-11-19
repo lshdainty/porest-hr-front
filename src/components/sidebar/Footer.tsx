@@ -4,10 +4,10 @@ import { AuthQueryKey, usePostLogout } from '@/api/auth';
 import { useGetUser, usePutUser, type PutUserReq } from '@/api/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar'
-import UserEditDialog from '@/components/user/UserEditDialog'
-import config from '@/config/config'
-import { useUser } from '@/contexts/UserContext'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar';
+import UserEditDialog from '@/components/user/UserEditDialog';
+import config from '@/config/config';
+import { useUser } from '@/contexts/UserContext';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { CircleUser, EllipsisVertical, LogOut } from 'lucide-react';
@@ -20,7 +20,7 @@ const defaultUser = {
   user_id: '',
   user_role: '',
   is_login: 'N',
-  profile_url: '/default-avatar.png'
+  profile_url: ''
 }
 
 export function Footer() {
