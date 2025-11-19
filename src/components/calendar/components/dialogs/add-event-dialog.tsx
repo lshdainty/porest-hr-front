@@ -26,7 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select';
-import { useLoginUserStore } from '@/store/LoginUser';
+import { useUser } from '@/contexts/UserContext'
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
@@ -74,8 +74,8 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   endDate: propEndDate,
   startTime
 }) => {
-  const [internalOpen, setInternalOpen] = React.useState(false);
-  const { loginUser } = useLoginUserStore();
+  const [internalOpen, setInternalOpen] = React.useState(false)
+  const { loginUser } = useUser()
 
   // open 상태 관리: props가 있으면 props 사용, 없으면 내부 상태 사용
   const open = propOpen !== undefined ? propOpen : internalOpen;

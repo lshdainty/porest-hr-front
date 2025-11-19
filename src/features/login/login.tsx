@@ -63,15 +63,20 @@ export default function Login({
   }, [navigate, queryClient]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const formData = new FormData(e.target as HTMLFormElement);
+    const formData = new FormData(e.target as HTMLFormElement)
 
     loginMutation.mutate(formData, {
       onSuccess: async () => {
-        navigate('/dashboard');
+        // 유저 정보 다시 가져오기
+        await queryClient.invalidateQueries({
+          queryKey: [AuthQueryKey.GET_LOGIN_CHECK]
+        })
+        toast.success('로그인에 성공했습니다.')
+        navigate('/dashboard')
       }
-    });
+    })
   }
 
   const handleGoogleLogin = () => {

@@ -18,14 +18,14 @@ import VacationHistoryTableSkeleton from '@/components/vacation/VacationHistoryT
 import VacationStatsCard from '@/components/vacation/VacationStatsCard';
 import VacationStatsCardSkeleton from '@/components/vacation/VacationStatsCardSkeleton';
 import VacationTypeStatsCard from '@/components/vacation/VacationTypeStatsCard';
-import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton';
-import { useLoginUserStore } from '@/store/LoginUser';
+import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton'
+import { useUser } from '@/contexts/UserContext'
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 export default function Vacation() {
-  const { loginUser } = useLoginUserStore();
-  const [selectedUserId, setSelectedUserId] = useState<string>(loginUser?.user_id || '');
+  const { loginUser } = useUser()
+  const [selectedUserId, setSelectedUserId] = useState<string>(loginUser?.user_id || '')
 
   const { data: users, isLoading: usersLoading } = useGetUsers();
   const { data: vacationTypes, isLoading: vacationTypesLoading } = useGetAvailableVacations({

@@ -4,10 +4,10 @@ import { AuthQueryKey, usePostLogout } from '@/api/auth';
 import { useGetUser, usePutUser, type PutUserReq } from '@/api/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar';
-import UserEditDialog from '@/components/user/UserEditDialog';
-import config from '@/config/config';
-import { useLoginUserStore } from '@/store/LoginUser';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar'
+import UserEditDialog from '@/components/user/UserEditDialog'
+import config from '@/config/config'
+import { useUser } from '@/contexts/UserContext'
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { CircleUser, EllipsisVertical, LogOut } from 'lucide-react';
@@ -28,7 +28,7 @@ export function Footer() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const logoutMutation = usePostLogout()
-  const { loginUser, clearLoginUser } = useLoginUserStore()
+  const { loginUser, clearLoginUser } = useUser()
   const { mutate: putUser } = usePutUser()
 
   // Dialog 상태 관리

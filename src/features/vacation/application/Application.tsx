@@ -7,13 +7,13 @@ import ApplicationTableSkeleton from '@/components/application/ApplicationTableS
 import VacationRequestStatsCards from '@/components/application/VacationRequestStatsCards'
 import VacationRequestStatsCardsSkeleton from '@/components/application/VacationRequestStatsCardsSkeleton'
 import { Button } from '@/components/shadcn/button'
-import { useLoginUserStore } from '@/store/LoginUser'
+import { useUser } from '@/contexts/UserContext'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Application() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const { loginUser } = useLoginUserStore()
+  const { loginUser } = useUser()
 
   const { data: vacationPolicies = [] } = useGetUserVacationPolicies({
     user_id: loginUser?.user_id || '',

@@ -20,11 +20,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/shadcn/dialog';
-import { ScrollArea } from '@/components/shadcn/scrollArea';
-import { Separator } from '@/components/shadcn/separator';
-import { Textarea } from '@/components/shadcn/textarea';
-import { useLoginUserStore } from '@/store/LoginUser';
-import { getStatusBadge, getStatusConfig, getStatusIcon } from '@/utils/vacationStatus';
+import { ScrollArea } from '@/components/shadcn/scrollArea'
+import { Separator } from '@/components/shadcn/separator'
+import { Textarea } from '@/components/shadcn/textarea'
+import { useUser } from '@/contexts/UserContext'
+import { getStatusBadge, getStatusConfig, getStatusIcon } from '@/utils/vacationStatus'
 import { useState } from 'react';
 
 interface VacationApprovalFormProps {
@@ -40,7 +40,7 @@ export default function VacationApprovalForm({
   requestData,
   applicantName,
 }: VacationApprovalFormProps) {
-  const { loginUser } = useLoginUserStore()
+  const { loginUser } = useUser()
   const [showRejectReason, setShowRejectReason] = useState(false)
   const [rejectReason, setRejectReason] = useState('')
 

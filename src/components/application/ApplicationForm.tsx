@@ -26,7 +26,7 @@ import {
 } from '@/components/shadcn/select'
 import { Separator } from '@/components/shadcn/separator'
 import { Textarea } from '@/components/shadcn/textarea'
-import { useLoginUserStore } from '@/store/LoginUser'
+import { useUser } from '@/contexts/UserContext'
 import { zodResolver } from '@hookform/resolvers/zod'
 import dayjs from 'dayjs'
 import { AlertCircle, Calendar, Clock, Users } from 'lucide-react'
@@ -56,7 +56,7 @@ interface ApplicationFormDialogProps {
 }
 
 export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, vacationPolicies, approvers }: ApplicationFormDialogProps) {
-  const { loginUser } = useLoginUserStore()
+  const { loginUser } = useUser()
   const { mutate: requestVacation } = usePostRequestVacation()
 
   const form = useForm<OvertimeFormValues>({

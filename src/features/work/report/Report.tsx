@@ -28,8 +28,8 @@ import {
 } from '@/components/shadcn/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Textarea } from '@/components/shadcn/textarea';
-import { cn } from '@/lib/utils';
-import { useLoginUserStore } from '@/store/LoginUser';
+import { cn } from '@/lib/utils'
+import { useUser } from '@/contexts/UserContext'
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import {
@@ -63,7 +63,7 @@ interface WorkHistory {
 }
 
 export default function Report() {
-  const { loginUser } = useLoginUserStore();
+  const { loginUser } = useUser()
   const { data: workGroups, isLoading: isWorkGroupsLoading } = useGetWorkGroups();
   const { data: workDivision, isLoading: isWorkDivisionLoading } = useGetWorkDivision();
   const { data: workHistoriesData, isLoading: isWorkHistoriesLoading, refetch: refetchWorkHistories } = useGetWorkHistories();

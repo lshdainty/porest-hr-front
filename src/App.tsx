@@ -1,10 +1,9 @@
-import { CustomQueryClientProviders } from '@/ClientProviders'
+import '@/api/index'
 import { Toaster } from '@/components/alert/toast'
-import { AxiosInterceptorProvider } from '@/components/global/AxiosInterceptorProvider'
-import { LoginCheckProvider } from '@/components/global/LoginCheckProvider'
 import { ThemeProvider } from '@/components/shadcn/themeProvider'
+import { UserProvider } from '@/contexts/UserContext'
+import Providers from '@/providers'
 import Router from '@/Router'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter } from 'react-router-dom'
 /*
   react19에서 antd 호환성 해결
@@ -16,16 +15,13 @@ const App: React.FC = () => {
   return (
     <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
       <Toaster />
-      <CustomQueryClientProviders>
+      <Providers>
         <BrowserRouter basename='/' future={{v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <AxiosInterceptorProvider>
-            <LoginCheckProvider>
-              <Router />
-              <ReactQueryDevtools />
-            </LoginCheckProvider>
-          </AxiosInterceptorProvider>
+          <UserProvider>
+            <Router />
+          </UserProvider>
         </BrowserRouter>
-      </CustomQueryClientProviders>
+      </Providers>
     </ThemeProvider>
   )
 }
