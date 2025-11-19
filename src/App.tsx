@@ -1,4 +1,4 @@
-import '@/api/index'
+import '@/lib/api'
 import { Toaster } from '@/components/alert/toast'
 import { ThemeProvider } from '@/components/shadcn/themeProvider'
 import { UserProvider } from '@/contexts/UserContext'
