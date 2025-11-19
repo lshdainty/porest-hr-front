@@ -8,6 +8,7 @@ const enum VacationQueryKey {
   GET_USER_VACATION_HISTORY = 'getUserVacationHistory',
   GET_ALL_USERS_VACATION_HISTORY = 'getAllUsersVacationHistory',
   GET_AVAILABLE_VACATIONS = 'getAvailableVacations',
+  PUT_UPDATE_VACATION_USAGE = 'putUpdateVacationUsage',
   DELETE_VACATION_USAGE = 'deleteVacationUsage',
   GET_VACATION_USAGES_BY_PERIOD = 'getVacationUsagesByPeriod',
   GET_USER_VACATION_USAGES_BY_PERIOD = 'getUserVacationUsagesByPeriod',
@@ -169,6 +170,47 @@ const useGetAvailableVacations = (reqData: GetAvailableVacationsReq) => {
       return resp.data;
     },
     enabled: !!reqData.user_id
+  });
+}
+
+interface PutUpdateVacationUsageReq {
+  vacation_usage_id: number
+  user_id: string
+  vacation_type: string
+  vacation_desc: string
+  vacation_time_type: string
+  start_date: string
+  end_date: string
+}
+
+interface PutUpdateVacationUsageResp {
+  vacation_usage_id: number
+}
+
+const usePutUpdateVacationUsage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PutUpdateVacationUsageReq) => {
+      const { vacation_usage_id, ...data } = reqData;
+      const resp: ApiResponse<PutUpdateVacationUsageResp> = await api.request({
+        method: 'put',
+        url: `/vacation-usages/${vacation_usage_id}`,
+        data
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
+      queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_USER_VACATION_HISTORY] });
+      toast.success('휴가 사용 내역이 수정되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
   });
 }
 
@@ -1084,7 +1126,7 @@ export {
   useDeleteRevokeVacationGrant, useDeleteRevokeVacationPoliciesFromUser, useDeleteRevokeVacationPolicyFromUser, useDeleteVacationPolicy, useDeleteVacationUsage, useGetAllUsersVacationHistory,
   useGetAllVacationsByApprover, useGetAvailableVacations, useGetUserAssignedVacationPolicies, useGetUserMonthlyVacationStats, useGetUserRequestedVacations,
   useGetUserRequestedVacationStats, useGetUserVacationHistory, useGetUserVacationPolicies, useGetUserVacationPolicyAssignmentStatus, useGetUserVacationStats, useGetUserVacationUsagesByPeriod, useGetVacationPolicies,
-  useGetVacationPolicy, useGetVacationUsagesByPeriod, usePostApproveVacation, usePostAssignVacationPoliciesToUser, usePostCancelVacationRequest, usePostManualGrantVacation, usePostRejectVacation, usePostRequestVacation, usePostUseVacation, usePostVacationPolicy, VacationQueryKey
+  useGetVacationPolicy, useGetVacationUsagesByPeriod, usePostApproveVacation, usePostAssignVacationPoliciesToUser, usePostCancelVacationRequest, usePostManualGrantVacation, usePostRejectVacation, usePostRequestVacation, usePostUseVacation, usePostVacationPolicy, usePutUpdateVacationUsage, VacationQueryKey
 };
 
   export type {
@@ -1114,7 +1156,8 @@ export {
     PostRejectVacationResp, PostRequestVacationReq,
     PostRequestVacationResp, PostUseVacationReq,
     PostUseVacationResp, PostVacationPolicyReq,
-    PostVacationPolicyResp, VacationGrantInfo, VacationPolicyAssignmentInfo,
+    PostVacationPolicyResp, PutUpdateVacationUsageReq,
+    PutUpdateVacationUsageResp, VacationGrantInfo, VacationPolicyAssignmentInfo,
     VacationUsageInfo
   };
 

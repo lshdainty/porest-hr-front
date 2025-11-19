@@ -12,6 +12,7 @@ export interface IEvent {
   endDate: string;
   title: string;
   description: string;
+  vacationType?: string;
   user: IUser;
   type: TCalendarType;
 }

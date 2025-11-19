@@ -10,7 +10,7 @@ interface getEventsByPeriodReq {
   end_date: string
 }
 
-interface getEventsByPeriodResp {
+export interface getEventsByPeriodResp {
   user_id: string
   user_name: string
   calendar_name: string
@@ -19,6 +19,7 @@ interface getEventsByPeriodResp {
   start_date: Date
   end_date: Date
   domain_type: string
+  vacation_type: string
   calendar_id: number
 }
 

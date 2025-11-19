@@ -26,6 +26,7 @@ import {
   subYears,
 } from 'date-fns';
 
+import type { getEventsByPeriodResp } from '@/api/calendar';
 import type { ICalendarCell, IEvent, IUser } from '@/components/calendar/interfaces';
 import type { TCalendarType, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/calendar/types';
 import { calendarTypes } from '@/components/calendar/types';
@@ -278,21 +279,6 @@ export function getMonthCellEvents(date: Date, events: IEvent[], eventPositions:
 
 // ================ Data transformation functions ================ //
 
-/**
- * API 응답 타입 정의
- */
-export interface ApiEventResponse {
-  user_id: string;
-  user_name: string;
-  calendar_name: string;
-  calendar_type: string;
-  calendar_desc: string;
-  start_date: Date;
-  end_date: Date;
-  domain_type: string;
-  calendar_id: number;
-}
-
 export interface ApiUserResponse {
   user_id: string;
   user_name: string;
@@ -327,7 +313,7 @@ export function convertApiUserToIUser(apiUser: ApiUserResponse): IUser {
 /**
  * API 이벤트 응답을 IEvent 인터페이스로 변환
  */
-export function convertApiEventToIEvent(apiEvent: ApiEventResponse, users: IUser[]): IEvent {
+export function convertApiEventToIEvent(apiEvent: getEventsByPeriodResp, users: IUser[]): IEvent {
   const user = users.find(u => u.id === apiEvent.user_id);
 
   if (!user) {
@@ -342,6 +328,7 @@ export function convertApiEventToIEvent(apiEvent: ApiEventResponse, users: IUser
     endDate: new Date(apiEvent.end_date).toISOString(),
     title: apiEvent.calendar_name,
     description: apiEvent.calendar_desc || '',
+    vacationType: apiEvent.domain_type === 'vacation' ? apiEvent.vacation_type : undefined,
     user: user,
     type: calendarType,
   };
@@ -351,7 +338,7 @@ export function convertApiEventToIEvent(apiEvent: ApiEventResponse, users: IUser
  * API 응답 배열을 변환
  */
 export function convertApiEvents(
-  apiEvents: ApiEventResponse[],
+  apiEvents: getEventsByPeriodResp[],
   apiUsers: ApiUserResponse[]
 ): { events: IEvent[], users: IUser[] } {
   const users = apiUsers.map(convertApiUserToIUser);

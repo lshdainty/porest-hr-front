@@ -1,5 +1,5 @@
-import { usePostSchedule } from '@/api/schedule';
-import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
+import { useGetAvailableVacations } from '@/api/vacation';
+import { useAddEvent } from '@/components/calendar/hooks/use-add-event';
 import { calendarTypes } from '@/components/calendar/types';
 import type { TEventColor } from '@/components/calendar/types';
 import { Badge } from '@/components/shadcn/badge';
@@ -108,65 +108,21 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
     start_date: dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
   });
 
-  const { mutate: postUseVacation } = usePostUseVacation();
-  const { mutate: postSchedule } = usePostSchedule();
+  const { addEvent } = useAddEvent();
 
   const onSubmit = (values: AddEventFormValues) => {
-    const format = 'YYYY-MM-DDTHH:mm:ss';
-    const { calendarType, vacationType, desc, startDate, endDate, startHour, startMinute } = values;
-    
-    const payload: any = {
-      user_id: loginUser?.user_id || '',
-    };
-
-    if (isDate) {
-      payload.start_date = dayjs(startDate).startOf('day').format(format);
-      payload.end_date = dayjs(endDate).endOf('day').format(format);
-    } else {
-      let plusHour = 0;
-      switch(calendarType) {
-        case 'MORNINGOFF':
-        case 'AFTERNOONOFF':
-        case 'HEALTHCHECKHALF':
-        case 'DEFENSEHALF':
-          plusHour = 4;
-          break;
-        case 'ONETIMEOFF':
-          plusHour = 1;
-          break;
-        case 'TWOTIMEOFF':
-          plusHour = 2;
-          break;
-        case 'THREETIMEOFF':
-          plusHour = 3;
-          break;
-        case 'FIVETIMEOFF':
-          plusHour = 5;
-          break;
-        case 'SIXTIMEOFF':
-          plusHour = 6;
-          break;
-        case 'SEVENTIMEOFF':
-          plusHour = 7;
-          break;
-        default:
-          break;
-      }
-      payload.start_date = dayjs(startDate).hour(Number(startHour)).minute(Number(startMinute)).second(0).format(format);
-      payload.end_date = dayjs(endDate).hour(Number(startHour) + plusHour).minute(Number(startMinute)).second(0).format(format);
-    }
-
-    if (isVacation) {
-      payload.vacation_type = vacationType;
-      payload.vacation_time_type = calendarType;
-      payload.vacation_desc = desc;
-      postUseVacation(payload);
-    } else {
-      payload.schedule_type = calendarType;
-      payload.schedule_desc = desc;
-      postSchedule(payload);
-    }
-    setOpen(false);
+    addEvent({
+      userId: loginUser?.user_id || '',
+      calendarType: values.calendarType,
+      vacationType: values.vacationType,
+      desc: values.desc,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      startHour: values.startHour,
+      startMinute: values.startMinute,
+    }, {
+      onSuccess: () => setOpen(false)
+    });
   }
 
   useEffect(() => {

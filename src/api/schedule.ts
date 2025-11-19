@@ -5,10 +5,20 @@ import { toast } from '@/components/alert/toast';
 
 const enum ScheduleQueryKey {
   POST_SCHEDULE = 'postSchedule',
+  PUT_UPDATE_SCHEDULE = 'putUpdateSchedule',
   DELETE_SCHEDULE = 'deleteSchedule'
 }
 
 interface PostScheduleReq {
+  user_id: string
+  start_date: string
+  end_date: string
+  schedule_type: string
+  schedule_desc: string
+}
+
+interface PutUpdateScheduleReq {
+  schedule_id: number
   user_id: string
   start_date: string
   end_date: string
@@ -41,6 +51,32 @@ const usePostSchedule = () => {
   });
 }
 
+const usePutUpdateSchedule = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (reqData: PutUpdateScheduleReq) => {
+      const { schedule_id, ...data } = reqData;
+      const resp: ApiResponse = await api.request({
+        method: 'put',
+        url: `/schedule/${schedule_id}`,
+        data: data
+      });
+
+      if (resp.code !== 200) throw new Error(resp.message);
+
+      return resp.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
+      toast.success('일정이 수정되었습니다.');
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+}
+
 const useDeleteSchedule = () => {
   const queryClient = useQueryClient();
 
@@ -50,9 +86,9 @@ const useDeleteSchedule = () => {
           method: 'delete',
           url: `/schedule/${scheduleId}`,
         });
-  
+
         if (resp.code !== 200) throw new Error(resp.message);
-  
+
         return resp.data;
       },
       onSuccess: () => {
@@ -71,5 +107,6 @@ export {
 
   // API Hook
   usePostSchedule,
+  usePutUpdateSchedule,
   useDeleteSchedule
 }
