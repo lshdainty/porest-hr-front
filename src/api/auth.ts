@@ -1,5 +1,5 @@
-import { api, type ApiResponse } from '@/api/index'
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { api, type ApiResponse } from '@/api/index';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 const enum AuthQueryKey {
   POST_LOGIN = 'postLogin',
@@ -161,22 +161,21 @@ const usePostCompleteSignup = () => {
 
 export {
   // QueryKey
-  AuthQueryKey,
-
-  // API Hook
-  usePostLogin,
-  usePostLogout,
-  useGetLoginCheck,
+  AuthQueryKey, useGetLoginCheck,
   useGetValidateInvitationToken,
   usePostCompleteSignup,
-}
+  // API Hook
+  usePostLogin,
+  usePostLogout
+};
 
-export type {
-  // Interface
-  PostLoginReq,
-  PostLoginResp,
-  GetLoginCheck,
-  GetValidateInvitationTokenResp,
-  PostCompleteSignupReq,
-  PostCompleteSignupResp,
-}
+  export type {
+    GetLoginCheck,
+    GetValidateInvitationTokenResp,
+    PostCompleteSignupReq,
+    PostCompleteSignupResp,
+    // Interface
+    PostLoginReq,
+    PostLoginResp
+  };
+
