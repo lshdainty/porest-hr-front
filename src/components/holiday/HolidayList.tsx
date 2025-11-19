@@ -4,7 +4,7 @@ import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
-import { type GetHolidaysResp } from '@/api/holiday';
+import { type GetHolidaysResp } from '@/lib/api/holiday';
 import HolidayDeleteDialog from '@/components/holiday/HolidayDeleteDialog';
 
 const holidayTypeColors = {

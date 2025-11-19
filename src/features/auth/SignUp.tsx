@@ -1,4 +1,4 @@
-import { useGetValidateInvitationToken, usePostCompleteSignup } from '@/api/auth'
+import { useValidateInvitationTokenQuery, usePostCompleteSignupMutation } from '@/hooks/queries/useAuths'
 import PorestLogo from '@/assets/img/porest.svg'
 import { toast } from '@/components/alert/toast'
 import { Button } from '@/components/shadcn/button'
@@ -20,8 +20,8 @@ export default function SignUp() {
   const navigate = useNavigate()
   const token = searchParams.get('token') || ''
 
-  const { data: validationData, isLoading, isError } = useGetValidateInvitationToken({ token })
-  const { mutate: completeSignup, isPending } = usePostCompleteSignup()
+  const { data: validationData, isLoading, isError } = useValidateInvitationTokenQuery(token)
+  const { mutate: completeSignup, isPending } = usePostCompleteSignupMutation()
 
   const [formData, setFormData] = useState<FormData>({
     birth: '',

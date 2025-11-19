@@ -1,4 +1,4 @@
-import { GetUsersResp } from '@/api/user';
+import { GetUsersResp } from '@/lib/api/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';

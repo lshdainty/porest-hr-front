@@ -1,4 +1,5 @@
-import { GetUsersResp, usePostUploadProfile, type PutUserReq } from '@/api/user';
+import { GetUsersResp, type PutUserReq } from '@/lib/api/user';
+import { usePostUploadProfileMutation } from '@/hooks/queries/useUsers';
 import { Alert, AlertDescription } from '@/components/shadcn/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Button } from '@/components/shadcn/button';
@@ -98,7 +99,7 @@ const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8
 };
 
 export default function UserEditDialog({ open, onOpenChange, user, onSave }: UserEditDialogProps) {
-  const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfile();
+  const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfileMutation();
   
   // 이미지 업로드 관련 상태 관리 - 초기값부터 완전한 URL로 설정
   const [profileImage, setProfileImage] = useState<string>(getFullImageUrl(user.profile_url || ''));

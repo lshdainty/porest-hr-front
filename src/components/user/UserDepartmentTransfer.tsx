@@ -1,4 +1,5 @@
-import { useCheckUserMainDepartment, type UserInfo } from '@/api/department'
+import { type UserInfo } from '@/lib/api/department'
+import { useCheckUserMainDepartmentQuery } from '@/hooks/queries/useDepartments'
 import { toast } from '@/components/alert/toast'
 import { Button } from '@/components/shadcn/button'
 import { Checkbox } from '@/components/shadcn/checkbox'
@@ -28,7 +29,7 @@ export default function UserDepartmentTransfer({
   const [checkingUserId, setCheckingUserId] = useState<string>('')
 
   // 메인부서 존재 여부 확인 API
-  const { data: mainDepartmentCheck, isSuccess } = useCheckUserMainDepartment(checkingUserId)
+  const { data: mainDepartmentCheck, isSuccess } = useCheckUserMainDepartmentQuery(checkingUserId)
 
   // props가 변경될 때마다 상태 업데이트
   useEffect(() => {

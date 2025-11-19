@@ -26,7 +26,7 @@ import {
   subYears,
 } from 'date-fns';
 
-import type { getEventsByPeriodResp } from '@/api/calendar';
+import type { GetEventsByPeriodResp } from '@/lib/api/calendar';
 import type { ICalendarCell, IEvent, IUser } from '@/components/calendar/interfaces';
 import type { TCalendarType, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/calendar/types';
 import { calendarTypes } from '@/components/calendar/types';
@@ -313,7 +313,7 @@ export function convertApiUserToIUser(apiUser: ApiUserResponse): IUser {
 /**
  * API 이벤트 응답을 IEvent 인터페이스로 변환
  */
-export function convertApiEventToIEvent(apiEvent: getEventsByPeriodResp, users: IUser[]): IEvent {
+export function convertApiEventToIEvent(apiEvent: GetEventsByPeriodResp, users: IUser[]): IEvent {
   const user = users.find(u => u.id === apiEvent.user_id);
 
   if (!user) {
@@ -338,7 +338,7 @@ export function convertApiEventToIEvent(apiEvent: getEventsByPeriodResp, users: 
  * API 응답 배열을 변환
  */
 export function convertApiEvents(
-  apiEvents: getEventsByPeriodResp[],
+  apiEvents: GetEventsByPeriodResp[],
   apiUsers: ApiUserResponse[]
 ): { events: IEvent[], users: IUser[] } {
   const users = apiUsers.map(convertApiUserToIUser);

@@ -1,5 +1,6 @@
-import { useGetOriginCompanyTypes } from '@/api/type';
-import { useDeleteUser, usePutUser, type GetUsersResp, type PutUserReq } from '@/api/user';
+import { useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
+import { useDeleteUserMutation, usePutUserMutation } from '@/hooks/queries/useUsers';
+import { type GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
@@ -23,9 +24,9 @@ interface UserTableProps {
 }
 
 export default function UserTable({ value: users }: UserTableProps) {
-  const { mutate: putUser } = usePutUser();
-  const { mutate: deleteUser } = useDeleteUser();
-  const { data: companyTypes } = useGetOriginCompanyTypes();
+  const { mutate: putUser } = usePutUserMutation();
+  const { mutate: deleteUser } = useDeleteUserMutation();
+  const { data: companyTypes } = useOriginCompanyTypesQuery();
 
   // Dialog 상태 관리
   const [showInviteDialog, setShowInviteDialog] = useState(false);

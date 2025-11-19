@@ -1,5 +1,6 @@
-import { useGetCompany, useGetCompanyWithDepartments } from '@/api/company';
-import { useDeleteDepartmentUsers, useGetDepartmentUsers, usePostDepartmentUsers, type UserInfo } from '@/api/department';
+import { useCompanyQuery, useCompanyWithDepartmentsQuery } from '@/hooks/queries/useCompanies';
+import { useDeleteDepartmentUsersMutation, useDepartmentUsersQuery, usePostDepartmentUsersMutation } from '@/hooks/queries/useDepartments';
+import { type UserInfo } from '@/lib/api/department';
 import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentTreePanelSkeleton from '@/components/company/DepartmentTreePanelSkeleton';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
@@ -12,17 +13,15 @@ import { useMemo, useState } from 'react';
 export default function Department() {
   const [selectedDept, setSelectedDept] = useState<any | null>(null);
 
-  const { data: company, isLoading } = useGetCompany();
-  const { data: companyWithDepartments } = useGetCompanyWithDepartments({
-    company_id: company?.company_id ?? ''
-  });
+  const { data: company, isLoading } = useCompanyQuery();
+  const { data: companyWithDepartments } = useCompanyWithDepartmentsQuery(company?.company_id ?? '');
 
-  const { data: departmentUsers, isLoading: isDepartmentUsersLoading } = useGetDepartmentUsers(
+  const { data: departmentUsers, isLoading: isDepartmentUsersLoading } = useDepartmentUsersQuery(
     selectedDept?.department_id
   );
 
-  const postDepartmentUsers = usePostDepartmentUsers();
-  const deleteDepartmentUsers = useDeleteDepartmentUsers();
+  const postDepartmentUsers = usePostDepartmentUsersMutation();
+  const deleteDepartmentUsers = useDeleteDepartmentUsersMutation();
 
   const departments = useMemo(() => {
     return companyWithDepartments?.departments || [];

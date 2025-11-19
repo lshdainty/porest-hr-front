@@ -1,4 +1,4 @@
-import { GetUserVacationUsagesByPeriodResp } from '@/api/vacation';
+import { GetUserVacationUsagesByPeriodResp } from '@/lib/api/vacation';
 import { AddEventDialog } from '@/components/calendar/components/dialogs/add-event-dialog';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';

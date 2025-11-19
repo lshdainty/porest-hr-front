@@ -1,11 +1,11 @@
 import {
-  useGetEffectiveTypes,
-  useGetExpirationTypes,
-  useGetGrantMethodTypes,
-  useGetRepeatUnitTypes,
-  useGetVacationTypes
-} from '@/api/type';
-import { useGetVacationPolicies } from '@/api/vacation';
+  useEffectiveTypesQuery,
+  useExpirationTypesQuery,
+  useGrantMethodTypesQuery,
+  useRepeatUnitTypesQuery,
+  useVacationTypesQuery
+} from '@/hooks/queries/useTypes';
+import { useVacationPoliciesQuery } from '@/hooks/queries/useVacations';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import {
@@ -27,12 +27,12 @@ import {
 import { useState } from 'react';
 
 export function VacationPolicyLists() {
-  const { data: vacationPolicies, isLoading } = useGetVacationPolicies();
-  const { data: grantMethodTypes } = useGetGrantMethodTypes();
-  const { data: effectiveTypes } = useGetEffectiveTypes();
-  const { data: expirationTypes } = useGetExpirationTypes();
-  const { data: vacationTypes } = useGetVacationTypes();
-  const { data: repeatUnitTypes } = useGetRepeatUnitTypes();
+  const { data: vacationPolicies, isLoading } = useVacationPoliciesQuery();
+  const { data: grantMethodTypes } = useGrantMethodTypesQuery();
+  const { data: effectiveTypes } = useEffectiveTypesQuery();
+  const { data: expirationTypes } = useExpirationTypesQuery();
+  const { data: vacationTypes } = useVacationTypesQuery();
+  const { data: repeatUnitTypes } = useRepeatUnitTypesQuery();
 
   const [searchQuery, setSearchQuery] = useState('');
 

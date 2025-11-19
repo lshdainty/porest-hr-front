@@ -1,4 +1,4 @@
-import { GetYearOperationDuesResp, GetMonthBirthDuesResp } from '@/api/dues';
+import { GetYearOperationDuesResp, GetMonthBirthDuesResp } from '@/lib/api/dues';
 import { Card, CardContent, CardHeader } from '@/components/shadcn/card';
 import { DollarSign, Users, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';

@@ -1,4 +1,4 @@
-import { GetUsersResp } from '@/api/user';
+import { GetUsersResp } from '@/lib/api/user';
 import {
   AlertDialog,
   AlertDialogAction,

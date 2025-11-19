@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/shadcn/alertDialog';
-import { GetHolidaysResp } from '@/api/holiday';
+import { GetHolidaysResp } from '@/lib/api/holiday';
 import { TriangleAlert } from 'lucide-react';
 
 interface HolidayDeleteDialogProps {

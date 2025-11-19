@@ -3,8 +3,8 @@ import { Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import DepartmentFormDialog from '@/components/company/DepartmentFormDialog';
 import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
-import { GetCompanyWithDepartment } from '@/api/company';
-import { PutDepartmentReq } from '@/api/department';
+import { GetCompanyWithDepartment } from '@/lib/api/company';
+import { PutDepartmentReq } from '@/lib/api/department';
 import { toast } from '@/components/alert/toast';
 
 interface DepartmentTreePanelProps {

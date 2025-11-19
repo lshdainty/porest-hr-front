@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { GetUsersResp } from '@/api/user';
+import { GetUsersResp } from '@/lib/api/user';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import SkaxLogo from '@/assets/img/skax.svg';
 import DtolLogo from '@/assets/img/dtol.svg';

@@ -8,7 +8,7 @@ import { Textarea } from '@/components/shadcn/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
 import { Field, FieldLabel, FieldError } from '@/components/shadcn/field';
 import { Spinner } from '@/components/shadcn/spinner';
-import { PostCompanyReq, PutCompanyReq } from '@/api/company';
+import { PostCompanyReq, PutCompanyReq } from '@/lib/api/company';
 
 const companyFormSchema = z.object({
   company_id: z.string().min(1, { message: '회사 ID를 입력해주세요.' }),

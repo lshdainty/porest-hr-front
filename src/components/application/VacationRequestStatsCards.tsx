@@ -1,4 +1,4 @@
-import { GetUserRequestedVacationStatsResp } from '@/api/vacation';
+import { GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { Progress } from '@/components/shadcn/progress';

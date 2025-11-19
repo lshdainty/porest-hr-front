@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { usePostDues, usePutDues, useDeleteDues, GetYearDuesResp } from '@/api/dues';
+import { usePostDuesMutation, usePutDuesMutation, useDeleteDuesMutation } from '@/hooks/queries/useDues';
+import { GetYearDuesResp } from '@/lib/api/dues';
 import { Badge } from '@/components/shadcn/badge';
 import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
@@ -26,9 +27,9 @@ interface DuesTableProps {
 }
 
 export default function DuesTable({ yearDues = [] }: DuesTableProps) {
-  const { mutate: postDues } = usePostDues();
-  const { mutate: putDues } = usePutDues();
-  const { mutate: deleteDues } = useDeleteDues();
+  const { mutate: postDues } = usePostDuesMutation();
+  const { mutate: putDues } = usePutDuesMutation();
+  const { mutate: deleteDues } = useDeleteDuesMutation();
   const [tableData, setTableData] = useState<EditableDuesData[]>([]);
   const [modifiedData, setModifiedData] = useState<ModifiedData>({
     created: [],

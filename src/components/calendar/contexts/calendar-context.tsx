@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import type { GetHolidaysResp } from '@/api/holiday';
+import type { GetHolidaysResp } from '@/lib/api/holiday';
 import type { IEvent, IUser } from '@/components/calendar/interfaces';
 import type { TBadgeVariant, TCalendarType, TCalendarView, TVisibleHours, TWorkingHours } from '@/components/calendar/types';
 import type { Dispatch, SetStateAction } from 'react';

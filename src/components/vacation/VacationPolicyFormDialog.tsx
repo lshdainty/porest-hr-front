@@ -1,4 +1,4 @@
-import { usePostVacationPolicy } from '@/api/vacation';
+import { usePostVacationPolicyMutation } from '@/hooks/queries/useVacations';
 import { Button } from '@/components/shadcn/button';
 import {
   Card,
@@ -262,7 +262,7 @@ export function VacationPolicyFormDialog({
   repeatUnitTypes = []
 }: VacationPolicyFormDialogProps) {
   const [open, setOpen] = useState(false);
-  const { mutateAsync: postVacationPolicy, isPending } = usePostVacationPolicy();
+  const { mutateAsync: postVacationPolicy, isPending } = usePostVacationPolicyMutation();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),

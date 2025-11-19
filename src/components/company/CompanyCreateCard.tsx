@@ -3,7 +3,7 @@ import { Building2, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Button } from '@/components/shadcn/button';
 import CompanyFormDialog from '@/components/company/CompanyFormDialog';
-import { PostCompanyReq } from '@/api/company';
+import { PostCompanyReq } from '@/lib/api/company';
 
 interface CompanyCreateCardProps {
   onCompanyCreate: (companyData: PostCompanyReq) => void;

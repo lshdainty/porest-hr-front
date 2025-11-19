@@ -1,6 +1,6 @@
-import { useGetEffectiveTypes, useGetExpirationTypes } from '@/api/type';
-import { useGetUsers } from '@/api/user';
-import { useGetUserAssignedVacationPolicies, usePostManualGrantVacation } from '@/api/vacation';
+import { useEffectiveTypesQuery, useExpirationTypesQuery } from '@/hooks/queries/useTypes';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
+import { useUserAssignedVacationPoliciesQuery, usePostManualGrantVacationMutation } from '@/hooks/queries/useVacations';
 import { Button } from '@/components/shadcn/button';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import {
@@ -48,10 +48,10 @@ export default function VacationGrantDialog({
   open,
   onClose,
 }: VacationGrantDialogProps) {
-  const { data: users, isLoading: isLoadingUsers } = useGetUsers();
-  const { mutate: grantVacation, isPending } = usePostManualGrantVacation();
-  const { data: effectiveTypes = [] } = useGetEffectiveTypes();
-  const { data: expirationTypes = [] } = useGetExpirationTypes();
+  const { data: users, isLoading: isLoadingUsers } = useUsersQuery();
+  const { mutate: grantVacation, isPending } = usePostManualGrantVacationMutation();
+  const { data: effectiveTypes = [] } = useEffectiveTypesQuery();
+  const { data: expirationTypes = [] } = useExpirationTypesQuery();
   const [useCustomDates, setUseCustomDates] = useState(false);
 
   const form = useForm<VacationGrantFormValues>({
@@ -74,10 +74,11 @@ export default function VacationGrantDialog({
   const expiryDate = form.watch('expiryDate');
 
   // 선택된 사용자의 MANUAL_GRANT 휴가 정책 조회
-  const { data: vacationPolicies, isLoading: isLoadingPolicies } = useGetUserAssignedVacationPolicies({
-    user_id: selectedUser,
-    grant_method: 'MANUAL_GRANT'
-  });
+  const { data: vacationPolicies, isLoading: isLoadingPolicies } = useUserAssignedVacationPoliciesQuery(
+    selectedUser,
+    undefined,
+    'MANUAL_GRANT'
+  );
 
   // 선택된 정책 찾기
   const selectedPolicy = vacationPolicies?.find(

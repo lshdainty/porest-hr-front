@@ -1,5 +1,5 @@
-import { useGetYearOperationDues, useGetMonthBirthDues, useGetUsersMonthBirthDues, useGetYearDues } from '@/api/dues';
-import { useGetUsers } from '@/api/user';
+import { useYearOperationDuesQuery, useMonthBirthDuesQuery, useUsersMonthBirthDuesQuery, useYearDuesQuery } from '@/hooks/queries/useDues';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
 import TotalDues from '@/components/dues/TotalDues';
 import UserBirthDues from '@/components/dues/UserBirthDues';
 import DuesTable from '@/components/dues/DuesTable';
@@ -12,11 +12,11 @@ export default function Dues() {
   const year = dayjs().format('YYYY');
   const month = dayjs().format('MM');
 
-  const { data: totalDues, isLoading: totalDuesLoading } = useGetYearOperationDues({ year });
-  const { data: birthDues, isLoading: birthDuesLoading } = useGetMonthBirthDues({ year, month });
-  const { data: usersBirthDues, isLoading: usersBirthDuesLoading } = useGetUsersMonthBirthDues({ year });
-  const { data: users, isLoading: usersLoading } = useGetUsers();
-  const { data: yearDues, isLoading: yearDuesLoading } = useGetYearDues({ year });
+  const { data: totalDues, isLoading: totalDuesLoading } = useYearOperationDuesQuery(year);
+  const { data: birthDues, isLoading: birthDuesLoading } = useMonthBirthDuesQuery(year, month);
+  const { data: usersBirthDues, isLoading: usersBirthDuesLoading } = useUsersMonthBirthDuesQuery(year);
+  const { data: users, isLoading: usersLoading } = useUsersQuery();
+  const { data: yearDues, isLoading: yearDuesLoading } = useYearDuesQuery(year);
 
   const totalDuesCombinedLoading = totalDuesLoading || birthDuesLoading;
   const userBirthDuesCombinedLoading = usersBirthDuesLoading || usersLoading;

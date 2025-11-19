@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import {
-  useGetHolidaysByStartEndDate,
-  usePostHoliday,
-  usePutHoliday,
-  useDeleteHoliday,
+  useHolidaysByPeriodQuery,
+  usePostHolidayMutation,
+  usePutHolidayMutation,
+  useDeleteHolidayMutation,
+} from '@/hooks/queries/useHolidays';
+import {
   type GetHolidaysResp,
   type PostHolidayReq,
   type PutHolidayReq,
-} from '@/api/holiday';
+} from '@/lib/api/holiday';
 import HolidayEditDialog from '@/components/holiday/HolidayEditDialog';
 import HolidayList from '@/components/holiday/HolidayList';
 import HolidayListSkeleton from '@/components/holiday/HolidayListSkeleton';
@@ -27,14 +29,10 @@ export default function Holiday() {
   const startDate = `${currentYear}0101`;
   const endDate = `${currentYear}1231`;
 
-  const { data: holidays, isLoading: holidaysLoding, refetch } = useGetHolidaysByStartEndDate({
-    start_date: startDate,
-    end_date: endDate,
-    country_code: 'KR'
-  });
-  const postMutation = usePostHoliday();
-  const putMutation = usePutHoliday();
-  const deleteMutation = useDeleteHoliday();
+  const { data: holidays, isLoading: holidaysLoding, refetch } = useHolidaysByPeriodQuery(startDate, endDate);
+  const postMutation = usePostHolidayMutation();
+  const putMutation = usePutHolidayMutation();
+  const deleteMutation = useDeleteHolidayMutation();
 
   const handleSave = (data: PostHolidayReq) => {
     const payload = {

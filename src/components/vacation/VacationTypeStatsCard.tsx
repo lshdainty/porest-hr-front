@@ -1,4 +1,4 @@
-import { GetAvailableVacationsResp } from '@/api/vacation';
+import { GetAvailableVacationsResp } from '@/lib/api/vacation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { cn } from '@/lib/utils';
 import { useEffect, useMemo, useRef, useState } from 'react';

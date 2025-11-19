@@ -1,5 +1,7 @@
-import { useGetCompany, useGetCompanyWithDepartments, usePostCompany, usePutCompany, type PostCompanyReq, type PutCompanyReq } from '@/api/company';
-import { useDeleteDepartment, usePostDepartment, usePutDepartment, type PostDepartmentReq, type PutDepartmentReq } from '@/api/department';
+import { useCompanyQuery, useCompanyWithDepartmentsQuery, usePostCompanyMutation, usePutCompanyMutation } from '@/hooks/queries/useCompanies';
+import { type PostCompanyReq, type PutCompanyReq } from '@/lib/api/company';
+import { useDeleteDepartmentMutation, usePostDepartmentMutation, usePutDepartmentMutation } from '@/hooks/queries/useDepartments';
+import { type PostDepartmentReq, type PutDepartmentReq } from '@/lib/api/department';
 import CompanyCreateCard from '@/components/company/CompanyCreateCard';
 import CompanyFormDialog from '@/components/company/CompanyFormDialog';
 import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
@@ -16,15 +18,13 @@ export default function Company() {
   const [selectedDept, setSelectedDept] = useState<any | null>(null);
   const [isCompanyEditDialogOpen, setIsCompanyEditDialogOpen] = useState(false);
 
-  const { data: company, isLoading } = useGetCompany();
-  const { data: companyWithDepartments } = useGetCompanyWithDepartments({
-    company_id: company?.company_id ?? ''
-  });
-  const { mutate: createCompany } = usePostCompany();
-  const { mutate: updateCompany } = usePutCompany();
-  const { mutate: createDepartment } = usePostDepartment();
-  const { mutate: updateDepartment } = usePutDepartment();
-  const { mutate: deleteDepartment } = useDeleteDepartment();
+  const { data: company, isLoading } = useCompanyQuery();
+  const { data: companyWithDepartments } = useCompanyWithDepartmentsQuery(company?.company_id ?? '');
+  const { mutate: createCompany } = usePostCompanyMutation();
+  const { mutate: updateCompany } = usePutCompanyMutation();
+  const { mutate: createDepartment } = usePostDepartmentMutation();
+  const { mutate: updateDepartment } = usePutDepartmentMutation();
+  const { mutate: deleteDepartment } = useDeleteDepartmentMutation();
 
   const departments = useMemo(() => {
     return companyWithDepartments?.departments || [];

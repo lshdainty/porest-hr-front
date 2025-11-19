@@ -1,4 +1,5 @@
-import { useDeleteVacationPolicy, type GetVacationPoliciesResp } from '@/api/vacation'
+import { useDeleteVacationPolicyMutation } from '@/hooks/queries/useVacations'
+import { type GetVacationPoliciesResp } from '@/lib/api/vacation'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +22,7 @@ export function VacationPolicyDeleteDialog({
   policy,
   trigger
 }: VacationPolicyDeleteDialogProps) {
-  const deleteVacationPolicy = useDeleteVacationPolicy()
+  const deleteVacationPolicy = useDeleteVacationPolicyMutation()
 
   const handleDelete = async () => {
     if (policy?.vacation_policy_id) {

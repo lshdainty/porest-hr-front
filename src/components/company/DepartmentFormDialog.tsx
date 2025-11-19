@@ -24,8 +24,8 @@ import {
   SelectValue
 } from '@/components/shadcn/select';
 import { Spinner } from '@/components/shadcn/spinner';
-import { PostDepartmentReq, PutDepartmentReq } from '@/api/department';
-import { useGetUsers } from '@/api/user';
+import { PostDepartmentReq, PutDepartmentReq } from '@/lib/api/department';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
 
 const departmentFormSchema = z.object({
   department_name: z.string().min(1, { message: '영문 부서명을 입력해주세요.' }),
@@ -61,7 +61,7 @@ export default function DepartmentFormDialog({
   parentId,
   companyId
 }: DepartmentFormDialogProps) {
-  const { data: users, isLoading: usersLoading } = useGetUsers();
+  const { data: users, isLoading: usersLoading } = useUsersQuery();
 
   const form = useForm<DepartmentFormValues>({
     resolver: zodResolver(departmentFormSchema),

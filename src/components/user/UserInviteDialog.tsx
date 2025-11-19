@@ -1,5 +1,5 @@
-import type { TypeResp } from '@/api/type'
-import { useGetUserIdDuplicate, usePostUserInvite, usePutInvitedUser } from '@/api/user'
+import type { TypeResp } from '@/lib/api/type'
+import { useUserIdDuplicateQuery, usePostUserInviteMutation, usePutInvitedUserMutation } from '@/hooks/queries/useUsers'
 import { Button } from '@/components/shadcn/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog'
 import { Field, FieldError, FieldLabel } from '@/components/shadcn/field'
@@ -42,15 +42,13 @@ interface UserInviteDialogProps {
 
 export default function UserInviteDialog({ open, onOpenChange, title, companyOptions, initialData }: UserInviteDialogProps) {
   const [userIdToCheck, setUserIdToCheck] = useState('')
-  const { mutateAsync: inviteUser, isPending: isInvitePending } = usePostUserInvite()
-  const { mutateAsync: updateInvitedUser, isPending: isUpdatePending } = usePutInvitedUser()
+  const { mutateAsync: inviteUser, isPending: isInvitePending } = usePostUserInviteMutation()
+  const { mutateAsync: updateInvitedUser, isPending: isUpdatePending } = usePutInvitedUserMutation()
 
   const isEditMode = !!initialData?.user_id
   const isPending = isInvitePending || isUpdatePending
 
-  const { data: duplicateCheckResult, isLoading: isCheckingDuplicate } = useGetUserIdDuplicate({
-    user_id: userIdToCheck
-  })
+  const { data: duplicateCheckResult, isLoading: isCheckingDuplicate } = useUserIdDuplicateQuery(userIdToCheck)
 
   const form = useForm<UserInviteFormValues>({
     resolver: zodResolver(formSchema),

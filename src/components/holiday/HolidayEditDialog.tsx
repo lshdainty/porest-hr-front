@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
-import { type GetHolidaysResp, type PostHolidayReq } from '@/api/holiday';
+import { type GetHolidaysResp, type PostHolidayReq } from '@/lib/api/holiday';
 
 const formSchema = z.object({
   holiday_name: z.string().min(1, { message: '공휴일 이름을 입력해주세요.' }),

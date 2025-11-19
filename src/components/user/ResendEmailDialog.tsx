@@ -1,4 +1,4 @@
-import { usePostResendInvitation } from '@/api/user'
+import { usePostResendInvitationMutation } from '@/hooks/queries/useUsers'
 import { Button } from '@/components/shadcn/button'
 import {
   Dialog,
@@ -18,7 +18,7 @@ interface ResendEmailDialogProps {
 }
 
 export default function ResendEmailDialog({ open, onOpenChange, userId, userEmail }: ResendEmailDialogProps) {
-  const { mutateAsync: resendInvitation, isPending } = usePostResendInvitation()
+  const { mutateAsync: resendInvitation, isPending } = usePostResendInvitationMutation()
 
   const handleConfirm = async () => {
     await resendInvitation(userId)

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Tree, TreeNode } from 'react-organizational-chart';
 import { Building2, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/shadcn/card'
-import { GetCompanyWithDepartment } from '@/api/company';
+import { GetCompanyWithDepartment } from '@/lib/api/company';
 
 interface DepartmentChartPanelProps {
   departments: GetCompanyWithDepartment[];

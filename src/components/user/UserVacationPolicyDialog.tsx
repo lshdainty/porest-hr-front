@@ -1,13 +1,13 @@
 import {
-  useGetEffectiveTypes,
-  useGetExpirationTypes,
-  useGetGrantMethodTypes
-} from '@/api/type'
+  useEffectiveTypesQuery,
+  useExpirationTypesQuery,
+  useGrantMethodTypesQuery
+} from '@/hooks/queries/useTypes'
 import {
-  useDeleteRevokeVacationPoliciesFromUser,
-  useGetUserVacationPolicyAssignmentStatus,
-  usePostAssignVacationPoliciesToUser
-} from '@/api/vacation'
+  useDeleteRevokeVacationPoliciesFromUserMutation,
+  useUserVacationPolicyAssignmentStatusQuery,
+  usePostAssignVacationPoliciesToUserMutation
+} from '@/hooks/queries/useVacations'
 import { Badge } from '@/components/shadcn/badge'
 import { Button } from '@/components/shadcn/button'
 import {
@@ -40,16 +40,14 @@ export default function UserVacationPolicyDialog({
   const [initialRightPolicyIds, setInitialRightPolicyIds] = useState<Set<string>>(new Set())
 
   // API 호출로 할당 상태 조회
-  const { data: assignmentStatus, isLoading, isError } = useGetUserVacationPolicyAssignmentStatus({
-    user_id: userId
-  })
-  const { data: grantMethodTypes } = useGetGrantMethodTypes()
-  const { data: effectiveTypes } = useGetEffectiveTypes()
-  const { data: expirationTypes } = useGetExpirationTypes()
+  const { data: assignmentStatus, isLoading, isError } = useUserVacationPolicyAssignmentStatusQuery(userId)
+  const { data: grantMethodTypes } = useGrantMethodTypesQuery()
+  const { data: effectiveTypes } = useEffectiveTypesQuery()
+  const { data: expirationTypes } = useExpirationTypesQuery()
 
   // 휴가 정책 할당/회수 API
-  const assignPoliciesMutation = usePostAssignVacationPoliciesToUser()
-  const revokePoliciesMutation = useDeleteRevokeVacationPoliciesFromUser()
+  const assignPoliciesMutation = usePostAssignVacationPoliciesToUserMutation()
+  const revokePoliciesMutation = useDeleteRevokeVacationPoliciesFromUserMutation()
 
   // Helper 함수: code로 displayName 찾기
   const getDisplayName = (code: string | null | undefined, types: Array<{ code: string; name: string }> | undefined) => {
@@ -125,16 +123,16 @@ export default function UserVacationPolicyDialog({
       // 추가된 정책이 있으면 할당 API 호출
       if (addedPolicyIds.length > 0) {
         await assignPoliciesMutation.mutateAsync({
-          user_id: userId,
-          vacation_policy_ids: addedPolicyIds
+          userId: userId,
+          vacationPolicyIds: addedPolicyIds
         })
       }
 
       // 제거된 정책이 있으면 회수 API 호출
       if (removedPolicyIds.length > 0) {
         await revokePoliciesMutation.mutateAsync({
-          user_id: userId,
-          vacation_policy_ids: removedPolicyIds
+          userId: userId,
+          vacationPolicyIds: removedPolicyIds
         })
       }
 

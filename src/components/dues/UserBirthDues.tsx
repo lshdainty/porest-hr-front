@@ -1,5 +1,5 @@
-import { GetUsersMonthBirthDuesResp } from '@/api/dues';
-import { GetUsersResp } from '@/api/user';
+import { GetUsersMonthBirthDuesResp } from '@/lib/api/dues';
+import { GetUsersResp } from '@/lib/api/user';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';

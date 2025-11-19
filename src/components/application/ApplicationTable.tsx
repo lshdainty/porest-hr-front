@@ -1,5 +1,6 @@
-import { TypeResp } from '@/api/type';
-import { GetUserRequestedVacationsResp, usePostCancelVacationRequest } from '@/api/vacation';
+import { TypeResp } from '@/lib/api/type';
+import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
+import { usePostCancelVacationRequestMutation } from '@/hooks/queries/useVacations';
 import VacationApprovalForm from '@/components/application/VacationApprovalForm';
 import VacationGrantDialog from '@/components/application/VacationGrantDialog';
 import { Badge } from '@/components/shadcn/badge';
@@ -43,7 +44,7 @@ export default function ApplicationTable({
   const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
   const [grantDialogOpen, setGrantDialogOpen] = useState(false);
 
-  const { mutate: cancelVacationRequest } = usePostCancelVacationRequest();
+  const { mutate: cancelVacationRequest } = usePostCancelVacationRequestMutation();
 
   const handleDetailView = (request: GetUserRequestedVacationsResp) => {
     setSelectedRequest(request);
@@ -59,8 +60,8 @@ export default function ApplicationTable({
     if (!userId) return;
 
     cancelVacationRequest({
-      vacation_grant_id: requestId,
-      user_id: userId
+      vacationGrantId: requestId,
+      userId: userId
     });
   };
 

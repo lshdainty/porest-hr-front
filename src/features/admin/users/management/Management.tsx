@@ -1,11 +1,11 @@
-import { useGetUsers } from '@/api/user';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
 import UserCompanyCard from '@/components/user/UserCompanyCard';
 import UserCompanyCardSkeleton from '@/components/user/UserCompanyCardSkeleton';
 import UserTable from '@/components/user/UserTable';
 import UserTableSkeleton from '@/components/user/UserTableSkeleton';
 
 export default function Management() {
-  const { data: users, isLoading: usersLoading } = useGetUsers();
+  const { data: users, isLoading: usersLoading } = useUsersQuery();
 
   if (usersLoading) {
     return (
