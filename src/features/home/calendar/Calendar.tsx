@@ -3,12 +3,12 @@
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 
-import { useGetEventsByPeriod } from '@/api/calendar';
-import { useGetHolidaysByStartEndDate } from '@/api/holiday';
-import { useGetUsers } from '@/api/user';
 import { ClientContainer } from '@/components/calendar/components/client-container';
 import { CalendarProvider, useCalendar } from '@/components/calendar/contexts/calendar-context';
 import { convertApiEvents } from '@/components/calendar/helpers';
+import { useEventsByPeriodQuery } from '@/hooks/queries/useCalendars';
+import { useHolidaysByPeriodQuery } from '@/hooks/queries/useHolidays';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
 
 import type { IEvent, IUser } from '@/components/calendar/interfaces';
 
@@ -52,17 +52,16 @@ function CalendarContent() {
   }, [selectedDate]);
 
   // 이벤트 API 호출 - eventRange가 변경될 때마다 재호출
-  const { data: apiEvents, isLoading: eventsLoading } = useGetEventsByPeriod({
-    start_date: dayjs(eventRange.start).format('YYYY-MM-DDTHH:mm:ss'),
-    end_date: dayjs(eventRange.end).format('YYYY-MM-DDTHH:mm:ss')
-  });
+  const { data: apiEvents, isLoading: eventsLoading } = useEventsByPeriodQuery(
+    dayjs(eventRange.start).format('YYYY-MM-DDTHH:mm:ss'),
+    dayjs(eventRange.end).format('YYYY-MM-DDTHH:mm:ss')
+  );
 
   // 공휴일 API 호출 - 현재 연도의 1월 1일 ~ 12월 31일
-  const { data: apiHolidays, isLoading: holidaysLoading } = useGetHolidaysByStartEndDate({
-    start_date: dayjs(holidayRange.start).format('YYYYMMDD'),
-    end_date: dayjs(holidayRange.end).format('YYYYMMDD'),
-    country_code: 'KR'
-  });
+  const { data: apiHolidays, isLoading: holidaysLoading } = useHolidaysByPeriodQuery(
+    dayjs(holidayRange.start).format('YYYYMMDD'),
+    dayjs(holidayRange.end).format('YYYYMMDD')
+  );
 
   // API 응답을 받아서 변환 후 context 업데이트
   useEffect(() => {
@@ -93,7 +92,7 @@ function CalendarContent() {
 
 // 외부 컴포넌트: users 데이터만 한 번 가져오고 CalendarProvider에 전달
 export default function Calendar() {
-  const { data: apiUsers, isLoading: usersLoading } = useGetUsers();
+  const { data: apiUsers, isLoading: usersLoading } = useUsersQuery();
 
   // 초기 로딩용 빈 배열
   const [users, setUsers] = useState<IUser[]>([]);
