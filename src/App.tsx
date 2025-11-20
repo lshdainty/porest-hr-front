@@ -1,7 +1,7 @@
-import '@/lib/api'
 import { Toaster } from '@/components/alert/toast'
 import { ThemeProvider } from '@/components/shadcn/themeProvider'
 import { UserProvider } from '@/contexts/UserContext'
+import '@/lib/api'
 import Providers from '@/providers'
 import Router from '@/Router'
 import { BrowserRouter } from 'react-router-dom'
@@ -16,7 +16,7 @@ const App: React.FC = () => {
     <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
       <Toaster />
       <Providers>
-        <BrowserRouter basename='/' future={{v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <BrowserRouter basename='/'>
           <UserProvider>
             <Router />
           </UserProvider>
