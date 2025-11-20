@@ -13,7 +13,7 @@ interface ReportHeaderProps {
   isFilterOpen: boolean;
   setIsFilterOpen: (open: boolean) => void;
   activeFiltersCount: number;
-  handleExcelImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleExcelImport: () => void;
   handleExcelExport: () => void;
   handleDownloadTemplate: () => void;
   handleDownloadUnregistered: () => void;
@@ -64,21 +64,10 @@ export default function ReportHeader({
           <div className="h-8 w-px bg-border" />
 
           {/* 엑셀 관련 버튼들 */}
-          <div className="relative">
-            <input
-              type="file"
-              accept=".xlsx, .xls"
-              onChange={handleExcelImport}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-              id="excel-import"
-            />
-            <Button variant="outline" asChild>
-              <label htmlFor="excel-import" className="cursor-pointer">
-                <FileUp className="w-4 h-4 mr-2" />
-                엑셀 임포트
-              </label>
-            </Button>
-          </div>
+          <Button variant="outline" onClick={handleExcelImport}>
+            <FileUp className="w-4 h-4 mr-2" />
+            엑셀 임포트
+          </Button>
 
           <Button variant="outline" onClick={handleExcelExport}>
             <FileDown className="w-4 h-4 mr-2" />

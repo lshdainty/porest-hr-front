@@ -4,19 +4,21 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
 import {
+  fetchDeleteWorkHistory,
+  fetchGetWorkDivision,
   fetchGetWorkGroups,
+  fetchGetWorkHistories,
   fetchGetWorkPartLabel,
   fetchGetWorkParts,
-  fetchGetWorkDivision,
-  fetchGetWorkHistories,
   fetchPostCreateWorkHistory,
+  fetchPostCreateWorkHistoryBatch,
   fetchPutUpdateWorkHistory,
-  fetchDeleteWorkHistory,
-  type WorkCodeResp,
-  type WorkHistoryResp,
   type CreateWorkHistoryReq,
   type CreateWorkHistoryResp,
-  type UpdateWorkHistoryReq
+  type UpdateWorkHistoryReq,
+  type WorkCodeResp,
+  type WorkGroupWithParts,
+  type WorkHistoryResp
 } from '@/lib/api/work'
 
 const workKeys = createQueryKeys('works')
@@ -26,6 +28,53 @@ export const useWorkGroupsQuery = () => {
   return useQuery<WorkCodeResp[]>({
     queryKey: workKeys.list({ type: 'groups' }),
     queryFn: () => fetchGetWorkGroups()
+  })
+}
+
+// 업무 그룹 + Parts 포함 조회 훅 (모든 Label과 Part를 한번에 조회하여 병합)
+export const useWorkGroupsWithPartsQuery = () => {
+  return useQuery<WorkGroupWithParts[]>({
+    queryKey: workKeys.list({ type: 'groupsWithParts' }),
+    queryFn: async () => {
+      // 1. 모든 업무 분류(Groups) 조회
+      const workGroups = await fetchGetWorkGroups()
+
+      if (!workGroups || workGroups.length === 0) return []
+
+      // 2. 모든 업무 분류에 대한 Label 조회
+      const labelsPromises = workGroups.map(group => fetchGetWorkPartLabel(group.work_code_seq))
+      const labelsResults = await Promise.all(labelsPromises)
+
+      console.log('test : ', labelsResults)
+
+      // 3. 모든 Label에 대한 Part 조회
+      const allLabels = labelsResults.flat()
+      console.log(allLabels)
+      const partsPromises = allLabels.map(label => fetchGetWorkParts(label.work_code_seq))
+      const partsResults = await Promise.all(partsPromises)
+      const allParts = partsResults.flat()
+      console.log('aprt : ', allParts)
+
+
+      // 4. 데이터 병합 (Group -> Label -> Part)
+      const mergedData: WorkGroupWithParts[] = workGroups.map(group => {
+        // 해당 그룹의 라벨들 찾기
+        const groupLabels = allLabels.filter(label => label.parent_work_code_seq === group.work_code_seq)
+        const groupLabelSeqs = groupLabels.map(label => label.work_code_seq)
+
+        // 해당 라벨들의 파트들 찾기
+        const groupParts = allParts.filter(part =>
+          part.parent_work_code_seq && groupLabelSeqs.includes(part.parent_work_code_seq)
+        )
+
+        return {
+          ...group,
+          parts: groupParts
+        }
+      })
+
+      return mergedData
+    }
   })
 }
 
@@ -81,5 +130,12 @@ export const usePutUpdateWorkHistoryMutation = () => {
 export const useDeleteWorkHistoryMutation = () => {
   return useMutation<void, Error, number>({
     mutationFn: (workHistorySeq: number) => fetchDeleteWorkHistory(workHistorySeq)
+  })
+}
+
+// 업무 히스토리 일괄 생성 Mutation 훅
+export const usePostCreateWorkHistoryBatchMutation = () => {
+  return useMutation<void, Error, CreateWorkHistoryReq[]>({
+    mutationFn: (data: CreateWorkHistoryReq[]) => fetchPostCreateWorkHistoryBatch(data)
   })
 }

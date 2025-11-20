@@ -1,5 +1,6 @@
 import { toast } from '@/components/alert/toast';
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
+import ExcelImportDialog from '@/components/report/ExcelImportDialog';
 import ReportFilter from '@/components/report/ReportFilter';
 import ReportHeader from '@/components/report/ReportHeader';
 import ReportSkeleton from '@/components/report/ReportSkeleton';
@@ -7,20 +8,19 @@ import ReportTable, { WorkHistory } from '@/components/report/ReportTable';
 import { useUser } from '@/contexts/UserContext';
 import {
   useDeleteWorkHistoryMutation,
+  usePostCreateWorkHistoryBatchMutation,
   usePostCreateWorkHistoryMutation,
   usePutUpdateWorkHistoryMutation,
   useWorkDivisionQuery,
-  useWorkGroupsQuery,
-  useWorkHistoriesQuery,
-  useWorkPartLabelQuery,
-  useWorkPartsQuery,
+  useWorkGroupsWithPartsQuery,
+  useWorkHistoriesQuery
 } from '@/hooks/queries/useWorks';
-import type { WorkHistoryResp } from '@/lib/api/work';
+import { type WorkGroupWithParts, type WorkHistoryResp } from '@/lib/api/work';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 interface ReportContentProps {
-  workGroups: any[];
+  workGroupsWithParts: WorkGroupWithParts[];
   workDivision: any[];
   workHistoriesData: any[];
   refetchWorkHistories: () => Promise<any>;
@@ -28,7 +28,7 @@ interface ReportContentProps {
 }
 
 const ReportContent = ({
-  workGroups,
+  workGroupsWithParts,
   workDivision,
   workHistoriesData,
   refetchWorkHistories,
@@ -37,26 +37,6 @@ const ReportContent = ({
   const createWorkHistory = usePostCreateWorkHistoryMutation();
   const updateWorkHistory = usePutUpdateWorkHistoryMutation();
   const deleteWorkHistory = useDeleteWorkHistoryMutation();
-
-  // 선택된 업무 분류의 seq를 저장
-  const [selectedCategorySeq, setSelectedCategorySeq] = useState<number>(0);
-  // 조회된 work_part label의 seq를 저장
-  const [workPartLabelSeq, setWorkPartLabelSeq] = useState<number>(0);
-
-  // 1단계: 선택된 업무 분류의 하위 LABEL(work_part) 조회
-  const { data: workPartLabels } = useWorkPartLabelQuery(selectedCategorySeq);
-
-  // 2단계: work_part label의 하위 OPTION 조회
-  const { data: workPartOptions, isLoading: isWorkPartOptionsLoading } = useWorkPartsQuery(workPartLabelSeq);
-
-  // workPartLabels가 조회되면 첫 번째 label의 seq를 저장
-  useEffect(() => {
-    if (workPartLabels && workPartLabels.length > 0) {
-      setWorkPartLabelSeq(workPartLabels[0].work_code_seq);
-    } else {
-      setWorkPartLabelSeq(0);
-    }
-  }, [workPartLabels]);
 
   const [workHistories, setWorkHistories] = useState<WorkHistory[]>([]);
 
@@ -127,9 +107,6 @@ const ReportContent = ({
 
   const handleEdit = (row: WorkHistory) => {
     // 수정 모드 진입 시 해당 row의 업무 분류에 해당하는 업무 파트 옵션 조회
-    if (row.work_group) {
-      setSelectedCategorySeq(row.work_group.work_code_seq);
-    }
     setEditingRow(row.no);
     setEditData({ ...row });
   };
@@ -322,11 +299,26 @@ const ReportContent = ({
   };
 
   // 엑셀 관련 함수
-  const handleExcelImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      console.log('엑셀 임포트:', file);
-      // 엑셀 임포트 로직 구현
+  const [isExcelImportOpen, setIsExcelImportOpen] = useState(false);
+
+  const createWorkHistoryBatch = usePostCreateWorkHistoryBatchMutation();
+
+  const handleExcelImport = () => {
+    setIsExcelImportOpen(true);
+  };
+
+  const handleExcelImportOpenChange = (open: boolean) => {
+    setIsExcelImportOpen(open);
+  };
+
+  const handleBatchRegister = async (data: any[]) => {
+    try {
+      await createWorkHistoryBatch.mutateAsync(data);
+      await refetchWorkHistories();
+      toast.success('일괄 등록이 완료되었습니다.');
+    } catch (error) {
+      console.error('일괄 등록 실패:', error);
+      toast.error('일괄 등록에 실패했습니다.');
     }
   };
 
@@ -393,24 +385,32 @@ const ReportContent = ({
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           handleDuplicate={handleDuplicate}
-          workGroups={workGroups}
+          workGroups={workGroupsWithParts}
           isWorkGroupsLoading={false} // QueryAsyncBoundary가 로딩을 처리하므로 여기서는 false
-          workPartOptions={workPartOptions}
-          isWorkPartOptionsLoading={isWorkPartOptionsLoading}
           workDivision={workDivision}
           isWorkDivisionLoading={false} // QueryAsyncBoundary가 로딩을 처리하므로 여기서는 false
-          setSelectedCategorySeq={setSelectedCategorySeq}
         />
       </div>
+
+      <ExcelImportDialog
+        open={isExcelImportOpen}
+        onOpenChange={handleExcelImportOpenChange}
+        workGroups={workGroupsWithParts}
+        workDivision={workDivision}
+        onRegister={handleBatchRegister}
+        isRegistering={createWorkHistoryBatch.isPending}
+      />
     </div>
   );
 };
 
 export default function Report() {
   const { loginUser } = useUser();
-  const { data: workGroups, isLoading: isWorkGroupsLoading, error: workGroupsError } = useWorkGroupsQuery();
+  const { data: workGroupsWithParts, isLoading: isWorkGroupsLoading, error: workGroupsError } = useWorkGroupsWithPartsQuery();
   const { data: workDivision, isLoading: isWorkDivisionLoading, error: workDivisionError } = useWorkDivisionQuery();
   const { data: workHistoriesData, isLoading: isWorkHistoriesLoading, error: workHistoriesError, refetch: refetchWorkHistories } = useWorkHistoriesQuery();
+
+  console.log('workGroupsWithParts:', workGroupsWithParts);
 
   const isLoading = isWorkGroupsLoading || isWorkDivisionLoading || isWorkHistoriesLoading;
   const error = workGroupsError || workDivisionError || workHistoriesError;
@@ -428,7 +428,7 @@ export default function Report() {
       }
     >
       <ReportContent
-        workGroups={workGroups || []}
+        workGroupsWithParts={workGroupsWithParts || []}
         workDivision={workDivision || []}
         workHistoriesData={workHistoriesData || []}
         refetchWorkHistories={refetchWorkHistories}

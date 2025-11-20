@@ -21,7 +21,7 @@ import {
 } from '@/components/shadcn/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Textarea } from '@/components/shadcn/textarea';
-import { WorkCodeResp } from '@/lib/api/work';
+import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
@@ -64,13 +64,10 @@ interface ReportTableProps {
   handleEdit: (row: WorkHistory) => void;
   handleDelete: (row: WorkHistory) => void;
   handleDuplicate: (row: WorkHistory) => void;
-  workGroups: WorkCodeResp[] | undefined;
+  workGroups: WorkGroupWithParts[];
   isWorkGroupsLoading: boolean;
-  workPartOptions: WorkCodeResp[] | undefined;
-  isWorkPartOptionsLoading: boolean;
   workDivision: WorkCodeResp[] | undefined;
   isWorkDivisionLoading: boolean;
-  setSelectedCategorySeq: (seq: number) => void;
 }
 
 export default function ReportTable({
@@ -92,11 +89,8 @@ export default function ReportTable({
   handleDuplicate,
   workGroups,
   isWorkGroupsLoading,
-  workPartOptions,
-  isWorkPartOptionsLoading,
   workDivision,
   isWorkDivisionLoading,
-  setSelectedCategorySeq,
 }: ReportTableProps) {
   const isAllSelected =
     workHistories.length > 0 && selectedRows.length === workHistories.length;
@@ -221,23 +215,15 @@ export default function ReportTable({
                     <TableCell>
                       {editingRow === row.no ? (
                         <Select
-                          value={editData?.work_group?.work_code || undefined}
+                          value={editData?.work_group?.work_code || ""}
                           onValueChange={(value) => {
-                            console.log('업무 분류 선택:', value);
-                            console.log('workGroups:', workGroups);
-                            // 업무 분류 선택 시 전체 객체 저장
                             const selectedGroup = workGroups?.find((g) => g.work_code === value);
-                            console.log('selectedGroup:', selectedGroup);
                             if (selectedGroup) {
-                              // 한 번에 여러 필드 업데이트
                               setEditData((prev) => prev ? {
                                 ...prev,
                                 work_group: selectedGroup,
                                 work_part: undefined // 업무 분류 변경 시 업무 파트 초기화
                               } : null);
-                              setSelectedCategorySeq(selectedGroup.work_code_seq);
-                            } else {
-                              console.error('선택한 업무 분류를 찾을 수 없습니다:', value);
                             }
                           }}
                           disabled={isWorkGroupsLoading}
@@ -262,31 +248,25 @@ export default function ReportTable({
                     <TableCell>
                       {editingRow === row.no ? (
                         <Select
-                          value={editData?.work_part?.work_code || undefined}
+                          value={editData?.work_part?.work_code || ""}
                           onValueChange={(value) => {
-                            console.log('업무 파트 선택:', value);
-                            console.log('workPartOptions:', workPartOptions);
-                            const selectedPart = workPartOptions?.find((p) => p.work_code === value);
-                            console.log('selectedPart:', selectedPart);
+                            const currentGroup = workGroups.find(g => g.work_code === editData?.work_group?.work_code);
+                            const selectedPart = currentGroup?.parts.find((p) => p.work_code === value);
                             if (selectedPart) {
                               updateEditData('work_part', selectedPart);
-                            } else {
-                              console.error('선택한 업무 파트를 찾을 수 없습니다:', value);
                             }
                           }}
-                          disabled={isWorkPartOptionsLoading || !workPartOptions || workPartOptions.length === 0}
+                          disabled={!editData?.work_group}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder={
-                              isWorkPartOptionsLoading
-                                ? "로딩 중..."
-                                : (!workPartOptions || workPartOptions.length === 0)
-                                  ? "업무 분류를 먼저 선택하세요"
-                                  : "업무 파트"
+                              !editData?.work_group
+                                ? "업무 분류를 먼저 선택하세요"
+                                : "업무 파트"
                             } />
                           </SelectTrigger>
                           <SelectContent>
-                            {workPartOptions?.map((part) => (
+                            {workGroups.find(g => g.work_code === editData?.work_group?.work_code)?.parts.map((part) => (
                               <SelectItem key={part.work_code} value={part.work_code}>
                                 {part.work_code_name}
                               </SelectItem>
@@ -302,16 +282,11 @@ export default function ReportTable({
                     <TableCell>
                       {editingRow === row.no ? (
                         <Select
-                          value={editData?.work_division?.work_code || undefined}
+                          value={editData?.work_division?.work_code || ""}
                           onValueChange={(value) => {
-                            console.log('업무 구분 선택:', value);
-                            console.log('workDivision:', workDivision);
                             const selectedDivision = workDivision?.find((d) => d.work_code === value);
-                            console.log('selectedDivision:', selectedDivision);
                             if (selectedDivision) {
                               updateEditData('work_division', selectedDivision);
-                            } else {
-                              console.error('선택한 업무 구분을 찾을 수 없습니다:', value);
                             }
                           }}
                           disabled={isWorkDivisionLoading}

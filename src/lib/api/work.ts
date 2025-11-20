@@ -10,6 +10,10 @@ export interface WorkCodeResp {
   parent_work_code_seq?: number
 }
 
+export interface WorkGroupWithParts extends WorkCodeResp {
+  parts: WorkCodeResp[];
+}
+
 export interface GetWorkPartLabelReq {
   parent_work_code_seq: number
 }
@@ -161,4 +165,25 @@ export async function fetchDeleteWorkHistory(workHistorySeq: number): Promise<vo
   });
 
   if (resp.code !== 200) throw new Error(resp.message);
+}
+
+export async function fetchPostCreateWorkHistoryBatch(data: CreateWorkHistoryReq[]): Promise<void> {
+  const resp: ApiResponse<void> = await api.request({
+    method: 'post',
+    url: `/work-histories/batch`,
+    data
+  });
+
+  if (resp.code !== 200) throw new Error(resp.message);
+}
+
+export async function fetchGetAllWorkCodes(): Promise<WorkCodeResp[]> {
+  const resp: ApiResponse<WorkCodeResp[]> = await api.request({
+    method: 'get',
+    url: `/work-codes/all`
+  });
+
+  if (resp.code !== 200) throw new Error(resp.message);
+
+  return resp.data;
 }
