@@ -156,7 +156,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
                             </div>
                           </TableCell>
                           <TableCell>
-                            {item.used_time}
+                            {item.used_time_str}
                           </TableCell>
                           <TableCell className='pr-4'>
                             <div className='flex justify-end'>
@@ -232,10 +232,10 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
                             </div>
                           </TableCell>
                           <TableCell>
-                            {item.grant_time}시간
+                            {item.grant_time_str}
                           </TableCell>
                           <TableCell>
-                            {item.remain_time}시간
+                            {item.remain_time_str}
                           </TableCell>
                           <TableCell>
                             {formatDate(item.grant_date)}

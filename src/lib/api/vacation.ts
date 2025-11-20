@@ -24,7 +24,9 @@ export interface VacationGrantInfo {
   vacation_type_name: string
   vacation_grant_desc: string
   grant_time: number
+  grant_time_str: string
   remain_time: number
+  remain_time_str: string
   grant_date: string
   expiry_date: string
 }
@@ -35,6 +37,7 @@ export interface VacationUsageInfo {
   vacation_time_type: string
   vacation_time_type_name: string
   used_time: number
+  used_time_str: string
   start_date: string
   end_date: string
 }
