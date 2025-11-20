@@ -5,7 +5,7 @@ import {
   useAvailableVacationsQuery,
   useUserMonthlyVacationStatsQuery,
   useUserVacationStatsQuery,
-  useUserVacationUsagesByPeriodQuery
+  useUserVacationHistoryQuery
 } from '@/hooks/queries/useVacations';
 import ApplicationTable from '@/components/application/ApplicationTable';
 import ApplicationTableSkeleton from '@/components/application/ApplicationTableSkeleton';
@@ -36,11 +36,7 @@ export default function Vacation() {
     selectedUserId,
     dayjs().format('YYYY')
   );
-  const { data: histories, isLoading: historiesLoading } = useUserVacationUsagesByPeriodQuery(
-    selectedUserId,
-    `${dayjs().format('YYYY')}-01-01T00:00:00`,
-    `${dayjs().format('YYYY')}-12-31T23:59:59`
-  );
+  const { data: histories, isLoading: historiesLoading } = useUserVacationHistoryQuery(selectedUserId);
   const { data: vacationStats, isLoading: vacationStatsLoading } = useUserVacationStatsQuery(
     selectedUserId,
     dayjs().format('YYYY-MM-DDTHH:mm:ss')
@@ -84,10 +80,10 @@ export default function Vacation() {
 
   if (!selectedUserId) {
     return (
-        <div className='p-4 sm:p-6 md:p-8'>
-            <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
-            <div>사용자 정보가 없습니다.</div>
-        </div>
+      <div className='p-4 sm:p-6 md:p-8'>
+        <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
+        <div>사용자 정보가 없습니다.</div>
+      </div>
     );
   }
 
@@ -119,7 +115,7 @@ export default function Vacation() {
         </div>
         <div className='xl:col-span-2 flex flex-col'>
           <VacationHistoryTable
-            value={histories || []}
+            value={histories || { grants: [], usages: [] }}
             canAdd={true}
           />
         </div>

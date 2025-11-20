@@ -15,7 +15,7 @@ import {
   useAvailableVacationsQuery,
   useUserMonthlyVacationStatsQuery,
   useUserVacationStatsQuery,
-  useUserVacationUsagesByPeriodQuery
+  useUserVacationHistoryQuery
 } from '@/hooks/queries/useVacations'
 import dayjs from 'dayjs'
 
@@ -49,7 +49,7 @@ const HistoryContent = ({
           <VacationTypeStatsCard value={vacationTypes || []} className='h-full' />
         </div>
         <div className='xl:col-span-2 flex flex-col'>
-          <VacationHistoryTable value={histories || []} canAdd={false} />
+          <VacationHistoryTable value={histories || { grants: [], usages: [] }} canAdd={false} />
         </div>
       </div>
     </div>
@@ -92,11 +92,7 @@ const History = () => {
     user_id,
     dayjs().format('YYYY')
   )
-  const { data: histories, isLoading: historiesLoading, error: historiesError } = useUserVacationUsagesByPeriodQuery(
-    user_id,
-    `${dayjs().format('YYYY')}-01-01T00:00:00`,
-    `${dayjs().format('YYYY')}-12-31T23:59:59`
-  )
+  const { data: histories, isLoading: historiesLoading, error: historiesError } = useUserVacationHistoryQuery(user_id)
   const { data: vacationStats, isLoading: vacationStatsLoading, error: vacationStatsError } = useUserVacationStatsQuery(
     user_id,
     dayjs().format('YYYY-MM-DDTHH:mm:ss')
