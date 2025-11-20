@@ -1,5 +1,3 @@
-import { GetUsersResp, type PutUserReq } from '@/lib/api/user';
-import { usePostUploadProfileMutation } from '@/hooks/queries/useUsers';
 import { Alert, AlertDescription } from '@/components/shadcn/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Button } from '@/components/shadcn/button';
@@ -12,26 +10,28 @@ import { Separator } from '@/components/shadcn/separator';
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Spinner } from '@/components/shadcn/spinner';
 import config from '@/config/config';
+import { usePostUploadProfileMutation } from '@/hooks/queries/useUsers';
+import { GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { companyOptions, departmentOptions } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import {
-  AlertCircle,
-  Briefcase,
-  Building2,
-  Cake,
-  Camera,
-  Clock,
-  Loader2,
-  Mail,
-  Moon,
-  Shield,
-  Trash2,
-  Upload,
-  User as UserIcon,
-  UserRound,
-  UserRoundCog
+    AlertCircle,
+    Briefcase,
+    Building2,
+    Cake,
+    Camera,
+    Clock,
+    Loader2,
+    Mail,
+    Moon,
+    Shield,
+    Trash2,
+    Upload,
+    User as UserIcon,
+    UserRound,
+    UserRoundCog
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -233,8 +233,8 @@ export default function UserEditDialog({ open, onOpenChange, user, onSave }: Use
           <DialogTitle>사용자 수정</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex gap-6 p-6">
-              <div className="w-1/3 flex flex-col items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row gap-6 p-6">
+              <div className="w-full sm:w-1/3 flex flex-col items-center justify-center gap-4">
                 <div className="relative group">
                   {isUploading ? (
                     <div className="relative">
@@ -344,9 +344,9 @@ export default function UserEditDialog({ open, onOpenChange, user, onSave }: Use
                 )}
               </div>
 
-              <Separator orientation="vertical" className="h-auto" />
+              <Separator orientation="vertical" className="hidden sm:block h-auto" />
 
-              <div className="w-2/3 space-y-4">
+              <div className="w-full sm:w-2/3 space-y-4">
                 <Controller
                   control={form.control}
                   name="user_name"

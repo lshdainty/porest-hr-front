@@ -1,200 +1,224 @@
-import React, { useState } from 'react';
-import {
-  GanttProvider,
-  GanttSidebar,
-  GanttSidebarItem,
-  GanttSidebarGroup,
-  GanttTimeline,
-  GanttHeader,
-  GanttFeatureList,
-  GanttFeatureListGroup,
-  GanttFeatureRow,
-  GanttToday,
-  GanttMarker,
-  type GanttFeature,
-  type GanttStatus,
-  type GanttMarkerProps,
-} from '@/components/shadcn-io/gantt';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
+import { Badge } from "@/components/shadcn/badge";
+import { useUsersQuery } from "@/hooks/queries/useUsers";
+import { cn } from "@/lib/utils";
 
-// 목업 데이터
-const mockStatuses: GanttStatus[] = [
-  { id: '96', name: '9 ~ 6', color: '#3b82f6' },
-  { id: '85', name: '8 ~ 5', color: '#10b981' },
-  { id: '107', name: '10 ~ 7', color: '#ef4444' },
-];
+// --- Types ---
 
-const today = new Date();
-const mockFeatures: GanttFeature[] = [
-  {
-    id: '이서준',
-    name: '이서준',
-    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
-    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0),
-    status: mockStatuses[0],
-    // lane: 'team-meetings',
-  },
-  {
-    id: '이민정',
-    name: '이민정',
-    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0),
-    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 19, 0),
-    status: mockStatuses[2],
-    // lane: 'development',
-  },
-  {
-    id: '강동원',
-    name: '강동원',
-    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8, 0),
-    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
-    status: mockStatuses[1],
-    // lane: 'break',
-  },
-  {
-    id: '심규선',
-    name: '심규선',
-    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
-    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0),
-    status: mockStatuses[0],
-    // lane: 'development',
-  },
-];
+interface ScheduleItem {
+  id: string;
+  startTime: string; // "HH:MM" format (24h)
+  endTime: string;   // "HH:MM" format (24h)
+}
 
-const mockMarkers: GanttMarkerProps[] = [
-  {
-    id: 'work-start',
-    date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 0),
-    label: '업무 시작',
-  },
-  {
-    id: 'lunch-time',
-    date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0),
-    label: '점심시간',
-  },
-  {
-    id: 'work-end',
-    date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 19, 0),
-    label: '업무 종료',
-  }
-];
+// --- Helper Functions ---
 
-const Schedule: React.FC = () => {
-  const [features, setFeatures] = useState<GanttFeature[]>(mockFeatures);
-  const [markers, setMarkers] = useState<GanttMarkerProps[]>(mockMarkers);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+const START_HOUR = 7;
+const END_HOUR = 22;
+const TOTAL_HOURS = END_HOUR - START_HOUR;
 
-  const groupedFeatures = features.reduce((acc, feature) => {
-    const lane = feature.lane || 'default';
-    if (!acc[lane]) acc[lane] = [];
-    acc[lane].push(feature);
-    return acc;
-  }, {} as Record<string, GanttFeature[]>);
-
-  const handleFeatureMove = (id: string, startAt: Date, endAt: Date | null) => {
-    setFeatures(prev => prev.map(feature => 
-      feature.id === id 
-        ? { ...feature, startAt, endAt: endAt || feature.endAt }
-        : feature
-    ));
-  };
-
-  const handleAddItem = (date: Date) => {
-    const newFeature: GanttFeature = {
-      id: `new-task-${Date.now()}`,
-      name: '새 작업',
-      startAt: date,
-      endAt: new Date(date.getTime() + 60 * 60 * 1000),
-      status: mockStatuses[0],
-      lane: 'development',
-    };
-    setFeatures(prev => [...prev, newFeature]);
-  };
-
-  const handleRemoveMarker = (id: string) => {
-    setMarkers(prev => prev.filter(marker => marker.id !== id));
-  };
-
-  return (
-    // Layout 구조에 맞게 높이 계산: 100vh - 헤더 높이
-    <div 
-      className="flex flex-col w-full overflow-hidden"
-      style={{
-        height: 'calc(100vh - var(--header-height))', // 헤더 높이 제외
-        maxHeight: 'calc(100vh - var(--header-height))',
-      }}
-    >
-      {/* 페이지 헤더 */}
-      <div className="flex-shrink-0 p-4 bg-muted/50 border-b">
-        <h1 className="text-xl font-bold">시간별 Gantt Chart</h1>
-        <p className="text-sm text-muted-foreground">
-          {selectedDate.toLocaleDateString('ko-KR')} - 00:00 ~ 23:59
-        </p>
-      </div>
-      
-      {/* Gantt Chart 컨테이너 - 나머지 공간 모두 사용 */}
-      <div className="flex-1 w-full overflow-hidden relative min-h-0">
-        <GanttProvider 
-          range="timely" 
-          zoom={100}
-          selectedDate={selectedDate}
-          onAddItem={handleAddItem}
-        >
-          <GanttSidebar>
-            {Object.entries(groupedFeatures).map(([lane, laneFeatures]) => (
-              <GanttSidebarGroup key={lane} name={lane}>
-                {laneFeatures.map(feature => (
-                  <GanttSidebarItem
-                    key={feature.id}
-                    feature={feature}
-                  />
-                ))}
-              </GanttSidebarGroup>
-            ))}
-          </GanttSidebar>
-
-          <GanttTimeline>
-            <GanttHeader />
-            <GanttToday />
-            
-            {markers.map(marker => (
-              <GanttMarker
-                key={marker.id}
-                {...marker}
-                onRemove={handleRemoveMarker}
-              />
-            ))}
-            
-            <GanttFeatureList>
-              <GanttFeatureListGroup>
-                {Object.entries(groupedFeatures).map(([lane, laneFeatures]) => (
-                  <GanttFeatureRow
-                    key={lane}
-                    features={laneFeatures}
-                    onMove={handleFeatureMove}
-                  >
-                    {(feature) => (
-                      <div className="flex items-center gap-2 w-full">
-                        <div
-                          className="w-2 h-2 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: feature.status.color }}
-                        />
-                        <span className="text-xs font-medium truncate flex-1">
-                          {feature.name}
-                        </span>
-                        <span className="text-xs text-muted-foreground flex-shrink-0">
-                          {feature.startAt.getHours().toString().padStart(2, '0')}:
-                          {feature.startAt.getMinutes().toString().padStart(2, '0')}
-                        </span>
-                      </div>
-                    )}
-                  </GanttFeatureRow>
-                ))}
-              </GanttFeatureListGroup>
-            </GanttFeatureList>
-          </GanttTimeline>
-        </GanttProvider>
-      </div>
-    </div>
-  );
+/**
+ * Converts "HH:MM" time string to a percentage position on the timeline (0% - 100%)
+ */
+const getPositionPercentage = (timeStr: string) => {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  const totalMinutesFromStart = (hours - START_HOUR) * 60 + minutes;
+  const totalTimelineMinutes = TOTAL_HOURS * 60;
+  return (totalMinutesFromStart / totalTimelineMinutes) * 100;
 };
 
-export default Schedule;
+/**
+ * Parses work_time string like "9~6" to start and end time in "HH:MM" format
+ */
+const parseWorkTime = (workTime: string): { startTime: string; endTime: string } | null => {
+  if (!workTime || workTime === '-') return null;
+
+  const match = workTime.match(/(\d+) ~ (\d+)/);
+  if (!match) return null;
+
+  let startHour = parseInt(match[1], 10);
+  let endHour = parseInt(match[2], 10);
+
+  // 끝 시간이 시작 시간보다 작으면 오후로 간주 (예: 6 -> 18)
+  if (endHour < startHour) {
+    endHour += 12;
+  }
+
+  return {
+    startTime: `${startHour.toString().padStart(2, '0')}:00`,
+    endTime: `${endHour.toString().padStart(2, '0')}:00`
+  };
+};
+
+const formatTimeRange = (start: string, end: string) => {
+  const format = (t: string) => {
+    const [h, m] = t.split(':').map(Number);
+    const ampm = h < 12 ? '오전' : '오후';
+    const formattedH = h > 12 ? h - 12 : h;
+    return `${ampm} ${formattedH}:${m.toString().padStart(2, '0')}`;
+  }
+  return `${format(start)} - ${format(end)}`;
+};
+
+/**
+ * Calculate total work hours from start and end time
+ */
+const calculateWorkHours = (startTime: string, endTime: string): string => {
+  const [startH, startM] = startTime.split(':').map(Number);
+  const [endH, endM] = endTime.split(':').map(Number);
+  const totalMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return minutes > 0 ? `${hours}시간 ${minutes}분` : `${hours}시간`;
+};
+
+// --- Components ---
+
+const TimeGridHeader = () => {
+    const hours = Array.from({ length: TOTAL_HOURS }, (_, i) => START_HOUR + i);
+
+    return (
+        <div className="relative flex h-10 border-b items-center text-xs text-gray-400 select-none">
+            {hours.map((hour, index) => (
+                <div key={hour} style={{ width: `${100 / TOTAL_HOURS}%` }} className="relative h-full flex items-center">
+                    <span className={cn("absolute", index === 0 ? "left-0" : "-translate-x-1/2")}>{hour}</span>
+                </div>
+            ))}
+            {/* 마지막 시간 (20) */}
+            <span className="absolute right-0">{END_HOUR}</span>
+        </div>
+    );
+};
+
+const BackgroundGrid = () => {
+    // 점심시간: 12~13시, 저녁시간: 18~19시
+    const LUNCH_START = 12;
+    const LUNCH_END = 13;
+    const DINNER_START = 18;
+    const DINNER_END = 19;
+
+    return (
+        <div className="absolute inset-0 flex pointer-events-none">
+            {Array.from({ length: TOTAL_HOURS }).map((_, i) => {
+                const hour = START_HOUR + i;
+                const isBreakTime = (hour >= LUNCH_START && hour < LUNCH_END) || (hour >= DINNER_START && hour < DINNER_END);
+
+                return (
+                    <div
+                        key={i}
+                        className="h-full border-r border-gray-100 relative"
+                        style={{ width: `${100 / TOTAL_HOURS}%` }}
+                    >
+                        {isBreakTime && (
+                            <div
+                                className="absolute inset-0 opacity-30"
+                                style={{
+                                    background: `repeating-linear-gradient(
+                                        45deg,
+                                        #d1d5db,
+                                        #d1d5db 2px,
+                                        transparent 2px,
+                                        transparent 8px
+                                    )`
+                                }}
+                            />
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    )
+}
+
+const ScheduleBar = ({ item }: { item: ScheduleItem }) => {
+    const left = getPositionPercentage(item.startTime);
+    const width = getPositionPercentage(item.endTime) - left;
+
+    return (
+        <div
+            className="absolute top-1/2 -translate-y-1/2 h-12 rounded-lg border flex overflow-hidden text-xs shadow-sm group transition-all hover:z-10 hover:shadow-md cursor-pointer bg-emerald-100 text-emerald-700 border-emerald-200"
+            style={{ left: `${left}%`, width: `${width}%` }}
+        >
+            {/* Content Area */}
+            <div className="flex flex-col justify-center px-3 z-10 font-medium whitespace-nowrap">
+                <div className="opacity-80 text-[10px]">
+                    {formatTimeRange(item.startTime, item.endTime)}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const TeamSchedule = () => {
+  const { data: users = [], isLoading } = useUsersQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-gray-500">로딩 중...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+        {/* Header Row (Empty left, Time grid right) */}
+        <div className="flex border-b bg-white sticky top-0 z-30">
+          <div className="w-64 shrink-0 p-4 border-r bg-white" /> {/* User Info Header Placeholder */}
+          <div className="flex-1 relative">
+            <TimeGridHeader />
+          </div>
+        </div>
+
+        {/* User Rows */}
+        <div className="divide-y">
+          {users.map((user) => {
+            const workTime = parseWorkTime(user.user_work_time);
+            const totalWorkTime = workTime
+              ? calculateWorkHours(workTime.startTime, workTime.endTime)
+              : '-';
+
+            return (
+              <div key={user.user_id} className="flex group hover:bg-gray-50/30 transition-colors h-24">
+                {/* Left: User Info */}
+                <div className="w-64 shrink-0 p-4 flex items-center gap-3 border-r bg-white z-20">
+                  <Avatar className="h-10 w-10 border">
+                    <AvatarImage src={user.profile_url} />
+                    <AvatarFallback>{user.user_name[0]}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-gray-800 text-sm">{user.user_name}</span>
+                    <span className="text-xs text-gray-500">{user.main_department_name_kr || user.user_role_name}</span>
+                    <Badge variant="secondary" className="mt-1 w-fit text-[10px] px-1.5 py-0 h-5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 font-normal border-emerald-100">
+                      {totalWorkTime}
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Right: Timeline Track */}
+                <div className="flex-1 relative min-w-[600px]">
+                  {/* Vertical Grid Lines */}
+                  <BackgroundGrid />
+
+                  {/* Schedule Bars */}
+                  <div className="absolute inset-0 w-full h-full">
+                    {workTime && (
+                      <ScheduleBar
+                        item={{
+                          id: user.user_id,
+                          startTime: workTime.startTime,
+                          endTime: workTime.endTime
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+    </div>
+  )
+}
+
+export default TeamSchedule
