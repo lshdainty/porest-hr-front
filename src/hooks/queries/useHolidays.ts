@@ -4,10 +4,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
 import {
+  fetchDeleteHoliday,
   fetchGetHolidaysByStartEndDate,
   fetchPostHoliday,
   fetchPutHoliday,
-  fetchDeleteHoliday,
   type GetHolidaysResp,
   type PostHolidayReq,
   type PutHolidayReq
@@ -16,11 +16,11 @@ import {
 const holidayKeys = createQueryKeys('holidays')
 
 // 기간별 공휴일 조회 훅
-export const useHolidaysByPeriodQuery = (startDate: string, endDate: string) => {
+export const useHolidaysByPeriodQuery = (startDate: string, endDate: string, countryCode: string) => {
   return useQuery<GetHolidaysResp[]>({
-    queryKey: holidayKeys.list({ startDate, endDate }),
-    queryFn: () => fetchGetHolidaysByStartEndDate(startDate, endDate),
-    enabled: !!startDate && !!endDate
+    queryKey: holidayKeys.list({ startDate, endDate, countryCode }),
+    queryFn: () => fetchGetHolidaysByStartEndDate(startDate, endDate, countryCode),
+    enabled: !!startDate && !!endDate && !!countryCode
   })
 }
 

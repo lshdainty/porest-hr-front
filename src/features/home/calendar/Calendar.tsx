@@ -60,7 +60,8 @@ function CalendarContent() {
   // 공휴일 API 호출 - 현재 연도의 1월 1일 ~ 12월 31일
   const { data: apiHolidays, isLoading: holidaysLoading } = useHolidaysByPeriodQuery(
     dayjs(holidayRange.start).format('YYYYMMDD'),
-    dayjs(holidayRange.end).format('YYYYMMDD')
+    dayjs(holidayRange.end).format('YYYYMMDD'),
+    'KR'
   );
 
   // API 응답을 받아서 변환 후 context 업데이트

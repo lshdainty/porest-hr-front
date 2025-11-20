@@ -1,4 +1,3 @@
-import { authKeys, usePostLoginMutation } from '@/hooks/queries/useAuths';
 import loginBG from '@/assets/img/login_bg.jpg';
 import Logo from '@/assets/img/porest.svg';
 import LogoDark from '@/assets/img/porest_dark.svg';
@@ -9,6 +8,7 @@ import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { useTheme } from '@/components/shadcn/themeProvider';
 import config from '@/config/config';
+import { authKeys, usePostLoginMutation } from '@/hooks/queries/useAuths';
 import { cn } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';

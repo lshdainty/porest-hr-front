@@ -43,10 +43,11 @@ export interface PutHolidayReq {
 }
 
 // API Functions
-export async function fetchGetHolidaysByStartEndDate(startDate: string, endDate: string): Promise<GetHolidaysResp[]> {
+export async function fetchGetHolidaysByStartEndDate(startDate: string, endDate: string, countryCode: string): Promise<GetHolidaysResp[]> {
+  countryCode = 'KR'
   const resp: ApiResponse<GetHolidaysResp[]> = await api.request({
     method: 'get',
-    url: `/holidays/date?start=${startDate}&end=${endDate}&country_code=KR`
+    url: `/holidays/date?start=${startDate}&end=${endDate}&country_code=${countryCode}`
   });
 
   if (resp.code !== 200) throw new Error(resp.message);

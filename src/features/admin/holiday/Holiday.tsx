@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import dayjs from 'dayjs';
+import HolidayEditDialog from '@/components/holiday/HolidayEditDialog';
+import HolidayList from '@/components/holiday/HolidayList';
+import HolidayListSkeleton from '@/components/holiday/HolidayListSkeleton';
+import { Button } from '@/components/shadcn/button';
 import {
+  useDeleteHolidayMutation,
   useHolidaysByPeriodQuery,
   usePostHolidayMutation,
   usePutHolidayMutation,
-  useDeleteHolidayMutation,
 } from '@/hooks/queries/useHolidays';
 import {
   type GetHolidaysResp,
   type PostHolidayReq,
   type PutHolidayReq,
 } from '@/lib/api/holiday';
-import HolidayEditDialog from '@/components/holiday/HolidayEditDialog';
-import HolidayList from '@/components/holiday/HolidayList';
-import HolidayListSkeleton from '@/components/holiday/HolidayListSkeleton';
-import { Button } from '@/components/shadcn/button';
+import dayjs from 'dayjs';
+import { useState } from 'react';
 
 const formatDateToYYYYMMDD = (dateString: string) => {
   if (!dateString) return '';
@@ -29,7 +29,7 @@ export default function Holiday() {
   const startDate = `${currentYear}0101`;
   const endDate = `${currentYear}1231`;
 
-  const { data: holidays, isLoading: holidaysLoding, refetch } = useHolidaysByPeriodQuery(startDate, endDate);
+  const { data: holidays, isLoading: holidaysLoding, refetch } = useHolidaysByPeriodQuery(startDate, endDate, 'KR');
   const postMutation = usePostHolidayMutation();
   const putMutation = usePutHolidayMutation();
   const deleteMutation = useDeleteHolidayMutation();

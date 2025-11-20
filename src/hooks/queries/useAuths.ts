@@ -6,14 +6,14 @@ import { createQueryKeys } from '@/constants/query-keys'
 import {
   fetchGetLoginCheck,
   fetchGetValidateInvitationToken,
+  fetchPostCompleteSignup,
   fetchPostLogin,
   fetchPostLogout,
-  fetchPostCompleteSignup,
   type GetLoginCheck,
   type GetValidateInvitationTokenResp,
-  type PostLoginResp,
   type PostCompleteSignupReq,
-  type PostCompleteSignupResp
+  type PostCompleteSignupResp,
+  type PostLoginResp
 } from '@/lib/api/auth'
 
 export const authKeys = createQueryKeys('auth')
@@ -22,7 +22,8 @@ export const authKeys = createQueryKeys('auth')
 export const useLoginCheckQuery = () => {
   return useQuery<GetLoginCheck>({
     queryKey: authKeys.detail('login-check'),
-    queryFn: () => fetchGetLoginCheck()
+    queryFn: () => fetchGetLoginCheck(),
+    retry: false,
   })
 }
 
