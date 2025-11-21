@@ -63,6 +63,17 @@ export interface DeleteWorkHistoryReq {
   work_history_seq: number
 }
 
+export interface WorkHistorySearchCondition {
+  startDate?: string;
+  endDate?: string;
+  userName?: string;
+  userId?: string;
+  groupSeq?: number;
+  partSeq?: number;
+  divisionSeq?: number;
+  sortType?: 'LATEST' | 'OLDEST';
+}
+
 // API Functions
 export async function fetchGetWorkGroups(): Promise<WorkCodeResp[]> {
   const resp: ApiResponse<WorkCodeResp[]> = await api.request({
@@ -136,10 +147,11 @@ export async function fetchPostCreateWorkHistory(data: CreateWorkHistoryReq): Pr
   return resp.data;
 }
 
-export async function fetchGetWorkHistories(): Promise<WorkHistoryResp[]> {
+export async function fetchGetWorkHistories(params?: WorkHistorySearchCondition): Promise<WorkHistoryResp[]> {
   const resp: ApiResponse<WorkHistoryResp[]> = await api.request({
     method: 'get',
-    url: `/work-histories`
+    url: `/work-histories`,
+    params
   });
 
   if (resp.code !== 200) throw new Error(resp.message);
@@ -186,4 +198,15 @@ export async function fetchGetAllWorkCodes(): Promise<WorkCodeResp[]> {
   if (resp.code !== 200) throw new Error(resp.message);
 
   return resp.data;
+}
+
+export async function fetchGetWorkHistoryExcelDownload(params?: WorkHistorySearchCondition): Promise<Blob> {
+  const resp = await api.request({
+    method: 'get',
+    url: `/work-histories/excel/download`,
+    params,
+    responseType: 'blob'
+  });
+
+  return resp as unknown as Blob;
 }

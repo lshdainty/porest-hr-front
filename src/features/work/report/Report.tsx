@@ -1,11 +1,12 @@
 import { toast } from '@/components/alert/toast';
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import ExcelImportDialog from '@/components/report/ExcelImportDialog';
-import ReportFilter from '@/components/report/ReportFilter';
+import ReportFilter, { FilterState } from '@/components/report/ReportFilter';
 import ReportHeader from '@/components/report/ReportHeader';
 import ReportSkeleton from '@/components/report/ReportSkeleton';
 import ReportTable, { WorkHistory } from '@/components/report/ReportTable';
 import { useUser } from '@/contexts/UserContext';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
 import {
   useDeleteWorkHistoryMutation,
   usePostCreateWorkHistoryBatchMutation,
@@ -13,9 +14,11 @@ import {
   usePutUpdateWorkHistoryMutation,
   useWorkDivisionQuery,
   useWorkGroupsWithPartsQuery,
-  useWorkHistoriesQuery
+  useWorkHistoriesQuery,
+  useWorkHistoryExcelDownloadMutation
 } from '@/hooks/queries/useWorks';
-import { type WorkGroupWithParts, type WorkHistoryResp } from '@/lib/api/work';
+import { type GetUsersResp } from '@/lib/api/user';
+import { type WorkGroupWithParts, type WorkHistoryResp, type WorkHistorySearchCondition } from '@/lib/api/work';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -23,16 +26,28 @@ interface ReportContentProps {
   workGroupsWithParts: WorkGroupWithParts[];
   workDivision: any[];
   workHistoriesData: any[];
+  users: GetUsersResp[];
   refetchWorkHistories: () => Promise<any>;
   loginUser: any;
+  activeFilters: FilterState;
+  handleSearch: () => void;
+  handleResetFilters: () => void;
+  filters: FilterState;
+  onFilterChange: (key: keyof FilterState, value: any) => void;
 }
 
 const ReportContent = ({
   workGroupsWithParts,
   workDivision,
   workHistoriesData,
+  users,
   refetchWorkHistories,
   loginUser,
+  activeFilters,
+  handleSearch,
+  handleResetFilters,
+  filters,
+  onFilterChange,
 }: ReportContentProps) => {
   const createWorkHistory = usePostCreateWorkHistoryMutation();
   const updateWorkHistory = usePutUpdateWorkHistoryMutation();
@@ -65,10 +80,6 @@ const ReportContent = ({
 
   // 필터 상태
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [filterName, setFilterName] = useState<string>('');
-  const [sortOrder, setSortOrder] = useState<string>('latest');
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -276,25 +287,15 @@ const ReportContent = ({
     setEditData((prev) => prev ? { ...prev, [field]: value } : null);
   };
 
-  // 필터 및 정렬 함수
-  const handleSearch = () => {
-    console.log('검색:', { startDate, endDate, filterName, sortOrder });
-    // 실제 필터링 로직 구현
-  };
-
-  const handleResetFilters = () => {
-    setStartDate(undefined);
-    setEndDate(undefined);
-    setFilterName('');
-    setSortOrder('latest');
-  };
-
   const getActiveFiltersCount = () => {
     let count = 0;
-    if (startDate) count++;
-    if (endDate) count++;
-    if (filterName) count++;
-    if (sortOrder !== 'latest') count++;
+    if (activeFilters.startDate) count++;
+    if (activeFilters.endDate) count++;
+    if (activeFilters.filterName) count++;
+    if (activeFilters.sortOrder !== 'latest') count++;
+    if (activeFilters.selectedWorkGroup !== 'all') count++;
+    if (activeFilters.selectedWorkPart !== 'all') count++;
+    if (activeFilters.selectedWorkDivision !== 'all') count++;
     return count;
   };
 
@@ -302,6 +303,7 @@ const ReportContent = ({
   const [isExcelImportOpen, setIsExcelImportOpen] = useState(false);
 
   const createWorkHistoryBatch = usePostCreateWorkHistoryBatchMutation();
+  const downloadWorkHistoryExcel = useWorkHistoryExcelDownloadMutation();
 
   const handleExcelImport = () => {
     setIsExcelImportOpen(true);
@@ -322,9 +324,40 @@ const ReportContent = ({
     }
   };
 
-  const handleExcelExport = () => {
-    console.log('엑셀 익스포트');
-    // 엑셀 익스포트 로직 구현
+  const handleExcelExport = async () => {
+    try {
+      // 현재 필터 조건으로 엑셀 다운로드 요청
+      const searchCondition: WorkHistorySearchCondition = {
+        startDate: activeFilters.startDate ? dayjs(activeFilters.startDate).format('YYYY-MM-DD') : undefined,
+        endDate: activeFilters.endDate ? dayjs(activeFilters.endDate).format('YYYY-MM-DD') : undefined,
+        userId: activeFilters.filterName && activeFilters.filterName !== 'all' ? activeFilters.filterName : undefined,
+        groupSeq: activeFilters.selectedWorkGroup !== 'all' 
+          ? workGroupsWithParts?.find(g => g.work_code === activeFilters.selectedWorkGroup)?.work_code_seq 
+          : undefined,
+        partSeq: activeFilters.selectedWorkPart !== 'all'
+          ? workGroupsWithParts?.flatMap(g => g.parts).find(p => p.work_code === activeFilters.selectedWorkPart)?.work_code_seq
+          : undefined,
+        divisionSeq: activeFilters.selectedWorkDivision !== 'all'
+          ? workDivision?.find(d => d.work_code === activeFilters.selectedWorkDivision)?.work_code_seq
+          : undefined,
+        sortType: activeFilters.sortOrder === 'latest' ? 'LATEST' : 'OLDEST',
+      };
+
+      const blob = await downloadWorkHistoryExcel.mutateAsync(searchCondition);
+
+      // 파일 다운로드 처리
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `업무이력_${dayjs().format('YYYYMMDD')}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('엑셀 다운로드 실패:', error);
+      toast.error('엑셀 다운로드에 실패했습니다.');
+    }
   };
 
   const handleDownloadTemplate = () => {
@@ -356,15 +389,12 @@ const ReportContent = ({
         setIsFilterOpen={setIsFilterOpen}
         activeFiltersCount={activeFiltersCount}
         handleResetFilters={handleResetFilters}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        filterName={filterName}
-        setFilterName={setFilterName}
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
+        filters={filters}
+        onFilterChange={onFilterChange}
         handleSearch={handleSearch}
+        workGroups={workGroupsWithParts}
+        workDivision={workDivision}
+        users={users}
       />
 
       <div className="mt-6">
@@ -408,12 +438,79 @@ export default function Report() {
   const { loginUser } = useUser();
   const { data: workGroupsWithParts, isLoading: isWorkGroupsLoading, error: workGroupsError } = useWorkGroupsWithPartsQuery();
   const { data: workDivision, isLoading: isWorkDivisionLoading, error: workDivisionError } = useWorkDivisionQuery();
-  const { data: workHistoriesData, isLoading: isWorkHistoriesLoading, error: workHistoriesError, refetch: refetchWorkHistories } = useWorkHistoriesQuery();
+  const { data: users, isLoading: isUsersLoading, error: usersError } = useUsersQuery();
+
+  // 필터 상태 관리 (Report 컴포넌트로 이동)
+  const [filters, setFilters] = useState<FilterState>({
+    startDate: dayjs().subtract(1, 'month').toDate(),
+    endDate: dayjs().toDate(),
+    filterName: '',
+    sortOrder: 'latest',
+    selectedWorkGroup: 'all',
+    selectedWorkPart: 'all',
+    selectedWorkDivision: 'all',
+  });
+
+  // 실제 적용된 필터 상태 (조회 버튼 클릭 시 업데이트)
+  const [activeFilters, setActiveFilters] = useState<FilterState>({
+    startDate: dayjs().subtract(1, 'month').toDate(),
+    endDate: dayjs().toDate(),
+    filterName: '',
+    sortOrder: 'latest',
+    selectedWorkGroup: 'all',
+    selectedWorkPart: 'all',
+    selectedWorkDivision: 'all',
+  });
+
+  // 검색 조건 생성
+  const searchCondition: WorkHistorySearchCondition = {
+    startDate: activeFilters.startDate ? dayjs(activeFilters.startDate).format('YYYY-MM-DD') : undefined,
+    endDate: activeFilters.endDate ? dayjs(activeFilters.endDate).format('YYYY-MM-DD') : undefined,
+    userId: activeFilters.filterName && activeFilters.filterName !== 'all' ? activeFilters.filterName : undefined,
+    groupSeq: activeFilters.selectedWorkGroup !== 'all' 
+      ? workGroupsWithParts?.find(g => g.work_code === activeFilters.selectedWorkGroup)?.work_code_seq 
+      : undefined,
+    partSeq: activeFilters.selectedWorkPart !== 'all'
+      ? workGroupsWithParts?.flatMap(g => g.parts).find(p => p.work_code === activeFilters.selectedWorkPart)?.work_code_seq
+      : undefined,
+    divisionSeq: activeFilters.selectedWorkDivision !== 'all'
+      ? workDivision?.find(d => d.work_code === activeFilters.selectedWorkDivision)?.work_code_seq
+      : undefined,
+    sortType: activeFilters.sortOrder === 'latest' ? 'LATEST' : 'OLDEST',
+  };
+
+  const { data: workHistoriesData, isLoading: isWorkHistoriesLoading, error: workHistoriesError, refetch: refetchWorkHistories } = useWorkHistoriesQuery(searchCondition);
+
+  const handleFilterChange = (key: keyof FilterState, value: any) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleSearch = () => {
+    setActiveFilters(filters);
+  };
+
+  const handleResetFilters = () => {
+    const initialFilters: FilterState = {
+      startDate: dayjs().subtract(1, 'month').toDate(),
+      endDate: dayjs().toDate(),
+      filterName: '',
+      sortOrder: 'latest',
+      selectedWorkGroup: 'all',
+      selectedWorkPart: 'all',
+      selectedWorkDivision: 'all',
+    };
+    
+    setFilters(initialFilters);
+    setActiveFilters(initialFilters);
+  };
 
   console.log('workGroupsWithParts:', workGroupsWithParts);
 
-  const isLoading = isWorkGroupsLoading || isWorkDivisionLoading || isWorkHistoriesLoading;
-  const error = workGroupsError || workDivisionError || workHistoriesError;
+  const isLoading = isWorkGroupsLoading || isWorkDivisionLoading || isWorkHistoriesLoading || isUsersLoading;
+  const error = workGroupsError || workDivisionError || workHistoriesError || usersError;
 
   return (
     <QueryAsyncBoundary
@@ -431,8 +528,14 @@ export default function Report() {
         workGroupsWithParts={workGroupsWithParts || []}
         workDivision={workDivision || []}
         workHistoriesData={workHistoriesData || []}
+        users={users || []}
         refetchWorkHistories={refetchWorkHistories}
         loginUser={loginUser}
+        activeFilters={activeFilters}
+        handleSearch={handleSearch}
+        handleResetFilters={handleResetFilters}
+        filters={filters}
+        onFilterChange={handleFilterChange}
       />
     </QueryAsyncBoundary>
   );

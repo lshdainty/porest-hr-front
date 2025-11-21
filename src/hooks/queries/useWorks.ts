@@ -8,6 +8,7 @@ import {
   fetchGetWorkDivision,
   fetchGetWorkGroups,
   fetchGetWorkHistories,
+  fetchGetWorkHistoryExcelDownload,
   fetchGetWorkPartLabel,
   fetchGetWorkParts,
   fetchPostCreateWorkHistory,
@@ -18,7 +19,8 @@ import {
   type UpdateWorkHistoryReq,
   type WorkCodeResp,
   type WorkGroupWithParts,
-  type WorkHistoryResp
+  type WorkHistoryResp,
+  type WorkHistorySearchCondition
 } from '@/lib/api/work'
 
 const workKeys = createQueryKeys('works')
@@ -105,10 +107,10 @@ export const useWorkDivisionQuery = () => {
 }
 
 // 업무 히스토리 조회 훅
-export const useWorkHistoriesQuery = () => {
+export const useWorkHistoriesQuery = (condition?: WorkHistorySearchCondition) => {
   return useQuery<WorkHistoryResp[]>({
-    queryKey: workKeys.lists(),
-    queryFn: () => fetchGetWorkHistories()
+    queryKey: workKeys.list({ type: 'histories', ...condition }),
+    queryFn: () => fetchGetWorkHistories(condition)
   })
 }
 
@@ -137,5 +139,12 @@ export const useDeleteWorkHistoryMutation = () => {
 export const usePostCreateWorkHistoryBatchMutation = () => {
   return useMutation<void, Error, CreateWorkHistoryReq[]>({
     mutationFn: (data: CreateWorkHistoryReq[]) => fetchPostCreateWorkHistoryBatch(data)
+  })
+}
+
+// 업무 히스토리 엑셀 다운로드 Mutation 훅
+export const useWorkHistoryExcelDownloadMutation = () => {
+  return useMutation<Blob, Error, WorkHistorySearchCondition | undefined>({
+    mutationFn: (condition?: WorkHistorySearchCondition) => fetchGetWorkHistoryExcelDownload(condition)
   })
 }
