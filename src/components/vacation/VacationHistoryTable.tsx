@@ -122,8 +122,8 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
                     <TableRow>
                       <TableHead className='min-w-[200px] pl-4'>사용 기간</TableHead>
                       <TableHead className='min-w-[150px]'>휴가 종류</TableHead>
-                      <TableHead className='min-w-[300px]'>사유</TableHead>
                       <TableHead className='min-w-[100px]'>사용 시간</TableHead>
+                      <TableHead className='min-w-[300px]'>내용</TableHead>
                       <TableHead className='min-w-[80px] pr-4'></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -151,12 +151,12 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
                             {item.vacation_time_type_name}
                           </TableCell>
                           <TableCell>
+                            {item.used_time_str}
+                          </TableCell>
+                          <TableCell>
                             <div className='max-w-[300px]'>
                               <p className='font-medium truncate'>{item.vacation_usage_desc}</p>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            {item.used_time_str}
                           </TableCell>
                           <TableCell className='pr-4'>
                             <div className='flex justify-end'>
