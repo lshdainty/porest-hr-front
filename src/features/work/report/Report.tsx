@@ -8,8 +8,8 @@ import ReportTable, { WorkHistory } from '@/components/report/ReportTable';
 import { useUser } from '@/contexts/UserContext';
 import { useUsersQuery } from '@/hooks/queries/useUsers';
 import {
+  useBulkCreateWorkHistoriesMutation,
   useDeleteWorkHistoryMutation,
-  usePostCreateWorkHistoryBatchMutation,
   usePostCreateWorkHistoryMutation,
   usePutUpdateWorkHistoryMutation,
   useWorkDivisionQuery,
@@ -302,7 +302,7 @@ const ReportContent = ({
   // 엑셀 관련 함수
   const [isExcelImportOpen, setIsExcelImportOpen] = useState(false);
 
-  const createWorkHistoryBatch = usePostCreateWorkHistoryBatchMutation();
+  const createWorkHistoryBatch = useBulkCreateWorkHistoriesMutation();
   const downloadWorkHistoryExcel = useWorkHistoryExcelDownloadMutation();
 
   const handleExcelImport = () => {
@@ -315,7 +315,7 @@ const ReportContent = ({
 
   const handleBatchRegister = async (data: any[]) => {
     try {
-      await createWorkHistoryBatch.mutateAsync(data);
+      await createWorkHistoryBatch.mutateAsync({ work_histories: data });
       await refetchWorkHistories();
       toast.success('일괄 등록이 완료되었습니다.');
     } catch (error) {
@@ -427,6 +427,7 @@ const ReportContent = ({
         onOpenChange={handleExcelImportOpenChange}
         workGroups={workGroupsWithParts}
         workDivision={workDivision}
+        users={users || []}
         onRegister={handleBatchRegister}
         isRegistering={createWorkHistoryBatch.isPending}
       />

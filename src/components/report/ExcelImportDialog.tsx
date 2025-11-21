@@ -1,31 +1,32 @@
 import { Button } from '@/components/shadcn/button';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/shadcn/dialog';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/shadcn/select';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/shadcn/table';
 import { Textarea } from '@/components/shadcn/textarea';
+import { GetUsersResp } from '@/lib/api/user';
 import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
-import { AlertCircle, Check, Loader2 } from 'lucide-react';
+import { AlertCircle, Check, Loader2, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -34,6 +35,7 @@ interface ExcelImportDialogProps {
   onOpenChange: (open: boolean) => void;
   workGroups: WorkGroupWithParts[];
   workDivision: WorkCodeResp[];
+  users: GetUsersResp[];
   onRegister: (data: any[]) => Promise<void>;
   isRegistering: boolean;
 }
@@ -60,6 +62,7 @@ export default function ExcelImportDialog({
   onOpenChange,
   workGroups,
   workDivision,
+  users,
   onRegister,
   isRegistering,
 }: ExcelImportDialogProps) {
@@ -80,6 +83,75 @@ export default function ExcelImportDialog({
     }
   }, [open]);
 
+  const validateRow = (row: ParsedRow): ParsedRow => {
+    const errors: { [key: string]: string } = {};
+    let isValid = true;
+
+    // Validate Date (Simple regex YYYY-MM-DD)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(row.date)) {
+      errors.date = '날짜 형식이 올바르지 않습니다 (YYYY-MM-DD)';
+      isValid = false;
+    }
+
+    // Validate User (Name -> ID mapping happens before validation, so we check manager_id)
+    if (!row.manager_id) {
+      errors.manager_id = '사용자를 찾을 수 없습니다';
+      isValid = false;
+    }
+
+    // Validate Codes
+    // Find Group Code
+    // Note: We use the names for initial validation from text, but codes for re-validation
+    let groupCode = workGroups.find(g => g.work_code === row.work_group_code);
+    if (!groupCode) {
+        // Fallback to name search if code is missing (initial parse)
+        groupCode = workGroups.find(g => g.work_code_name === row.work_group_name);
+    }
+    
+    if (!groupCode) {
+      errors.work_group_name = '존재하지 않는 업무 분류입니다';
+      isValid = false;
+    }
+
+    // Find Part Code
+    let partCode;
+    if (groupCode) {
+       // Check if the part exists in the group's parts list
+       partCode = groupCode.parts.find(p => p.work_code === row.work_part_code);
+       if (!partCode) {
+           partCode = groupCode.parts.find(p => p.work_code_name === row.work_part_name);
+       }
+    }
+    
+    if (!partCode) {
+       errors.work_part_name = '존재하지 않는 업무 파트이거나 해당 분류에 속하지 않습니다';
+       isValid = false;
+    }
+
+    // Find Division Code
+    let divisionCode = workDivision.find(d => d.work_code === row.work_division_code);
+    if (!divisionCode) {
+        divisionCode = workDivision.find(d => d.work_code_name === row.work_division_name);
+    }
+
+    if (!divisionCode) {
+      errors.work_division_name = '존재하지 않는 업무 구분입니다';
+      isValid = false;
+    }
+
+    return {
+        ...row,
+        isValid,
+        errors,
+        work_group_code: groupCode?.work_code,
+        work_group_name: groupCode?.work_code_name || row.work_group_name,
+        work_part_code: partCode?.work_code,
+        work_part_name: partCode?.work_code_name || row.work_part_name,
+        work_division_code: divisionCode?.work_code,
+        work_division_name: divisionCode?.work_code_name || row.work_division_name,
+    };
+  };
+
   const parseAndValidate = () => {
     if (!inputText.trim()) {
       toast.error('데이터를 입력해주세요.');
@@ -92,80 +164,54 @@ export default function ExcelImportDialog({
 
     rows.forEach((row, index) => {
       // Use selected delimiter
-      const cols = row.split(delimiter);
+      const columns = row.split(delimiter);
       
-      const date = cols[0]?.trim() || '';
-      const manager_id = cols[1]?.trim() || '';
-      const work_group_name = cols[2]?.trim() || '';
-      const work_part_name = cols[3]?.trim() || '';
-      const work_division_name = cols[4]?.trim() || '';
-      const hours = cols[5]?.trim() || '0';
-      const content = cols[6]?.trim() || '';
+      const date = columns[0]?.trim() || '';
+      const userName = columns[1]?.trim() || ''; // 2nd column is User Name now
+      const groupName = columns[2]?.trim() || '';
+      const partName = columns[3]?.trim() || '';
+      const divisionName = columns[4]?.trim() || '';
+      const hours = columns[5]?.trim() || '';
+      const content = columns[6]?.trim() || '';
 
-      const errors: { [key: string]: string } = {};
-      let isValid = true;
+      // Find User ID by Name
+      const user = users.find(u => u.user_name === userName);
+      const managerId = user ? user.user_id : '';
 
-      // Validate Date (Simple regex YYYY-MM-DD)
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-        errors.date = '날짜 형식이 올바르지 않습니다 (YYYY-MM-DD)';
-        isValid = false;
-      }
-
-      // Validate ID
-      if (!manager_id) {
-        errors.manager_id = '사번을 입력해주세요';
-        isValid = false;
-      }
-
-      // Validate Codes
-      // Find Group Code
-      const groupCode = workGroups.find(g => g.work_code_name === work_group_name);
-      if (!groupCode) {
-        errors.work_group_name = '존재하지 않는 업무 분류입니다';
-        isValid = false;
-      }
-
-      // Find Part Code
-      let partCode;
-      if (groupCode) {
-         // Check if the part exists in the group's parts list
-         partCode = groupCode.parts.find(p => p.work_code_name === work_part_name);
-      }
-      
-      if (!partCode) {
-         errors.work_part_name = '존재하지 않는 업무 파트이거나 해당 분류에 속하지 않습니다';
-         isValid = false;
-      }
-
-      // Find Division Code
-      const divisionCode = workDivision.find(d => d.work_code_name === work_division_name);
-      if (!divisionCode) {
-        errors.work_division_name = '존재하지 않는 업무 구분입니다';
-        isValid = false;
-      }
-
-      if (!isValid) errorCount++;
-
-      parsed.push({
+      let parsedRow: ParsedRow = {
         id: index,
         date,
-        manager_id,
-        work_group_name,
-        work_part_name,
-        work_division_name,
+        manager_id: managerId, // Set ID if found
+        work_group_name: groupName,
+        work_part_name: partName,
+        work_division_name: divisionName,
         hours,
         content,
-        isValid,
-        errors,
-        work_group_code: groupCode?.work_code,
-        work_part_code: partCode?.work_code,
-        work_division_code: divisionCode?.work_code,
-      });
+        isValid: true,
+        errors: {},
+      };
+
+      parsedRow = validateRow(parsedRow);
+
+      if (!parsedRow.isValid) errorCount++;
+      parsed.push(parsedRow);
     });
 
     setParsedData(parsed);
     setValidationErrorCount(errorCount);
     setStep('preview');
+  };
+
+  const handleRevalidate = () => {
+      let errorCount = 0;
+      const revalidatedData = parsedData.map(row => {
+          const validated = validateRow(row);
+          if (!validated.isValid) errorCount++;
+          return validated;
+      });
+      setParsedData(revalidatedData);
+      setValidationErrorCount(errorCount);
+      toast.success('데이터 검증이 완료되었습니다.');
   };
 
   const handleCellChange = (id: number, field: keyof ParsedRow, value: string) => {
@@ -176,49 +222,7 @@ export default function ExcelImportDialog({
       const updatedRow = { ...row, [field]: value };
       
       // Re-validate this row
-      const errors: { [key: string]: string } = {};
-      let isValid = true;
-
-      // Re-validate Date
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(updatedRow.date)) {
-        errors.date = '날짜 형식이 올바르지 않습니다';
-        isValid = false;
-      }
-      if (!updatedRow.manager_id) {
-        errors.manager_id = '사번 필수';
-        isValid = false;
-      }
-
-      // Re-validate Codes
-      const groupCode = workGroups.find(g => g.work_code_name === updatedRow.work_group_name);
-      if (!groupCode) {
-        errors.work_group_name = 'Invalid Group';
-        isValid = false;
-      }
-
-      let partCode;
-      if (groupCode) {
-         partCode = groupCode.parts.find(p => p.work_code_name === updatedRow.work_part_name);
-      }
-      if (!partCode) {
-         errors.work_part_name = 'Invalid Part';
-         isValid = false;
-      }
-
-      const divisionCode = workDivision.find(d => d.work_code_name === updatedRow.work_division_name);
-      if (!divisionCode) {
-        errors.work_division_name = 'Invalid Division';
-        isValid = false;
-      }
-
-      return {
-        ...updatedRow,
-        isValid,
-        errors,
-        work_group_code: groupCode?.work_code,
-        work_part_code: partCode?.work_code,
-        work_division_code: divisionCode?.work_code,
-      };
+      return validateRow(updatedRow);
     }));
   };
 
@@ -249,45 +253,12 @@ export default function ExcelImportDialog({
       }
 
       // Re-validate
-      const errors: { [key: string]: string } = {};
-      let isValid = true;
-
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(updatedRow.date)) {
-        errors.date = '날짜 형식이 올바르지 않습니다';
-        isValid = false;
-      }
-      if (!updatedRow.manager_id) {
-        errors.manager_id = '사번 필수';
-        isValid = false;
-      }
-
-      const groupCode = workGroups.find(g => g.work_code === updatedRow.work_group_code);
-      if (!groupCode) {
-        errors.work_group_name = 'Invalid Group';
-        isValid = false;
-      }
-
-      let partCode;
-      if (groupCode) {
-         partCode = groupCode.parts.find(p => p.work_code === updatedRow.work_part_code);
-      }
-      if (!partCode) {
-         errors.work_part_name = 'Invalid Part';
-         isValid = false;
-      }
-
-      const divisionCode = workDivision.find(d => d.work_code === updatedRow.work_division_code);
-      if (!divisionCode) {
-        errors.work_division_name = 'Invalid Division';
-        isValid = false;
-      }
-
-      return {
-        ...updatedRow,
-        isValid,
-        errors
-      };
+      return validateRow(updatedRow);
     }));
+  };
+
+  const handleDeleteRow = (id: number) => {
+    setParsedData(prev => prev.filter(row => row.id !== id));
   };
 
   // Update error count when parsedData changes
@@ -330,7 +301,7 @@ export default function ExcelImportDialog({
 
         <div className="flex-1 overflow-hidden p-1">
           {step === 'input' ? (
-            <div className="flex flex-col h-full gap-2">
+            <div className="flex flex-col h-[60vh] gap-2">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">구분자 선택:</span>
                 <Select value={delimiter} onValueChange={setDelimiter}>
@@ -351,18 +322,19 @@ export default function ExcelImportDialog({
               />
             </div>
           ) : (
-            <div className="border rounded-md h-full overflow-auto">
+            <div className="border rounded-md [&>div]:h-[60vh]">
               <Table>
                 <TableHeader className="sticky top-0 bg-white z-10">
                   <TableRow>
+                    <TableHead className="w-[50px]">상태</TableHead>
                     <TableHead className="w-[100px]">날짜</TableHead>
-                    <TableHead className="w-[80px]">사번</TableHead>
+                    <TableHead className="w-[120px]">사용자</TableHead>
                     <TableHead className="w-[140px]">업무분류</TableHead>
                     <TableHead className="w-[140px]">업무파트</TableHead>
                     <TableHead className="w-[140px]">업무구분</TableHead>
                     <TableHead className="w-[60px]">시간</TableHead>
                     <TableHead>내용</TableHead>
-                    <TableHead className="w-[50px]">상태</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -373,6 +345,13 @@ export default function ExcelImportDialog({
 
                     return (
                       <TableRow key={row.id} className={cn(!row.isValid && "bg-red-50")}>
+                        <TableCell>
+                          {row.isValid ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <AlertCircle className="w-4 h-4 text-red-500" />
+                          )}
+                        </TableCell>
                         <TableCell className="p-1">
                           <input 
                             className={cn("w-full bg-transparent border-none focus:ring-1 px-1", row.errors.date && "text-red-600 font-bold")}
@@ -382,12 +361,21 @@ export default function ExcelImportDialog({
                           />
                         </TableCell>
                         <TableCell className="p-1">
-                          <input 
-                            className={cn("w-full bg-transparent border-none focus:ring-1 px-1", row.errors.manager_id && "text-red-600 font-bold")}
+                          <Select
                             value={row.manager_id}
-                            onChange={e => handleCellChange(row.id, 'manager_id', e.target.value)}
-                            title={row.errors.manager_id}
-                          />
+                            onValueChange={(value) => handleCellChange(row.id, 'manager_id', value)}
+                          >
+                            <SelectTrigger className={cn("h-8 w-full", row.errors.manager_id && "border-red-500")}>
+                              <SelectValue placeholder="선택" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {users.map((user) => (
+                                <SelectItem key={user.user_id} value={user.user_id}>
+                                  {user.user_name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell className="p-1">
                           <Select
@@ -455,12 +443,15 @@ export default function ExcelImportDialog({
                             onChange={e => handleCellChange(row.id, 'content', e.target.value)}
                           />
                         </TableCell>
-                        <TableCell>
-                          {row.isValid ? (
-                            <Check className="w-4 h-4 text-green-500" />
-                          ) : (
-                            <AlertCircle className="w-4 h-4 text-red-500" />
-                          )}
+                        <TableCell className="p-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDeleteRow(row.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </TableCell>
                       </TableRow>
                     );
@@ -483,6 +474,9 @@ export default function ExcelImportDialog({
             <>
               <Button variant="secondary" onClick={() => setStep('input')}>
                 다시 입력
+              </Button>
+              <Button variant="outline" onClick={handleRevalidate}>
+                데이터 검증
               </Button>
               <Button onClick={handleRegister} disabled={validationErrorCount > 0 || isRegistering}>
                 {isRegistering && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

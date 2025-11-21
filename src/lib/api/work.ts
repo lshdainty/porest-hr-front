@@ -179,14 +179,24 @@ export async function fetchDeleteWorkHistory(workHistorySeq: number): Promise<vo
   if (resp.code !== 200) throw new Error(resp.message);
 }
 
-export async function fetchPostCreateWorkHistoryBatch(data: CreateWorkHistoryReq[]): Promise<void> {
-  const resp: ApiResponse<void> = await api.request({
+export interface BulkCreateWorkHistoryReq {
+  work_histories: CreateWorkHistoryReq[]
+}
+
+export interface BulkCreateWorkHistoryResp {
+  work_history_seqs: number[]
+}
+
+export async function fetchPostBulkCreateWorkHistories(data: BulkCreateWorkHistoryReq): Promise<BulkCreateWorkHistoryResp> {
+  const resp: ApiResponse<BulkCreateWorkHistoryResp> = await api.request({
     method: 'post',
-    url: `/work-histories/batch`,
+    url: `/work-histories/bulk`,
     data
   });
 
   if (resp.code !== 200) throw new Error(resp.message);
+
+  return resp.data;
 }
 
 export async function fetchGetAllWorkCodes(): Promise<WorkCodeResp[]> {

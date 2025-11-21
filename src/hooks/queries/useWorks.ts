@@ -11,9 +11,11 @@ import {
   fetchGetWorkHistoryExcelDownload,
   fetchGetWorkPartLabel,
   fetchGetWorkParts,
+  fetchPostBulkCreateWorkHistories,
   fetchPostCreateWorkHistory,
-  fetchPostCreateWorkHistoryBatch,
   fetchPutUpdateWorkHistory,
+  type BulkCreateWorkHistoryReq,
+  type BulkCreateWorkHistoryResp,
   type CreateWorkHistoryReq,
   type CreateWorkHistoryResp,
   type UpdateWorkHistoryReq,
@@ -136,9 +138,9 @@ export const useDeleteWorkHistoryMutation = () => {
 }
 
 // 업무 히스토리 일괄 생성 Mutation 훅
-export const usePostCreateWorkHistoryBatchMutation = () => {
-  return useMutation<void, Error, CreateWorkHistoryReq[]>({
-    mutationFn: (data: CreateWorkHistoryReq[]) => fetchPostCreateWorkHistoryBatch(data)
+export const useBulkCreateWorkHistoriesMutation = () => {
+  return useMutation<BulkCreateWorkHistoryResp, Error, BulkCreateWorkHistoryReq>({
+    mutationFn: (data: BulkCreateWorkHistoryReq) => fetchPostBulkCreateWorkHistories(data)
   })
 }
 
