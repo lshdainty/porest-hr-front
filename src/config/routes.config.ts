@@ -28,10 +28,10 @@ import {
 import { TreeDataItem } from '@/components/shadcn/treeView';
 import Authority from '@/features/admin/authority/Authority';
 
-import Dashboard from '@/features/home/dashboard/Dashboard';
 import ApplicationPage from '@/pages/ApplicationPage';
 import CalendarPage from '@/pages/CalendarPage';
 import CompanyPage from '@/pages/CompanyPage';
+import DashboardPage from '@/pages/DashboardPage';
 import DuesPage from '@/pages/DuesPage';
 import HistoryPage from '@/pages/HistoryPage';
 import HolidayPage from '@/pages/HolidayPage';
@@ -77,7 +77,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Dashboard',
             path: '/dashboard',
             icon: LayoutDashboard,
-            component: Dashboard, // 직접 컴포넌트 참조
+            component: DashboardPage, // 직접 컴포넌트 참조
             isDefault: true,
           },
           {
