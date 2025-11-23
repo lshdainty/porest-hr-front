@@ -1,11 +1,11 @@
-import dayjs from 'dayjs';
-import { Calendar, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { type GetHolidaysResp } from '@/lib/api/holiday';
-import HolidayDeleteDialog from '@/components/holiday/HolidayDeleteDialog';
+import dayjs from 'dayjs';
+import { Calendar, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
+import HolidayDeleteDialog from './HolidayDeleteDialog';
 
 const holidayTypeColors = {
   PUBLIC: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-200 dark:border-purple-800',

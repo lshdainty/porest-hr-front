@@ -1,29 +1,28 @@
-import HolidayEditDialog from '@/components/holiday/HolidayEditDialog';
-import HolidayList from '@/components/holiday/HolidayList';
-import HolidayListSkeleton from '@/components/holiday/HolidayListSkeleton';
 import { Button } from '@/components/shadcn/button';
+import { useHolidayContext } from '@/features/admin/holiday/contexts/HolidayContext';
 import {
-  useDeleteHolidayMutation,
-  useHolidaysByPeriodQuery,
-  usePostHolidayMutation,
-  usePutHolidayMutation,
+    useDeleteHolidayMutation,
+    useHolidaysByPeriodQuery,
+    usePostHolidayMutation,
+    usePutHolidayMutation,
 } from '@/hooks/queries/useHolidays';
 import {
-  type GetHolidaysResp,
-  type PostHolidayReq,
-  type PutHolidayReq,
+    type GetHolidaysResp,
+    type PostHolidayReq,
+    type PutHolidayReq,
 } from '@/lib/api/holiday';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import HolidayEditDialog from './HolidayEditDialog';
+import HolidayList from './HolidayList';
+import HolidayListSkeleton from './HolidayListSkeleton';
 
 const formatDateToYYYYMMDD = (dateString: string) => {
   if (!dateString) return '';
   return dayjs(dateString).format('YYYYMMDD');
 };
 
-export default function Holiday() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingHoliday, setEditingHoliday] = useState<GetHolidaysResp | null>(null);
+const HolidayContent = () => {
+  const { isDialogOpen, setIsDialogOpen, editingHoliday, setEditingHoliday } = useHolidayContext();
 
   const currentYear = new Date().getFullYear();
   const startDate = `${currentYear}0101`;
@@ -129,4 +128,6 @@ export default function Holiday() {
       </div>
     </div>
   );
-}
+};
+
+export default HolidayContent;
