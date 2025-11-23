@@ -1,9 +1,9 @@
-import { Skeleton } from '@/components/shadcn/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { Skeleton } from '@/components/shadcn/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { cn } from '@/lib/utils';
 
-export default function DuesTableSkeleton() {
+const DuesTableSkeleton = () => {
   return (
     <Card className='flex-1'>
       <CardHeader>
@@ -88,3 +88,5 @@ export default function DuesTableSkeleton() {
     </Card>
   )
 }
+
+export default DuesTableSkeleton;

@@ -1,7 +1,8 @@
-import { Skeleton } from '@/components/shadcn/skeleton'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import React from 'react';
 
-export default function UserBirthDuesSkeleton() {
+const UserBirthDuesSkeleton = () => {
   return (
     <div>
       <Card>
@@ -20,7 +21,7 @@ export default function UserBirthDuesSkeleton() {
                 </div>
               ))}
               {Array.from({ length: 5 }).map((_, i) => (
-                <>
+                <React.Fragment key={i}>
                   <div key={`sk-name-${i}`} className='font-semibold text-left py-1'>
                     <Skeleton className='h-5 w-16' />
                   </div>
@@ -29,7 +30,7 @@ export default function UserBirthDuesSkeleton() {
                       <Skeleton className='w-12 h-10 rounded-md' />
                     </div>
                   ))}
-                </>
+                </React.Fragment>
               ))}
             </div>
           </div>
@@ -37,4 +38,6 @@ export default function UserBirthDuesSkeleton() {
       </Card>
     </div>
   );
-}
+};
+
+export default UserBirthDuesSkeleton;

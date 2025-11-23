@@ -1,8 +1,8 @@
-import { GetYearOperationDuesResp, GetMonthBirthDuesResp } from '@/lib/api/dues';
 import { Card, CardContent, CardHeader } from '@/components/shadcn/card';
-import { DollarSign, Users, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
+import { GetMonthBirthDuesResp, GetYearOperationDuesResp } from '@/lib/api/dues';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
+import { BanknoteArrowDown, BanknoteArrowUp, DollarSign, Users } from 'lucide-react';
 
 interface TotalDuesProps {
   totalDues?: GetYearOperationDuesResp;
@@ -48,7 +48,7 @@ const BigNumberCard = ({
   );
 };
 
-export default function TotalDuesBigNumber({ totalDues, birthDues }: TotalDuesProps) {
+const TotalDues = ({ totalDues, birthDues }: TotalDuesProps) => {
   const currentMonth = dayjs().format('MM');
 
   return (
@@ -83,4 +83,6 @@ export default function TotalDuesBigNumber({ totalDues, birthDues }: TotalDuesPr
       />
     </div>
   );
-}
+};
+
+export default TotalDues;

@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
-import { usePostDuesMutation, usePutDuesMutation, useDeleteDuesMutation } from '@/hooks/queries/useDues';
-import { GetYearDuesResp } from '@/lib/api/dues';
 import { Badge } from '@/components/shadcn/badge';
-import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
+import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
-import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pencil, Copy, Trash2, Save } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
+import { useDeleteDuesMutation, usePostDuesMutation, usePutDuesMutation } from '@/hooks/queries/useDues';
+import { GetYearDuesResp } from '@/lib/api/dues';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Copy, EllipsisVertical, Pencil, Save, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type EditableDuesData = GetYearDuesResp & { id: string; isNew?: boolean; tempId?: string };
 type UpdateDuesData = GetYearDuesResp & { id: string };
@@ -26,7 +26,7 @@ interface DuesTableProps {
   yearDues?: GetYearDuesResp[];
 }
 
-export default function DuesTable({ yearDues = [] }: DuesTableProps) {
+const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
   const { mutate: postDues } = usePostDuesMutation();
   const { mutate: putDues } = usePutDuesMutation();
   const { mutate: deleteDues } = useDeleteDuesMutation();
@@ -460,5 +460,7 @@ export default function DuesTable({ yearDues = [] }: DuesTableProps) {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
+
+export default DuesTable;

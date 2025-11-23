@@ -32,7 +32,6 @@ import UsersDepartment from '@/features/admin/users/department/Department.tsx';
 import UsersManagement from '@/features/admin/users/management/Management.tsx';
 import Policy from '@/features/admin/vacation/Policy';
 import Vacation from '@/features/admin/vacation/Vacation';
-import Dues from '@/features/culture/dues/Dues';
 import Rule from '@/features/culture/rule/Rule';
 import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
@@ -245,7 +244,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Dues',
             path: '/culture/dues',
             icon: CircleDollarSign,
-            component: Dues,
+            component: DuesPage,
             isDefault: true,
           },
           {

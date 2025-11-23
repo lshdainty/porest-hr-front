@@ -1,8 +1,8 @@
-import { Skeleton } from '@/components/shadcn/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/shadcn/card';
-import { DollarSign, Users, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { BanknoteArrowDown, BanknoteArrowUp, DollarSign, Users } from 'lucide-react';
 
-export default function TotalDuesSkeleton() {
+const TotalDuesSkeleton = () => {
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
       <Card className='relative overflow-hidden'>
@@ -82,4 +82,6 @@ export default function TotalDuesSkeleton() {
       </Card>
     </div>
   );
-}
+};
+
+export default TotalDuesSkeleton;

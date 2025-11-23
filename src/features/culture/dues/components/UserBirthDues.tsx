@@ -1,15 +1,16 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { GetUsersMonthBirthDuesResp } from '@/lib/api/dues';
 import { GetUsersResp } from '@/lib/api/user';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
-import { Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Gift } from 'lucide-react';
+import React from 'react';
 
 interface UserBirthDuesProps {
   usersBirthDues?: GetUsersMonthBirthDuesResp[];
   users?: GetUsersResp[];
 }
 
-export default function UserBirthDues({ usersBirthDues, users }: UserBirthDuesProps) {
+const UserBirthDues = ({ usersBirthDues, users }: UserBirthDuesProps) => {
   return (
     <div>
       <Card>
@@ -28,7 +29,7 @@ export default function UserBirthDues({ usersBirthDues, users }: UserBirthDuesPr
                 const dues = duesData ? duesData.month_birth_dues : Array(12).fill(0);
 
                 return (
-                  <>
+                  <React.Fragment key={user.user_id}>
                     <div className='font-semibold text-left py-1'>{user.user_name}</div>
                     {dues.map((value, index) => {
                       const birthMonth = user.user_birth ? parseInt(user.user_birth.split('-')[1]) : null;
@@ -50,7 +51,7 @@ export default function UserBirthDues({ usersBirthDues, users }: UserBirthDuesPr
                         </div>
                       );
                     })}
-                  </>
+                  </React.Fragment>
                 );
               })}
             </div>
@@ -59,4 +60,6 @@ export default function UserBirthDues({ usersBirthDues, users }: UserBirthDuesPr
       </Card>
     </div>
   );
-}
+};
+
+export default UserBirthDues;
