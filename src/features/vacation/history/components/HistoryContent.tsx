@@ -1,6 +1,6 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
-import UserInfoCard from '@/components/user/UserInfoCard'
-import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton'
+import UserInfoCard from '@/features/user/components/UserInfoCard'
+import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleton'
 import { useUser } from '@/contexts/UserContext'
 import { useUserQuery } from '@/hooks/queries/useUsers'
 import {

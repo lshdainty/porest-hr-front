@@ -1,5 +1,5 @@
-import UserInfoCard from '@/components/user/UserInfoCard';
-import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
+import UserInfoCard from '@/features/user/components/UserInfoCard';
+import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleton';
 import { useUser } from '@/contexts/UserContext';
 import { useVacationContext } from '@/features/admin/vacation/stats/contexts/VacationContext';
 import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
