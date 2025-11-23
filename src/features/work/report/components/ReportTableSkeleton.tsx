@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 
-export default function ReportTableSkeleton() {
+const ReportTableSkeleton = () => {
   return (
     <Card>
       <CardHeader>
@@ -58,4 +58,6 @@ export default function ReportTableSkeleton() {
       </CardContent>
     </Card>
   );
-}
+};
+
+export default ReportTableSkeleton;

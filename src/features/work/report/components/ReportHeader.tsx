@@ -9,25 +9,26 @@ import {
   Filter,
 } from 'lucide-react';
 
+import { useReportContext } from '@/features/work/report/contexts/ReportContext';
+
 interface ReportHeaderProps {
-  isFilterOpen: boolean;
-  setIsFilterOpen: (open: boolean) => void;
-  activeFiltersCount: number;
   handleExcelImport: () => void;
   handleExcelExport: () => void;
   handleDownloadTemplate: () => void;
   handleDownloadUnregistered: () => void;
 }
 
-export default function ReportHeader({
-  isFilterOpen,
-  setIsFilterOpen,
-  activeFiltersCount,
+const ReportHeader = ({
   handleExcelImport,
   handleExcelExport,
   handleDownloadTemplate,
   handleDownloadUnregistered,
-}: ReportHeaderProps) {
+}: ReportHeaderProps) => {
+  const {
+    isFilterOpen,
+    setIsFilterOpen,
+    activeFiltersCount,
+  } = useReportContext();
   return (
     <>
       <h1 className='text-3xl font-bold mb-6'>업무 이력 작성</h1>
@@ -88,3 +89,5 @@ export default function ReportHeader({
     </>
   );
 }
+
+export default ReportHeader;

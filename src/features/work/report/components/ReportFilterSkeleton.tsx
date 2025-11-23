@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/shadcn/card';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
-export default function ReportFilterSkeleton() {
+const ReportFilterSkeleton = () => {
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">
@@ -49,4 +49,6 @@ export default function ReportFilterSkeleton() {
       </CardContent>
     </Card>
   );
-}
+};
+
+export default ReportFilterSkeleton;

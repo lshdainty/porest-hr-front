@@ -4,20 +4,20 @@ import { Calendar } from '@/components/shadcn/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/shadcn/dropdownMenu';
 import { Input } from '@/components/shadcn/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/shadcn/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Textarea } from '@/components/shadcn/textarea';
@@ -26,39 +26,22 @@ import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import {
-  CalendarIcon,
-  Copy,
-  EllipsisVertical,
-  Pencil,
-  Plus,
-  Trash2
+    CalendarIcon,
+    Copy,
+    EllipsisVertical,
+    Pencil,
+    Plus,
+    Trash2
 } from 'lucide-react';
 
-export interface WorkHistory {
-  no: number;
-  work_history_seq?: number;
-  date: string;
-  manager_id: string;
-  manager_name: string;
-  work_group?: WorkCodeResp;
-  work_part?: WorkCodeResp;
-  work_division?: WorkCodeResp;
-  hours: number | string;
-  content: string;
-}
+import { useReportContext } from '@/features/work/report/contexts/ReportContext';
+import { WorkHistory } from '@/features/work/report/types';
 
 interface ReportTableProps {
   workHistories: WorkHistory[];
   isWorkHistoriesLoading: boolean;
-  selectedRows: number[];
-  handleSelectAll: (checked: boolean) => void;
-  handleSelectRow: (no: number, checked: boolean) => void;
   handleAddRow: () => void;
   handleDuplicateSelected: () => void;
-  editingRow: number | null;
-  editData: WorkHistory | null;
-  setEditData: React.Dispatch<React.SetStateAction<WorkHistory | null>>;
-  updateEditData: (field: keyof WorkHistory, value: any) => void;
   handleSave: () => void;
   handleCancel: () => void;
   handleEdit: (row: WorkHistory) => void;
@@ -70,18 +53,11 @@ interface ReportTableProps {
   isWorkDivisionLoading: boolean;
 }
 
-export default function ReportTable({
+const ReportTable = ({
   workHistories,
   isWorkHistoriesLoading,
-  selectedRows,
-  handleSelectAll,
-  handleSelectRow,
   handleAddRow,
   handleDuplicateSelected,
-  editingRow,
-  editData,
-  setEditData,
-  updateEditData,
   handleSave,
   handleCancel,
   handleEdit,
@@ -91,7 +67,31 @@ export default function ReportTable({
   isWorkGroupsLoading,
   workDivision,
   isWorkDivisionLoading,
-}: ReportTableProps) {
+}: ReportTableProps) => {
+  const {
+    selectedRows,
+    setSelectedRows,
+    editingRow,
+    editData,
+    setEditData,
+    updateEditData,
+  } = useReportContext();
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRows(workHistories.map((row) => row.no));
+    } else {
+      setSelectedRows([]);
+    }
+  };
+
+  const handleSelectRow = (no: number, checked: boolean) => {
+    if (checked) {
+      setSelectedRows([...selectedRows, no]);
+    } else {
+      setSelectedRows(selectedRows.filter((rowNo) => rowNo !== no));
+    }
+  };
   const isAllSelected =
     workHistories.length > 0 && selectedRows.length === workHistories.length;
   const isSomeSelected = selectedRows.length > 0 && selectedRows.length < workHistories.length;
@@ -403,3 +403,5 @@ export default function ReportTable({
     </Card>
   );
 }
+
+export default ReportTable;

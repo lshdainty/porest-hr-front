@@ -3,63 +3,52 @@ import { Button } from '@/components/shadcn/button';
 import { Calendar } from '@/components/shadcn/calendar';
 import { Card, CardContent } from '@/components/shadcn/card';
 import {
-    Collapsible,
-    CollapsibleContent
+  Collapsible,
+  CollapsibleContent
 } from '@/components/shadcn/collapsible';
 import { Label } from '@/components/shadcn/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/shadcn/select';
 import { GetUsersResp } from '@/lib/api/user'; // Added import
 import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 import {
-    CalendarIcon,
-    Search,
-    X
+  CalendarIcon,
+  Search,
+  X
 } from 'lucide-react';
 
-export interface FilterState {
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  filterName: string;
-  sortOrder: string;
-  selectedWorkGroup: string;
-  selectedWorkPart: string;
-  selectedWorkDivision: string;
-}
+
+
+import { useReportContext } from '@/features/work/report/contexts/ReportContext';
 
 interface ReportFilterProps {
-  isFilterOpen: boolean;
-  setIsFilterOpen: (open: boolean) => void;
-  activeFiltersCount: number;
-  handleResetFilters: () => void;
-  filters: FilterState;
-  onFilterChange: (key: keyof FilterState, value: any) => void;
-  handleSearch: () => void;
   workGroups: WorkGroupWithParts[];
   workDivision: WorkCodeResp[];
   users: GetUsersResp[];
 }
 
-export default function ReportFilter({
-  isFilterOpen,
-  setIsFilterOpen,
-  activeFiltersCount,
-  handleResetFilters,
-  filters,
-  onFilterChange,
-  handleSearch,
+const ReportFilter = ({
   workGroups,
   workDivision,
   users,
-}: ReportFilterProps) {
+}: ReportFilterProps) => {
+  const {
+    isFilterOpen,
+    setIsFilterOpen,
+    activeFiltersCount,
+    handleResetFilters,
+    filters,
+    handleFilterChange: onFilterChange,
+    handleSearch,
+  } = useReportContext();
   // 선택된 업무 분류에 따른 업무 파트 목록
   const currentWorkParts = filters.selectedWorkGroup !== 'all'
     ? workGroups.find(g => g.work_code === filters.selectedWorkGroup)?.parts || []
@@ -276,3 +265,5 @@ export default function ReportFilter({
     </Collapsible>
   );
 }
+
+export default ReportFilter;

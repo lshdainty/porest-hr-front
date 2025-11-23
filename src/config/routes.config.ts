@@ -1,27 +1,27 @@
 import {
-    Briefcase,
-    Building2,
-    CalendarCog,
-    CalendarDays,
-    ChartGantt,
-    ChartLine,
-    ChartNoAxesCombined,
-    CircleDollarSign,
-    HeartHandshake,
-    Home,
-    IdCardLanyard,
-    LayoutDashboard,
-    ListTodo,
-    MessageSquarePlus,
-    NotebookPen,
-    Scale,
-    Settings,
-    ShieldCheck,
-    ShieldEllipsis,
-    ShieldUser,
-    TreePalm,
-    Users as UserIcon,
-    UserRoundCog
+  Briefcase,
+  Building2,
+  CalendarCog,
+  CalendarDays,
+  ChartGantt,
+  ChartLine,
+  ChartNoAxesCombined,
+  CircleDollarSign,
+  HeartHandshake,
+  Home,
+  IdCardLanyard,
+  LayoutDashboard,
+  ListTodo,
+  MessageSquarePlus,
+  NotebookPen,
+  Scale,
+  Settings,
+  ShieldCheck,
+  ShieldEllipsis,
+  ShieldUser,
+  TreePalm,
+  Users as UserIcon,
+  UserRoundCog
 } from 'lucide-react';
 
 // 컴포넌트 직접 import
@@ -38,8 +38,8 @@ import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
 import Application from '@/features/vacation/application/Application';
 import History from '@/features/vacation/history/History';
-import Report from '@/features/work/report/Report';
 import Schedule from '@/features/work/schedule/Schedule';
+import ReportPage from '@/pages/ReportPage';
 import TodoPage from '@/pages/TodoPage';
 
 import { TreeDataItem } from '@/components/shadcn/treeView';
@@ -222,7 +222,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Report',
             path: '/work/report',
             icon: NotebookPen,
-            component: Report,
+            component: ReportPage,
             isDefault: true,
           },
           {

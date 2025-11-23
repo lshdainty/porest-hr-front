@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/shadcn/skeleton';
 
-export default function ReportHeaderSkeleton() {
+const ReportHeaderSkeleton = () => {
   return (
     <>
       <Skeleton className='h-9 w-48 mb-6' />
@@ -24,4 +24,6 @@ export default function ReportHeaderSkeleton() {
       </div>
     </>
   );
-}
+};
+
+export default ReportHeaderSkeleton;
