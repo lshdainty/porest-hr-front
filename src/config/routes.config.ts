@@ -27,7 +27,6 @@ import {
 // 컴포넌트 직접 import
 import { TreeDataItem } from '@/components/shadcn/treeView';
 import Authority from '@/features/admin/authority/Authority';
-import Policy from '@/features/admin/vacation/Policy';
 import Vacation from '@/features/admin/vacation/Vacation';
 import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
@@ -36,6 +35,7 @@ import CompanyPage from '@/pages/CompanyPage';
 import DuesPage from '@/pages/DuesPage';
 import HistoryPage from '@/pages/HistoryPage';
 import HolidayPage from '@/pages/HolidayPage';
+import PolicyPage from '@/pages/PolicyPage';
 import ReportPage from '@/pages/ReportPage';
 import RulePage from '@/pages/RulePage';
 import SchedulePage from '@/pages/SchedulePage';
@@ -169,7 +169,7 @@ export const routesConfig: RouteGroup[] = [
                 name: 'Policy',
                 path: '/admin/vacation/policy',
                 icon: ShieldEllipsis,
-                component: Policy,
+                component: PolicyPage,
               },
             ],
           },
