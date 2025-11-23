@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/shadcn/card'
 import { Skeleton } from '@/components/shadcn/skeleton'
 
-export default function VacationRequestStatsCardsSkeleton() {
+const VacationRequestStatsCardsSkeleton = () => {
   return (
     <div className='grid grid-cols-2 lg:grid-cols-7 gap-4 mb-8'>
       {[...Array(7)].map((_, i) => (
@@ -22,3 +22,5 @@ export default function VacationRequestStatsCardsSkeleton() {
     </div>
   )
 }
+
+export default VacationRequestStatsCardsSkeleton

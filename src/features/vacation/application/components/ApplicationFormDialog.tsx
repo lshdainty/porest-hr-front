@@ -1,16 +1,13 @@
-import type { GetUserApproversResp } from '@/lib/api/user'
-import type { GetUserVacationPoliciesResp } from '@/lib/api/vacation'
-import { usePostRequestVacationMutation } from '@/hooks/queries/useVacations'
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar'
 import { Button } from '@/components/shadcn/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/shadcn/dialog'
 import { Field, FieldError, FieldLabel } from '@/components/shadcn/field'
 import { Input } from '@/components/shadcn/input'
@@ -18,15 +15,18 @@ import { InputDatePicker } from '@/components/shadcn/inputDatePicker'
 import { InputTimePicker } from '@/components/shadcn/inputTimePicker'
 import { ScrollArea } from '@/components/shadcn/scrollArea'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/shadcn/select'
 import { Separator } from '@/components/shadcn/separator'
 import { Textarea } from '@/components/shadcn/textarea'
 import { useUser } from '@/contexts/UserContext'
+import { usePostRequestVacationMutation } from '@/hooks/queries/useVacations'
+import type { GetUserApproversResp } from '@/lib/api/user'
+import type { GetUserVacationPoliciesResp } from '@/lib/api/vacation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import dayjs from 'dayjs'
 import { AlertCircle, Calendar, Clock, Users } from 'lucide-react'
@@ -55,7 +55,7 @@ interface ApplicationFormDialogProps {
   approvers: GetUserApproversResp[]
 }
 
-export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, vacationPolicies, approvers }: ApplicationFormDialogProps) {
+const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicies, approvers }: ApplicationFormDialogProps) => {
   const { loginUser } = useUser()
   const { mutate: requestVacation } = usePostRequestVacationMutation()
 
@@ -735,3 +735,5 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess, 
     </Dialog>
   )
 }
+
+export default ApplicationFormDialog

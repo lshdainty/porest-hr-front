@@ -1,8 +1,3 @@
-import { TypeResp } from '@/lib/api/type';
-import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
-import { usePostCancelVacationRequestMutation } from '@/hooks/queries/useVacations';
-import VacationApprovalForm from '@/components/application/VacationApprovalForm';
-import VacationGrantDialog from '@/components/application/VacationGrantDialog';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
@@ -15,6 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/shadcn/table';
+import VacationApprovalForm from '@/features/vacation/application/components/VacationApprovalForm';
+import VacationGrantDialog from '@/features/vacation/application/components/VacationGrantDialog';
+import { usePostCancelVacationRequestMutation } from '@/hooks/queries/useVacations';
+import { TypeResp } from '@/lib/api/type';
+import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
 import { getStatusBadge } from '@/utils/vacationStatus';
 import dayjs from 'dayjs';
 import {
@@ -33,13 +33,13 @@ interface ApplicationTableProps {
   showGrantButton?: boolean
 }
 
-export default function ApplicationTable({
+const ApplicationTable = ({
   vacationRequests,
   grantStatusTypes,
   userId,
   userName,
   showGrantButton = false
-}: ApplicationTableProps) {
+}: ApplicationTableProps) => {
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
   const [grantDialogOpen, setGrantDialogOpen] = useState(false);
@@ -221,3 +221,5 @@ export default function ApplicationTable({
     </>
   );
 }
+
+export default ApplicationTable;

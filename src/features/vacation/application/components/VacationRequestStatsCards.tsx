@@ -1,19 +1,19 @@
-import { GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { Progress } from '@/components/shadcn/progress';
+import { GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
 import { VACATION_STATUS_CONFIG } from '@/utils/vacationStatus';
 import {
-  CalendarDays,
-  FileText,
-  TrendingUp
+    CalendarDays,
+    FileText,
+    TrendingUp
 } from 'lucide-react';
 
 interface VacationRequestStatsCardsProps {
   stats: GetUserRequestedVacationStatsResp | undefined;
 }
 
-export default function VacationRequestStatsCards({ stats }: VacationRequestStatsCardsProps) {
+const VacationRequestStatsCards = ({ stats }: VacationRequestStatsCardsProps) => {
   // 통계 데이터
   const totalRequests = stats?.total_request_count || 0;
   const pendingRequests = stats?.pending_count || 0;
@@ -157,3 +157,5 @@ export default function VacationRequestStatsCards({ stats }: VacationRequestStat
     </div>
   );
 }
+
+export default VacationRequestStatsCards;

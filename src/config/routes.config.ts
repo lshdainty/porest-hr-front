@@ -35,8 +35,8 @@ import Policy from '@/features/admin/vacation/Policy';
 import Vacation from '@/features/admin/vacation/Vacation';
 import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
-import Application from '@/features/vacation/application/Application';
 import History from '@/features/vacation/history/History';
+import ApplicationPage from '@/pages/ApplicationPage';
 import DuesPage from '@/pages/DuesPage';
 import ReportPage from '@/pages/ReportPage';
 import RulePage from '@/pages/RulePage';
@@ -106,7 +106,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Application',
             path: '/vacation/application',
             icon: MessageSquarePlus,
-            component: Application,
+            component: ApplicationPage,
           },
         ],
       },
