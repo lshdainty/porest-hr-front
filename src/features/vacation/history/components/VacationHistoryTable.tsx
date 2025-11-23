@@ -1,12 +1,12 @@
-import { AddEventDialog } from '@/components/calendar/components/dialogs/add-event-dialog';
-import { EditEventDialog } from '@/components/calendar/components/dialogs/edit-event-dialog';
-import { IEvent } from '@/components/calendar/interfaces';
-import { calendarTypes } from '@/components/calendar/types';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { AddEventDialog } from '@/features/home/calendar/components/dialogs/add-event-dialog';
+import { EditEventDialog } from '@/features/home/calendar/components/dialogs/edit-event-dialog';
+import { IEvent } from '@/features/home/calendar/interfaces';
+import { calendarTypes } from '@/features/home/calendar/types';
 import { useDeleteVacationUsageMutation } from '@/hooks/queries/useVacations';
 import { GetUserVacationHistoryResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';

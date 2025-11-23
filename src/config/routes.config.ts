@@ -27,9 +27,10 @@ import {
 // 컴포넌트 직접 import
 import { TreeDataItem } from '@/components/shadcn/treeView';
 import Authority from '@/features/admin/authority/Authority';
-import Calendar from '@/features/home/calendar/Calendar';
+
 import Dashboard from '@/features/home/dashboard/Dashboard';
 import ApplicationPage from '@/pages/ApplicationPage';
+import CalendarPage from '@/pages/CalendarPage';
 import CompanyPage from '@/pages/CompanyPage';
 import DuesPage from '@/pages/DuesPage';
 import HistoryPage from '@/pages/HistoryPage';
@@ -84,7 +85,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Calendar',
             path: '/calendar',
             icon: CalendarDays,
-            component: Calendar,
+            component: CalendarPage,
           }
         ],
       },
