@@ -1,6 +1,3 @@
-import { useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
-import { useDeleteUserMutation, usePutUserMutation } from '@/hooks/queries/useUsers';
-import { type GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
@@ -13,11 +10,14 @@ import UserEditDialog from '@/components/user/UserEditDialog';
 import UserInviteDialog from '@/components/user/UserInviteDialog';
 import UserVacationPolicyDialog from '@/components/user/UserVacationPolicyDialog';
 import config from '@/config/config';
+import { useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
+import { useDeleteUserMutation, usePutUserMutation } from '@/hooks/queries/useUsers';
+import { type GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import { EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2, UserRound, UserRoundCog } from 'lucide-react';
-import { useState } from 'react';
+import { useManagementContext } from '../contexts/ManagementContext';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -28,13 +28,14 @@ export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: deleteUser } = useDeleteUserMutation();
   const { data: companyTypes } = useOriginCompanyTypesQuery();
 
-  // Dialog 상태 관리
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState<string | null>(null);
-  const [showResendDialog, setShowResendDialog] = useState<string | null>(null);
-  const [showPolicyDialog, setPolicyDialog] = useState<string | null>(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
-  const [showInviteEditDialog, setShowInviteEditDialog] = useState<string | null>(null);
+  const {
+    showInviteDialog, setShowInviteDialog,
+    showEditDialog, setShowEditDialog,
+    showResendDialog, setShowResendDialog,
+    showPolicyDialog, setPolicyDialog,
+    showDeleteDialog, setShowDeleteDialog,
+    showInviteEditDialog, setShowInviteEditDialog
+  } = useManagementContext();
 
   const handleUpdateUser = (user: PutUserReq) => {
     putUser({
