@@ -1,4 +1,4 @@
-import ScheduleSkeleton from '@/components/schedule/ScheduleSkeleton';
+import ScheduleSkeleton from '@/features/work/schedule/components/ScheduleSkeleton';
 import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleton';
 import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton';
 import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton';

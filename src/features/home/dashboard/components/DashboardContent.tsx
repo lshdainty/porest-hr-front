@@ -1,6 +1,6 @@
 import { SpeedDial, SpeedDialAction } from '@/components/common/SpeedDial';
-import ScheduleSkeleton from '@/components/schedule/ScheduleSkeleton';
-import ScheduleTable from '@/components/schedule/ScheduleTable';
+import ScheduleSkeleton from '@/features/work/schedule/components/ScheduleSkeleton';
+import ScheduleTable from '@/features/work/schedule/components/ScheduleTable';
 import { Button } from '@/components/shadcn/button';
 import UserInfoCard from '@/features/user/components/UserInfoCard';
 import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleton';
