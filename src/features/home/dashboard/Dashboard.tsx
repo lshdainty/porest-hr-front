@@ -8,21 +8,21 @@ import 'react-resizable/css/styles.css';
 import { useUser } from '@/contexts/UserContext';
 import { useUserQuery, useUsersQuery } from '@/hooks/queries/useUsers';
 import {
-  useAvailableVacationsQuery,
-  useUserMonthlyVacationStatsQuery,
-  useUserVacationStatsQuery
+    useAvailableVacationsQuery,
+    useUserMonthlyVacationStatsQuery,
+    useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations';
 
 import ScheduleSkeleton from '@/components/schedule/ScheduleSkeleton';
 import ScheduleTable from '@/components/schedule/ScheduleTable';
 import UserInfoCard from '@/components/user/UserInfoCard';
 import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
-import MonthVacationStatsCard from '@/components/vacation/MonthVacationStatsCard';
-import MonthVacationStatsCardSkeleton from '@/components/vacation/MonthVacationStatsCardSkeleton';
-import VacationStatsCard from '@/components/vacation/VacationStatsCard';
-import VacationStatsCardSkeleton from '@/components/vacation/VacationStatsCardSkeleton';
-import VacationTypeStatsCard from '@/components/vacation/VacationTypeStatsCard';
-import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton';
+import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard';
+import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton';
+import VacationStatsCard from '@/features/vacation/history/components/VacationStatsCard';
+import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton';
+import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard';
+import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton';
 
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { SpeedDial, SpeedDialAction } from '@/components/common/SpeedDial';

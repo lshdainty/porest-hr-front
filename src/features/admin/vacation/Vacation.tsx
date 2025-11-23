@@ -1,25 +1,25 @@
+import UserInfoCard from '@/components/user/UserInfoCard';
+import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
+import { useUser } from '@/contexts/UserContext';
+import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
+import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
+import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard';
+import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton';
+import VacationHistoryTable from '@/features/vacation/history/components/VacationHistoryTable';
+import VacationHistoryTableSkeleton from '@/features/vacation/history/components/VacationHistoryTableSkeleton';
+import VacationStatsCard from '@/features/vacation/history/components/VacationStatsCard';
+import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton';
+import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard';
+import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton';
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUsersQuery } from '@/hooks/queries/useUsers';
 import {
-  useAllVacationsByApproverQuery,
-  useAvailableVacationsQuery,
-  useUserMonthlyVacationStatsQuery,
-  useUserVacationStatsQuery,
-  useUserVacationHistoryQuery
+    useAllVacationsByApproverQuery,
+    useAvailableVacationsQuery,
+    useUserMonthlyVacationStatsQuery,
+    useUserVacationHistoryQuery,
+    useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations';
-import ApplicationTable from '@/components/application/ApplicationTable';
-import ApplicationTableSkeleton from '@/components/application/ApplicationTableSkeleton';
-import UserInfoCard from '@/components/user/UserInfoCard';
-import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
-import MonthVacationStatsCard from '@/components/vacation/MonthVacationStatsCard';
-import MonthVacationStatsCardSkeleton from '@/components/vacation/MonthVacationStatsCardSkeleton';
-import VacationHistoryTable from '@/components/vacation/VacationHistoryTable';
-import VacationHistoryTableSkeleton from '@/components/vacation/VacationHistoryTableSkeleton';
-import VacationStatsCard from '@/components/vacation/VacationStatsCard';
-import VacationStatsCardSkeleton from '@/components/vacation/VacationStatsCardSkeleton';
-import VacationTypeStatsCard from '@/components/vacation/VacationTypeStatsCard';
-import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton'
-import { useUser } from '@/contexts/UserContext'
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 

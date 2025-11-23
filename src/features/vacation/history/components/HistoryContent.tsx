@@ -1,23 +1,24 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
 import UserInfoCard from '@/components/user/UserInfoCard'
 import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton'
-import MonthVacationStatsCard from '@/components/vacation/MonthVacationStatsCard'
-import MonthVacationStatsCardSkeleton from '@/components/vacation/MonthVacationStatsCardSkeleton'
-import VacationHistoryTable from '@/components/vacation/VacationHistoryTable'
-import VacationHistoryTableSkeleton from '@/components/vacation/VacationHistoryTableSkeleton'
-import VacationStatsCard from '@/components/vacation/VacationStatsCard'
-import VacationStatsCardSkeleton from '@/components/vacation/VacationStatsCardSkeleton'
-import VacationTypeStatsCard from '@/components/vacation/VacationTypeStatsCard'
-import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton'
 import { useUser } from '@/contexts/UserContext'
 import { useUserQuery } from '@/hooks/queries/useUsers'
 import {
   useAvailableVacationsQuery,
   useUserMonthlyVacationStatsQuery,
-  useUserVacationStatsQuery,
-  useUserVacationHistoryQuery
+  useUserVacationHistoryQuery,
+  useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations'
 import dayjs from 'dayjs'
+import { useHistoryContext } from '../contexts/HistoryContext'
+import MonthVacationStatsCard from './MonthVacationStatsCard'
+import MonthVacationStatsCardSkeleton from './MonthVacationStatsCardSkeleton'
+import VacationHistoryTable from './VacationHistoryTable'
+import VacationHistoryTableSkeleton from './VacationHistoryTableSkeleton'
+import VacationStatsCard from './VacationStatsCard'
+import VacationStatsCardSkeleton from './VacationStatsCardSkeleton'
+import VacationTypeStatsCard from './VacationTypeStatsCard'
+import VacationTypeStatsCardSkeleton from './VacationTypeStatsCardSkeleton'
 
 interface HistoryContentProps {
   user: any
@@ -27,7 +28,7 @@ interface HistoryContentProps {
   histories: any
 }
 
-const HistoryContent = ({
+const HistoryContentLayout = ({
   user,
   vacationStats,
   monthStats,
@@ -79,8 +80,9 @@ const HistorySkeleton = () => {
   )
 }
 
-const History = () => {
+const HistoryContent = () => {
   const { loginUser } = useUser()
+  const { selectedYear } = useHistoryContext()
   const user_id = loginUser?.user_id || ''
 
   const { data: user, isLoading: userLoading, error: userError } = useUserQuery(user_id)
@@ -90,7 +92,7 @@ const History = () => {
   )
   const { data: monthStats, isLoading: monthStatsLoading, error: monthStatsError } = useUserMonthlyVacationStatsQuery(
     user_id,
-    dayjs().format('YYYY')
+    selectedYear
   )
   const { data: histories, isLoading: historiesLoading, error: historiesError } = useUserVacationHistoryQuery(user_id)
   const { data: vacationStats, isLoading: vacationStatsLoading, error: vacationStatsError } = useUserVacationStatsQuery(
@@ -113,7 +115,7 @@ const History = () => {
         </div>
       }
     >
-      <HistoryContent
+      <HistoryContentLayout
         user={user}
         vacationStats={vacationStats}
         monthStats={monthStats}
@@ -124,4 +126,4 @@ const History = () => {
   )
 }
 
-export default History
+export default HistoryContent

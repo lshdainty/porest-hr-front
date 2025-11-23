@@ -1,43 +1,42 @@
 import {
-  Briefcase,
-  Building2,
-  CalendarCog,
-  CalendarDays,
-  ChartGantt,
-  ChartLine,
-  ChartNoAxesCombined,
-  CircleDollarSign,
-  HeartHandshake,
-  Home,
-  IdCardLanyard,
-  LayoutDashboard,
-  ListTodo,
-  MessageSquarePlus,
-  NotebookPen,
-  Scale,
-  Settings,
-  ShieldCheck,
-  ShieldEllipsis,
-  ShieldUser,
-  TreePalm,
-  Users as UserIcon,
-  UserRoundCog
+    Briefcase,
+    Building2,
+    CalendarCog,
+    CalendarDays,
+    ChartGantt,
+    ChartLine,
+    ChartNoAxesCombined,
+    CircleDollarSign,
+    HeartHandshake,
+    Home,
+    IdCardLanyard,
+    LayoutDashboard,
+    ListTodo,
+    MessageSquarePlus,
+    NotebookPen,
+    Scale,
+    Settings,
+    ShieldCheck,
+    ShieldEllipsis,
+    ShieldUser,
+    TreePalm,
+    Users as UserIcon,
+    UserRoundCog
 } from 'lucide-react';
 
 // 컴포넌트 직접 import
 import { TreeDataItem } from '@/components/shadcn/treeView';
 import Authority from '@/features/admin/authority/Authority';
 import Company from '@/features/admin/company/Company';
-import Holiday from '@/features/admin/holiday/Holiday';
 import UsersDepartment from '@/features/admin/users/department/Department.tsx';
 import UsersManagement from '@/features/admin/users/management/Management.tsx';
 import Policy from '@/features/admin/vacation/Policy';
 import Vacation from '@/features/admin/vacation/Vacation';
 import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
-import History from '@/features/vacation/history/History';
 import ApplicationPage from '@/pages/ApplicationPage';
 import DuesPage from '@/pages/DuesPage';
+import HistoryPage from '@/pages/HistoryPage';
 import ReportPage from '@/pages/ReportPage';
 import RulePage from '@/pages/RulePage';
 import SchedulePage from '@/pages/SchedulePage';
@@ -98,7 +97,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'History',
             path: '/vacation/history',
             icon: ChartNoAxesCombined,
-            component: History,
+            component: HistoryPage,
             isDefault: true,
           },
           {
