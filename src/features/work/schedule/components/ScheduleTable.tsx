@@ -153,7 +153,8 @@ const ScheduleBar = ({ item }: { item: ScheduleItem }) => {
   );
 };
 
-export default function ScheduleTable({ users }: ScheduleTableProps) {
+const ScheduleTable = ({ users }: ScheduleTableProps) => {
+
   return (
     <div className="bg-background overflow-hidden">
       <div className="overflow-x-auto">
@@ -218,3 +219,5 @@ export default function ScheduleTable({ users }: ScheduleTableProps) {
     </div>
   )
 }
+
+export default ScheduleTable;

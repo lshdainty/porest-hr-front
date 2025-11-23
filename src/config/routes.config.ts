@@ -38,8 +38,8 @@ import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
 import Application from '@/features/vacation/application/Application';
 import History from '@/features/vacation/history/History';
-import Schedule from '@/features/work/schedule/Schedule';
 import ReportPage from '@/pages/ReportPage';
+import SchedulePage from '@/pages/SchedulePage';
 import TodoPage from '@/pages/TodoPage';
 
 import { TreeDataItem } from '@/components/shadcn/treeView';
@@ -230,7 +230,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Schedule',
             path: '/work/schedule',
             icon: ChartGantt,
-            component: Schedule,
+            component: SchedulePage,
           },
         ],
       },

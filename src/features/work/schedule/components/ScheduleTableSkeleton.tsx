@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/shadcn/skeleton';
 
-export default function ScheduleTableSkeleton() {
+const ScheduleTableSkeleton = () => {
   return (
     <div className="bg-white overflow-hidden">
       <div className="overflow-x-auto">
@@ -46,4 +46,6 @@ export default function ScheduleTableSkeleton() {
       </div>
     </div>
   );
-}
+};
+
+export default ScheduleTableSkeleton;
