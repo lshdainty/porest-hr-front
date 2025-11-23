@@ -3,9 +3,9 @@ import { useUser } from '@/contexts/UserContext'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import NotFound from '@/components/notFound/NotFound'
-import SignUp from '@/features/auth/SignUp'
 import Layout from '@/features/layout/layout'
 import LoginPage from '@/pages/LoginPage'
+import SignUpPage from '@/pages/SignUpPage'
 
 // 설정 파일에서 import
 import { RouteConfig, flattenRoutes, routesConfig } from '@/config/routes.config'
@@ -71,7 +71,7 @@ const Router: React.FC = () => {
       />
       <Route
         path='/signup'
-        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUp/>}
+        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage/>}
       />
 
       {/* 보호된 라우트 - 인증 안된 경우 로그인으로 리다이렉트 */}
