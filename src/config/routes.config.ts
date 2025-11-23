@@ -1,33 +1,32 @@
 import {
-    Briefcase,
-    Building2,
-    CalendarCog,
-    CalendarDays,
-    ChartGantt,
-    ChartLine,
-    ChartNoAxesCombined,
-    CircleDollarSign,
-    HeartHandshake,
-    Home,
-    LayoutDashboard,
-    ListTodo,
-    MessageSquarePlus,
-    Network,
-    NotebookPen,
-    Scale,
-    Settings,
-    ShieldCheck,
-    ShieldEllipsis,
-    ShieldUser,
-    TreePalm,
-    Users as UserIcon,
-    UserRoundCog
+  Briefcase,
+  Building2,
+  CalendarCog,
+  CalendarDays,
+  ChartGantt,
+  ChartLine,
+  ChartNoAxesCombined,
+  CircleDollarSign,
+  HeartHandshake,
+  Home,
+  LayoutDashboard,
+  ListTodo,
+  MessageSquarePlus,
+  Network,
+  NotebookPen,
+  Scale,
+  Settings,
+  ShieldCheck,
+  ShieldEllipsis,
+  ShieldUser,
+  TreePalm,
+  Users as UserIcon,
+  UserRoundCog
 } from 'lucide-react';
 
 // 컴포넌트 직접 import
 import { TreeDataItem } from '@/components/shadcn/treeView';
 import Authority from '@/features/admin/authority/Authority';
-import Vacation from '@/features/admin/vacation/Vacation';
 import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
 import ApplicationPage from '@/pages/ApplicationPage';
@@ -42,6 +41,7 @@ import SchedulePage from '@/pages/SchedulePage';
 import TodoPage from '@/pages/TodoPage';
 import UsersDepartmentPage from '@/pages/UsersDepartmentPage';
 import UsersManagementPage from '@/pages/UsersManagementPage';
+import VacationPage from '@/pages/VacationPage';
 
 import React from 'react';
 
@@ -161,7 +161,7 @@ export const routesConfig: RouteGroup[] = [
                 name: 'Stats',
                 path: '/admin/vacation/stats',
                 icon: ChartLine,
-                component: Vacation,
+                component: VacationPage,
                 isDefault: true,
               },
               {

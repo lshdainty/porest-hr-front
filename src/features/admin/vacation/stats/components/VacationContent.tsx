@@ -1,6 +1,7 @@
 import UserInfoCard from '@/components/user/UserInfoCard';
 import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
 import { useUser } from '@/contexts/UserContext';
+import { useVacationContext } from '@/features/admin/vacation/stats/contexts/VacationContext';
 import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
 import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
 import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard';
@@ -21,11 +22,11 @@ import {
     useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-export default function Vacation() {
-  const { loginUser } = useUser()
-  const [selectedUserId, setSelectedUserId] = useState<string>(loginUser?.user_id || '')
+const VacationContent = () => {
+  const { loginUser } = useUser();
+  const { selectedUserId, setSelectedUserId } = useVacationContext();
 
   const { data: users, isLoading: usersLoading } = useUsersQuery();
   const { data: vacationTypes, isLoading: vacationTypesLoading } = useAvailableVacationsQuery(
@@ -50,7 +51,7 @@ export default function Vacation() {
     if (loginUser && !selectedUserId) {
       setSelectedUserId(loginUser.user_id);
     }
-  }, [loginUser, selectedUserId]);
+  }, [loginUser, selectedUserId, setSelectedUserId]);
 
   if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading || isLoadingRequests) {
     return (
@@ -131,4 +132,6 @@ export default function Vacation() {
       </div>
     </div>
   );
-}
+};
+
+export default VacationContent;
