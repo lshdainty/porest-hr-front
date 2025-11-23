@@ -1,10 +1,10 @@
 import { useUsersQuery } from '@/hooks/queries/useUsers';
-import UserCompanyCard from '@/components/user/UserCompanyCard';
-import UserCompanyCardSkeleton from '@/components/user/UserCompanyCardSkeleton';
-import UserTable from '@/components/user/UserTable';
-import UserTableSkeleton from '@/components/user/UserTableSkeleton';
+import UserCompanyCard from './UserCompanyCard';
+import UserCompanyCardSkeleton from './UserCompanyCardSkeleton';
+import UserTable from './UserTable';
+import UserTableSkeleton from './UserTableSkeleton';
 
-export default function Management() {
+const ManagementContent = () => {
   const { data: users, isLoading: usersLoading } = useUsersQuery();
 
   if (usersLoading) {
@@ -24,4 +24,6 @@ export default function Management() {
       <UserTable value={users || []} />
     </div>
   );
-}
+};
+
+export default ManagementContent;

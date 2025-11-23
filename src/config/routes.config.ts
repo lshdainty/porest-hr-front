@@ -9,10 +9,10 @@ import {
     CircleDollarSign,
     HeartHandshake,
     Home,
-    IdCardLanyard,
     LayoutDashboard,
     ListTodo,
     MessageSquarePlus,
+    Network,
     NotebookPen,
     Scale,
     Settings,
@@ -27,20 +27,22 @@ import {
 // 컴포넌트 직접 import
 import { TreeDataItem } from '@/components/shadcn/treeView';
 import Authority from '@/features/admin/authority/Authority';
-import Company from '@/features/admin/company/Company';
-import UsersDepartment from '@/features/admin/users/department/Department.tsx';
-import UsersManagement from '@/features/admin/users/management/Management.tsx';
+import Holiday from '@/features/admin/holiday/Holiday';
 import Policy from '@/features/admin/vacation/Policy';
 import Vacation from '@/features/admin/vacation/Vacation';
 import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
 import ApplicationPage from '@/pages/ApplicationPage';
+import CompanyPage from '@/pages/CompanyPage';
 import DuesPage from '@/pages/DuesPage';
 import HistoryPage from '@/pages/HistoryPage';
 import ReportPage from '@/pages/ReportPage';
 import RulePage from '@/pages/RulePage';
 import SchedulePage from '@/pages/SchedulePage';
 import TodoPage from '@/pages/TodoPage';
+import UsersDepartmentPage from '@/pages/UsersDepartmentPage';
+import UsersManagementPage from '@/pages/UsersManagementPage';
+
 import React from 'react';
 
 export interface RouteConfig {
@@ -120,7 +122,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Company',
             path: '/admin/company',
             icon: Building2,
-            component: Company,
+            component: CompanyPage,
             isDefault: true,
           },
           {
@@ -135,15 +137,15 @@ export const routesConfig: RouteGroup[] = [
                 name: 'Management',
                 path: '/admin/users/management',
                 icon: UserRoundCog,
-                component: UsersManagement,
+                component: UsersManagementPage,
                 isDefault: true,
               },
               {
-                id: 'admin-users-department',
-                name: 'department',
+                id: 'users-department',
+                name: 'Department',
                 path: '/admin/users/department',
-                icon: IdCardLanyard,
-                component: UsersDepartment,
+                icon: Network,
+                component: UsersDepartmentPage,
                 isDefault: true,
               }
             ],
