@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 
 // 컴포넌트 직접 import
+import { TreeDataItem } from '@/components/shadcn/treeView';
 import Authority from '@/features/admin/authority/Authority';
 import Company from '@/features/admin/company/Company';
 import Holiday from '@/features/admin/holiday/Holiday';
@@ -32,16 +33,15 @@ import UsersDepartment from '@/features/admin/users/department/Department.tsx';
 import UsersManagement from '@/features/admin/users/management/Management.tsx';
 import Policy from '@/features/admin/vacation/Policy';
 import Vacation from '@/features/admin/vacation/Vacation';
-import Rule from '@/features/culture/rule/Rule';
 import Calendar from '@/features/home/calendar/Calendar';
 import Dashboard from '@/features/home/dashboard/Dashboard';
 import Application from '@/features/vacation/application/Application';
 import History from '@/features/vacation/history/History';
+import DuesPage from '@/pages/DuesPage';
 import ReportPage from '@/pages/ReportPage';
+import RulePage from '@/pages/RulePage';
 import SchedulePage from '@/pages/SchedulePage';
 import TodoPage from '@/pages/TodoPage';
-
-import { TreeDataItem } from '@/components/shadcn/treeView';
 import React from 'react';
 
 export interface RouteConfig {
@@ -252,7 +252,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Rule',
             path: '/culture/rule',
             icon: Scale,
-            component: Rule,
+            component: RulePage,
           },
         ],
       }
