@@ -8,6 +8,7 @@ import ScheduleWidget from '@/features/home/dashboard/components/widgets/Schedul
 import TotalDuesWidget from '@/features/home/dashboard/components/widgets/TotalDuesWidget';
 import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
 import UserBirthDuesWidget from '@/features/home/dashboard/components/widgets/UserBirthDuesWidget';
+import UserCompanyStatsWidget from '@/features/home/dashboard/components/widgets/UserCompanyStatsWidget';
 import VacationHistoryWidget from '@/features/home/dashboard/components/widgets/VacationHistoryWidget';
 import VacationRequestStatsWidget from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
 import VacationStatsWidget from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
@@ -160,6 +161,10 @@ const DashboardContent = ({
     'user-birth-dues': {
       title: '월별 생일비 입금 현황',
       component: <UserBirthDuesWidget usersBirthDues={usersBirthDues} users={users} />
+    },
+    'user-company-stats': {
+      title: '회사별 인원 현황',
+      component: <UserCompanyStatsWidget users={users} />
     }
   };
 
