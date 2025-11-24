@@ -128,7 +128,7 @@ const DashboardContent = ({
 
   return (
     <div className='min-h-screen bg-gray-50/50 relative overflow-hidden flex flex-col'>
-      <div className='flex-1 overflow-y-auto p-4'>
+      <div className='flex-1 overflow-y-auto'>
         <ResponsiveGridLayout
           className='layout min-h-screen'
           layouts={layouts}
