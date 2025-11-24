@@ -5,13 +5,14 @@ import MonthStatsWidget from '@/features/home/dashboard/components/widgets/Month
 import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
 import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
 import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
+import VacationHistoryWidget from '@/features/home/dashboard/components/widgets/VacationHistoryWidget';
 import VacationRequestStatsWidget from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
 import VacationStatsWidget from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
 import WidgetWrapper from '@/features/home/dashboard/components/WidgetWrapper';
 import { WIDGETS } from '@/features/home/dashboard/constants';
 import { useDashboardContext } from '@/features/home/dashboard/contexts/DashboardContext';
 import { TypeResp } from '@/lib/api/type';
-import { GetUserRequestedVacationsResp, GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
+import { GetUserRequestedVacationsResp, GetUserRequestedVacationStatsResp, GetUserVacationHistoryResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { GripVertical, Pencil, Plus, Save, Settings, X } from 'lucide-react';
 import { useMemo } from 'react';
@@ -30,6 +31,7 @@ interface DashboardContentProps {
   vacationRequests?: GetUserRequestedVacationsResp[];
   requestStats?: GetUserRequestedVacationStatsResp;
   grantStatusTypes?: TypeResp[];
+  vacationHistory?: GetUserVacationHistoryResp;
 }
 
 const DashboardContent = ({ 
@@ -40,7 +42,8 @@ const DashboardContent = ({
   users,
   vacationRequests,
   requestStats,
-  grantStatusTypes = []
+  grantStatusTypes = [],
+  vacationHistory
 }: DashboardContentProps) => {
   const {
     layouts,
@@ -130,6 +133,10 @@ const DashboardContent = ({
     'vacation-request-stats': {
       title: '휴가 신청 통계',
       component: <VacationRequestStatsWidget stats={requestStats} />
+    },
+    'vacation-history': {
+      title: '휴가 내역',
+      component: <VacationHistoryWidget vacationHistory={vacationHistory} />
     }
   };
 
