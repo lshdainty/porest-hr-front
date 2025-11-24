@@ -169,7 +169,7 @@ const DashboardContent = ({
   };
 
   return (
-    <div className='min-h-screen bg-gray-50/50 relative overflow-hidden flex flex-col'>
+    <div className='min-h-screen bg-background relative overflow-hidden flex flex-col'>
       <div className='flex-1 overflow-y-auto'>
         <ResponsiveGridLayout
           className='layout min-h-screen'
@@ -216,7 +216,7 @@ const DashboardContent = ({
       {/* Custom Non-Modal Toolbox Panel */}
       <div 
         className={cn(
-          'fixed top-0 right-0 bottom-0 w-80 bg-white shadow-2xl border-l transform transition-transform duration-300 ease-in-out z-40 overflow-y-auto',
+          'fixed top-0 right-0 bottom-0 w-80 bg-background shadow-2xl border-l transform transition-transform duration-300 ease-in-out z-40 overflow-y-auto',
           isEditing && isToolboxOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
@@ -226,7 +226,7 @@ const DashboardContent = ({
           <div className='space-y-4'>
             <div className='space-y-2'>
               <h4 className='text-sm font-medium text-muted-foreground mb-4'>사용 가능한 위젯</h4>
-              <p className='text-xs text-gray-400 mb-4'>
+              <p className='text-xs text-muted-foreground mb-4'>
                 위젯을 드래그하여 대시보드에 추가하세요.
               </p>
               
@@ -237,7 +237,7 @@ const DashboardContent = ({
                     key={widget.id}
                     className={cn(
                       'flex items-center justify-between p-3 rounded-lg border bg-card transition-colors select-none',
-                      isActive ? 'opacity-50 cursor-not-allowed bg-gray-50' : 'hover:bg-accent/50 cursor-grab active:cursor-grabbing'
+                      isActive ? 'opacity-50 cursor-not-allowed bg-muted' : 'hover:bg-accent/50 cursor-grab active:cursor-grabbing'
                     )}
                     draggable={!isActive}
                     onDragStart={(e) => {
@@ -254,7 +254,7 @@ const DashboardContent = ({
                     }}
                   >
                     <div className='flex items-center gap-3'>
-                      <GripVertical className='w-4 h-4 text-gray-400' />
+                      <GripVertical className='w-4 h-4 text-muted-foreground' />
                       <span className='font-medium text-sm'>{widget.label}</span>
                     </div>
                     {isActive && <span className='text-xs text-green-600 font-medium'>사용 중</span>}
