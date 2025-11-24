@@ -8,6 +8,7 @@ export const WIDGETS = [
   { id: 'type-stats', label: '휴가 유형별 통계', defaultH: 8, defaultW: 3 },
   { id: 'schedule', label: '근무 일정', defaultH: 8, defaultW: 9 },
   { id: 'vacation-application', label: '휴가 신청 내역', defaultH: 8, defaultW: 12 },
+  { id: 'vacation-request-stats', label: '휴가 신청 통계', defaultH: 4, defaultW: 12 },
 ];
 
 export const defaultLayouts = {

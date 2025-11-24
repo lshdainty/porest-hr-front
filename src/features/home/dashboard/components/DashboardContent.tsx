@@ -5,12 +5,13 @@ import MonthStatsWidget from '@/features/home/dashboard/components/widgets/Month
 import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
 import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
 import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
+import VacationRequestStatsWidget from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
 import VacationStatsWidget from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
 import WidgetWrapper from '@/features/home/dashboard/components/WidgetWrapper';
 import { WIDGETS } from '@/features/home/dashboard/constants';
 import { useDashboardContext } from '@/features/home/dashboard/contexts/DashboardContext';
 import { TypeResp } from '@/lib/api/type';
-import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
+import { GetUserRequestedVacationsResp, GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { GripVertical, Pencil, Plus, Save, Settings, X } from 'lucide-react';
 import { useMemo } from 'react';
@@ -27,6 +28,7 @@ interface DashboardContentProps {
   vacationTypes: any;
   users: any;
   vacationRequests?: GetUserRequestedVacationsResp[];
+  requestStats?: GetUserRequestedVacationStatsResp;
   grantStatusTypes?: TypeResp[];
 }
 
@@ -37,6 +39,7 @@ const DashboardContent = ({
   vacationTypes,
   users,
   vacationRequests,
+  requestStats,
   grantStatusTypes = []
 }: DashboardContentProps) => {
   const {
@@ -123,6 +126,10 @@ const DashboardContent = ({
           userName={user?.user_name}
         />
       )
+    },
+    'vacation-request-stats': {
+      title: '휴가 신청 통계',
+      component: <VacationRequestStatsWidget stats={requestStats} />
     }
   };
 

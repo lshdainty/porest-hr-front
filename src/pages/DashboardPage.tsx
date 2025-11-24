@@ -9,6 +9,7 @@ import {
     useAvailableVacationsQuery,
     useUserMonthlyVacationStatsQuery,
     useUserRequestedVacationsQuery,
+    useUserRequestedVacationStatsQuery,
     useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations';
 import dayjs from 'dayjs';
@@ -31,11 +32,12 @@ const DashboardPage = () => {
     dayjs().format('YYYY-MM-DDTHH:mm:ss')
   );
   const { data: vacationRequests, isLoading: vacationRequestsLoading, error: vacationRequestsError } = useUserRequestedVacationsQuery(user_id);
+  const { data: requestStats, isLoading: requestStatsLoading, error: requestStatsError } = useUserRequestedVacationStatsQuery(user_id);
   const { data: grantStatusTypes } = useGrantStatusTypesQuery();
   const { data: users, isLoading: usersLoading, error: usersError } = useUsersQuery();
 
-  const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading || vacationRequestsLoading;
-  const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError || vacationRequestsError;
+  const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading || vacationRequestsLoading || requestStatsLoading;
+  const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError || vacationRequestsError || requestStatsError;
 
   return (
     <QueryAsyncBoundary
@@ -57,6 +59,7 @@ const DashboardPage = () => {
           vacationTypes={vacationTypes}
           users={users}
           vacationRequests={vacationRequests}
+          requestStats={requestStats}
           grantStatusTypes={grantStatusTypes}
         />
       </DashboardProvider>

@@ -1,16 +1,16 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { Button } from '@/components/shadcn/button';
 import { useUser } from '@/contexts/UserContext';
+import ApplicationFormDialog from '@/features/vacation/application/components/ApplicationFormDialog';
+import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
+import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
+import VacationRequestStatsContent from '@/features/vacation/application/components/VacationRequestStatsContent';
+import VacationRequestStatsContentSkeleton from '@/features/vacation/application/components/VacationRequestStatsContentSkeleton';
+import { useApplicationContext } from '@/features/vacation/application/contexts/ApplicationContext';
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUserApproversQuery } from '@/hooks/queries/useUsers';
 import { useUserRequestedVacationsQuery, useUserRequestedVacationStatsQuery, useUserVacationPoliciesQuery } from '@/hooks/queries/useVacations';
 import { Plus } from 'lucide-react';
-import { useApplicationContext } from '@/features/vacation/application/contexts/ApplicationContext';
-import ApplicationFormDialog from '@/features/vacation/application/components/ApplicationFormDialog';
-import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
-import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
-import VacationRequestStatsCards from '@/features/vacation/application/components/VacationRequestStatsCards';
-import VacationRequestStatsCardsSkeleton from '@/features/vacation/application/components/VacationRequestStatsCardsSkeleton';
 
 const ApplicationContent = () => {
   const { isDialogOpen, setIsDialogOpen } = useApplicationContext();
@@ -48,7 +48,7 @@ const ApplicationContent = () => {
     <div className='p-4 sm:p-6 md:p-8'>
       <h1 className='text-3xl font-bold mb-2'>휴가 신청 관리</h1>
       <p className='text-foreground/70 mb-8'>휴가를 신청하고 현황을 관리하세요</p>
-      <VacationRequestStatsCardsSkeleton />
+      <VacationRequestStatsContentSkeleton />
       <ApplicationTableSkeleton />
     </div>
   );
@@ -77,7 +77,11 @@ const ApplicationContent = () => {
             새 신청서 작성
           </Button>
         </div>
-        <VacationRequestStatsCards stats={stats} />
+        {isLoadingStats ? (
+          <VacationRequestStatsContentSkeleton />
+        ) : (
+          <VacationRequestStatsContent stats={stats} />
+        )}
         <ApplicationTable
           vacationRequests={vacationRequests}
           grantStatusTypes={grantStatusTypes}
