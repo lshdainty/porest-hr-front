@@ -4,8 +4,8 @@ import { useUser } from '@/contexts/UserContext';
 import ApplicationFormDialog from '@/features/vacation/application/components/ApplicationFormDialog';
 import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
 import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
-import VacationRequestStatsContent from '@/features/vacation/application/components/VacationRequestStatsContent';
-import VacationRequestStatsContentSkeleton from '@/features/vacation/application/components/VacationRequestStatsContentSkeleton';
+import VacationRequestStatsCards from '@/features/vacation/application/components/VacationRequestStatsCards';
+import VacationRequestStatsCardsSkeleton from '@/features/vacation/application/components/VacationRequestStatsCardsSkeleton';
 import { useApplicationContext } from '@/features/vacation/application/contexts/ApplicationContext';
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUserApproversQuery } from '@/hooks/queries/useUsers';
@@ -48,7 +48,7 @@ const ApplicationContent = () => {
     <div className='p-4 sm:p-6 md:p-8'>
       <h1 className='text-3xl font-bold mb-2'>휴가 신청 관리</h1>
       <p className='text-foreground/70 mb-8'>휴가를 신청하고 현황을 관리하세요</p>
-      <VacationRequestStatsContentSkeleton />
+      <VacationRequestStatsCardsSkeleton />
       <ApplicationTableSkeleton />
     </div>
   );
@@ -78,9 +78,9 @@ const ApplicationContent = () => {
           </Button>
         </div>
         {isLoadingStats ? (
-          <VacationRequestStatsContentSkeleton />
+          <VacationRequestStatsCardsSkeleton />
         ) : (
-          <VacationRequestStatsContent stats={stats} />
+          <VacationRequestStatsCards stats={stats} />
         )}
         <ApplicationTable
           vacationRequests={vacationRequests}

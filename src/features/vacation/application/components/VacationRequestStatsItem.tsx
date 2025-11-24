@@ -1,20 +1,55 @@
 import { Badge } from '@/components/shadcn/badge';
-import { Card, CardContent } from '@/components/shadcn/card';
 import { Progress } from '@/components/shadcn/progress';
 import { GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
 import { VACATION_STATUS_CONFIG } from '@/utils/vacationStatus';
 import {
-    CalendarDays,
-    FileText,
-    TrendingUp
+  CalendarDays,
+  FileText,
+  TrendingUp
 } from 'lucide-react';
+import { ReactNode } from 'react';
 
-interface VacationRequestStatsContentProps {
-  stats: GetUserRequestedVacationStatsResp | undefined;
+export interface VacationRequestStatsItemProps {
+  id?: string;
+  icon: ReactNode;
+  iconBg: string;
+  headerRight?: ReactNode;
+  title: string;
+  value: string | number;
+  description?: string;
+  footer?: ReactNode;
 }
 
-const VacationRequestStatsContent = ({ stats }: VacationRequestStatsContentProps) => {
-  // 통계 데이터
+const VacationRequestStatsItem = ({
+  icon,
+  iconBg,
+  headerRight,
+  title,
+  value,
+  description,
+  footer
+}: VacationRequestStatsItemProps) => {
+  return (
+    <>
+      <div className='flex items-center justify-between mb-4'>
+        <div className={`w-12 h-12 rounded-lg ${iconBg} flex items-center justify-center`}>
+          {icon}
+        </div>
+        {headerRight}
+      </div>
+      <div>
+        <p className='text-sm text-foreground mb-1'>{title}</p>
+        <p className='text-2xl font-bold text-foreground'>{value}</p>
+        {description && (
+          <p className='text-xs text-foreground/70 mt-1'>{description}</p>
+        )}
+        {footer}
+      </div>
+    </>
+  );
+};
+
+export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationStatsResp | undefined): VacationRequestStatsItemProps[] => {
   const totalRequests = stats?.total_request_count || 0;
   const pendingRequests = stats?.pending_count || 0;
   const inProgressRequests = stats?.progress_count || 0;
@@ -26,7 +61,7 @@ const VacationRequestStatsContent = ({ stats }: VacationRequestStatsContentProps
   const requestGrowth = stats?.change_rate || 0;
   const averageProcessingDays = stats?.average_processing_days || 0;
 
-  const cardConfig = [
+  return [
     {
       id: 'total',
       icon: <FileText className='w-6 h-6 text-blue-600' />,
@@ -120,31 +155,6 @@ const VacationRequestStatsContent = ({ stats }: VacationRequestStatsContentProps
       description: '승인된 휴가'
     }
   ];
+};
 
-  return (
-    <div className='grid grid-cols-2 lg:grid-cols-7 gap-4 mb-8'>
-      {cardConfig.map((card) => (
-        <Card key={card.id} className='relative overflow-hidden py-0'>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className={`w-12 h-12 rounded-lg ${card.iconBg} flex items-center justify-center`}>
-                {card.icon}
-              </div>
-              {card.headerRight}
-            </div>
-            <div>
-              <p className='text-sm text-foreground mb-1'>{card.title}</p>
-              <p className='text-2xl font-bold text-foreground'>{card.value}</p>
-              {card.description && (
-                <p className='text-xs text-foreground/70 mt-1'>{card.description}</p>
-              )}
-              {card.footer}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-export default VacationRequestStatsContent;
+export default VacationRequestStatsItem;
