@@ -17,21 +17,21 @@ import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import {
-    AlertCircle,
-    Briefcase,
-    Building2,
-    Cake,
-    Camera,
-    Clock,
-    Loader2,
-    Mail,
-    Moon,
-    Shield,
-    Trash2,
-    Upload,
-    User as UserIcon,
-    UserRound,
-    UserRoundCog
+  AlertCircle,
+  Briefcase,
+  Building2,
+  Cake,
+  Camera,
+  Clock,
+  Loader2,
+  Mail,
+  Moon,
+  Shield,
+  Trash2,
+  Upload,
+  User as UserIcon,
+  UserRound,
+  UserRoundCog
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -128,7 +128,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       form.reset({
         ...user,
         user_origin_company_type: user.user_origin_company_type || companyOptions[0].company_type,
-        user_department_type: user.user_department_type || departmentOptions[0].department_type,
+        user_department_type: (user as any).user_department_type || departmentOptions[0].department_type,
         lunar_yn: user.lunar_yn || 'N',
       });
       setProfileImage(getFullImageUrl(user.profile_url || ''));
@@ -251,7 +251,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                           <span className="text-xs text-muted-foreground font-medium">처리 중...</span>
                         </div>
                       </div>
-                      <style jsx>{`
+                      <style>{`
                         @keyframes shimmer {
                           0% { background-position: -200px 0; }
                           100% { background-position: calc(200px + 100%) 0; }

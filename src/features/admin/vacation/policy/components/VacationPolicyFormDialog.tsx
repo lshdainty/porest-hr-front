@@ -1,40 +1,40 @@
-import { usePostVacationPolicyMutation } from '@/hooks/queries/useVacations';
 import { Button } from '@/components/shadcn/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/shadcn/card';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from '@/components/shadcn/dialog';
 import {
-  Field,
-  FieldError,
-  FieldLabel
+    Field,
+    FieldError,
+    FieldLabel
 } from '@/components/shadcn/field';
 import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/shadcn/select';
 import { Separator } from '@/components/shadcn/separator';
 import { Spinner } from '@/components/shadcn/spinner';
 import { Textarea } from '@/components/shadcn/textarea';
+import { usePostVacationPolicyMutation } from '@/hooks/queries/useVacations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Calendar,
-  Info
+    Calendar,
+    Info
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -491,7 +491,7 @@ const VacationPolicyFormDialog = ({
 
   const shouldShowSpecificDays = (): boolean => {
     if (watchGrantMethod !== 'REPEAT_GRANT') return false;
-    return ['YEARLY', 'MONTHLY', 'QUARTERLY', 'HALF'].includes(watchRepeatUnit);
+    return ['YEARLY', 'MONTHLY', 'QUARTERLY', 'HALF'].includes(watchRepeatUnit || '');
   };
 
   return (
@@ -1123,4 +1123,5 @@ const VacationPolicyFormDialog = ({
   )
 }
 
-export { VacationPolicyFormDialog }
+export { VacationPolicyFormDialog };
+

@@ -1,27 +1,27 @@
-import { useEffectiveTypesQuery, useExpirationTypesQuery } from '@/hooks/queries/useTypes';
-import { useUsersQuery } from '@/hooks/queries/useUsers';
-import { useUserAssignedVacationPoliciesQuery, usePostManualGrantVacationMutation } from '@/hooks/queries/useVacations';
 import { Button } from '@/components/shadcn/button';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/shadcn/dialog';
 import { Field, FieldError, FieldLabel } from '@/components/shadcn/field';
 import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/shadcn/select';
 import { Textarea } from '@/components/shadcn/textarea';
+import { useEffectiveTypesQuery, useExpirationTypesQuery } from '@/hooks/queries/useTypes';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
+import { usePostManualGrantVacationMutation, useUserAssignedVacationPoliciesQuery } from '@/hooks/queries/useVacations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
@@ -137,7 +137,7 @@ const VacationGrantDialog = ({
         form.setValue('grantTime', selectedPolicy.grant_time);
       } else {
         // is_flexible_grant가 'Y'인 경우, 기존 값 유지 또는 초기화
-        form.setValue('grantTime', undefined);
+        form.setValue('grantTime', 0);
       }
     }
   }, [selectedPolicy, form]);

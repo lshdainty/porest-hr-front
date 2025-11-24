@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Building2, Plus } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Button } from '@/components/shadcn/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/card';
 import CompanyFormDialog from '@/features/admin/company/components/CompanyFormDialog';
 import { PostCompanyReq } from '@/lib/api/company';
+import { Building2, Plus } from 'lucide-react';
+import { useState } from 'react';
 
 interface CompanyCreateCardProps {
   onCompanyCreate: (companyData: PostCompanyReq) => void;
@@ -12,8 +12,9 @@ interface CompanyCreateCardProps {
 const CompanyCreateCard = ({ onCompanyCreate }: CompanyCreateCardProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
-  const handleSaveCompany = (formData: PostCompanyReq): void => {
-    onCompanyCreate(formData);
+  const handleSaveCompany = (formData: PostCompanyReq | { companyId: string; data: any }): void => {
+    // Since this is a create card, we assume the data is PostCompanyReq
+    onCompanyCreate(formData as PostCompanyReq);
     setIsDialogOpen(false);
   };
 

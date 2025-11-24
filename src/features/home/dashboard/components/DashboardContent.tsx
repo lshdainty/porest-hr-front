@@ -1,24 +1,24 @@
 import { SpeedDial, SpeedDialAction } from '@/components/common/SpeedDial';
-import ScheduleSkeleton from '@/features/work/schedule/components/ScheduleSkeleton';
-import ScheduleTable from '@/features/work/schedule/components/ScheduleTable';
 import { Button } from '@/components/shadcn/button';
-import UserInfoCard from '@/features/user/components/UserInfoCard';
+import WidgetWrapper from '@/features/home/dashboard/components/WidgetWrapper';
+import { WIDGETS } from '@/features/home/dashboard/constants';
+import { useDashboardContext } from '@/features/home/dashboard/contexts/DashboardContext';
 import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleton';
+import UserInfoContent from '@/features/user/components/UserInfoContent';
 import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard';
 import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton';
 import VacationStatsCard from '@/features/vacation/history/components/VacationStatsCard';
 import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton';
 import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard';
 import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton';
+import ScheduleSkeleton from '@/features/work/schedule/components/ScheduleSkeleton';
+import ScheduleTable from '@/features/work/schedule/components/ScheduleTable';
 import { cn } from '@/lib/utils';
 import { GripVertical, Pencil, Plus, Save, Settings, X } from 'lucide-react';
 import { useMemo } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { WIDGETS } from '@/features/home/dashboard/constants';
-import { useDashboardContext } from '@/features/home/dashboard/contexts/DashboardContext';
-import WidgetWrapper from '@/features/home/dashboard/components/WidgetWrapper';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -114,7 +114,7 @@ const DashboardContent = ({
               <WidgetWrapper title="내 정보" onClose={() => toggleWidget('profile')} isEditing={isEditing}>
                 {user ? (
                   <div className="h-full overflow-y-auto">
-                     <UserInfoCard value={[user]} />
+                     <UserInfoContent user={user} />
                   </div>
                 ) : <UserInfoCardSkeleton />}
               </WidgetWrapper>

@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import dayjs from 'dayjs';
 import { Button } from '@/components/shadcn/button';
-import { Input } from '@/components/shadcn/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { type GetHolidaysResp, type PostHolidayReq } from '@/lib/api/holiday';
+import { zodResolver } from '@hookform/resolvers/zod';
+import dayjs from 'dayjs';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const formSchema = z.object({
   holiday_name: z.string().min(1, { message: '공휴일 이름을 입력해주세요.' }),
@@ -75,7 +75,7 @@ const HolidayEditDialog = ({
   }, [editingHoliday, form]);
 
   const onSubmit = (values: HolidayFormValues) => {
-    onSave(values);
+    onSave({ ...values, holiday_icon: values.holiday_icon || '', lunar_date: values.lunar_date || '' });
   };
 
   const handleCancel = () => {

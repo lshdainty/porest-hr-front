@@ -9,7 +9,7 @@ interface ProvidersProps {
 }
 
 const Providers = ({ children }: ProvidersProps) => {
-  const queryClientRef = useRef<QueryClient>()
+  const queryClientRef = useRef<QueryClient>(undefined)
 
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient({
