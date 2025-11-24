@@ -3,7 +3,7 @@ import { useUser } from '@/contexts/UserContext'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import NotFound from '@/components/notFound/NotFound'
-import Layout from '@/features/layout/layout'
+import Layout from '@/components/layout/layout'
 import LoginPage from '@/pages/LoginPage'
 import SignUpPage from '@/pages/SignUpPage'
 
