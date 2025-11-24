@@ -3,7 +3,7 @@ import { useUser } from '@/contexts/UserContext';
 import DashboardContent from '@/features/home/dashboard/components/DashboardContent';
 import DashboardSkeleton from '@/features/home/dashboard/components/DashboardSkeleton';
 import { DashboardProvider } from '@/features/home/dashboard/contexts/DashboardContext';
-import { useYearDuesQuery } from '@/hooks/queries/useDues';
+import { useMonthBirthDuesQuery, useYearDuesQuery, useYearOperationDuesQuery } from '@/hooks/queries/useDues';
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUserQuery, useUsersQuery } from '@/hooks/queries/useUsers';
 import {
@@ -39,9 +39,11 @@ const DashboardPage = () => {
   const { data: users, isLoading: usersLoading, error: usersError } = useUsersQuery();
   const { data: vacationHistory, isLoading: vacationHistoryLoading, error: vacationHistoryError } = useUserVacationHistoryQuery(user_id);
   const { data: yearDues, isLoading: yearDuesLoading, error: yearDuesError } = useYearDuesQuery(dayjs().format('YYYY'));
+  const { data: totalDues, isLoading: totalDuesLoading, error: totalDuesError } = useYearOperationDuesQuery(dayjs().format('YYYY'));
+  const { data: birthDues, isLoading: birthDuesLoading, error: birthDuesError } = useMonthBirthDuesQuery(dayjs().format('YYYY'), dayjs().format('MM'));
 
-  const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading || vacationRequestsLoading || requestStatsLoading || vacationHistoryLoading || yearDuesLoading;
-  const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError || vacationRequestsError || requestStatsError || vacationHistoryError || yearDuesError;
+  const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading || vacationRequestsLoading || requestStatsLoading || vacationHistoryLoading || yearDuesLoading || totalDuesLoading || birthDuesLoading;
+  const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError || vacationRequestsError || requestStatsError || vacationHistoryError || yearDuesError || totalDuesError || birthDuesError;
 
   return (
     <QueryAsyncBoundary
@@ -67,6 +69,8 @@ const DashboardPage = () => {
           grantStatusTypes={grantStatusTypes}
           vacationHistory={vacationHistory}
           yearDues={yearDues}
+          totalDues={totalDues}
+          birthDues={birthDues}
         />
       </DashboardProvider>
     </QueryAsyncBoundary>

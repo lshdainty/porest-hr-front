@@ -5,6 +5,7 @@ import DuesWidget from '@/features/home/dashboard/components/widgets/DuesWidget'
 import MonthStatsWidget from '@/features/home/dashboard/components/widgets/MonthStatsWidget';
 import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
 import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
+import TotalDuesWidget from '@/features/home/dashboard/components/widgets/TotalDuesWidget';
 import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
 import VacationHistoryWidget from '@/features/home/dashboard/components/widgets/VacationHistoryWidget';
 import VacationRequestStatsWidget from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
@@ -34,6 +35,8 @@ interface DashboardContentProps {
   grantStatusTypes?: TypeResp[];
   vacationHistory?: GetUserVacationHistoryResp;
   yearDues?: any[];
+  totalDues?: any;
+  birthDues?: any;
 }
 
 const DashboardContent = ({ 
@@ -46,7 +49,9 @@ const DashboardContent = ({
   requestStats,
   grantStatusTypes = [],
   vacationHistory,
-  yearDues
+  yearDues,
+  totalDues,
+  birthDues
 }: DashboardContentProps) => {
   const {
     layouts,
@@ -144,6 +149,10 @@ const DashboardContent = ({
     'dues': {
       title: '회비 내역',
       component: <DuesWidget yearDues={yearDues} />
+    },
+    'total-dues': {
+      title: '회비 현황',
+      component: <TotalDuesWidget totalDues={totalDues} birthDues={birthDues} />
     }
   };
 

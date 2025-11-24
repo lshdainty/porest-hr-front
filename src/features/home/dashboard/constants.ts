@@ -11,6 +11,7 @@ export const WIDGETS = [
   { id: 'vacation-request-stats', label: '휴가 신청 통계', defaultH: 4, defaultW: 12 },
   { id: 'vacation-history', label: '휴가 내역', defaultH: 14, defaultW: 12 },
   { id: 'dues', label: '회비 내역', defaultH: 14, defaultW: 12 },
+  { id: 'total-dues', label: '회비 현황', defaultH: 4, defaultW: 12 },
 ];
 
 export const defaultLayouts = {
