@@ -25,6 +25,7 @@ export interface GetUserResp {
   invitation_status?: string
   registered_at?: string
   dashboard?: string
+  permissions?: string[]
 }
 
 export interface GetUsersResp {

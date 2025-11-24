@@ -1,5 +1,6 @@
 import { Toaster } from '@/components/alert/toast'
 import { ThemeProvider } from '@/components/shadcn/themeProvider'
+import { PermissionProvider } from '@/contexts/PermissionContext'
 import { UserProvider } from '@/contexts/UserContext'
 import '@/lib/api'
 import Providers from '@/providers'
@@ -18,7 +19,9 @@ const App: React.FC = () => {
       <Providers>
         <BrowserRouter basename='/'>
           <UserProvider>
-            <Router />
+            <PermissionProvider>
+              <Router />
+            </PermissionProvider>
           </UserProvider>
         </BrowserRouter>
       </Providers>

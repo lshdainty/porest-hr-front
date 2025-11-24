@@ -1,9 +1,10 @@
+import PermissionGuard from '@/components/auth/PermissionGuard'
 import Loading from '@/components/loading/Loading'
 import { useUser } from '@/contexts/UserContext'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 
-import NotFound from '@/components/notFound/NotFound'
 import Layout from '@/components/layout/layout'
+import NotFound from '@/components/notFound/NotFound'
 import LoginPage from '@/pages/LoginPage'
 import SignUpPage from '@/pages/SignUpPage'
 
@@ -24,7 +25,17 @@ const generateRouteElements = (routes: RouteConfig[], parentPath = ''): React.Re
       const defaultChild = route.children.find(child => child.isDefault);
 
       elements.push(
-        <Route key={route.id} path={cleanPath}>
+        <Route
+          key={route.id}
+          path={cleanPath}
+          element={
+            route.requiredPermissions ? (
+              <PermissionGuard requiredPermission={route.requiredPermissions} fallback={<Navigate to="/" replace />}>
+                <Outlet />
+              </PermissionGuard>
+            ) : undefined
+          }
+        >
           {childElements}
           {defaultChild && (
             <Route
@@ -42,7 +53,15 @@ const generateRouteElements = (routes: RouteConfig[], parentPath = ''): React.Re
         <Route
           key={route.id}
           path={cleanPath}
-          element={<Component />}
+          element={
+            route.requiredPermissions ? (
+              <PermissionGuard requiredPermission={route.requiredPermissions} fallback={<Navigate to="/" replace />}>
+                <Component />
+              </PermissionGuard>
+            ) : (
+              <Component />
+            )
+          }
         />
       )
     }

@@ -20,6 +20,7 @@ export interface GetLoginCheck {
   user_role: string
   is_login: string
   profile_url?: string
+  permissions?: string[]
 }
 
 export interface GetValidateInvitationTokenReq {

@@ -4,12 +4,14 @@ import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
+import config from '@/config/config';
+import { usePermission } from '@/contexts/PermissionContext';
 import ResendEmailDialog from '@/features/admin/users/management/components/ResendEmailDialog';
 import UserDeleteDialog from '@/features/admin/users/management/components/UserDeleteDialog';
-import UserEditDialog from '@/features/user/components/UserEditDialog';
 import UserInviteDialog from '@/features/admin/users/management/components/UserInviteDialog';
 import UserVacationPolicyDialog from '@/features/admin/users/management/components/UserVacationPolicyDialog';
-import config from '@/config/config';
+import { useManagementContext } from '@/features/admin/users/management/contexts/ManagementContext';
+import UserEditDialog from '@/features/user/components/UserEditDialog';
 import { useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
 import { useDeleteUserMutation, usePutUserMutation } from '@/hooks/queries/useUsers';
 import { type GetUsersResp, type PutUserReq } from '@/lib/api/user';
@@ -17,7 +19,6 @@ import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import { EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2, UserRound, UserRoundCog } from 'lucide-react';
-import { useManagementContext } from '@/features/admin/users/management/contexts/ManagementContext';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -36,6 +37,8 @@ const UserTable = ({ value: users }: UserTableProps) => {
     showDeleteDialog, setShowDeleteDialog,
     showInviteEditDialog, setShowInviteEditDialog
   } = useManagementContext();
+
+  const { hasPermission } = usePermission();
 
   const handleUpdateUser = (user: PutUserReq) => {
     putUser({
@@ -63,9 +66,11 @@ const UserTable = ({ value: users }: UserTableProps) => {
         <div className='flex items-center justify-between'>
           <CardTitle>사용자 목록</CardTitle>
           <div className='flex gap-2'>
-            <Button className='text-sm h-8' size='sm' onClick={() => setShowInviteDialog(true)}>
-              초대
-            </Button>
+            {hasPermission('user:invite') && (
+              <Button className='text-sm h-8' size='sm' onClick={() => setShowInviteDialog(true)}>
+                초대
+              </Button>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -177,14 +182,16 @@ const UserTable = ({ value: users }: UserTableProps) => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align='end' className='w-32'>
-                            <DropdownMenuItem
-                              disabled={row.invitation_status !== 'EXPIRED' && row.invitation_status !== 'INACTIVE'}
-                              onSelect={() => setShowResendDialog(row.user_id)}
-                            >
-                              <MailPlus className='h-4 w-4' />
-                              <span>메일 재전송</span>
-                            </DropdownMenuItem>
-                            {row.invitation_status === 'ACTIVE' && (
+                            {hasPermission('user:invite:resend') && (
+                              <DropdownMenuItem
+                                disabled={row.invitation_status !== 'EXPIRED' && row.invitation_status !== 'INACTIVE'}
+                                onSelect={() => setShowResendDialog(row.user_id)}
+                              >
+                                <MailPlus className='h-4 w-4' />
+                                <span>메일 재전송</span>
+                              </DropdownMenuItem>
+                            )}
+                            {row.invitation_status === 'ACTIVE' && hasPermission('user:update') && (
                               <DropdownMenuItem
                                 onSelect={() => setShowEditDialog(row.user_id)}
                               >
@@ -192,7 +199,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 <span>사용자 수정</span>
                               </DropdownMenuItem>
                             )}
-                            {row.invitation_status === 'PENDING' && (
+                            {row.invitation_status === 'PENDING' && hasPermission('user:update') && (
                               <DropdownMenuItem
                                 onSelect={() => setShowInviteEditDialog(row.user_id)}
                               >
@@ -208,7 +215,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 <span>사용자 수정</span>
                               </DropdownMenuItem>
                             )}
-                            {row.invitation_status === 'ACTIVE' && (
+                            {row.invitation_status === 'ACTIVE' && hasPermission('user:policy:assign') && (
                               <DropdownMenuItem
                                 onSelect={() => setPolicyDialog(row.user_id)}
                               >
@@ -217,13 +224,15 @@ const UserTable = ({ value: users }: UserTableProps) => {
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onSelect={() => setShowDeleteDialog(row.user_id)}
-                              className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                            >
-                              <Trash2 className='h-4 w-4' />
-                              <span>삭제</span>
-                            </DropdownMenuItem>
+                            {hasPermission('user:delete') && (
+                              <DropdownMenuItem
+                                onSelect={() => setShowDeleteDialog(row.user_id)}
+                                className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                              >
+                                <Trash2 className='h-4 w-4' />
+                                <span>삭제</span>
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
