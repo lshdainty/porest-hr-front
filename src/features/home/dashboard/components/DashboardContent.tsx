@@ -7,6 +7,7 @@ import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileW
 import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
 import TotalDuesWidget from '@/features/home/dashboard/components/widgets/TotalDuesWidget';
 import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
+import UserBirthDuesWidget from '@/features/home/dashboard/components/widgets/UserBirthDuesWidget';
 import VacationHistoryWidget from '@/features/home/dashboard/components/widgets/VacationHistoryWidget';
 import VacationRequestStatsWidget from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
 import VacationStatsWidget from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
@@ -37,6 +38,7 @@ interface DashboardContentProps {
   yearDues?: any[];
   totalDues?: any;
   birthDues?: any;
+  usersBirthDues?: any[];
 }
 
 const DashboardContent = ({ 
@@ -51,7 +53,8 @@ const DashboardContent = ({
   vacationHistory,
   yearDues,
   totalDues,
-  birthDues
+  birthDues,
+  usersBirthDues
 }: DashboardContentProps) => {
   const {
     layouts,
@@ -153,6 +156,10 @@ const DashboardContent = ({
     'total-dues': {
       title: '회비 현황',
       component: <TotalDuesWidget totalDues={totalDues} birthDues={birthDues} />
+    },
+    'user-birth-dues': {
+      title: '월별 생일비 입금 현황',
+      component: <UserBirthDuesWidget usersBirthDues={usersBirthDues} users={users} />
     }
   };
 
