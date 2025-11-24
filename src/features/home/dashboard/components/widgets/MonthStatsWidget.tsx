@@ -1,5 +1,5 @@
-import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard';
 import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton';
+import MonthVacationStatsContent from '@/features/vacation/history/components/MonthVacationStatsContent';
 import { GetUserMonthlyVacationStatsResp } from '@/lib/api/vacation';
 
 interface MonthStatsWidgetProps {
@@ -11,7 +11,11 @@ const MonthStatsWidget = ({ monthStats }: MonthStatsWidgetProps) => {
     return <MonthVacationStatsCardSkeleton />;
   }
 
-  return <MonthVacationStatsCard value={monthStats} className='h-full' />;
+  return (
+    <div className='h-full w-full p-4'>
+      <MonthVacationStatsContent data={monthStats} />
+    </div>
+  );
 };
 
 export default MonthStatsWidget;
