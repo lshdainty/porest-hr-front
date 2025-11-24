@@ -36,13 +36,13 @@ interface HolidayEditDialogProps {
   trigger?: React.ReactNode;
 }
 
-export default function HolidayEditDialog({
+const HolidayEditDialog = ({
   isOpen,
   onOpenChange,
   editingHoliday,
   onSave,
   trigger,
-}: HolidayEditDialogProps) {
+}: HolidayEditDialogProps) => {
   const form = useForm<HolidayFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -269,5 +269,7 @@ export default function HolidayEditDialog({
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+
+export default HolidayEditDialog

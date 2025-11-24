@@ -14,7 +14,7 @@ interface IProps {
   multiDayEvents: IEvent[];
 }
 
-export function CalendarAgendaView({ singleDayEvents, multiDayEvents }: IProps) {
+const CalendarAgendaView = ({ singleDayEvents, multiDayEvents }: IProps) => {
   const { selectedDate } = useCalendar();
 
   const eventsByDay = useMemo(() => {
@@ -76,5 +76,7 @@ export function CalendarAgendaView({ singleDayEvents, multiDayEvents }: IProps) 
         </div>
       </ScrollArea>
     </div>
-  );
+  )
 }
+
+export { CalendarAgendaView }

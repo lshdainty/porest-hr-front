@@ -13,7 +13,7 @@ interface IProps {
   events: IEvent[];
 }
 
-export function YearViewDayCell({ day, date, events }: IProps) {
+const YearViewDayCell = ({ day, date, events }: IProps) => {
   const { setSelectedDate, setView, findHolidayByDate } = useCalendar();
 
   const maxIndicators = 3;
@@ -99,5 +99,7 @@ export function YearViewDayCell({ day, date, events }: IProps) {
         </div>
       )}
     </button>
-  );
+  )
 }
+
+export { YearViewDayCell }

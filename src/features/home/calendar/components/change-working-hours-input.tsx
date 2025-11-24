@@ -21,7 +21,7 @@ const DAYS_OF_WEEK = [
   { index: 6, name: 'Saturday' },
 ];
 
-export function ChangeWorkingHoursInput() {
+const ChangeWorkingHoursInput = () => {
   const { workingHours, setWorkingHours } = useCalendar();
 
   const [localWorkingHours, setLocalWorkingHours] = useState({ ...workingHours });
@@ -132,5 +132,7 @@ export function ChangeWorkingHoursInput() {
         Apply
       </Button>
     </div>
-  );
+  )
 }
+
+export { ChangeWorkingHoursInput }

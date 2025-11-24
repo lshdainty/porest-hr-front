@@ -251,7 +251,7 @@ interface VacationPolicyFormDialogProps {
   repeatUnitTypes?: Array<{ code: string; name: string }>;
 }
 
-export function VacationPolicyFormDialog({
+const VacationPolicyFormDialog = ({
   trigger,
   initialData = null,
   isEditing = false,
@@ -260,7 +260,7 @@ export function VacationPolicyFormDialog({
   effectiveTypes = [],
   expirationTypes = [],
   repeatUnitTypes = []
-}: VacationPolicyFormDialogProps) {
+}: VacationPolicyFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const { mutateAsync: postVacationPolicy, isPending } = usePostVacationPolicyMutation();
 
@@ -1120,5 +1120,7 @@ export function VacationPolicyFormDialog({
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+
+export { VacationPolicyFormDialog }

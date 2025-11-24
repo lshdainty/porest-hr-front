@@ -16,7 +16,7 @@ interface IProps {
   events: IEvent[];
 }
 
-export function DateNavigator({ view, events }: IProps) {
+const DateNavigator = ({ view, events }: IProps) => {
   const { selectedDate, setSelectedDate } = useCalendar();
 
   const year = selectedDate.getFullYear();
@@ -51,5 +51,7 @@ export function DateNavigator({ view, events }: IProps) {
         </Button>
       </div>
     </div>
-  );
+  )
 }
+
+export { DateNavigator }

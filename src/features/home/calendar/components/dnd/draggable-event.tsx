@@ -17,7 +17,7 @@ interface DraggableEventProps {
   children: React.ReactNode;
 }
 
-export function DraggableEvent({ event, children }: DraggableEventProps) {
+const DraggableEvent = ({ event, children }: DraggableEventProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [{ isDragging }, drag, preview] = useDrag(() => ({
@@ -41,5 +41,7 @@ export function DraggableEvent({ event, children }: DraggableEventProps) {
     <div ref={ref} className={cn(isDragging && 'opacity-40')}>
       {children}
     </div>
-  );
+  )
 }
+
+export { DraggableEvent }

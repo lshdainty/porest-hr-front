@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Separator } from '@/components/shadcn/separator';
 
-export default function UserInfoCardSkeleton() {
+const UserInfoCardSkeleton = () => {
   return (
     <div className='flex flex-col gap-6'>
       <Card className='h-full min-w-[350px]'>
@@ -52,5 +52,7 @@ export default function UserInfoCardSkeleton() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
+
+export default UserInfoCardSkeleton

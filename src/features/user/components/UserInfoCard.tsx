@@ -14,12 +14,12 @@ interface UserInfoCardProps {
   onUserChange?: (userId: string) => void;
 }
 
-export default function UserInfoCard({ 
+const UserInfoCard = ({
   title = '사용자 정보',
-  value: users, 
-  selectedUserId, 
+  value: users,
+  selectedUserId,
   onUserChange,
-}: UserInfoCardProps) {
+}: UserInfoCardProps) => {
   const isSingleUser = users.length === 1;
   const selectedUser = isSingleUser 
     ? users[0] 
@@ -134,5 +134,7 @@ export default function UserInfoCard({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
+
+export default UserInfoCard

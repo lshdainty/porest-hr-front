@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 
-export default function UserCompanyCardSkeleton() {
+const UserCompanyCardSkeleton = () => {
   return (
     <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6'>
       {Array(5).fill(0).map((_, i) => (
@@ -21,3 +21,5 @@ export default function UserCompanyCardSkeleton() {
     </div>
   )
 }
+
+export default UserCompanyCardSkeleton

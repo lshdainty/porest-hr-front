@@ -125,7 +125,7 @@ mockUsers.forEach(user => {
   });
 });
 
-export default function Authority() {
+const Authority = () => {
   const [permissions, setPermissions] = useState<AllPermissions>(initialPermissions);
   const [selectedUser, setSelectedUser] = useState<User | null>(mockUsers[0]);
   const [expanded, setExpanded] = useState<string[]>(treeData.map(n => n.id));
@@ -270,5 +270,7 @@ export default function Authority() {
           </ResizablePanel>
       </ResizablePanelGroup>
     </div>
-  );
+  )
 }
+
+export default Authority

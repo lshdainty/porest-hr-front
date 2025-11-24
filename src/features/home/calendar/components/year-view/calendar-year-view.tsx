@@ -11,7 +11,7 @@ interface IProps {
   allEvents: IEvent[];
 }
 
-export function CalendarYearView({ allEvents }: IProps) {
+const CalendarYearView = ({ allEvents }: IProps) => {
   const { selectedDate } = useCalendar();
 
   const months = useMemo(() => {
@@ -27,5 +27,7 @@ export function CalendarYearView({ allEvents }: IProps) {
         ))}
       </div>
     </div>
-  );
+  )
 }
+
+export { CalendarYearView }

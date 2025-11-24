@@ -18,10 +18,10 @@ interface VacationPolicyDeleteDialogProps {
   trigger: React.ReactNode
 }
 
-export function VacationPolicyDeleteDialog({
+const VacationPolicyDeleteDialog = ({
   policy,
   trigger
-}: VacationPolicyDeleteDialogProps) {
+}: VacationPolicyDeleteDialogProps) => {
   const deleteVacationPolicy = useDeleteVacationPolicyMutation()
 
   const handleDelete = async () => {
@@ -65,3 +65,5 @@ export function VacationPolicyDeleteDialog({
     </AlertDialog>
   )
 }
+
+export { VacationPolicyDeleteDialog }

@@ -23,7 +23,7 @@ interface UserTableProps {
   value: GetUsersResp[];
 }
 
-export default function UserTable({ value: users }: UserTableProps) {
+const UserTable = ({ value: users }: UserTableProps) => {
   const { mutate: putUser } = usePutUserMutation();
   const { mutate: deleteUser } = useDeleteUserMutation();
   const { data: companyTypes } = useOriginCompanyTypesQuery();
@@ -308,3 +308,5 @@ export default function UserTable({ value: users }: UserTableProps) {
     </Card>
   )
 }
+
+export default UserTable

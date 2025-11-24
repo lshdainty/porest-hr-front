@@ -98,7 +98,7 @@ const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8
   });
 };
 
-export default function UserEditDialog({ open, onOpenChange, user, onSave }: UserEditDialogProps) {
+const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProps) => {
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfileMutation();
   
   // 이미지 업로드 관련 상태 관리 - 초기값부터 완전한 URL로 설정
@@ -519,5 +519,7 @@ export default function UserEditDialog({ open, onOpenChange, user, onSave }: Use
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+
+export default UserEditDialog

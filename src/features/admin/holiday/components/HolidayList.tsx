@@ -32,12 +32,12 @@ interface HolidayListProps {
   onAddClick: () => void;
 }
 
-export default function HolidayList({ 
-  holidays, 
-  onEdit, 
-  onDelete, 
-  onAddClick 
-}: HolidayListProps) {
+const HolidayList = ({
+  holidays,
+  onEdit,
+  onDelete,
+  onAddClick
+}: HolidayListProps) => {
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     if (dateString.length === 8 && /^\d{8}$/.test(dateString)) {
@@ -161,5 +161,7 @@ export default function HolidayList({
         </Card>
       )}
     </div>
-  );
+  )
 }
+
+export default HolidayList

@@ -4,7 +4,7 @@ import { useCalendar } from '@/features/home/calendar/contexts/calendar-context'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 
-export function ChangeBadgeVariantInput() {
+const ChangeBadgeVariantInput = () => {
   const { badgeVariant, setBadgeVariant } = useCalendar();
 
   return (
@@ -23,5 +23,7 @@ export function ChangeBadgeVariantInput() {
         </SelectContent>
       </Select>
     </div>
-  );
+  )
 }
+
+export { ChangeBadgeVariantInput }

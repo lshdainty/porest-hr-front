@@ -15,7 +15,7 @@ interface DroppableDayCellProps {
   children: React.ReactNode;
 }
 
-export function DroppableDayCell({ cell, children }: DroppableDayCellProps) {
+const DroppableDayCell = ({ cell, children }: DroppableDayCellProps) => {
   const { updateEvent } = useUpdateEvent();
 
   const [{ isOver, canDrop }, drop] = useDrop(
@@ -53,5 +53,7 @@ export function DroppableDayCell({ cell, children }: DroppableDayCellProps) {
     <div ref={drop as unknown as React.RefObject<HTMLDivElement>} className={cn(isOver && canDrop && 'bg-accent/50')}>
       {children}
     </div>
-  );
+  )
 }
+
+export { DroppableDayCell }

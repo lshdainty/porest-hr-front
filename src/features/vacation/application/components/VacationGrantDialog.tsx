@@ -44,10 +44,10 @@ interface VacationGrantDialogProps {
   onClose: () => void;
 }
 
-export default function VacationGrantDialog({
+const VacationGrantDialog = ({
   open,
   onClose,
-}: VacationGrantDialogProps) {
+}: VacationGrantDialogProps) => {
   const { data: users, isLoading: isLoadingUsers } = useUsersQuery();
   const { mutate: grantVacation, isPending } = usePostManualGrantVacationMutation();
   const { data: effectiveTypes = [] } = useEffectiveTypesQuery();
@@ -480,5 +480,7 @@ export default function VacationGrantDialog({
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+
+export default VacationGrantDialog

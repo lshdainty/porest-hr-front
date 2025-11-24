@@ -12,7 +12,7 @@ interface IProps {
   events: IEvent[];
 }
 
-export function YearViewMonth({ month, events }: IProps) {
+const YearViewMonth = ({ month, events }: IProps) => {
   const { setSelectedDate, setView } = useCalendar();
 
   const monthName = format(month, 'MMMM');
@@ -70,5 +70,7 @@ export function YearViewMonth({ month, events }: IProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
+
+export { YearViewMonth }

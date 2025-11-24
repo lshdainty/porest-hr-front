@@ -11,7 +11,7 @@ interface IProps {
   multiDayEvents: IEvent[];
 }
 
-export function AgendaDayGroup({ date, events, multiDayEvents }: IProps) {
+const AgendaDayGroup = ({ date, events, multiDayEvents }: IProps) => {
   const sortedEvents = [...events].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
   return (
@@ -35,5 +35,7 @@ export function AgendaDayGroup({ date, events, multiDayEvents }: IProps) {
         {sortedEvents.length > 0 && sortedEvents.map(event => <AgendaEventCard key={event.id} event={event} />)}
       </div>
     </div>
-  );
+  )
 }
+
+export { AgendaDayGroup }

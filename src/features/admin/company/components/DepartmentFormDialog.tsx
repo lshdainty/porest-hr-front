@@ -51,7 +51,7 @@ interface DepartmentFormDialogProps {
   companyId?: string;
 }
 
-export default function DepartmentFormDialog({
+const DepartmentFormDialog = ({
   isOpen,
   onOpenChange,
   onSave,
@@ -60,7 +60,7 @@ export default function DepartmentFormDialog({
   isAddingChild = false,
   parentId,
   companyId
-}: DepartmentFormDialogProps) {
+}: DepartmentFormDialogProps) => {
   const { data: users, isLoading: usersLoading } = useUsersQuery();
 
   const form = useForm<DepartmentFormValues>({
@@ -302,5 +302,7 @@ export default function DepartmentFormDialog({
         </form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
+
+export default DepartmentFormDialog

@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/shadcn/skeleton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 
-export default function UserTableSkeleton() {
+const UserTableSkeleton = () => {
   return (
     <Card className='flex-1'>
       <CardHeader>
@@ -94,3 +94,5 @@ export default function UserTableSkeleton() {
     </Card>
   )
 }
+
+export default UserTableSkeleton

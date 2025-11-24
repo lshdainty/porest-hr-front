@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
-export default function MonthVacationStatsCardSkeleton() {
+const MonthVacationStatsCardSkeleton = () => {
   return (
     <Card>
       <CardHeader>
@@ -13,5 +13,7 @@ export default function MonthVacationStatsCardSkeleton() {
         <Skeleton className='w-full h-[350px]' />
       </CardContent>
     </Card>
-  );
+  )
 }
+
+export default MonthVacationStatsCardSkeleton

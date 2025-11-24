@@ -22,7 +22,7 @@ const colorClassMap: Record<TEventColor, string> = {
   teal: 'border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800 dark:bg-teal-950 dark:text-teal-300',
 };
 
-export function EventFilter() {
+const EventFilter = () => {
   const { users, selectedUserIds, setSelectedUserIds, selectedTypeIds, setSelectedTypeIds } = useCalendar();
 
   // User handlers
@@ -183,5 +183,7 @@ export function EventFilter() {
         </Tabs>
       </PopoverContent>
     </Popover>
-  );
+  )
 }
+
+export { EventFilter }

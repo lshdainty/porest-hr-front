@@ -18,7 +18,7 @@ interface HolidayDeleteDialogProps {
   onDelete: (holiday_seq: number) => void;
 }
 
-export default function HolidayDeleteDialog({ holiday, trigger, onDelete }: HolidayDeleteDialogProps) {
+const HolidayDeleteDialog = ({ holiday, trigger, onDelete }: HolidayDeleteDialogProps) => {
   const handleDelete = () => {
     if (holiday.holiday_seq) {
       onDelete(holiday.holiday_seq);
@@ -48,5 +48,7 @@ export default function HolidayDeleteDialog({ holiday, trigger, onDelete }: Holi
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }
+
+export default HolidayDeleteDialog

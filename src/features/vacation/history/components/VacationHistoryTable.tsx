@@ -44,7 +44,7 @@ const formatDate = (dateString: string) => {
   return `${year}.${month}.${day}`;
 };
 
-export default function VacationHistoryTable({ value: data, canAdd = false }: VacationHistoryTableProps) {
+const VacationHistoryTable = ({ value: data, canAdd = false }: VacationHistoryTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -315,5 +315,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
         </EditEventDialog>
       )}
     </>
-  );
+  )
 }
+
+export default VacationHistoryTable

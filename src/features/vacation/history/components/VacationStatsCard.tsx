@@ -7,7 +7,7 @@ interface VacationStatsCardProps {
   value: GetUserVacationStatsResp | undefined
 }
 
-export default function VacationStatsCard({ value: data }: VacationStatsCardProps) {
+const VacationStatsCard = ({ value: data }: VacationStatsCardProps) => {
   if (!data) {
     return null;
   }
@@ -65,3 +65,5 @@ export default function VacationStatsCard({ value: data }: VacationStatsCardProp
     </div>
   )
 }
+
+export default VacationStatsCard

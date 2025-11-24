@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/shadcn/skeleton';
 
-export default function DepartmentTreePanelSkeleton() {
+const DepartmentTreePanelSkeleton = () => {
   const TreeNodeSkeleton = ({ level = 0, hasChildren = true }: { level?: number; hasChildren?: boolean }) => (
     <div className='space-y-2'>
       <div 
@@ -82,5 +82,7 @@ export default function DepartmentTreePanelSkeleton() {
         </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default DepartmentTreePanelSkeleton

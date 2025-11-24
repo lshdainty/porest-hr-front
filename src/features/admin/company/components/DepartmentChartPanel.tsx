@@ -14,9 +14,9 @@ interface StyledNodeProps {
   colorCode: string;
 }
 
-export default function DepartmentChartPanel({
+const DepartmentChartPanel = ({
   departments
-}: DepartmentChartPanelProps) {
+}: DepartmentChartPanelProps) => {
   const lineColor = useMemo(() => {
     return getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
   }, [])
@@ -145,5 +145,7 @@ export default function DepartmentChartPanel({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
+
+export default DepartmentChartPanel

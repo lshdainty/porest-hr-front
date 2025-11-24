@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/ca
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { cn } from '@/lib/utils';
 
-export default function VacationHistoryTableSkeleton() {
+const VacationHistoryTableSkeleton = () => {
   return (
     <Card className='flex-1'>
       <CardHeader>
@@ -77,3 +77,5 @@ export default function VacationHistoryTableSkeleton() {
     </Card>
   )
 }
+
+export default VacationHistoryTableSkeleton

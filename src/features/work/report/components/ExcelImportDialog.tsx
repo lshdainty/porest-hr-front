@@ -57,7 +57,7 @@ interface ParsedRow {
   work_division_code?: string;
 }
 
-export default function ExcelImportDialog({
+const ExcelImportDialog = ({
   open,
   onOpenChange,
   workGroups,
@@ -65,7 +65,7 @@ export default function ExcelImportDialog({
   users,
   onRegister,
   isRegistering,
-}: ExcelImportDialogProps) {
+}: ExcelImportDialogProps) => {
   const [step, setStep] = useState<'input' | 'preview'>('input');
   const [inputText, setInputText] = useState('');
   const [parsedData, setParsedData] = useState<ParsedRow[]>([]);
@@ -487,5 +487,7 @@ export default function ExcelImportDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+
+export default ExcelImportDialog

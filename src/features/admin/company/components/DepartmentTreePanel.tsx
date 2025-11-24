@@ -20,7 +20,7 @@ interface DepartmentTreePanelProps {
   disableCollapse?: boolean;
 }
 
-export default function DepartmentTreePanel({
+const DepartmentTreePanel = ({
   departments,
   selectedDept,
   onDeptSelect,
@@ -31,7 +31,7 @@ export default function DepartmentTreePanel({
   showAddButton = true,
   showNodeActions = true,
   disableCollapse = false,
-}: DepartmentTreePanelProps) {
+}: DepartmentTreePanelProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDept, setEditingDept] = useState<GetCompanyWithDepartment | null>(null);
   const [addingChildToId, setAddingChildToId] = useState<number | null>(null);
@@ -244,5 +244,7 @@ export default function DepartmentTreePanel({
         companyId={companyId}
       />
     </div>
-  );
+  )
 }
+
+export default DepartmentTreePanel

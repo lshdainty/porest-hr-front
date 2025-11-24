@@ -15,7 +15,7 @@ interface VacationPolicyListsProps {
   searchQuery?: string;
 }
 
-export function VacationPolicyLists({ policies, searchQuery }: VacationPolicyListsProps) {
+const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps) => {
   const { data: grantMethodTypes } = useGrantMethodTypesQuery();
   const { data: effectiveTypes } = useEffectiveTypesQuery();
   const { data: expirationTypes } = useExpirationTypesQuery();
@@ -102,5 +102,7 @@ export function VacationPolicyLists({ policies, searchQuery }: VacationPolicyLis
         </Card>
       )}
     </div>
-  );
+  )
 }
+
+export { VacationPolicyLists }

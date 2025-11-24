@@ -35,12 +35,12 @@ interface VacationApprovalFormProps {
   applicantName?: string;
 }
 
-export default function VacationApprovalForm({
+const VacationApprovalForm = ({
   open,
   onClose,
   requestData,
   applicantName,
-}: VacationApprovalFormProps) {
+}: VacationApprovalFormProps) => {
   const { loginUser } = useUser()
   const [showRejectReason, setShowRejectReason] = useState(false)
   const [rejectReason, setRejectReason] = useState('')
@@ -457,5 +457,7 @@ export default function VacationApprovalForm({
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+
+export default VacationApprovalForm

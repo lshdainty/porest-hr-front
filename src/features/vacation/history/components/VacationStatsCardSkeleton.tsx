@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
-export default function VacationStatsCardSkeleton() {
+const VacationStatsCardSkeleton = () => {
   return (
     <div className='flex flex-wrap gap-6'>
       {Array(3).fill(0).map((_, index) => (
@@ -19,5 +19,7 @@ export default function VacationStatsCardSkeleton() {
         </Card>
       ))}
     </div>
-  );
+  )
 }
+
+export default VacationStatsCardSkeleton

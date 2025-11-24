@@ -51,7 +51,7 @@ interface IProps {
   eventTotalDays?: number;
 }
 
-export function AgendaEventCard({ event, eventCurrentDay, eventTotalDays }: IProps) {
+const AgendaEventCard = ({ event, eventCurrentDay, eventTotalDays }: IProps) => {
   const { badgeVariant } = useCalendar();
 
   const startDate = parseISO(event.startDate);
@@ -108,5 +108,7 @@ export function AgendaEventCard({ event, eventCurrentDay, eventTotalDays }: IPro
         </div>
       </div>
     </EventDetailsDialog>
-  );
+  )
 }
+
+export { AgendaEventCard }

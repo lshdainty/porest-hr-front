@@ -14,7 +14,7 @@ import { CalendarDayView } from '@/features/home/calendar/components/week-and-da
 import { CalendarWeekView } from '@/features/home/calendar/components/week-and-day-view/calendar-week-view';
 import { CalendarYearView } from '@/features/home/calendar/components/year-view/calendar-year-view';
 
-export function ClientContainer() {
+const ClientContainer = () => {
   const { selectedDate, selectedUserIds, selectedTypeIds, events, view } = useCalendar();
 
   const filteredEvents = useMemo(() => {
@@ -96,5 +96,7 @@ export function ClientContainer() {
         </DndProviderWrapper>
       </div>
     </div>
-  );
+  )
 }
+
+export { ClientContainer }

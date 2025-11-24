@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/shadcn/card";
 import { Skeleton } from "@/components/shadcn/skeleton";
 
-export default function HolidayListSkeleton() {
+const HolidayListSkeleton = () => {
   return (
     <div className="grid gap-4">
       {Array.from({ length: 3 }).map((_, index) => (
@@ -23,5 +23,7 @@ export default function HolidayListSkeleton() {
         </Card>
       ))}
     </div>
-  );
+  )
 }
+
+export default HolidayListSkeleton

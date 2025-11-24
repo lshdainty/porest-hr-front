@@ -24,7 +24,7 @@ interface VacationTypeStatsCardProps {
   className: string | undefined;
 }
 
-export default function VacationTypeStatsCard({ value, className }: VacationTypeStatsCardProps) {
+const VacationTypeStatsCard = ({ value, className }: VacationTypeStatsCardProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerDimensions, setContainerDimensions] = useState({ width: 400, height: 400 });
   const minChartSize = 300; // 최소 차트 크기
@@ -221,3 +221,5 @@ export default function VacationTypeStatsCard({ value, className }: VacationType
     </Card>
   )
 }
+
+export default VacationTypeStatsCard

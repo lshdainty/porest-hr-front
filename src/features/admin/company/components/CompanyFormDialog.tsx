@@ -26,13 +26,13 @@ interface CompanyFormDialogProps {
   mode?: 'create' | 'edit';
 }
 
-export default function CompanyFormDialog({
+const CompanyFormDialog = ({
   isOpen,
   onOpenChange,
   onSave,
   initialData = {},
   mode = 'create'
-}: CompanyFormDialogProps) {
+}: CompanyFormDialogProps) => {
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
@@ -152,5 +152,7 @@ export default function CompanyFormDialog({
         </form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
+
+export default CompanyFormDialog

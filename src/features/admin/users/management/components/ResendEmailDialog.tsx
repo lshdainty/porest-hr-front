@@ -17,7 +17,7 @@ interface ResendEmailDialogProps {
   userEmail: string
 }
 
-export default function ResendEmailDialog({ open, onOpenChange, userId, userEmail }: ResendEmailDialogProps) {
+const ResendEmailDialog = ({ open, onOpenChange, userId, userEmail }: ResendEmailDialogProps) => {
   const { mutateAsync: resendInvitation, isPending } = usePostResendInvitationMutation()
 
   const handleConfirm = async () => {
@@ -57,3 +57,5 @@ export default function ResendEmailDialog({ open, onOpenChange, userId, userEmai
     </Dialog>
   )
 }
+
+export default ResendEmailDialog

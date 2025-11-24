@@ -17,7 +17,7 @@ interface DroppableTimeBlockProps {
   children: React.ReactNode;
 }
 
-export function DroppableTimeBlock({ date, hour, minute, children }: DroppableTimeBlockProps) {
+const DroppableTimeBlock = ({ date, hour, minute, children }: DroppableTimeBlockProps) => {
   const { updateEvent } = useUpdateEvent();
 
   const [{ isOver, canDrop }, drop] = useDrop(
@@ -55,5 +55,7 @@ export function DroppableTimeBlock({ date, hour, minute, children }: DroppableTi
     <div ref={drop as unknown as React.RefObject<HTMLDivElement>} className={cn('h-[24px]', isOver && canDrop && 'bg-accent/50')}>
       {children}
     </div>
-  );
+  )
 }
+
+export { DroppableTimeBlock }

@@ -40,7 +40,7 @@ interface UserInviteDialogProps {
   }
 }
 
-export default function UserInviteDialog({ open, onOpenChange, title, companyOptions, initialData }: UserInviteDialogProps) {
+const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialData }: UserInviteDialogProps) => {
   const [userIdToCheck, setUserIdToCheck] = useState('')
   const { mutateAsync: inviteUser, isPending: isInvitePending } = usePostUserInviteMutation()
   const { mutateAsync: updateInvitedUser, isPending: isUpdatePending } = usePutInvitedUserMutation()
@@ -265,3 +265,5 @@ export default function UserInviteDialog({ open, onOpenChange, title, companyOpt
     </Dialog>
   )
 }
+
+export default UserInviteDialog

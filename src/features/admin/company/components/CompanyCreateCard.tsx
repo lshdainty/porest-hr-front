@@ -9,7 +9,7 @@ interface CompanyCreateCardProps {
   onCompanyCreate: (companyData: PostCompanyReq) => void;
 }
 
-export default function CompanyCreateCard({ onCompanyCreate }: CompanyCreateCardProps) {
+const CompanyCreateCard = ({ onCompanyCreate }: CompanyCreateCardProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const handleSaveCompany = (formData: PostCompanyReq): void => {
@@ -47,5 +47,7 @@ export default function CompanyCreateCard({ onCompanyCreate }: CompanyCreateCard
         />
       </CardContent>
     </Card>
-  );
+  )
 }
+
+export default CompanyCreateCard

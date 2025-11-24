@@ -11,7 +11,7 @@ interface UserCompanyCardProps {
   value: GetUsersResp[];
 }
 
-export default function UserCompanyCard({ value: users }: UserCompanyCardProps) {
+const UserCompanyCard = ({ value: users }: UserCompanyCardProps) => {
   const companys = useMemo(() => {
     if (!users) return [];
 
@@ -52,3 +52,5 @@ export default function UserCompanyCard({ value: users }: UserCompanyCardProps) 
     </div>
   )
 }
+
+export default UserCompanyCard

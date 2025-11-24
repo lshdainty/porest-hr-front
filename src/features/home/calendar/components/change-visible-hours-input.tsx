@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 import type { TimeValue } from 'react-aria-components';
 
-export function ChangeVisibleHoursInput() {
+const ChangeVisibleHoursInput = () => {
   const { visibleHours, setVisibleHours } = useCalendar();
 
   const [from, setFrom] = useState<{ hour: number; minute: number }>({ hour: visibleHours.from, minute: 0 });
@@ -51,5 +51,7 @@ export function ChangeVisibleHoursInput() {
         Apply
       </Button>
     </div>
-  );
+  )
 }
+
+export { ChangeVisibleHoursInput }

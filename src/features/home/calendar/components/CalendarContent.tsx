@@ -10,7 +10,7 @@ import { useEventsByPeriodQuery } from '@/hooks/queries/useCalendars';
 import { useHolidaysByPeriodQuery } from '@/hooks/queries/useHolidays';
 
 // CalendarProvider 내부에서 동작하는 컴포넌트
-export default function CalendarContent() {
+const CalendarContent = () => {
   const { selectedDate, view, users, setLocalEvents, setHolidays } = useCalendar();
 
   // selectedDate와 view에 따라 이벤트 날짜 범위 계산
@@ -85,5 +85,7 @@ export default function CalendarContent() {
     }
   }, [apiHolidays, holidaysLoading, setHolidays]);
 
-  return <ClientContainer />;
+  return <ClientContainer />
 }
+
+export default CalendarContent

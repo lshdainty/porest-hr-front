@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/shadcn/skeleton';
 
-export default function DepartmentChartPanelSkeleton() {
+const DepartmentChartPanelSkeleton = () => {
   return (
     <div className='h-full flex flex-col'>
       {/* Header Skeleton */}
@@ -61,5 +61,7 @@ export default function DepartmentChartPanelSkeleton() {
         </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default DepartmentChartPanelSkeleton

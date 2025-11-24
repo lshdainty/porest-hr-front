@@ -18,7 +18,7 @@ interface UserDeleteDialogProps {
   onDelete: (id: string) => void;
 }
 
-export default function UserDeleteDialog({ open, onOpenChange, user, onDelete }: UserDeleteDialogProps) {
+const UserDeleteDialog = ({ open, onOpenChange, user, onDelete }: UserDeleteDialogProps) => {
   const handleDelete = () => {
     if (user.user_id !== '') {
       onDelete(user.user_id);
@@ -48,5 +48,7 @@ export default function UserDeleteDialog({ open, onOpenChange, user, onDelete }:
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }
+
+export default UserDeleteDialog

@@ -14,12 +14,12 @@ interface UserDepartmentTransferProps {
   isLoading?: boolean
 }
 
-export default function UserDepartmentTransfer({
+const UserDepartmentTransfer = ({
   usersInDepartment,
   usersNotInDepartment,
   onTransfer,
   isLoading = false,
-}: UserDepartmentTransferProps) {
+}: UserDepartmentTransferProps) => {
   // 초기 사용자 ID 추적을 위한 상태
   const [initialLeftUserIds, setInitialLeftUserIds] = useState<Set<string>>(new Set())
   const [initialRightUserIds, setInitialRightUserIds] = useState<Set<string>>(new Set())
@@ -203,3 +203,5 @@ export default function UserDepartmentTransfer({
     </div>
   )
 }
+
+export default UserDepartmentTransfer

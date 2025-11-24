@@ -8,7 +8,7 @@ interface MonthVacationStatsCardProps {
   className: string | undefined;
 }
 
-export default function MonthVacationStatsCard({ value: data, className }: MonthVacationStatsCardProps) {
+const MonthVacationStatsCard = ({ value: data, className }: MonthVacationStatsCardProps) => {
   return (
     <Card className={cn(className)}>
       <CardHeader>
@@ -56,3 +56,5 @@ export default function MonthVacationStatsCard({ value: data, className }: Month
     </Card>
   )
 }
+
+export default MonthVacationStatsCard

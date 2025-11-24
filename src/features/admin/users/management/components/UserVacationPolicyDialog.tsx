@@ -28,12 +28,12 @@ interface UserVacationPolicyDialogProps {
   userName?: string
 }
 
-export default function UserVacationPolicyDialog({
+const UserVacationPolicyDialog = ({
   open,
   onOpenChange,
   userId,
   userName
-}: UserVacationPolicyDialogProps) {
+}: UserVacationPolicyDialogProps) => {
   const [leftItems, setLeftItems] = useState<TransferItem[]>([])
   const [rightItems, setRightItems] = useState<TransferItem[]>([])
   const [initialLeftPolicyIds, setInitialLeftPolicyIds] = useState<Set<string>>(new Set())
@@ -237,3 +237,5 @@ export default function UserVacationPolicyDialog({
     </Dialog>
   )
 }
+
+export default UserVacationPolicyDialog
