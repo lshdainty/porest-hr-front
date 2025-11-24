@@ -1,8 +1,8 @@
 import { useUsersQuery } from '@/hooks/queries/useUsers';
-import UserCompanyCard from './UserCompanyCard';
-import UserCompanyCardSkeleton from './UserCompanyCardSkeleton';
-import UserTable from './UserTable';
-import UserTableSkeleton from './UserTableSkeleton';
+import UserCompanyCard from '@/features/admin/users/management/components/UserCompanyCard';
+import UserCompanyCardSkeleton from '@/features/admin/users/management/components/UserCompanyCardSkeleton';
+import UserTable from '@/features/admin/users/management/components/UserTable';
+import UserTableSkeleton from '@/features/admin/users/management/components/UserTableSkeleton';
 
 const ManagementContent = () => {
   const { data: users, isLoading: usersLoading } = useUsersQuery();

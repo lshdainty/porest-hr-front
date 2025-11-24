@@ -16,8 +16,8 @@ import {
     Search,
 } from 'lucide-react';
 
-import { VacationPolicyFormDialog } from './VacationPolicyFormDialog';
-import { VacationPolicyLists } from './VacationPolicyLists';
+import { VacationPolicyFormDialog } from '@/features/admin/vacation/policy/components/VacationPolicyFormDialog';
+import { VacationPolicyLists } from '@/features/admin/vacation/policy/components/VacationPolicyLists';
 
 const PolicyContent = () => {
   const { searchQuery, setSearchQuery } = usePolicyContext();

@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import { EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2, UserRound, UserRoundCog } from 'lucide-react';
-import { useManagementContext } from '../contexts/ManagementContext';
+import { useManagementContext } from '@/features/admin/users/management/contexts/ManagementContext';
 
 interface UserTableProps {
   value: GetUsersResp[];

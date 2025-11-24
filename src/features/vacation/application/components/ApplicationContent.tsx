@@ -5,12 +5,12 @@ import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUserApproversQuery } from '@/hooks/queries/useUsers';
 import { useUserRequestedVacationsQuery, useUserRequestedVacationStatsQuery, useUserVacationPoliciesQuery } from '@/hooks/queries/useVacations';
 import { Plus } from 'lucide-react';
-import { useApplicationContext } from '../contexts/ApplicationContext';
-import ApplicationFormDialog from './ApplicationFormDialog';
-import ApplicationTable from './ApplicationTable';
-import ApplicationTableSkeleton from './ApplicationTableSkeleton';
-import VacationRequestStatsCards from './VacationRequestStatsCards';
-import VacationRequestStatsCardsSkeleton from './VacationRequestStatsCardsSkeleton';
+import { useApplicationContext } from '@/features/vacation/application/contexts/ApplicationContext';
+import ApplicationFormDialog from '@/features/vacation/application/components/ApplicationFormDialog';
+import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
+import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
+import VacationRequestStatsCards from '@/features/vacation/application/components/VacationRequestStatsCards';
+import VacationRequestStatsCardsSkeleton from '@/features/vacation/application/components/VacationRequestStatsCardsSkeleton';
 
 const ApplicationContent = () => {
   const { isDialogOpen, setIsDialogOpen } = useApplicationContext();

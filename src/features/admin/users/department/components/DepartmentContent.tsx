@@ -7,8 +7,8 @@ import { useDeleteDepartmentUsersMutation, useDepartmentUsersQuery, usePostDepar
 import { type UserInfo } from '@/lib/api/department';
 import { Building2 } from 'lucide-react';
 import { useMemo } from 'react';
-import { useDepartmentContext } from '../contexts/DepartmentContext';
-import UserDepartmentTransfer from './UserDepartmentTransfer';
+import { useDepartmentContext } from '@/features/admin/users/department/contexts/DepartmentContext';
+import UserDepartmentTransfer from '@/features/admin/users/department/components/UserDepartmentTransfer';
 
 const DepartmentContent = () => {
   const { selectedDept, setSelectedDept } = useDepartmentContext();

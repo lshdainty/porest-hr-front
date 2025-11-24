@@ -8,7 +8,7 @@ import {
     useVacationTypesQuery
 } from '@/hooks/queries/useTypes';
 import { Calendar, CalendarClock, Repeat, Trash2 } from 'lucide-react';
-import { VacationPolicyDeleteDialog } from './VacationPolicyDeleteDialog';
+import { VacationPolicyDeleteDialog } from '@/features/admin/vacation/policy/components/VacationPolicyDeleteDialog';
 
 interface VacationPolicyListsProps {
   policies: any[]; // Replace 'any' with proper type if available, e.g., IVacationPolicy

@@ -7,9 +7,9 @@ import { usePostCompleteSignupMutation, useValidateInvitationTokenQuery } from '
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import InvitationInfo from './InvitationInfo';
-import SignUpForm from './SignUpForm';
-import SocialConnectButton from './SocialConnectButton';
+import InvitationInfo from '@/features/auth/components/InvitationInfo';
+import SignUpForm from '@/features/auth/components/SignUpForm';
+import SocialConnectButton from '@/features/auth/components/SocialConnectButton';
 
 interface FormData {
   birth: string;

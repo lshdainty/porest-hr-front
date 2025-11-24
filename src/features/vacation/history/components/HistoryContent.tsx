@@ -10,15 +10,15 @@ import {
   useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations'
 import dayjs from 'dayjs'
-import { useHistoryContext } from '../contexts/HistoryContext'
-import MonthVacationStatsCard from './MonthVacationStatsCard'
-import MonthVacationStatsCardSkeleton from './MonthVacationStatsCardSkeleton'
-import VacationHistoryTable from './VacationHistoryTable'
-import VacationHistoryTableSkeleton from './VacationHistoryTableSkeleton'
-import VacationStatsCard from './VacationStatsCard'
-import VacationStatsCardSkeleton from './VacationStatsCardSkeleton'
-import VacationTypeStatsCard from './VacationTypeStatsCard'
-import VacationTypeStatsCardSkeleton from './VacationTypeStatsCardSkeleton'
+import { useHistoryContext } from '@/features/vacation/history/contexts/HistoryContext'
+import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard'
+import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton'
+import VacationHistoryTable from '@/features/vacation/history/components/VacationHistoryTable'
+import VacationHistoryTableSkeleton from '@/features/vacation/history/components/VacationHistoryTableSkeleton'
+import VacationStatsCard from '@/features/vacation/history/components/VacationStatsCard'
+import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton'
+import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard'
+import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton'
 
 interface HistoryContentProps {
   user: any

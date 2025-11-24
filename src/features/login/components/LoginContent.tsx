@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SocialLoginButton from './SocialLoginButton';
+import SocialLoginButton from '@/features/login/components/SocialLoginButton';
 
 interface LoginContentProps extends React.ComponentProps<'div'> {}
 

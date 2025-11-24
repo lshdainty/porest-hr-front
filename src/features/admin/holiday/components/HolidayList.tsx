@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { type GetHolidaysResp } from '@/lib/api/holiday';
 import dayjs from 'dayjs';
 import { Calendar, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
-import HolidayDeleteDialog from './HolidayDeleteDialog';
+import HolidayDeleteDialog from '@/features/admin/holiday/components/HolidayDeleteDialog';
 
 const holidayTypeColors = {
   PUBLIC: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-200 dark:border-purple-800',

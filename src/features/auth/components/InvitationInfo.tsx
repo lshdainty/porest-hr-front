@@ -1,4 +1,4 @@
-import { useSignUpContext } from '../contexts/SignUpContext';
+import { useSignUpContext } from '@/features/auth/contexts/SignUpContext';
 
 const InvitationInfo = () => {
   const { validationData } = useSignUpContext();

@@ -12,9 +12,9 @@ import {
     type PutHolidayReq,
 } from '@/lib/api/holiday';
 import dayjs from 'dayjs';
-import HolidayEditDialog from './HolidayEditDialog';
-import HolidayList from './HolidayList';
-import HolidayListSkeleton from './HolidayListSkeleton';
+import HolidayEditDialog from '@/features/admin/holiday/components/HolidayEditDialog';
+import HolidayList from '@/features/admin/holiday/components/HolidayList';
+import HolidayListSkeleton from '@/features/admin/holiday/components/HolidayListSkeleton';
 
 const formatDateToYYYYMMDD = (dateString: string) => {
   if (!dateString) return '';

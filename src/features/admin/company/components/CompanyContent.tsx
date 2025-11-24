@@ -7,12 +7,12 @@ import { type PostCompanyReq, type PutCompanyReq } from '@/lib/api/company';
 import { type PostDepartmentReq, type PutDepartmentReq } from '@/lib/api/department';
 import { Building2, Pencil } from 'lucide-react';
 import { useMemo } from 'react';
-import CompanyCreateCard from './CompanyCreateCard';
-import CompanyFormDialog from './CompanyFormDialog';
-import DepartmentChartPanel from './DepartmentChartPanel';
-import DepartmentChartPanelSkeleton from './DepartmentChartPanelSkeleton';
-import DepartmentTreePanel from './DepartmentTreePanel';
-import DepartmentTreePanelSkeleton from './DepartmentTreePanelSkeleton';
+import CompanyCreateCard from '@/features/admin/company/components/CompanyCreateCard';
+import CompanyFormDialog from '@/features/admin/company/components/CompanyFormDialog';
+import DepartmentChartPanel from '@/features/admin/company/components/DepartmentChartPanel';
+import DepartmentChartPanelSkeleton from '@/features/admin/company/components/DepartmentChartPanelSkeleton';
+import DepartmentTreePanel from '@/features/admin/company/components/DepartmentTreePanel';
+import DepartmentTreePanelSkeleton from '@/features/admin/company/components/DepartmentTreePanelSkeleton';
 
 const CompanyContent = () => {
   const { selectedDept, setSelectedDept, isCompanyEditDialogOpen, setIsCompanyEditDialogOpen } = useCompanyContext();

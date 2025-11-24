@@ -16,9 +16,9 @@ import { useMemo } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { WIDGETS } from '../constants';
-import { useDashboardContext } from '../contexts/DashboardContext';
-import WidgetWrapper from './WidgetWrapper';
+import { WIDGETS } from '@/features/home/dashboard/constants';
+import { useDashboardContext } from '@/features/home/dashboard/contexts/DashboardContext';
+import WidgetWrapper from '@/features/home/dashboard/components/WidgetWrapper';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 

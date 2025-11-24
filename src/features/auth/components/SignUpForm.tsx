@@ -3,7 +3,7 @@ import { Checkbox } from '@/components/shadcn/checkbox';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Label } from '@/components/shadcn/label';
 import { Loader2 } from 'lucide-react';
-import { useSignUpContext } from '../contexts/SignUpContext';
+import { useSignUpContext } from '@/features/auth/contexts/SignUpContext';
 
 const SignUpForm = () => {
   const { formData, setFormData, connectedOAuth, isPending, handleSubmit } = useSignUpContext();

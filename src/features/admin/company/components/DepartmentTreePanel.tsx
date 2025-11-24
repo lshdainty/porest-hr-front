@@ -5,7 +5,7 @@ import { GetCompanyWithDepartment } from '@/lib/api/company';
 import { PutDepartmentReq } from '@/lib/api/department';
 import { Building2, Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import DepartmentFormDialog from './DepartmentFormDialog';
+import DepartmentFormDialog from '@/features/admin/company/components/DepartmentFormDialog';
 
 interface DepartmentTreePanelProps {
   departments: GetCompanyWithDepartment[];

@@ -1,6 +1,6 @@
 import { Button } from '@/components/shadcn/button';
 import { CheckCircle2, ExternalLink } from 'lucide-react';
-import { useSignUpContext } from '../contexts/SignUpContext';
+import { useSignUpContext } from '@/features/auth/contexts/SignUpContext';
 
 const SocialConnectButton = () => {
   const { connectedOAuth, handleOAuthConnect } = useSignUpContext();
