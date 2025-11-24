@@ -4,27 +4,30 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
 import {
-  fetchGetUser,
-  fetchGetUsers,
-  fetchGetUserApprovers,
-  fetchGetUserIdDuplicate,
-  fetchPostUser,
-  fetchPutUser,
-  fetchDeleteUser,
-  fetchPutInvitedUser,
-  fetchPostUserInvite,
-  fetchPostUploadProfile,
-  fetchPostResendInvitation,
-  type GetUserResp,
-  type GetUsersResp,
-  type GetUserApproversResp,
-  type GetUserIdDuplicateResp,
-  type PostUserReq,
-  type PutUserReq,
-  type PutInvitedUserReq,
-  type PutInvitedUserResp,
-  type PostUserInviteReq,
-  type PostUserInviteResp
+    fetchDeleteUser,
+    fetchGetUser,
+    fetchGetUserApprovers,
+    fetchGetUserIdDuplicate,
+    fetchGetUsers,
+    fetchPostResendInvitation,
+    fetchPostUploadProfile,
+    fetchPostUser,
+    fetchPostUserInvite,
+    fetchPutInvitedUser,
+    fetchPutUser,
+    fetchUpdateDashboard,
+    type GetUserApproversResp,
+    type GetUserIdDuplicateResp,
+    type GetUserResp,
+    type GetUsersResp,
+    type PostUserInviteReq,
+    type PostUserInviteResp,
+    type PostUserReq,
+    type PutInvitedUserReq,
+    type PutInvitedUserResp,
+    type PutUserReq,
+    type UpdateDashboardReq,
+    type UpdateDashboardResp
 } from '@/lib/api/user'
 
 const userKeys = createQueryKeys('users')
@@ -139,6 +142,17 @@ export const usePostResendInvitationMutation = () => {
     mutationFn: (userId: string) => fetchPostResendInvitation(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() })
+    }
+  })
+}
+// 대시보드 수정 Mutation 훅
+export const useUpdateDashboardMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<UpdateDashboardResp, Error, { userId: string, data: UpdateDashboardReq }>({
+    mutationFn: ({ userId, data }) => fetchUpdateDashboard(userId, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: userKeys.detail(data.user_id) })
     }
   })
 }

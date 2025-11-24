@@ -24,6 +24,7 @@ export interface GetUserResp {
   invitation_expires_at?: string
   invitation_status?: string
   registered_at?: string
+  dashboard?: string
 }
 
 export interface GetUsersResp {
@@ -140,6 +141,15 @@ export interface PostUserInviteResp {
   invitation_sent_at: string
   invitation_expires_at: string
   invitation_status: string
+}
+
+export interface UpdateDashboardReq {
+  dashboard: string
+}
+
+export interface UpdateDashboardResp {
+  user_id: string
+  dashboard: string
 }
 
 // API Functions
@@ -277,6 +287,18 @@ export async function fetchPostResendInvitation(userId: string): Promise<any> {
   const resp: ApiResponse = await api.request({
     method: 'post',
     url: `/users/${userId}/invitations/resend`
+  });
+
+  if (resp.code !== 200) throw new Error(resp.message);
+
+  return resp.data;
+}
+
+export async function fetchUpdateDashboard(userId: string, data: UpdateDashboardReq): Promise<UpdateDashboardResp> {
+  const resp: ApiResponse<UpdateDashboardResp> = await api.request({
+    method: 'patch',
+    url: `/users/${userId}/dashboard`,
+    data
   });
 
   if (resp.code !== 200) throw new Error(resp.message);

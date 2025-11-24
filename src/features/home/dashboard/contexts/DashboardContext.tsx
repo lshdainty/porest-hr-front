@@ -1,4 +1,6 @@
+import { useUpdateDashboardMutation } from '@/hooks/queries/useUsers';
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import { toast } from 'sonner';
 import { defaultLayouts, LAYOUT_STORAGE_KEY, WIDGETS, WIDGETS_STORAGE_KEY } from '../constants';
 
 interface DashboardContextType {
@@ -31,13 +33,29 @@ export const useDashboardContext = () => {
   return context;
 };
 
-export const DashboardProvider = ({ children }: { children: ReactNode }) => {
+export const DashboardProvider = ({ children, userId, initialDashboard }: { children: ReactNode; userId: string; initialDashboard?: string }) => {
   const [layouts, setLayouts] = useState(() => {
+    if (initialDashboard) {
+      try {
+        const parsed = JSON.parse(initialDashboard);
+        if (parsed.layouts) return parsed.layouts;
+      } catch (e) {
+        console.error('Failed to parse initial dashboard layouts', e);
+      }
+    }
     const saved = localStorage.getItem(LAYOUT_STORAGE_KEY);
     return saved ? JSON.parse(saved) : defaultLayouts;
   });
 
   const [activeWidgets, setActiveWidgets] = useState<string[]>(() => {
+    if (initialDashboard) {
+      try {
+        const parsed = JSON.parse(initialDashboard);
+        if (parsed.activeWidgets) return parsed.activeWidgets;
+      } catch (e) {
+        console.error('Failed to parse initial dashboard widgets', e);
+      }
+    }
     const saved = localStorage.getItem(WIDGETS_STORAGE_KEY);
     return saved ? JSON.parse(saved) : WIDGETS.map(w => w.id);
   });
@@ -46,6 +64,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const [isToolboxOpen, setIsToolboxOpen] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<any>(null);
   const [currentBreakpoint, setCurrentBreakpoint] = useState('lg');
+  const { mutate: updateDashboard } = useUpdateDashboardMutation();
 
   const handleLayoutChange = useCallback((layout: any, allLayouts: any) => {
     setLayouts(allLayouts);
@@ -107,9 +126,23 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
       activeWidgets
     };
     console.log('Dashboard Configuration Saved:', JSON.stringify(dashboardConfig, null, 2));
-    setIsToolboxOpen(false);
-    // Delay state change to allow SpeedDial to close smoothly
-    setTimeout(() => setIsEditing(false), 300);
+    
+    updateDashboard(
+      { 
+        userId, 
+        data: { dashboard: JSON.stringify(dashboardConfig) } 
+      },
+      {
+        onSuccess: () => {
+          setIsToolboxOpen(false);
+          // Delay state change to allow SpeedDial to close smoothly
+          setTimeout(() => setIsEditing(false), 300);
+        },
+        onError: () => {
+          toast.error('대시보드 설정 저장에 실패했습니다.');
+        }
+      }
+    );
   };
 
   const handleCancel = () => {

@@ -7,12 +7,12 @@ import { useMonthBirthDuesQuery, useUsersMonthBirthDuesQuery, useYearDuesQuery, 
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUserQuery, useUsersQuery } from '@/hooks/queries/useUsers';
 import {
-  useAvailableVacationsQuery,
-  useUserMonthlyVacationStatsQuery,
-  useUserRequestedVacationsQuery,
-  useUserRequestedVacationStatsQuery,
-  useUserVacationHistoryQuery,
-  useUserVacationStatsQuery
+    useAvailableVacationsQuery,
+    useUserMonthlyVacationStatsQuery,
+    useUserRequestedVacationsQuery,
+    useUserRequestedVacationStatsQuery,
+    useUserVacationHistoryQuery,
+    useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations';
 import dayjs from 'dayjs';
 
@@ -58,7 +58,7 @@ const DashboardPage = () => {
         </div>
       }
     >
-      <DashboardProvider>
+      <DashboardProvider userId={user_id} initialDashboard={user?.dashboard}>
         <DashboardContent
           user={user}
           vacationStats={vacationStats}
