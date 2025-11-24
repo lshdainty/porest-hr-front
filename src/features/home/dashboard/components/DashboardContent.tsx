@@ -1,18 +1,16 @@
 import { SpeedDial, SpeedDialAction } from '@/components/common/SpeedDial';
 import { Button } from '@/components/shadcn/button';
+import ApplicationTableWidget from '@/features/home/dashboard/components/widgets/ApplicationTableWidget';
+import MonthStatsWidget from '@/features/home/dashboard/components/widgets/MonthStatsWidget';
+import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
+import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
+import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
+import VacationStatsWidget from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
 import WidgetWrapper from '@/features/home/dashboard/components/WidgetWrapper';
 import { WIDGETS } from '@/features/home/dashboard/constants';
 import { useDashboardContext } from '@/features/home/dashboard/contexts/DashboardContext';
-import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleton';
-import UserInfoContent from '@/features/user/components/UserInfoContent';
-import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard';
-import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton';
-import VacationStatsCard from '@/features/vacation/history/components/VacationStatsCard';
-import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton';
-import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard';
-import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton';
-import ScheduleSkeleton from '@/features/work/schedule/components/ScheduleSkeleton';
-import ScheduleTable from '@/features/work/schedule/components/ScheduleTable';
+import { TypeResp } from '@/lib/api/type';
+import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { GripVertical, Pencil, Plus, Save, Settings, X } from 'lucide-react';
 import { useMemo } from 'react';
@@ -28,6 +26,8 @@ interface DashboardContentProps {
   monthStats: any;
   vacationTypes: any;
   users: any;
+  vacationRequests?: GetUserRequestedVacationsResp[];
+  grantStatusTypes?: TypeResp[];
 }
 
 const DashboardContent = ({ 
@@ -36,6 +36,8 @@ const DashboardContent = ({
   monthStats,
   vacationTypes,
   users,
+  vacationRequests,
+  grantStatusTypes = []
 }: DashboardContentProps) => {
   const {
     layouts,
@@ -90,6 +92,40 @@ const DashboardContent = ({
     ];
   }, [isEditing, isToolboxOpen, handleSave, handleCancel, setIsEditing, setIsToolboxOpen]);
 
+  const widgetConfig: Record<string, { title: string; component: React.ReactNode }> = {
+    profile: {
+      title: '내 정보',
+      component: <ProfileWidget user={user} />
+    },
+    'vacation-stats': {
+      title: '휴가 현황',
+      component: <VacationStatsWidget vacationStats={vacationStats} />
+    },
+    'month-stats': {
+      title: '월별 휴가 통계',
+      component: <MonthStatsWidget monthStats={monthStats} />
+    },
+    'type-stats': {
+      title: '휴가 유형별 통계',
+      component: <TypeStatsWidget vacationTypes={vacationTypes} />
+    },
+    schedule: {
+      title: '근무 일정',
+      component: <ScheduleWidget users={users} />
+    },
+    'vacation-application': {
+      title: '휴가 신청 내역',
+      component: (
+        <ApplicationTableWidget 
+          vacationRequests={vacationRequests}
+          grantStatusTypes={grantStatusTypes || []}
+          userId={user?.user_id || ''}
+          userName={user?.user_name}
+        />
+      )
+    }
+  };
+
   return (
     <div className='min-h-screen bg-gray-50/50 relative overflow-hidden flex flex-col'>
       <div className='flex-1 overflow-y-auto p-4'>
@@ -109,49 +145,22 @@ const DashboardContent = ({
           onDrop={onDrop}
           droppingItem={draggedWidget ? { i: draggedWidget.id, w: draggedWidget.defaultW, h: draggedWidget.defaultH } : undefined}
         >
-          {activeWidgets.includes('profile') && (
-            <div key='profile'>
-              <WidgetWrapper title='내 정보' onClose={() => toggleWidget('profile')} isEditing={isEditing}>
-                {user ? (
-                  <div className='h-full overflow-y-auto'>
-                     <UserInfoContent user={user} />
-                  </div>
-                ) : <UserInfoCardSkeleton />}
-              </WidgetWrapper>
-            </div>
-          )}
+          {activeWidgets.map((widgetId) => {
+            const config = widgetConfig[widgetId];
+            if (!config) return null;
 
-          {activeWidgets.includes('vacation-stats') && (
-            <div key='vacation-stats'>
-              <WidgetWrapper title='휴가 현황' onClose={() => toggleWidget('vacation-stats')} isEditing={isEditing}>
-                 {vacationStats ? <VacationStatsCard value={vacationStats} /> : <VacationStatsCardSkeleton />}
-              </WidgetWrapper>
-            </div>
-          )}
-
-          {activeWidgets.includes('month-stats') && (
-            <div key='month-stats'>
-              <WidgetWrapper title='월별 휴가 통계' onClose={() => toggleWidget('month-stats')} isEditing={isEditing}>
-                {monthStats ? <MonthVacationStatsCard value={monthStats} className='h-full' /> : <MonthVacationStatsCardSkeleton />}
-              </WidgetWrapper>
-            </div>
-          )}
-
-          {activeWidgets.includes('type-stats') && (
-            <div key='type-stats'>
-              <WidgetWrapper title='휴가 유형별 통계' onClose={() => toggleWidget('type-stats')} isEditing={isEditing}>
-                 {vacationTypes ? <VacationTypeStatsCard value={vacationTypes} className='h-full' /> : <VacationTypeStatsCardSkeleton />}
-              </WidgetWrapper>
-            </div>
-          )}
-
-          {activeWidgets.includes('schedule') && (
-            <div key='schedule'>
-              <WidgetWrapper title='근무 일정' onClose={() => toggleWidget('schedule')} isEditing={isEditing}>
-                 {users ? <ScheduleTable users={users} /> : <ScheduleSkeleton />}
-              </WidgetWrapper>
-            </div>
-          )}
+            return (
+              <div key={widgetId}>
+                <WidgetWrapper 
+                  title={config.title} 
+                  onClose={() => toggleWidget(widgetId)} 
+                  isEditing={isEditing}
+                >
+                  {config.component}
+                </WidgetWrapper>
+              </div>
+            );
+          })}
         </ResponsiveGridLayout>
       </div>
 

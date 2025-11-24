@@ -3,10 +3,12 @@ import { useUser } from '@/contexts/UserContext';
 import DashboardContent from '@/features/home/dashboard/components/DashboardContent';
 import DashboardSkeleton from '@/features/home/dashboard/components/DashboardSkeleton';
 import { DashboardProvider } from '@/features/home/dashboard/contexts/DashboardContext';
+import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUserQuery, useUsersQuery } from '@/hooks/queries/useUsers';
 import {
     useAvailableVacationsQuery,
     useUserMonthlyVacationStatsQuery,
+    useUserRequestedVacationsQuery,
     useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations';
 import dayjs from 'dayjs';
@@ -28,10 +30,12 @@ const DashboardPage = () => {
     user_id,
     dayjs().format('YYYY-MM-DDTHH:mm:ss')
   );
+  const { data: vacationRequests, isLoading: vacationRequestsLoading, error: vacationRequestsError } = useUserRequestedVacationsQuery(user_id);
+  const { data: grantStatusTypes } = useGrantStatusTypesQuery();
   const { data: users, isLoading: usersLoading, error: usersError } = useUsersQuery();
 
-  const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading;
-  const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError;
+  const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading || vacationRequestsLoading;
+  const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError || vacationRequestsError;
 
   return (
     <QueryAsyncBoundary
@@ -52,6 +56,8 @@ const DashboardPage = () => {
           monthStats={monthStats}
           vacationTypes={vacationTypes}
           users={users}
+          vacationRequests={vacationRequests}
+          grantStatusTypes={grantStatusTypes}
         />
       </DashboardProvider>
     </QueryAsyncBoundary>
