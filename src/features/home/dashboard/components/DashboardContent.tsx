@@ -1,6 +1,7 @@
 import { SpeedDial, SpeedDialAction } from '@/components/common/SpeedDial';
 import { Button } from '@/components/shadcn/button';
 import ApplicationTableWidget from '@/features/home/dashboard/components/widgets/ApplicationTableWidget';
+import DuesWidget from '@/features/home/dashboard/components/widgets/DuesWidget';
 import MonthStatsWidget from '@/features/home/dashboard/components/widgets/MonthStatsWidget';
 import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
 import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
@@ -32,6 +33,7 @@ interface DashboardContentProps {
   requestStats?: GetUserRequestedVacationStatsResp;
   grantStatusTypes?: TypeResp[];
   vacationHistory?: GetUserVacationHistoryResp;
+  yearDues?: any[];
 }
 
 const DashboardContent = ({ 
@@ -43,7 +45,8 @@ const DashboardContent = ({
   vacationRequests,
   requestStats,
   grantStatusTypes = [],
-  vacationHistory
+  vacationHistory,
+  yearDues
 }: DashboardContentProps) => {
   const {
     layouts,
@@ -137,6 +140,10 @@ const DashboardContent = ({
     'vacation-history': {
       title: '휴가 내역',
       component: <VacationHistoryWidget vacationHistory={vacationHistory} />
+    },
+    'dues': {
+      title: '회비 내역',
+      component: <DuesWidget yearDues={yearDues} />
     }
   };
 

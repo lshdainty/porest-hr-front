@@ -3,15 +3,16 @@ import { useUser } from '@/contexts/UserContext';
 import DashboardContent from '@/features/home/dashboard/components/DashboardContent';
 import DashboardSkeleton from '@/features/home/dashboard/components/DashboardSkeleton';
 import { DashboardProvider } from '@/features/home/dashboard/contexts/DashboardContext';
+import { useYearDuesQuery } from '@/hooks/queries/useDues';
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUserQuery, useUsersQuery } from '@/hooks/queries/useUsers';
 import {
-    useAvailableVacationsQuery,
-    useUserMonthlyVacationStatsQuery,
-    useUserRequestedVacationsQuery,
-    useUserRequestedVacationStatsQuery,
-    useUserVacationHistoryQuery,
-    useUserVacationStatsQuery
+  useAvailableVacationsQuery,
+  useUserMonthlyVacationStatsQuery,
+  useUserRequestedVacationsQuery,
+  useUserRequestedVacationStatsQuery,
+  useUserVacationHistoryQuery,
+  useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations';
 import dayjs from 'dayjs';
 
@@ -37,9 +38,10 @@ const DashboardPage = () => {
   const { data: grantStatusTypes } = useGrantStatusTypesQuery();
   const { data: users, isLoading: usersLoading, error: usersError } = useUsersQuery();
   const { data: vacationHistory, isLoading: vacationHistoryLoading, error: vacationHistoryError } = useUserVacationHistoryQuery(user_id);
+  const { data: yearDues, isLoading: yearDuesLoading, error: yearDuesError } = useYearDuesQuery(dayjs().format('YYYY'));
 
-  const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading || vacationRequestsLoading || requestStatsLoading || vacationHistoryLoading;
-  const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError || vacationRequestsError || requestStatsError || vacationHistoryError;
+  const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading || vacationRequestsLoading || requestStatsLoading || vacationHistoryLoading || yearDuesLoading;
+  const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError || vacationRequestsError || requestStatsError || vacationHistoryError || yearDuesError;
 
   return (
     <QueryAsyncBoundary
@@ -64,6 +66,7 @@ const DashboardPage = () => {
           requestStats={requestStats}
           grantStatusTypes={grantStatusTypes}
           vacationHistory={vacationHistory}
+          yearDues={yearDues}
         />
       </DashboardProvider>
     </QueryAsyncBoundary>
