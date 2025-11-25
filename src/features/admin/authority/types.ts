@@ -1,23 +1,23 @@
 export interface Authority {
-  id: string;
   code: string;
   name: string;
-  group: string;
-  description?: string;
+  description: string;
+  resourceType: string;
+  actionType: string;
 }
 
 export interface Role {
-  id: string;
-  name: string;
+  role_code: string;
+  role_name: string;
   description: string;
-  authorityIds: string[];
+  permissions: Authority[];
 }
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  roleIds: string[];
+  role_codes: string[];
   department?: string;
   position?: string;
 }

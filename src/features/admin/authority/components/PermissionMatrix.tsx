@@ -7,17 +7,18 @@ interface PermissionMatrixProps {
   authorities: Authority[];
   selectedAuthorityIds: string[];
   onToggleAuthority: (authorityId: string, checked: boolean) => void;
+  disabled?: boolean;
 }
 
-const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority }: PermissionMatrixProps) => {
-  
+const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority, disabled = false }: PermissionMatrixProps) => {
+
   const groupedAuthorities = useMemo(() => {
     const groups: { [key: string]: Authority[] } = {};
     authorities.forEach(auth => {
-      if (!groups[auth.group]) {
-        groups[auth.group] = [];
+      if (!groups[auth.resourceType]) {
+        groups[auth.resourceType] = [];
       }
-      groups[auth.group].push(auth);
+      groups[auth.resourceType].push(auth);
     });
     return groups;
   }, [authorities]);
@@ -29,21 +30,22 @@ const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority
           <h4 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wider">{group}</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {groupAuths.map((auth) => (
-              <div key={auth.id} className="flex items-start space-x-3 p-2 rounded hover:bg-muted/50 transition-colors">
-                <Checkbox 
-                  id={auth.id} 
-                  checked={selectedAuthorityIds.includes(auth.id)}
-                  onCheckedChange={(checked) => onToggleAuthority(auth.id, checked as boolean)}
+              <div key={auth.code} className="flex items-start space-x-3 p-2 rounded hover:bg-muted/50 transition-colors">
+                <Checkbox
+                  id={auth.code}
+                  checked={selectedAuthorityIds.includes(auth.code)}
+                  onCheckedChange={(checked) => onToggleAuthority(auth.code, checked as boolean)}
+                  disabled={disabled}
                 />
                 <div className="grid gap-1.5 leading-none">
-                  <Label 
-                    htmlFor={auth.id} 
+                  <Label
+                    htmlFor={auth.code}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                   >
                     {auth.name}
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    {auth.code}
+                    {auth.description}
                   </p>
                 </div>
               </div>

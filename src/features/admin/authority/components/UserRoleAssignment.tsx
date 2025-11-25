@@ -4,28 +4,25 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
 import { Role, User } from "@/features/admin/authority/types";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 
 interface UserRoleAssignmentProps {
   user: User;
   allRoles: Role[];
-  onUpdateUserRoles: (userId: string, roleIds: string[]) => void;
+  onUpdateUserRole: (userId: string, roleCode: string) => void;
 }
 
-const UserRoleAssignment = ({ user, allRoles, onUpdateUserRoles }: UserRoleAssignmentProps) => {
+const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole }: UserRoleAssignmentProps) => {
   const [open, setOpen] = useState(false);
 
-  const assignedRoles = allRoles.filter(role => user.roleIds.includes(role.id));
-  const availableRoles = allRoles.filter(role => !user.roleIds.includes(role.id));
+  // Assuming user has only one role code in the array
+  const currentRoleCode = user.role_codes[0];
+  const currentRole = allRoles.find(r => r.role_code === currentRoleCode);
 
-  const handleAddRole = (roleId: string) => {
-    onUpdateUserRoles(user.id, [...user.roleIds, roleId]);
+  const handleSelectRole = (roleCode: string) => {
+    onUpdateUserRole(user.id, roleCode);
     setOpen(false);
-  };
-
-  const handleRemoveRole = (roleId: string) => {
-    onUpdateUserRoles(user.id, user.roleIds.filter(id => id !== roleId));
   };
 
   return (
@@ -46,69 +43,55 @@ const UserRoleAssignment = ({ user, allRoles, onUpdateUserRoles }: UserRoleAssig
 
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Assigned Roles</h3>
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Role
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
-              <Command>
-                <CommandInput placeholder="Search role..." />
-                <CommandList>
-                  <CommandEmpty>No role found.</CommandEmpty>
-                  <CommandGroup>
-                    {availableRoles.map((role) => (
-                      <CommandItem
-                        key={role.id}
-                        value={role.name}
-                        onSelect={() => handleAddRole(role.id)}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            user.roleIds.includes(role.id) ? "opacity-100" : "opacity-0"
-                          )}
-                        />
-                        {role.name}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <h3 className="text-lg font-semibold">Assigned Role</h3>
         </div>
 
-        <div className="space-y-4">
-          {assignedRoles.length > 0 ? (
-            assignedRoles.map(role => (
-              <div key={role.id} className="flex items-center justify-between p-4 border rounded-lg bg-card">
-                <div>
-                  <div className="font-medium flex items-center gap-2">
-                    {role.name}
-                    <Badge variant="secondary" className="text-xs font-normal">ID: {role.id}</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">{role.description}</p>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="text-muted-foreground hover:text-destructive"
-                  onClick={() => handleRemoveRole(role.id)}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between p-4 border rounded-lg bg-card">
+            <div>
+              <div className="font-medium flex items-center gap-2">
+                {currentRole ? currentRole.role_name : "No Role Assigned"}
+                {currentRole && <Badge variant="secondary" className="text-xs font-normal">{currentRole.role_code}</Badge>}
               </div>
-            ))
-          ) : (
-            <div className="text-center py-8 border-2 border-dashed rounded-lg text-muted-foreground">
-              No roles assigned to this user.
+              <p className="text-sm text-muted-foreground mt-1">
+                {currentRole ? currentRole.description : "Assign a role to this user."}
+              </p>
             </div>
-          )}
+            
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
+                  {currentRole ? "Change Role" : "Assign Role"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search role..." />
+                  <CommandList>
+                    <CommandEmpty>No role found.</CommandEmpty>
+                    <CommandGroup>
+                      {allRoles.map((role) => (
+                        <CommandItem
+                          key={role.role_code}
+                          value={role.role_name}
+                          onSelect={() => handleSelectRole(role.role_code)}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              currentRoleCode === role.role_code ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {role.role_name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
       </div>
     </div>

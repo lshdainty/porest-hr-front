@@ -43,15 +43,17 @@ const UserList = ({ users, selectedUserId, onSelectUser }: UserListProps) => {
               <div
                 key={user.id}
                 className={cn(
-                  "flex flex-col p-3 rounded-md cursor-pointer transition-colors text-sm",
+                  "flex items-center justify-between p-3 rounded-md cursor-pointer transition-colors text-sm",
                   selectedUserId === user.id
-                    ? "bg-primary/10 text-primary"
+                    ? "bg-primary/10 text-primary font-medium"
                     : "hover:bg-muted"
                 )}
                 onClick={() => onSelectUser(user.id)}
               >
-                <div className="font-medium">{user.name}</div>
-                <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                <div className="flex flex-col overflow-hidden">
+                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+                </div>
               </div>
             ))
           ) : (

@@ -33,3 +33,9 @@ export * from './work';
 
 // Type
 export * from './type';
+
+// Role
+export * from './role';
+
+// Permission
+export * from './permission';
