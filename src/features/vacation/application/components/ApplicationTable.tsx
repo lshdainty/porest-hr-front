@@ -1,12 +1,13 @@
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { usePermission } from '@/contexts/PermissionContext';
 import ApplicationTableContent from '@/features/vacation/application/components/ApplicationTableContent';
 import VacationApprovalForm from '@/features/vacation/application/components/VacationApprovalForm';
 import VacationGrantDialog from '@/features/vacation/application/components/VacationGrantDialog';
 import { usePostCancelVacationRequestMutation } from '@/hooks/queries/useVacations';
 import { TypeResp } from '@/lib/api/type';
 import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
-import { useState } from 'react';
+import { Activity, useState } from 'react';
 
 interface ApplicationTableProps {
   vacationRequests: GetUserRequestedVacationsResp[]
@@ -26,6 +27,7 @@ const ApplicationTable = ({
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
   const [grantDialogOpen, setGrantDialogOpen] = useState(false);
+  const { hasAnyPermission } = usePermission();
 
   const { mutate: cancelVacationRequest } = usePostCancelVacationRequestMutation();
 
@@ -54,14 +56,14 @@ const ApplicationTable = ({
         <CardHeader>
           <div className='flex items-center justify-between'>
             <CardTitle>신청 내역</CardTitle>
-            {showGrantButton && (
+            <Activity mode={showGrantButton && hasAnyPermission(['VACATION:GRANT', 'VACATION:MANAGE']) ? 'visible' : 'hidden'}>
               <Button
                 onClick={() => setGrantDialogOpen(true)}
                 className='bg-blue-600 hover:bg-blue-700 text-white'
               >
                 휴가 부여
               </Button>
-            )}
+            </Activity>
           </div>
         </CardHeader>
         <CardContent>

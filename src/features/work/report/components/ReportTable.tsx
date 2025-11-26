@@ -4,20 +4,20 @@ import { Calendar } from '@/components/shadcn/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/shadcn/dropdownMenu';
 import { Input } from '@/components/shadcn/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/shadcn/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Textarea } from '@/components/shadcn/textarea';
@@ -26,16 +26,18 @@ import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import {
-    CalendarIcon,
-    Copy,
-    EllipsisVertical,
-    Pencil,
-    Plus,
-    Trash2
+  CalendarIcon,
+  Copy,
+  EllipsisVertical,
+  Pencil,
+  Plus,
+  Trash2
 } from 'lucide-react';
 
+import { usePermission } from '@/contexts/PermissionContext';
 import { useReportContext } from '@/features/work/report/contexts/ReportContext';
 import { WorkHistory } from '@/features/work/report/types';
+import { Activity } from 'react';
 
 interface ReportTableProps {
   workHistories: WorkHistory[];
@@ -76,6 +78,8 @@ const ReportTable = ({
     setEditData,
     updateEditData,
   } = useReportContext();
+  
+  const { hasAnyPermission } = usePermission();
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -101,21 +105,23 @@ const ReportTable = ({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>업무 이력 테이블</CardTitle>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleDuplicateSelected}
-              disabled={selectedRows.length === 0}
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              복제 ({selectedRows.length})
-            </Button>
-            <Button size="sm" onClick={handleAddRow}>
-              <Plus className="w-4 h-4 mr-2" />
-              추가
-            </Button>
-          </div>
+          <Activity mode={hasAnyPermission(['WORK:WRITE', 'WORK:MANAGE']) ? 'visible' : 'hidden'}>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleDuplicateSelected}
+                disabled={selectedRows.length === 0}
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                복제 ({selectedRows.length})
+              </Button>
+              <Button size="sm" onClick={handleAddRow}>
+                <Plus className="w-4 h-4 mr-2" />
+                추가
+              </Button>
+            </div>
+          </Activity>
         </div>
       </CardHeader>
       <CardContent>

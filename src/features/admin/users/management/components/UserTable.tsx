@@ -38,7 +38,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
     showInviteEditDialog, setShowInviteEditDialog
   } = useManagementContext();
 
-  const { hasPermission } = usePermission();
+  const { hasPermission, hasAllPermissions } = usePermission();
 
   const handleUpdateUser = (user: PutUserReq) => {
     putUser({
@@ -66,7 +66,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
         <div className='flex items-center justify-between'>
           <CardTitle>사용자 목록</CardTitle>
           <div className='flex gap-2'>
-            {hasPermission('user:invite') && (
+            {hasPermission('USER:MANAGE') && (
               <Button className='text-sm h-8' size='sm' onClick={() => setShowInviteDialog(true)}>
                 초대
               </Button>
@@ -182,7 +182,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align='end' className='w-32'>
-                            {hasPermission('user:invite:resend') && (
+                            {hasPermission('USER:MANAGE') && (
                               <DropdownMenuItem
                                 disabled={row.invitation_status !== 'EXPIRED' && row.invitation_status !== 'INACTIVE'}
                                 onSelect={() => setShowResendDialog(row.user_id)}
@@ -191,7 +191,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 <span>메일 재전송</span>
                               </DropdownMenuItem>
                             )}
-                            {row.invitation_status === 'ACTIVE' && hasPermission('user:update') && (
+                            {row.invitation_status === 'ACTIVE' && hasPermission('USER:MANAGE') && (
                               <DropdownMenuItem
                                 onSelect={() => setShowEditDialog(row.user_id)}
                               >
@@ -199,7 +199,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 <span>사용자 수정</span>
                               </DropdownMenuItem>
                             )}
-                            {row.invitation_status === 'PENDING' && hasPermission('user:update') && (
+                            {row.invitation_status === 'PENDING' && hasPermission('USER:MANAGE') && (
                               <DropdownMenuItem
                                 onSelect={() => setShowInviteEditDialog(row.user_id)}
                               >
@@ -215,7 +215,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 <span>사용자 수정</span>
                               </DropdownMenuItem>
                             )}
-                            {row.invitation_status === 'ACTIVE' && hasPermission('user:policy:assign') && (
+                            {row.invitation_status === 'ACTIVE' && hasAllPermissions(['USER:MANAGE', 'VACATION:MANAGE']) && (
                               <DropdownMenuItem
                                 onSelect={() => setPolicyDialog(row.user_id)}
                               >
@@ -224,7 +224,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
-                            {hasPermission('user:delete') && (
+                            {hasPermission('USER:MANAGE') && (
                               <DropdownMenuItem
                                 onSelect={() => setShowDeleteDialog(row.user_id)}
                                 className='text-destructive focus:text-destructive hover:!bg-destructive/20'
