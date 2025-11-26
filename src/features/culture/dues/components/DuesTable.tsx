@@ -1,3 +1,4 @@
+import PermissionGuard from '@/components/auth/PermissionGuard';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { useDeleteDuesMutation, usePostDuesMutation, usePutDuesMutation } from '@/hooks/queries/useDues';
@@ -244,10 +245,12 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
       <CardHeader>
         <div className='flex items-center justify-between'>
           <CardTitle>입출금 내역</CardTitle>
-          <div className='flex gap-2'>
-            <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
-            <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
-          </div>
+          <PermissionGuard requiredPermission="DUES:MANAGE">
+            <div className='flex gap-2'>
+              <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
+              <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
+            </div>
+          </PermissionGuard>
         </div>
       </CardHeader>
       <CardContent>
