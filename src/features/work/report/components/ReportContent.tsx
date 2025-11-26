@@ -10,14 +10,14 @@ import { useReportContext } from '@/features/work/report/contexts/ReportContext'
 import { WorkHistory } from '@/features/work/report/types';
 import { useUsersQuery } from '@/hooks/queries/useUsers';
 import {
-    useBulkCreateWorkHistoriesMutation,
-    useDeleteWorkHistoryMutation,
-    usePostCreateWorkHistoryMutation,
-    usePutUpdateWorkHistoryMutation,
-    useWorkDivisionQuery,
-    useWorkGroupsWithPartsQuery,
-    useWorkHistoriesQuery,
-    useWorkHistoryExcelDownloadMutation
+  useBulkCreateWorkHistoriesMutation,
+  useDeleteWorkHistoryMutation,
+  usePostCreateWorkHistoryMutation,
+  usePutUpdateWorkHistoryMutation,
+  useWorkDivisionQuery,
+  useWorkGroupsWithPartsQuery,
+  useWorkHistoriesQuery,
+  useWorkHistoryExcelDownloadMutation
 } from '@/hooks/queries/useWorks';
 import { WorkHistoryResp, WorkHistorySearchCondition } from '@/lib/api/work';
 import dayjs from 'dayjs';
@@ -155,7 +155,6 @@ const ReportContent = () => {
       await refetchWorkHistories();
       setEditingRow(null);
       setEditData(null);
-      toast.success('저장되었습니다.');
     } catch (error) {
       console.error('저장 실패:', error);
       toast.error('저장에 실패했습니다. 다시 시도해주세요.');
@@ -188,7 +187,6 @@ const ReportContent = () => {
       });
 
       await refetchWorkHistories();
-      toast.success('복제가 완료되었습니다.');
     } catch (error) {
       console.error('복제 실패:', error);
       toast.error('복제에 실패했습니다. 다시 시도해주세요.');
@@ -227,7 +225,6 @@ const ReportContent = () => {
       await Promise.all(promises);
       await refetchWorkHistories();
       setSelectedRows([]);
-      toast.success(`${selectedWorkHistories.length}개의 항목이 복제되었습니다.`);
     } catch (error) {
       console.error('복제 실패:', error);
       toast.error('복제에 실패했습니다. 다시 시도해주세요.');
@@ -244,7 +241,6 @@ const ReportContent = () => {
     try {
       await deleteWorkHistory.mutateAsync(row.work_history_seq);
       await refetchWorkHistories();
-      toast.success('삭제되었습니다.');
     } catch (error) {
       console.error('삭제 실패:', error);
       toast.error('삭제에 실패했습니다. 다시 시도해주세요.');
@@ -258,7 +254,6 @@ const ReportContent = () => {
     try {
       await createWorkHistoryBatch.mutateAsync({ work_histories: data });
       await refetchWorkHistories();
-      toast.success('일괄 등록이 완료되었습니다.');
     } catch (error) {
       console.error('일괄 등록 실패:', error);
       toast.error('일괄 등록에 실패했습니다.');
@@ -314,7 +309,7 @@ const ReportContent = () => {
           users={users || []}
         />
 
-        <div className="mt-6">
+        <div className='mt-6'>
           <ReportTable
             workHistories={workHistories}
             isWorkHistoriesLoading={false}

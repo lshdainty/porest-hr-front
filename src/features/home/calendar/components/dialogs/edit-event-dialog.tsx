@@ -1,7 +1,3 @@
-import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations';
-import { useUpdateEvent } from '@/features/home/calendar/hooks/use-update-event';
-import type { TEventColor } from '@/features/home/calendar/types';
-import { calendarTypes } from '@/features/home/calendar/types';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import {
@@ -26,11 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select';
-import { useUser } from '@/contexts/UserContext'
+import { useUser } from '@/contexts/UserContext';
+import { useUpdateEvent } from '@/features/home/calendar/hooks/use-update-event';
+import type { TEventColor } from '@/features/home/calendar/types';
+import { calendarTypes } from '@/features/home/calendar/types';
+import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import type { IEvent } from '@/features/home/calendar/interfaces';
@@ -100,6 +101,19 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   const selectedCalendar = calendarTypes.find(c => c.id === watchedCalendarType);
   const isVacation = selectedCalendar?.type === 'vacation';
   const isDate = selectedCalendar?.isDate;
+
+  const watchedStartDate = form.watch('startDate');
+
+  useEffect(() => {
+    const currentEndDate = form.getValues('endDate');
+    if (watchedStartDate && currentEndDate) {
+      const start = dayjs(watchedStartDate);
+      const end = dayjs(currentEndDate);
+      if (start.isAfter(end)) {
+        form.setValue('endDate', watchedStartDate);
+      }
+    }
+  }, [watchedStartDate, form]);
 
   const {data: vacations} = useAvailableVacationsQuery(
     loginUser?.user_id || '',
@@ -263,7 +277,16 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
                     </FieldLabel>
                     <InputDatePicker
                       value={field.value}
-                      onValueChange={field.onChange}
+                      onValueChange={(date) => {
+                        const startDate = form.getValues('startDate');
+                        if (startDate && date) {
+                          if (dayjs(date).isBefore(dayjs(startDate))) {
+                            toast.error('종료일은 시작일보다 빠를 수 없습니다.');
+                            return;
+                          }
+                        }
+                        field.onChange(date);
+                      }}
                       placeholder='종료일'
                     />
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />

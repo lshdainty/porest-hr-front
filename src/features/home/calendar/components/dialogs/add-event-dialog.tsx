@@ -54,6 +54,15 @@ const formSchema = z.object({
   endDate: z.string().min(1, '종료일을 입력해주세요.'),
   startHour: z.string().optional(),
   startMinute: z.string().optional(),
+}).superRefine((data, ctx) => {
+  const selectedCalendar = calendarTypes.find(c => c.id === data.calendarType);
+  if (selectedCalendar?.type === 'vacation' && !data.vacationType) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: '사용 휴가를 선택해주세요.',
+      path: ['vacationType'],
+    });
+  }
 });
 
 type AddEventFormValues = z.infer<typeof formSchema>;
@@ -119,7 +128,8 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
 
   const {data: vacations} = useAvailableVacationsQuery(
     loginUser?.user_id || '',
-    dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
+    watchedStartDate ? dayjs(watchedStartDate).format('YYYY-MM-DDTHH:mm:ss') : '',
+    { enabled: open && !!watchedStartDate }
   );
 
   const { addEvent } = useAddEvent();

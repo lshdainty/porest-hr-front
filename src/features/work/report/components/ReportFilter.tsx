@@ -57,54 +57,54 @@ const ReportFilter = ({
   return (
     <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
       <CollapsibleContent>
-        <Card className="shadow-sm bg-muted/10">
-          <CardContent className="pt-6 pb-6">
-            <div className="space-y-6">
+        <Card className='shadow-sm bg-muted/10'>
+          <CardContent className='pt-6 pb-6'>
+            <div className='space-y-6'>
               {/* 필터 헤더 */}
-              <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-foreground/80">상세 검색 조건</h3>
+              <div className='flex items-center justify-between pb-2 border-b border-border/50'>
+                <div className='flex items-center gap-2'>
+                  <h3 className='text-sm font-semibold text-foreground/80'>상세 검색 조건</h3>
                   {activeFiltersCount > 0 && (
-                    <Badge variant="secondary" className="text-xs font-normal">
+                    <Badge variant='secondary' className='text-xs font-normal'>
                       {activeFiltersCount}개 필터 적용 중
                     </Badge>
                   )}
                 </div>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant='ghost'
+                  size='sm'
                   onClick={handleResetFilters}
                   disabled={activeFiltersCount === 0}
-                  className="h-8 text-xs hover:bg-destructive/10 hover:text-destructive transition-colors"
+                  className='h-8 text-xs hover:bg-destructive/10 hover:text-destructive transition-colors'
                 >
-                  <X className="w-3 h-3 mr-1" />
+                  <X className='w-3 h-3 mr-1' />
                   초기화
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 items-end">
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 items-end'>
                 {/* 시작 날짜 */}
-                <div className="space-y-2">
-                  <Label htmlFor="start-date" className="text-xs text-muted-foreground">
+                <div className='space-y-2'>
+                  <Label htmlFor='start-date' className='text-xs text-muted-foreground'>
                     시작날짜
                   </Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
-                        id="start-date"
-                        variant="outline"
+                        id='start-date'
+                        variant='outline'
                         className={cn(
                           'w-full justify-start text-left font-normal h-9 px-3',
                           !filters.startDate && 'text-muted-foreground'
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                        {filters.startDate ? dayjs(filters.startDate).format('YYYY-MM-DD') : <span className="text-xs">날짜 선택</span>}
+                        <CalendarIcon className='mr-2 h-3.5 w-3.5' />
+                        {filters.startDate ? dayjs(filters.startDate).format('YYYY-MM-DD') : <span className='text-xs'>날짜 선택</span>}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className='w-auto p-0' align='start'>
                       <Calendar
-                        mode="single"
+                        mode='single'
                         selected={filters.startDate}
                         onSelect={(date) => onFilterChange('startDate', date)}
                         initialFocus
@@ -114,27 +114,27 @@ const ReportFilter = ({
                 </div>
 
                 {/* 종료 날짜 */}
-                <div className="space-y-2">
-                  <Label htmlFor="end-date" className="text-xs text-muted-foreground">
+                <div className='space-y-2'>
+                  <Label htmlFor='end-date' className='text-xs text-muted-foreground'>
                     종료날짜
                   </Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
-                        id="end-date"
-                        variant="outline"
+                        id='end-date'
+                        variant='outline'
                         className={cn(
                           'w-full justify-start text-left font-normal h-9 px-3',
                           !filters.endDate && 'text-muted-foreground'
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                        {filters.endDate ? dayjs(filters.endDate).format('YYYY-MM-DD') : <span className="text-xs">날짜 선택</span>}
+                        <CalendarIcon className='mr-2 h-3.5 w-3.5' />
+                        {filters.endDate ? dayjs(filters.endDate).format('YYYY-MM-DD') : <span className='text-xs'>날짜 선택</span>}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className='w-auto p-0' align='start'>
                       <Calendar
-                        mode="single"
+                        mode='single'
                         selected={filters.endDate}
                         onSelect={(date) => onFilterChange('endDate', date)}
                         initialFocus
@@ -144,17 +144,17 @@ const ReportFilter = ({
                 </div>
 
                 {/* 담당자 */}
-        <div className="space-y-2">
-          <Label htmlFor="manager" className="text-xs text-muted-foreground">담당자</Label>
+        <div className='space-y-2'>
+          <Label htmlFor='manager' className='text-xs text-muted-foreground'>담당자</Label>
           <Select 
             value={filters.filterName || 'all'} 
             onValueChange={(value) => onFilterChange('filterName', value === 'all' ? '' : value)}
           >
-            <SelectTrigger id="manager" className="h-9">
-              <SelectValue placeholder="전체" />
+            <SelectTrigger id='manager' className='h-9'>
+              <SelectValue placeholder='전체' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">전체</SelectItem>
+              <SelectItem value='all'>전체</SelectItem>
               {users.map((user) => (
                 <SelectItem key={user.user_id} value={user.user_id}>
                   {user.user_name}
@@ -165,8 +165,8 @@ const ReportFilter = ({
         </div>
 
                 {/* 업무 분류 */}
-                <div className="space-y-2">
-                  <Label htmlFor="work-group" className="text-xs text-muted-foreground">
+                <div className='space-y-2'>
+                  <Label htmlFor='work-group' className='text-xs text-muted-foreground'>
                     업무 분류
                   </Label>
                   <Select 
@@ -176,11 +176,11 @@ const ReportFilter = ({
                       onFilterChange('selectedWorkPart', 'all'); // 분류 변경 시 파트 초기화
                     }}
                   >
-                    <SelectTrigger id="work-group" className="h-9">
-                      <SelectValue placeholder="전체" />
+                    <SelectTrigger id='work-group' className='h-9'>
+                      <SelectValue placeholder='전체' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value='all'>전체</SelectItem>
                       {workGroups.map((group) => (
                         <SelectItem key={group.work_code} value={group.work_code}>
                           {group.work_code_name}
@@ -191,8 +191,8 @@ const ReportFilter = ({
                 </div>
 
                 {/* 업무 파트 */}
-                <div className="space-y-2">
-                  <Label htmlFor="work-part" className="text-xs text-muted-foreground">
+                <div className='space-y-2'>
+                  <Label htmlFor='work-part' className='text-xs text-muted-foreground'>
                     업무 파트
                   </Label>
                   <Select 
@@ -200,11 +200,11 @@ const ReportFilter = ({
                     onValueChange={(value) => onFilterChange('selectedWorkPart', value)}
                     disabled={filters.selectedWorkGroup === 'all'}
                   >
-                    <SelectTrigger id="work-part" className="h-9">
-                      <SelectValue placeholder={filters.selectedWorkGroup === 'all' ? "-" : "전체"} />
+                    <SelectTrigger id='work-part' className='h-9'>
+                      <SelectValue placeholder={filters.selectedWorkGroup === 'all' ? '-' : '전체'} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value='all'>전체</SelectItem>
                       {currentWorkParts.map((part) => (
                         <SelectItem key={part.work_code} value={part.work_code}>
                           {part.work_code_name}
@@ -215,16 +215,16 @@ const ReportFilter = ({
                 </div>
 
                 {/* 업무 구분 */}
-                <div className="space-y-2">
-                  <Label htmlFor="work-division" className="text-xs text-muted-foreground">
+                <div className='space-y-2'>
+                  <Label htmlFor='work-division' className='text-xs text-muted-foreground'>
                     업무 구분
                   </Label>
                   <Select value={filters.selectedWorkDivision} onValueChange={(value) => onFilterChange('selectedWorkDivision', value)}>
-                    <SelectTrigger id="work-division" className="h-9">
-                      <SelectValue placeholder="전체" />
+                    <SelectTrigger id='work-division' className='h-9'>
+                      <SelectValue placeholder='전체' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">전체</SelectItem>
+                      <SelectItem value='all'>전체</SelectItem>
                       {workDivision.map((division) => (
                         <SelectItem key={division.work_code} value={division.work_code}>
                           {division.work_code_name}
@@ -235,25 +235,25 @@ const ReportFilter = ({
                 </div>
 
                 {/* 정렬 */}
-                <div className="space-y-2">
-                  <Label htmlFor="sort-order" className="text-xs text-muted-foreground">
+                <div className='space-y-2'>
+                  <Label htmlFor='sort-order' className='text-xs text-muted-foreground'>
                     정렬 기준
                   </Label>
                   <Select value={filters.sortOrder} onValueChange={(value) => onFilterChange('sortOrder', value)}>
-                    <SelectTrigger id="sort-order" className="h-9">
-                      <SelectValue placeholder="정렬 선택" />
+                    <SelectTrigger id='sort-order' className='h-9'>
+                      <SelectValue placeholder='정렬 선택' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="latest">최신순</SelectItem>
-                      <SelectItem value="oldest">오래된순</SelectItem>
+                      <SelectItem value='latest'>최신순</SelectItem>
+                      <SelectItem value='oldest'>오래된순</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* 조회 버튼 */}
-                <div className="flex items-end">
-                  <Button onClick={handleSearch} className="w-full h-9">
-                    <Search className="w-4 h-4 mr-2" />
+                <div className='flex items-end'>
+                  <Button onClick={handleSearch} className='w-full h-9'>
+                    <Search className='w-4 h-4 mr-2' />
                     조회
                   </Button>
                 </div>

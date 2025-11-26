@@ -289,7 +289,7 @@ const ExcelImportDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl max-h-[90vh] flex flex-col">
+      <DialogContent className='max-w-7xl max-h-[90vh] flex flex-col'>
         <DialogHeader>
           <DialogTitle>엑셀 데이터 임포트</DialogTitle>
           <DialogDescription>
@@ -299,13 +299,13 @@ const ExcelImportDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden p-1">
+        <div className='flex-1 overflow-hidden p-1'>
           {step === 'input' ? (
-            <div className="flex flex-col h-[60vh] gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">구분자 선택:</span>
+            <div className='flex flex-col h-[60vh] gap-2'>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-medium'>구분자 선택:</span>
                 <Select value={delimiter} onValueChange={setDelimiter}>
-                  <SelectTrigger className="w-[120px]">
+                  <SelectTrigger className='w-[120px]'>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -316,25 +316,25 @@ const ExcelImportDialog = ({
               </div>
               <Textarea
                 placeholder={`2024-01-01${delimiter}user123${delimiter}개발${delimiter}프론트엔드${delimiter}프로젝트${delimiter}8${delimiter}로그인 구현\n2024-01-01${delimiter}user123${delimiter}개발${delimiter}백엔드${delimiter}유지보수${delimiter}4${delimiter}버그 수정`}
-                className="flex-1 font-mono text-sm resize-none"
+                className='flex-1 font-mono text-sm resize-none'
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
               />
             </div>
           ) : (
-            <div className="border rounded-md [&>div]:h-[60vh]">
+            <div className='border rounded-md [&>div]:h-[60vh]'>
               <Table>
-                <TableHeader className="sticky top-0 bg-white z-10">
+                <TableHeader className='sticky top-0 bg-white z-10'>
                   <TableRow>
-                    <TableHead className="w-[50px]">상태</TableHead>
-                    <TableHead className="w-[100px]">날짜</TableHead>
-                    <TableHead className="w-[120px]">사용자</TableHead>
-                    <TableHead className="w-[140px]">업무분류</TableHead>
-                    <TableHead className="w-[140px]">업무파트</TableHead>
-                    <TableHead className="w-[140px]">업무구분</TableHead>
-                    <TableHead className="w-[60px]">시간</TableHead>
+                    <TableHead className='w-[50px]'>상태</TableHead>
+                    <TableHead className='w-[100px]'>날짜</TableHead>
+                    <TableHead className='w-[120px]'>사용자</TableHead>
+                    <TableHead className='w-[140px]'>업무분류</TableHead>
+                    <TableHead className='w-[140px]'>업무파트</TableHead>
+                    <TableHead className='w-[140px]'>업무구분</TableHead>
+                    <TableHead className='w-[60px]'>시간</TableHead>
                     <TableHead>내용</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
+                    <TableHead className='w-[50px]'></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -344,29 +344,29 @@ const ExcelImportDialog = ({
                     const filteredParts = currentGroup ? currentGroup.parts : [];
 
                     return (
-                      <TableRow key={row.id} className={cn(!row.isValid && "bg-red-50")}>
+                      <TableRow key={row.id} className={cn(!row.isValid && 'bg-red-50')}>
                         <TableCell>
                           {row.isValid ? (
-                            <Check className="w-4 h-4 text-green-500" />
+                            <Check className='w-4 h-4 text-green-500' />
                           ) : (
-                            <AlertCircle className="w-4 h-4 text-red-500" />
+                            <AlertCircle className='w-4 h-4 text-red-500' />
                           )}
                         </TableCell>
-                        <TableCell className="p-1">
+                        <TableCell className='p-1'>
                           <input 
-                            className={cn("w-full bg-transparent border-none focus:ring-1 px-1", row.errors.date && "text-red-600 font-bold")}
+                            className={cn('w-full bg-transparent border-none focus:ring-1 px-1', row.errors.date && 'text-red-600 font-bold')}
                             value={row.date}
                             onChange={e => handleCellChange(row.id, 'date', e.target.value)}
                             title={row.errors.date}
                           />
                         </TableCell>
-                        <TableCell className="p-1">
+                        <TableCell className='p-1'>
                           <Select
                             value={row.manager_id}
                             onValueChange={(value) => handleCellChange(row.id, 'manager_id', value)}
                           >
-                            <SelectTrigger className={cn("h-8 w-full", row.errors.manager_id && "border-red-500")}>
-                              <SelectValue placeholder="선택" />
+                            <SelectTrigger className={cn('h-8 w-full', row.errors.manager_id && 'border-red-500')}>
+                              <SelectValue placeholder='선택' />
                             </SelectTrigger>
                             <SelectContent>
                               {users.map((user) => (
@@ -377,13 +377,13 @@ const ExcelImportDialog = ({
                             </SelectContent>
                           </Select>
                         </TableCell>
-                        <TableCell className="p-1">
+                        <TableCell className='p-1'>
                           <Select
                             value={row.work_group_code}
                             onValueChange={(value) => handleCodeChange(row.id, 'group', value)}
                           >
-                            <SelectTrigger className={cn("h-8 w-full", row.errors.work_group_name && "border-red-500")}>
-                              <SelectValue placeholder="선택" />
+                            <SelectTrigger className={cn('h-8 w-full', row.errors.work_group_name && 'border-red-500')}>
+                              <SelectValue placeholder='선택' />
                             </SelectTrigger>
                             <SelectContent>
                               {workGroups.map((group) => (
@@ -394,14 +394,14 @@ const ExcelImportDialog = ({
                             </SelectContent>
                           </Select>
                         </TableCell>
-                        <TableCell className="p-1">
+                        <TableCell className='p-1'>
                           <Select
                             value={row.work_part_code}
                             onValueChange={(value) => handleCodeChange(row.id, 'part', value)}
                             disabled={!row.work_group_code}
                           >
-                            <SelectTrigger className={cn("h-8 w-full", row.errors.work_part_name && "border-red-500")}>
-                              <SelectValue placeholder="선택" />
+                            <SelectTrigger className={cn('h-8 w-full', row.errors.work_part_name && 'border-red-500')}>
+                              <SelectValue placeholder='선택' />
                             </SelectTrigger>
                             <SelectContent>
                               {filteredParts.map((part) => (
@@ -412,13 +412,13 @@ const ExcelImportDialog = ({
                             </SelectContent>
                           </Select>
                         </TableCell>
-                        <TableCell className="p-1">
+                        <TableCell className='p-1'>
                            <Select
                             value={row.work_division_code}
                             onValueChange={(value) => handleCodeChange(row.id, 'division', value)}
                           >
-                            <SelectTrigger className={cn("h-8 w-full", row.errors.work_division_name && "border-red-500")}>
-                              <SelectValue placeholder="선택" />
+                            <SelectTrigger className={cn('h-8 w-full', row.errors.work_division_name && 'border-red-500')}>
+                              <SelectValue placeholder='선택' />
                             </SelectTrigger>
                             <SelectContent>
                               {workDivision.map((division) => (
@@ -429,28 +429,28 @@ const ExcelImportDialog = ({
                             </SelectContent>
                           </Select>
                         </TableCell>
-                        <TableCell className="p-1">
+                        <TableCell className='p-1'>
                           <input 
-                            className="w-full bg-transparent border-none focus:ring-1 px-1"
+                            className='w-full bg-transparent border-none focus:ring-1 px-1'
                             value={row.hours}
                             onChange={e => handleCellChange(row.id, 'hours', e.target.value)}
                           />
                         </TableCell>
-                        <TableCell className="p-1">
+                        <TableCell className='p-1'>
                           <input 
-                            className="w-full bg-transparent border-none focus:ring-1 px-1"
+                            className='w-full bg-transparent border-none focus:ring-1 px-1'
                             value={row.content}
                             onChange={e => handleCellChange(row.id, 'content', e.target.value)}
                           />
                         </TableCell>
-                        <TableCell className="p-1">
+                        <TableCell className='p-1'>
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                            variant='ghost'
+                            size='icon'
+                            className='h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50'
                             onClick={() => handleDeleteRow(row.id)}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className='w-4 h-4' />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -462,8 +462,8 @@ const ExcelImportDialog = ({
           )}
         </div>
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <DialogFooter className='gap-2'>
+          <Button variant='outline' onClick={() => onOpenChange(false)}>
             취소
           </Button>
           {step === 'input' ? (
@@ -472,14 +472,14 @@ const ExcelImportDialog = ({
             </Button>
           ) : (
             <>
-              <Button variant="secondary" onClick={() => setStep('input')}>
+              <Button variant='secondary' onClick={() => setStep('input')}>
                 다시 입력
               </Button>
-              <Button variant="outline" onClick={handleRevalidate}>
+              <Button variant='outline' onClick={handleRevalidate}>
                 데이터 검증
               </Button>
               <Button onClick={handleRegister} disabled={validationErrorCount > 0 || isRegistering}>
-                {isRegistering && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {isRegistering && <Loader2 className='w-4 h-4 mr-2 animate-spin' />}
                 {validationErrorCount > 0 ? `${validationErrorCount}개 오류 수정 필요` : '일괄 등록'}
               </Button>
             </>
