@@ -1,5 +1,5 @@
 import { Permission, usePermission } from '@/contexts/PermissionContext';
-import React from 'react';
+import React, { Activity } from 'react';
 
 interface PermissionGuardProps {
   requiredPermission: Permission | Permission[];
@@ -26,11 +26,14 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
     ? hasAllPermissions(permissions)
     : hasAnyPermission(permissions);
 
-  if (!isAllowed) {
-    return <>{fallback}</>;
-  }
-
-  return <>{children}</>;
+  return (
+    <>
+      <Activity mode={isAllowed ? 'visible' : 'hidden'}>
+        {children}
+      </Activity>
+      {!isAllowed && fallback}
+    </>
+  );
 };
 
 export default PermissionGuard;
