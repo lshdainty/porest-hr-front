@@ -15,7 +15,6 @@ import {
   Network,
   NotebookPen,
   Scale,
-  Settings,
   ShieldCheck,
   ShieldEllipsis,
   ShieldUser,
@@ -65,7 +64,7 @@ export interface RouteGroup {
 
 export const routesConfig: RouteGroup[] = [
   {
-    label: 'Platform',
+    label: 'SKC',
     routes: [
       {
         id: 'home',
@@ -116,113 +115,6 @@ export const routesConfig: RouteGroup[] = [
         ],
       },
       {
-        id: 'admin',
-        name: 'Admin',
-        path: '/admin',
-        icon: ShieldUser,
-        children: [
-          {
-            id: 'admin-company',
-            name: 'Company',
-            path: '/admin/company',
-            icon: Building2,
-            component: CompanyPage,
-            isDefault: true,
-            requiredPermissions: ['COMPANY:MANAGE'],
-          },
-          {
-            id: 'admin-users',
-            name: 'Users',
-            path: '/admin/users',
-            icon: UserIcon,
-            isDefault: true,
-            requiredPermissions: ['USER:MANAGE'],
-            children: [
-              {
-                id: 'admin-users-management',
-                name: 'Management',
-                path: '/admin/users/management',
-                icon: UserRoundCog,
-                component: UsersManagementPage,
-                isDefault: true,
-              },
-              {
-                id: 'users-department',
-                name: 'Department',
-                path: '/admin/users/department',
-                icon: Network,
-                component: UsersDepartmentPage,
-                isDefault: true,
-              }
-            ],
-          },
-          {
-            id: 'admin-vacation',
-            name: 'Vacation',
-            path: '/admin/vacation',
-            icon: TreePalm,
-            requiredPermissions: ['VACATION:APPROVE'],
-            children: [
-              {
-                id: 'admin-vacation-stats',
-                name: 'Stats',
-                path: '/admin/vacation/stats',
-                icon: ChartLine,
-                component: VacationPage,
-                requiredPermissions: ['VACATION:APPROVE'],
-                isDefault: true,
-              },
-              {
-                id: 'admin-vacation-policy',
-                name: 'Policy',
-                path: '/admin/vacation/policy',
-                icon: ShieldEllipsis,
-                requiredPermissions: ['VACATION:MANAGE'],
-                component: PolicyPage,
-              },
-            ],
-          },
-          {
-            id: 'admin-authority',
-            name: 'Authority',
-            path: '/admin/authority',
-            icon: ShieldCheck,
-            requiredPermissions: ['ROLE:MANAGE'],
-            children: [
-              {
-                id: 'admin-authority-mgmt',
-                name: 'Management',
-                path: '/admin/authority/mgmt',
-                icon: Settings,
-                component: Authority,
-                isDefault: true,
-              },
-              {
-                id: 'admin-authority-dashboard',
-                name: 'Dashboard',
-                path: '/admin/authority/dashboard',
-                icon: LayoutDashboard,
-                component: () => {return null},
-              },
-            ],
-          },
-          {
-            id: 'admin-holiday',
-            name: 'Holiday',
-            path: '/admin/holiday',
-            icon: CalendarCog,
-            component: HolidayPage,
-            isDefault: true,
-            requiredPermissions: ['HOLIDAY:MANAGE'],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'SKC',
-    routes: [
-      {
         id: 'work',
         name: 'Work',
         path: '/work',
@@ -262,11 +154,103 @@ export const routesConfig: RouteGroup[] = [
             requiredPermissions: ['DUES:READ'],
           },
           {
-            id: 'culture-rule',
-            name: 'Rule',
-            path: '/culture/rule',
+            id: 'culture-regulation',
+            name: 'Regulation',
+            path: '/culture/regulation',
             icon: Scale,
             component: RulePage,
+          },
+        ],
+      }
+    ],
+  },
+  {
+    label: 'Admin',
+    routes: [
+      {
+        id: 'admin',
+        name: 'Admin',
+        path: '/admin',
+        icon: ShieldUser,
+        children: [
+          {
+            id: 'admin-company',
+            name: 'Company',
+            path: '/admin/company',
+            icon: Building2,
+            component: CompanyPage,
+            isDefault: true,
+            requiredPermissions: ['COMPANY:MANAGE'],
+          },
+          {
+            id: 'admin-users',
+            name: 'Users',
+            path: '/admin/users',
+            icon: UserIcon,
+            isDefault: true,
+            requiredPermissions: ['USER:MANAGE'],
+            children: [
+              {
+                id: 'admin-users-management',
+                name: 'Invite & Management',
+                path: '/admin/users/management',
+                icon: UserRoundCog,
+                component: UsersManagementPage,
+                isDefault: true,
+              },
+              {
+                id: 'users-department',
+                name: 'Department',
+                path: '/admin/users/department',
+                icon: Network,
+                component: UsersDepartmentPage,
+                isDefault: true,
+              }
+            ],
+          },
+          {
+            id: 'admin-vacation',
+            name: 'Vacation',
+            path: '/admin/vacation',
+            icon: TreePalm,
+            requiredPermissions: ['VACATION:APPROVE'],
+            children: [
+              {
+                id: 'admin-vacation-approval',
+                name: 'Approval & Grant',
+                path: '/admin/vacation/approval',
+                icon: ChartLine,
+                component: VacationPage,
+                requiredPermissions: ['VACATION:APPROVE'],
+                isDefault: true,
+              },
+              {
+                id: 'admin-vacation-policy',
+                name: 'Policy',
+                path: '/admin/vacation/policy',
+                icon: ShieldEllipsis,
+                requiredPermissions: ['VACATION:MANAGE'],
+                component: PolicyPage,
+              },
+            ],
+          },
+          {
+            id: 'admin-authority',
+            name: 'Role & Authority',
+            path: '/admin/authority',
+            icon: ShieldCheck,
+            requiredPermissions: ['ROLE:MANAGE'],
+            isDefault: true,
+            component: Authority
+          },
+          {
+            id: 'admin-holiday',
+            name: 'Holiday',
+            path: '/admin/holiday',
+            icon: CalendarCog,
+            component: HolidayPage,
+            isDefault: true,
+            requiredPermissions: ['HOLIDAY:MANAGE'],
           },
         ],
       }
