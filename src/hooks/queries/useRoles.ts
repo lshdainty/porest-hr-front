@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
+import { type PermissionResp } from '@/lib/api/permission'
 import {
     fetchDeleteRole,
     fetchDeleteRolePermission,
@@ -41,7 +42,7 @@ export const useRoleQuery = (roleCode: string) => {
 
 // 역할 권한 목록 조회 훅
 export const useRolePermissionsQuery = (roleCode: string) => {
-  return useQuery<string[]>({
+  return useQuery<PermissionResp[]>({
     queryKey: roleKeys.list({ type: 'permissions', roleCode }),
     queryFn: () => fetchGetRolePermissions(roleCode),
     enabled: !!roleCode
@@ -92,6 +93,7 @@ export const usePutRolePermissionsMutation = () => {
   return useMutation<void, Error, { roleCode: string, data: UpdateRolePermissionsReq }>({
     mutationFn: ({ roleCode, data }) => fetchPutRolePermissions(roleCode, data),
     onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: roleKeys.lists() })
       queryClient.invalidateQueries({ queryKey: roleKeys.detail(variables.roleCode) })
       queryClient.invalidateQueries({ queryKey: roleKeys.list({ type: 'permissions', roleCode: variables.roleCode }) })
     }
@@ -105,6 +107,7 @@ export const usePostRolePermissionMutation = () => {
   return useMutation<void, Error, { roleCode: string, data: RolePermissionReq }>({
     mutationFn: ({ roleCode, data }) => fetchPostRolePermission(roleCode, data),
     onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: roleKeys.lists() })
       queryClient.invalidateQueries({ queryKey: roleKeys.detail(variables.roleCode) })
       queryClient.invalidateQueries({ queryKey: roleKeys.list({ type: 'permissions', roleCode: variables.roleCode }) })
     }
@@ -118,6 +121,7 @@ export const useDeleteRolePermissionMutation = () => {
   return useMutation<void, Error, { roleCode: string, permissionCode: string }>({
     mutationFn: ({ roleCode, permissionCode }) => fetchDeleteRolePermission(roleCode, permissionCode),
     onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: roleKeys.lists() })
       queryClient.invalidateQueries({ queryKey: roleKeys.detail(variables.roleCode) })
       queryClient.invalidateQueries({ queryKey: roleKeys.list({ type: 'permissions', roleCode: variables.roleCode }) })
     }

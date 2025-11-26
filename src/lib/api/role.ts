@@ -7,7 +7,7 @@ export interface RoleResp {
   role_code: string
   role_name: string
   description: string
-  permissions: import('./permission').PermissionResp[]
+  permissions: string[]
 }
 
 // 역할 생성 요청 DTO

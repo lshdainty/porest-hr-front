@@ -1,9 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { ProtectedPage } from "@/components/auth/ProtectedPage";
-import PermissionManagementPanel from "@/features/admin/authority/components/PermissionManagementPanel";
 import RoleManagementPanel from "@/features/admin/authority/components/RoleManagementPanel";
 import UserManagementPanel from "@/features/admin/authority/components/UserManagementPanel";
-import { Key, Shield, Users } from "lucide-react";
+import { Shield, Users } from "lucide-react";
 
 const Authority = () => {
   return (
@@ -21,10 +20,6 @@ const Authority = () => {
                 <Shield className="w-4 h-4" />
                 Roles
               </TabsTrigger>
-              <TabsTrigger value="permissions" className="flex-1 flex items-center gap-2">
-                <Key className="w-4 h-4" />
-                Permissions
-              </TabsTrigger>
               <TabsTrigger value="users" className="flex-1 flex items-center gap-2">
                 <Users className="w-4 h-4" />
                 Users
@@ -34,10 +29,6 @@ const Authority = () => {
 
           <TabsContent value="roles" className="flex-1 mt-0 min-h-0">
             <RoleManagementPanel />
-          </TabsContent>
-
-          <TabsContent value="permissions" className="flex-1 mt-0 min-h-0">
-            <PermissionManagementPanel />
           </TabsContent>
 
           <TabsContent value="users" className="flex-1 mt-0 min-h-0">

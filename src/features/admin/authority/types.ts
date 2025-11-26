@@ -2,8 +2,8 @@ export interface Authority {
   code: string;
   name: string;
   description: string;
-  resourceType: string;
-  actionType: string;
+  resource: string;
+  action: string;
 }
 
 export interface Role {

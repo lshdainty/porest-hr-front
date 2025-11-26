@@ -19,6 +19,13 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave }: RoleDetailPr
   const { hasPermission } = usePermission();
   const canManageRoles = hasPermission("ROLE:MANAGE");
 
+  // 새 역할인지 확인
+  const isNewRole = (role as any).isNew;
+
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdateRole({ ...role, role_code: e.target.value });
+  };
+
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdateRole({ ...role, role_name: e.target.value });
   };
@@ -28,15 +35,12 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave }: RoleDetailPr
   };
 
   const handleToggleAuthority = (authCode: string, checked: boolean) => {
-    // This logic needs to be handled by the parent or we need to find the full authority object
-    // For now, let's assume the parent handles the API call and we just pass the updated role object
-    // But wait, Role has permissions: Authority[], not string[]
-    // So we need to find the authority object from allAuthorities
+    const currentPermissions = role.permissions || [];
+    let newPermissions = [...currentPermissions];
 
-    let newPermissions = [...role.permissions];
     if (checked) {
         const authToAdd = allAuthorities.find(a => a.code === authCode);
-        if (authToAdd) {
+        if (authToAdd && !newPermissions.some(p => p.code === authCode)) {
             newPermissions.push(authToAdd);
         }
     } else {
@@ -63,6 +67,23 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave }: RoleDetailPr
         </div>
 
         <div className="grid gap-4 max-w-2xl">
+          <div className="grid gap-2">
+            <Label htmlFor="role-code">Role Code</Label>
+            <Input
+              id="role-code"
+              value={role.role_code}
+              onChange={handleCodeChange}
+              placeholder="e.g. ROLE_HR_MANAGER"
+              disabled={!isNewRole}
+              className={!isNewRole ? "bg-muted" : ""}
+            />
+            {!isNewRole && (
+              <p className="text-xs text-muted-foreground">Role code cannot be changed after creation.</p>
+            )}
+            {isNewRole && (
+              <p className="text-xs text-muted-foreground">Use uppercase letters, numbers, and underscores (e.g. ROLE_ADMIN).</p>
+            )}
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="role-name">Role Name</Label>
             <Input
@@ -91,7 +112,7 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave }: RoleDetailPr
         <h3 className="text-lg font-semibold mb-4">Permissions</h3>
         <PermissionMatrix
           authorities={allAuthorities}
-          selectedAuthorityIds={role.permissions.map(p => p.code)}
+          selectedAuthorityIds={(role.permissions || []).filter(p => p && p.code).map(p => p.code)}
           onToggleAuthority={handleToggleAuthority}
           disabled={!canManageRoles}
         />

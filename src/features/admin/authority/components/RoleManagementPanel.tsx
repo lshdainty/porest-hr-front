@@ -16,14 +16,14 @@ import { toast } from "sonner";
 const RoleManagementPanel = () => {
   const { data: roles = [], isLoading: isRolesLoading } = useRolesQuery();
   const { data: authorities = [], isLoading: isPermissionsLoading } = usePermissionsQuery();
-  
+
   const { mutateAsync: createRole } = usePostRoleMutation();
   const { mutateAsync: deleteRole } = useDeleteRoleMutation();
-  const { mutateAsync: updateRoleMutation } = usePutRoleMutation(); // Renamed to avoid conflict with local state update
-  const { mutateAsync: updateRolePermissionsMutation } = usePutRolePermissionsMutation(); // Renamed
+  const { mutateAsync: updateRoleMutation } = usePutRoleMutation();
+  const { mutateAsync: updateRolePermissionsMutation } = usePutRolePermissionsMutation();
 
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
-  const [editingRole, setEditingRole] = useState<Role | null>(null); // Local state for the role being edited
+  const [editingRole, setEditingRole] = useState<Role | null>(null);
 
   useEffect(() => {
     if (roles.length > 0 && !selectedRoleId) {
@@ -36,32 +36,34 @@ const RoleManagementPanel = () => {
   // Update editingRole whenever selectedRole changes
   useEffect(() => {
     if (selectedRole) {
-      setEditingRole(selectedRole);
+      // API에서 permissions가 string[]로 오므로, Authority[] 형태로 변환
+      const permissionObjects = selectedRole.permissions
+        .map(code => authorities.find(auth => auth.code === code))
+        .filter(auth => auth !== undefined);
+
+      setEditingRole({
+        ...selectedRole,
+        permissions: permissionObjects
+      });
     } else {
       setEditingRole(null);
     }
-  }, [selectedRole]);
+  }, [selectedRole, authorities]);
 
   const isLoading = isRolesLoading || isPermissionsLoading;
 
-  const handleAddRole = async () => {
-    const timestamp = Date.now();
-    const newRoleCode = `ROLE_${timestamp}`;
-    const newRoleName = "New Role";
-    
-    try {
-      await createRole({
-        role_code: newRoleCode,
-        role_name: newRoleName,
-        description: "Newly created role"
-      });
-      
-      setSelectedRoleId(newRoleCode);
-      toast.success("Role created successfully");
-    } catch (error) {
-      console.error("Failed to create role:", error);
-      toast.error("Failed to create role");
-    }
+  const handleAddRole = () => {
+    // 임시 새 역할 객체 생성 (API 호출 없이)
+    const tempRole: Role & { isNew?: boolean } = {
+      role_code: "",
+      role_name: "",
+      description: "",
+      permissions: [],
+      isNew: true // 새 역할 플래그
+    };
+
+    setEditingRole(tempRole);
+    setSelectedRoleId(null); // 선택된 역할 해제
   };
 
   const handleDeleteRole = async (roleCode: string) => {
@@ -90,24 +92,46 @@ const RoleManagementPanel = () => {
   const handleSave = async () => {
     if (!editingRole) return;
 
+    // 입력 값 검증
+    if (!editingRole.role_code || !editingRole.role_name) {
+      toast.error("Role code and name are required");
+      return;
+    }
+
     try {
-      // 1. Update Role Info (description only, based on API definition)
-      await updateRoleMutation({
-        roleCode: editingRole.role_code,
-        data: {
-          description: editingRole.description
-        }
-      });
+      const isNewRole = (editingRole as any).isNew;
 
-      // 2. Update Permissions
-      await updateRolePermissionsMutation({
-        roleCode: editingRole.role_code,
-        data: {
+      if (isNewRole) {
+        // 새 역할 생성
+        await createRole({
+          role_code: editingRole.role_code,
+          role_name: editingRole.role_name,
+          description: editingRole.description,
           permission_codes: editingRole.permissions.map(p => p.code)
-        }
-      });
+        });
 
-      toast.success("Role saved successfully");
+        setSelectedRoleId(editingRole.role_code);
+        toast.success("Role created successfully");
+      } else {
+        // 기존 역할 수정
+        // 1. Update Role Info (description only, based on API definition)
+        await updateRoleMutation({
+          roleCode: editingRole.role_code,
+          data: {
+            description: editingRole.description
+          }
+        });
+
+        // 2. Update Permissions
+        await updateRolePermissionsMutation({
+          roleCode: editingRole.role_code,
+          data: {
+            permission_codes: editingRole.permissions.map(p => p.code)
+          }
+        });
+
+        toast.success("Role updated successfully");
+      }
       // React Query's invalidation will refetch roles and permissions automatically
     } catch (error) {
       console.error("Failed to save role:", error);

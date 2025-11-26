@@ -3,13 +3,12 @@ import { api, type ApiResponse } from '@/lib/api';
 // Request/Response Types
 
 // 권한 응답 DTO
-// 권한 응답 DTO
 export interface PermissionResp {
   code: string
   name: string
   description: string
-  resourceType: string
-  actionType: string
+  resource: string
+  action: string
 }
 
 // 권한 생성 요청 DTO
@@ -17,16 +16,16 @@ export interface CreatePermissionReq {
   code: string
   name: string
   description?: string
-  resourceType: string
-  actionType: string
+  resource: string
+  action: string
 }
 
 // 권한 수정 요청 DTO
 export interface UpdatePermissionReq {
   name?: string
   description?: string
-  resourceType?: string
-  actionType?: string
+  resource?: string
+  action?: string
 }
 
 // API Functions
