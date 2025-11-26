@@ -25,9 +25,9 @@ import {
 
 // 컴포넌트 직접 import
 import { TreeDataItem } from '@/components/shadcn/treeView';
-import Authority from '@/features/admin/authority/Authority';
 
 import ApplicationPage from '@/pages/ApplicationPage';
+import AuthorityPage from '@/pages/AuthorityPage';
 import CalendarPage from '@/pages/CalendarPage';
 import CompanyPage from '@/pages/CompanyPage';
 import DashboardPage from '@/pages/DashboardPage';
@@ -241,7 +241,7 @@ export const routesConfig: RouteGroup[] = [
             icon: ShieldCheck,
             requiredPermissions: ['ROLE:MANAGE'],
             isDefault: true,
-            component: Authority
+            component: AuthorityPage
           },
           {
             id: 'admin-holiday',
