@@ -9,6 +9,7 @@ import {
   fetchGetWorkGroups,
   fetchGetWorkHistories,
   fetchGetWorkHistoryExcelDownload,
+  fetchGetUnregisteredWorkHistoryExcelDownload,
   fetchGetWorkPartLabel,
   fetchGetWorkParts,
   fetchPostBulkCreateWorkHistories,
@@ -18,6 +19,7 @@ import {
   type BulkCreateWorkHistoryResp,
   type CreateWorkHistoryReq,
   type CreateWorkHistoryResp,
+  type UnregisteredWorkHistoryDownloadReq,
   type UpdateWorkHistoryReq,
   type WorkCodeResp,
   type WorkGroupWithParts,
@@ -148,5 +150,12 @@ export const useBulkCreateWorkHistoriesMutation = () => {
 export const useWorkHistoryExcelDownloadMutation = () => {
   return useMutation<Blob, Error, WorkHistorySearchCondition | undefined>({
     mutationFn: (condition?: WorkHistorySearchCondition) => fetchGetWorkHistoryExcelDownload(condition)
+  })
+}
+
+// 미등록 업무 시간 엑셀 다운로드 Mutation 훅
+export const useUnregisteredWorkHistoryExcelDownloadMutation = () => {
+  return useMutation<Blob, Error, UnregisteredWorkHistoryDownloadReq>({
+    mutationFn: (params: UnregisteredWorkHistoryDownloadReq) => fetchGetUnregisteredWorkHistoryExcelDownload(params)
   })
 }

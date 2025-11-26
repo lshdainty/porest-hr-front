@@ -6,6 +6,7 @@ import ReportFilter from '@/features/work/report/components/ReportFilter';
 import ReportHeader from '@/features/work/report/components/ReportHeader';
 import ReportSkeleton from '@/features/work/report/components/ReportSkeleton';
 import ReportTable from '@/features/work/report/components/ReportTable';
+import UnregisteredDownloadDialog from '@/features/work/report/components/UnregisteredDownloadDialog';
 import { useReportContext } from '@/features/work/report/contexts/ReportContext';
 import { WorkHistory } from '@/features/work/report/types';
 import { useUsersQuery } from '@/hooks/queries/useUsers';
@@ -68,6 +69,9 @@ const ReportContent = () => {
 
   // Local State for Table Data (converted from API response)
   const [workHistories, setWorkHistories] = useState<WorkHistory[]>([]);
+
+  // Unregistered Hours Download Dialog State
+  const [isUnregisteredDialogOpen, setIsUnregisteredDialogOpen] = useState(false);
 
   useEffect(() => {
     if (workHistoriesData) {
@@ -278,7 +282,10 @@ const ReportContent = () => {
   };
 
   const handleDownloadTemplate = () => console.log('예시 파일 다운로드');
-  const handleDownloadUnregistered = () => console.log('미등록 리스트 다운로드');
+
+  const handleDownloadUnregistered = () => {
+    setIsUnregisteredDialogOpen(true);
+  };
 
   const isLoading = isWorkGroupsLoading || isWorkDivisionLoading || isWorkHistoriesLoading || isUsersLoading;
   const error = workGroupsError || workDivisionError || workHistoriesError || usersError;
@@ -335,6 +342,11 @@ const ReportContent = () => {
           users={users || []}
           onRegister={handleBatchRegister}
           isRegistering={createWorkHistoryBatch.isPending}
+        />
+
+        <UnregisteredDownloadDialog
+          open={isUnregisteredDialogOpen}
+          onOpenChange={setIsUnregisteredDialogOpen}
         />
       </div>
     </QueryAsyncBoundary>

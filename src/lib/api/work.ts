@@ -220,3 +220,19 @@ export async function fetchGetWorkHistoryExcelDownload(params?: WorkHistorySearc
 
   return resp as unknown as Blob;
 }
+
+export interface UnregisteredWorkHistoryDownloadReq {
+  year: number
+  month: number
+}
+
+export async function fetchGetUnregisteredWorkHistoryExcelDownload(params: UnregisteredWorkHistoryDownloadReq): Promise<Blob> {
+  const resp = await api.request({
+    method: 'get',
+    url: `/work-histories/unregistered-hours/download`,
+    params,
+    responseType: 'blob'
+  });
+
+  return resp as unknown as Blob;
+}
