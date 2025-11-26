@@ -21,7 +21,7 @@ interface DuesTableContentProps {
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   onCopy?: (row: EditableDuesData) => void;
-  onSaveRow?: () => void;
+  onSaveRow?: (id: string) => void;
   onInputChange?: (e: React.ChangeEvent<HTMLInputElement>, id: string, field: keyof GetYearDuesResp) => void;
   onSelectChange?: (value: string, id: string, field: keyof GetYearDuesResp) => void;
   onDateChange?: (value: string | undefined, id: string) => void;
@@ -57,7 +57,8 @@ const DuesTableContent = ({
             <TableRow>
               <TableHead className='min-w-[140px] pl-4'>날짜</TableHead>
               <TableHead className='min-w-[120px]'>이름</TableHead>
-              <TableHead className='min-w-[250px]'>내용</TableHead>
+              <TableHead className='min-w-[120px]'>분류</TableHead>
+              <TableHead className='min-w-[200px]'>내용</TableHead>
               <TableHead className='min-w-[140px]'>금액</TableHead>
               <TableHead className='min-w-[100px]'>유형</TableHead>
               <TableHead className='min-w-[140px]'>총액</TableHead>
@@ -67,7 +68,7 @@ const DuesTableContent = ({
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   데이터가 없습니다.
                 </TableCell>
               </TableRow>
@@ -100,6 +101,27 @@ const DuesTableContent = ({
                         />
                       ) : (
                         row.dues_user_name
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing && onSelectChange ? (
+                        <Select
+                          value={row.dues_type}
+                          onValueChange={(value) => onSelectChange(value, row.id, 'dues_type')}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='분류' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value='OPERATION'>운영비</SelectItem>
+                            <SelectItem value='BIRTH'>생일</SelectItem>
+                            <SelectItem value='FINE'>벌금</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Badge className='text-xs whitespace-nowrap'>
+                          {row.dues_type === 'OPERATION' ? '운영비' : row.dues_type === 'BIRTH' ? '생일' : '벌금'}
+                        </Badge>
                       )}
                     </TableCell>
                     <TableCell>
@@ -170,7 +192,7 @@ const DuesTableContent = ({
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align='end' className='w-32'>
                               {isEditing ? (
-                                <DropdownMenuItem onClick={onSaveRow}>
+                                <DropdownMenuItem onClick={() => onSaveRow?.(row.id)}>
                                   <Save className='h-4 w-4' />
                                   <span>저장</span>
                                 </DropdownMenuItem>

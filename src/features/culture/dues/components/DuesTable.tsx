@@ -1,3 +1,4 @@
+import { toast } from '@/components/alert/toast';
 import PermissionGuard from '@/components/auth/PermissionGuard';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
@@ -6,14 +7,6 @@ import { GetYearDuesResp } from '@/lib/api/dues';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import DuesTableContent, { EditableDuesData } from './DuesTableContent';
-
-interface ModifiedData {
-  created: EditableDuesData[];
-  updated: UpdateDuesData[];
-  deleted: number[];
-}
-
-type UpdateDuesData = GetYearDuesResp & { id: string };
 
 interface DuesTableProps {
   yearDues?: GetYearDuesResp[];
@@ -24,11 +17,6 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
   const { mutate: putDues } = usePutDuesMutation();
   const { mutate: deleteDues } = useDeleteDuesMutation();
   const [tableData, setTableData] = useState<EditableDuesData[]>([]);
-  const [modifiedData, setModifiedData] = useState<ModifiedData>({
-    created: [],
-    updated: [],
-    deleted: [],
-  });
   const [editingRow, setEditingRow] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
@@ -55,19 +43,20 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
     if (!rowToDelete) return;
 
     if (rowToDelete.isNew) {
-      setModifiedData({
-        ...modifiedData,
-        created: modifiedData.created.filter((dues) => dues.id !== id),
-      });
+      // 새로 생성된 행 - 로컬에서만 삭제
+      setTableData(tableData.filter((dues) => dues.id !== id));
     } else {
-      setModifiedData({
-        ...modifiedData,
-        updated: modifiedData.updated.filter((dues) => dues.id !== id),
-        deleted: [...modifiedData.deleted, parseInt(id)],
+      // 기존 행 - DELETE API 호출
+      deleteDues(rowToDelete.dues_seq, {
+        onSuccess: () => {
+          setTableData(tableData.filter((dues) => dues.id !== id));
+        },
+        onError: (error) => {
+          console.error('회비 삭제 실패:', error);
+          toast.error('회비 삭제에 실패했습니다.');
+        }
       });
     }
-
-    setTableData(tableData.filter((dues) => dues.id !== id));
   };
 
   const handleCopy = (row: EditableDuesData) => {
@@ -81,10 +70,6 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
     };
     const newTableData = [...tableData, newRow];
     setTableData(newTableData);
-    setModifiedData({
-      ...modifiedData,
-      created: [...modifiedData.created, newRow],
-    });
     setEditingRow(tempId);
     setCurrentPage(Math.ceil(newTableData.length / rowsPerPage));
   };
@@ -107,10 +92,6 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
 
     const newTableData = [...tableData, newRow];
     setTableData(newTableData);
-    setModifiedData({
-      ...modifiedData,
-      created: [...modifiedData.created, newRow],
-    });
     setEditingRow(tempId);
     setCurrentPage(Math.ceil(newTableData.length / rowsPerPage));
   };
@@ -119,125 +100,64 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
     setEditingRow(id);
   };
 
-  const handleSave = () => {
-    modifiedData.created.forEach(dues => {
-      const { isNew, tempId, id, ...duesData } = dues;
-      postDues(duesData);
-    });
+  const handleSaveRow = (id: string) => {
+    const rowToSave = tableData.find(row => row.id === id);
+    if (!rowToSave) return;
 
-    modifiedData.updated.forEach(dues => {
-      putDues(dues);
-    });
-
-    modifiedData.deleted.forEach(dues_seq => {
-      deleteDues(dues_seq);
-    });
-
-    setModifiedData({ created: [], updated: [], deleted: [] });
+    if (rowToSave.isNew) {
+      // 새로 생성된 행 - POST 호출
+      const { isNew, tempId, id: rowId, dues_seq, total_dues, ...duesData } = rowToSave;
+      postDues(duesData, {
+        onSuccess: () => {
+          setEditingRow(null);
+        },
+        onError: (error) => {
+          console.error('회비 등록 실패:', error);
+          toast.error('회비 등록에 실패했습니다.');
+        }
+      });
+    } else {
+      // 기존 행 - PUT 호출
+      const { id: rowId, total_dues, ...duesData } = rowToSave;
+      putDues(duesData, {
+        onSuccess: () => {
+          setEditingRow(null);
+        },
+        onError: (error) => {
+          console.error('회비 수정 실패:', error);
+          toast.error('회비 수정에 실패했습니다.');
+        }
+      });
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string, field: keyof GetYearDuesResp) => {
-    const newData = tableData.map((row) => {
+    setTableData(tableData.map((row) => {
       if (row.id === id) {
         return { ...row, [field]: e.target.value };
       }
       return row;
-    });
-    setTableData(newData);
-
-    const updatedDues = newData.find(dues => dues.id === id);
-    if (!updatedDues) return;
-
-    if (updatedDues.isNew) {
-      setModifiedData({
-        ...modifiedData,
-        created: modifiedData.created.map((dues) =>
-          dues.id === id ? updatedDues : dues
-        ),
-      });
-    } else if (!modifiedData.updated.find((dues) => dues.id === id)) {
-      setModifiedData({
-        ...modifiedData,
-        updated: [...modifiedData.updated, updatedDues],
-      });
-    } else {
-      setModifiedData({
-        ...modifiedData,
-        updated: modifiedData.updated.map((dues) =>
-          dues.id === id ? updatedDues : dues
-        ),
-      });
-    }
+    }));
   };
 
   const handleSelectChange = (value: string, id: string, field: keyof GetYearDuesResp) => {
-    const newData = tableData.map((row) => {
+    setTableData(tableData.map((row) => {
       if (row.id === id) {
         return { ...row, [field]: value };
       }
       return row;
-    });
-    setTableData(newData);
-
-    const updatedDues = newData.find(dues => dues.id === id);
-    if (!updatedDues) return;
-
-    if (updatedDues.isNew) {
-      setModifiedData({
-        ...modifiedData,
-        created: modifiedData.created.map((dues) =>
-          dues.id === id ? updatedDues : dues
-        ),
-      });
-    } else if (!modifiedData.updated.find((dues) => dues.id === id)) {
-      setModifiedData({
-        ...modifiedData,
-        updated: [...modifiedData.updated, updatedDues],
-      });
-    } else {
-      setModifiedData({
-        ...modifiedData,
-        updated: modifiedData.updated.map((dues) =>
-          dues.id === id ? updatedDues : dues
-        ),
-      });
-    }
+    }));
   };
 
   const handleDateChange = (value: string | undefined, id: string) => {
     if (!value) return;
     const formattedDate = dayjs(value).format('YYYYMMDD');
-    const newData = tableData.map((row) => {
+    setTableData(tableData.map((row) => {
       if (row.id === id) {
         return { ...row, dues_date: formattedDate };
       }
       return row;
-    });
-    setTableData(newData);
-
-    const updatedDues = newData.find(dues => dues.id === id);
-    if (!updatedDues) return;
-
-    if (updatedDues.isNew) {
-      setModifiedData({
-        ...modifiedData,
-        created: modifiedData.created.map((dues) =>
-          dues.id === id ? updatedDues : dues
-        ),
-      });
-    } else if (!modifiedData.updated.find((dues) => dues.id === id)) {
-      setModifiedData({
-        ...modifiedData,
-        updated: [...modifiedData.updated, updatedDues],
-      });
-    } else {
-      setModifiedData({
-        ...modifiedData,
-        updated: modifiedData.updated.map((dues) =>
-          dues.id === id ? updatedDues : dues
-        ),
-      });
-    }
+    }));
   };
 
   return (
@@ -246,10 +166,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
         <div className='flex items-center justify-between'>
           <CardTitle>입출금 내역</CardTitle>
           <PermissionGuard requiredPermission="DUES:MANAGE">
-            <div className='flex gap-2'>
-              <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
-              <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
-            </div>
+            <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
           </PermissionGuard>
         </div>
       </CardHeader>
@@ -263,7 +180,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onCopy={handleCopy}
-          onSaveRow={() => setEditingRow(null)}
+          onSaveRow={handleSaveRow}
           onInputChange={handleInputChange}
           onSelectChange={handleSelectChange}
           onDateChange={handleDateChange}
