@@ -1,27 +1,27 @@
 import {
-    Briefcase,
-    Building2,
-    CalendarCog,
-    CalendarDays,
-    ChartGantt,
-    ChartLine,
-    ChartNoAxesCombined,
-    CircleDollarSign,
-    HeartHandshake,
-    Home,
-    LayoutDashboard,
-    ListTodo,
-    MessageSquarePlus,
-    Network,
-    NotebookPen,
-    Scale,
-    Settings,
-    ShieldCheck,
-    ShieldEllipsis,
-    ShieldUser,
-    TreePalm,
-    Users as UserIcon,
-    UserRoundCog
+  Briefcase,
+  Building2,
+  CalendarCog,
+  CalendarDays,
+  ChartGantt,
+  ChartLine,
+  ChartNoAxesCombined,
+  CircleDollarSign,
+  HeartHandshake,
+  Home,
+  LayoutDashboard,
+  ListTodo,
+  MessageSquarePlus,
+  Network,
+  NotebookPen,
+  Scale,
+  Settings,
+  ShieldCheck,
+  ShieldEllipsis,
+  ShieldUser,
+  TreePalm,
+  Users as UserIcon,
+  UserRoundCog
 } from 'lucide-react';
 
 // 컴포넌트 직접 import
@@ -103,7 +103,7 @@ export const routesConfig: RouteGroup[] = [
             icon: ChartNoAxesCombined,
             component: HistoryPage,
             isDefault: true,
-            requiredPermissions: ['vacation:read:mine'],
+            requiredPermissions: ['VACATION:READ'],
           },
           {
             id: 'vacation-application',
@@ -111,7 +111,7 @@ export const routesConfig: RouteGroup[] = [
             path: '/vacation/application',
             icon: MessageSquarePlus,
             component: ApplicationPage,
-            requiredPermissions: ['vacation:request'],
+            requiredPermissions: ['VACATION:REQUEST'],
           },
         ],
       },
@@ -128,7 +128,7 @@ export const routesConfig: RouteGroup[] = [
             icon: Building2,
             component: CompanyPage,
             isDefault: true,
-            requiredPermissions: ['company:manage'],
+            requiredPermissions: ['COMPANY:MANAGE'],
           },
           {
             id: 'admin-users',
@@ -136,7 +136,7 @@ export const routesConfig: RouteGroup[] = [
             path: '/admin/users',
             icon: UserIcon,
             isDefault: true,
-            requiredPermissions: ['user:read'],
+            requiredPermissions: ['USER:MANAGE'],
             children: [
               {
                 id: 'admin-users-management',
@@ -161,7 +161,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Vacation',
             path: '/admin/vacation',
             icon: TreePalm,
-            requiredPermissions: ['vacation:read:all'],
+            requiredPermissions: ['VACATION:APPROVE'],
             children: [
               {
                 id: 'admin-vacation-stats',
@@ -169,6 +169,7 @@ export const routesConfig: RouteGroup[] = [
                 path: '/admin/vacation/stats',
                 icon: ChartLine,
                 component: VacationPage,
+                requiredPermissions: ['VACATION:APPROVE'],
                 isDefault: true,
               },
               {
@@ -176,6 +177,7 @@ export const routesConfig: RouteGroup[] = [
                 name: 'Policy',
                 path: '/admin/vacation/policy',
                 icon: ShieldEllipsis,
+                requiredPermissions: ['VACATION:MANAGE'],
                 component: PolicyPage,
               },
             ],
@@ -185,7 +187,7 @@ export const routesConfig: RouteGroup[] = [
             name: 'Authority',
             path: '/admin/authority',
             icon: ShieldCheck,
-            requiredPermissions: ['authority:manage'],
+            requiredPermissions: ['ROLE:MANAGE'],
             children: [
               {
                 id: 'admin-authority-mgmt',
@@ -211,7 +213,7 @@ export const routesConfig: RouteGroup[] = [
             icon: CalendarCog,
             component: HolidayPage,
             isDefault: true,
-            requiredPermissions: ['holiday:manage'],
+            requiredPermissions: ['HOLIDAY:MANAGE'],
           },
         ],
       },
@@ -225,7 +227,7 @@ export const routesConfig: RouteGroup[] = [
         name: 'Work',
         path: '/work',
         icon: Briefcase,
-        requiredPermissions: ['work:read:mine'],
+        requiredPermissions: ['WORK:READ'],
         children: [
           {
             id: 'work-report',
@@ -257,6 +259,7 @@ export const routesConfig: RouteGroup[] = [
             icon: CircleDollarSign,
             component: DuesPage,
             isDefault: true,
+            requiredPermissions: ['DUES:READ'],
           },
           {
             id: 'culture-rule',

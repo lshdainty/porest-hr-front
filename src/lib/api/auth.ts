@@ -13,14 +13,27 @@ export interface PostLoginResp {
   is_login: string
 }
 
+export interface PermissionInfo {
+  permission_code: string;
+  permission_name: string;
+}
+
+export interface RoleInfo {
+  role_code: string;
+  role_name: string;
+  permissions: PermissionInfo[];
+}
+
 export interface GetLoginCheck {
-  user_id: string
-  user_name: string
-  user_email: string
-  user_role: string
-  is_login: string
-  profile_url?: string
-  permissions?: string[]
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  roles: RoleInfo[];
+  user_roles: string[];
+  user_role_name: string | null;
+  permissions: string[];
+  is_login: string;
+  profile_url?: string;
 }
 
 export interface GetValidateInvitationTokenReq {

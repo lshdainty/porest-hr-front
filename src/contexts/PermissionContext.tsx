@@ -1,6 +1,5 @@
-import { useUser } from '@/contexts/UserContext';
-import { useMyPermissionsQuery } from '@/hooks/queries/usePermissions';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { useUser } from './UserContext';
 
 // 권한 타입 정의
 export type Permission = string;
@@ -22,20 +21,16 @@ interface PermissionProviderProps {
 
 
 export function PermissionProvider({ children }: PermissionProviderProps) {
-  const { isLoading: isUserLoading } = useUser();
+  const { loginUser, isLoading: isUserLoading } = useUser();
   const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const { data: permissionsData, isLoading: isPermissionsLoading } = useMyPermissionsQuery();
 
   useEffect(() => {
-    if (permissionsData) {
-      setPermissions(permissionsData);
+    if (loginUser?.permissions) {
+      setPermissions(loginUser.permissions);
     } else {
       setPermissions([]);
     }
-    setIsLoading(false);
-  }, [permissionsData]);
+  }, [loginUser]);
 
   const hasPermission = (permission: Permission): boolean => {
     return permissions.includes(permission);
@@ -54,7 +49,7 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     hasPermission,
     hasAnyPermission,
     hasAllPermissions,
-    isLoading: isLoading || isUserLoading || isPermissionsLoading
+    isLoading: isUserLoading
   };
 
   return <PermissionContext.Provider value={value}>{children}</PermissionContext.Provider>;

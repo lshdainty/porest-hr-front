@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import type { GetLoginCheck } from '@/lib/api/auth'
 import { useLoginCheckQuery } from '@/hooks/queries/useAuths'
+import type { GetLoginCheck } from '@/lib/api/auth'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 // Context 타입 정의
 interface UserContextType {
@@ -69,6 +69,8 @@ export function UserProvider({ children }: UserProviderProps) {
     clearLoginUser,
     refreshUser,
   }
+
+  console.log('loginUser', loginUser)
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }
