@@ -237,8 +237,63 @@ export async function fetchGetUnregisteredWorkHistoryExcelDownload(params: Unreg
   return resp as unknown as Blob;
 }
 
-// System Check API Types
-export type SystemType = 'SYSTEM1'; // Add more types as they are defined in backend
+// Work Code
+export type CodeType = 'LABEL' | 'OPTION';
+
+export interface CreateWorkCodeReq {
+  work_code: string;
+  work_code_name: string;
+  code_type: CodeType;
+  parent_work_code_seq?: number;
+  order_seq?: number;
+}
+
+export interface CreateWorkCodeResp {
+  work_code_seq: number;
+}
+
+export interface UpdateWorkCodeReq {
+  work_code_seq: number; // Path variable
+  work_code: string;
+  work_code_name: string;
+  parent_work_code_seq?: number;
+  order_seq?: number;
+}
+
+export async function fetchPostCreateWorkCode(data: CreateWorkCodeReq): Promise<CreateWorkCodeResp> {
+  const resp: ApiResponse<CreateWorkCodeResp> = await api.request({
+    method: 'post',
+    url: `/work-codes`,
+    data
+  });
+
+  if (resp.code !== 200) throw new Error(resp.message);
+
+  return resp.data;
+}
+
+export async function fetchPutUpdateWorkCode(data: UpdateWorkCodeReq): Promise<void> {
+  const { work_code_seq, ...requestData } = data;
+  const resp: ApiResponse<void> = await api.request({
+    method: 'put',
+    url: `/work-codes/${work_code_seq}`,
+    data: requestData
+  });
+
+  if (resp.code !== 200) throw new Error(resp.message);
+}
+
+export async function fetchDeleteWorkCode(workCodeSeq: number): Promise<void> {
+  const resp: ApiResponse<void> = await api.request({
+    method: 'delete',
+    url: `/work-codes/${workCodeSeq}`
+  });
+
+  if (resp.code !== 200) throw new Error(resp.message);
+}
+
+// System Log
+export type SystemType = 'SYSTEM1'; // Add other system types as needed
 
 export interface ToggleSystemCheckReq {
   system_code: SystemType;

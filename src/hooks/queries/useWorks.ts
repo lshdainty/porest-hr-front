@@ -5,6 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { createQueryKeys } from '@/constants/query-keys'
 import { fetchGetSystemTypes, type TypeResp } from '@/lib/api/type'
 import {
+    fetchDeleteWorkCode,
     fetchDeleteWorkHistory,
     fetchGetSystemCheckStatus,
     fetchGetUnregisteredWorkHistoryExcelDownload,
@@ -15,18 +16,23 @@ import {
     fetchGetWorkPartLabel,
     fetchGetWorkParts,
     fetchPostBulkCreateWorkHistories,
+    fetchPostCreateWorkCode,
     fetchPostCreateWorkHistory,
     fetchPostToggleSystemCheck,
+    fetchPutUpdateWorkCode,
     fetchPutUpdateWorkHistory,
     type BulkCreateWorkHistoryReq,
     type BulkCreateWorkHistoryResp,
     type CheckSystemStatusResp,
+    type CreateWorkCodeReq,
+    type CreateWorkCodeResp,
     type CreateWorkHistoryReq,
     type CreateWorkHistoryResp,
     type SystemType,
     type ToggleSystemCheckReq,
     type ToggleSystemCheckResp,
     type UnregisteredWorkHistoryDownloadReq,
+    type UpdateWorkCodeReq,
     type UpdateWorkHistoryReq,
     type WorkCodeResp,
     type WorkGroupWithParts,
@@ -186,7 +192,26 @@ export const useSystemCheckStatusQuery = (systemCode: SystemType) => {
 // 시스템 타입 목록 조회 훅
 export const useSystemTypesQuery = () => {
   return useQuery<TypeResp[]>({
-    queryKey: workKeys.list({ type: 'systemTypes' }),
+    queryKey: ['system-types'],
     queryFn: () => fetchGetSystemTypes()
-  })
-}
+  });
+};
+
+// Work Code Mutations
+export const usePostCreateWorkCodeMutation = () => {
+  return useMutation<CreateWorkCodeResp, Error, CreateWorkCodeReq>({
+    mutationFn: (data: CreateWorkCodeReq) => fetchPostCreateWorkCode(data)
+  });
+};
+
+export const usePutUpdateWorkCodeMutation = () => {
+  return useMutation<void, Error, UpdateWorkCodeReq>({
+    mutationFn: (data: UpdateWorkCodeReq) => fetchPutUpdateWorkCode(data)
+  });
+};
+
+export const useDeleteWorkCodeMutation = () => {
+  return useMutation<void, Error, number>({
+    mutationFn: (workCodeSeq: number) => fetchDeleteWorkCode(workCodeSeq)
+  });
+};
