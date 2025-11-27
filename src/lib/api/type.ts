@@ -4,6 +4,7 @@ import { api, type ApiResponse } from '@/lib/api';
 export interface TypeResp {
   code: string
   name: string
+  order_seq: number
 }
 
 export interface GetTypesReq {
@@ -65,4 +66,8 @@ export async function fetchGetHolidayTypes(): Promise<TypeResp[]> {
 
 export async function fetchGetOriginCompanyTypes(): Promise<TypeResp[]> {
   return fetchGetTypes('origin-company-type');
+}
+
+export async function fetchGetSystemTypes(): Promise<TypeResp[]> {
+  return fetchGetTypes('system-type');
 }

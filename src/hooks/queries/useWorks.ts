@@ -3,28 +3,35 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
+import { fetchGetSystemTypes, type TypeResp } from '@/lib/api/type'
 import {
-  fetchDeleteWorkHistory,
-  fetchGetWorkDivision,
-  fetchGetWorkGroups,
-  fetchGetWorkHistories,
-  fetchGetWorkHistoryExcelDownload,
-  fetchGetUnregisteredWorkHistoryExcelDownload,
-  fetchGetWorkPartLabel,
-  fetchGetWorkParts,
-  fetchPostBulkCreateWorkHistories,
-  fetchPostCreateWorkHistory,
-  fetchPutUpdateWorkHistory,
-  type BulkCreateWorkHistoryReq,
-  type BulkCreateWorkHistoryResp,
-  type CreateWorkHistoryReq,
-  type CreateWorkHistoryResp,
-  type UnregisteredWorkHistoryDownloadReq,
-  type UpdateWorkHistoryReq,
-  type WorkCodeResp,
-  type WorkGroupWithParts,
-  type WorkHistoryResp,
-  type WorkHistorySearchCondition
+    fetchDeleteWorkHistory,
+    fetchGetSystemCheckStatus,
+    fetchGetUnregisteredWorkHistoryExcelDownload,
+    fetchGetWorkDivision,
+    fetchGetWorkGroups,
+    fetchGetWorkHistories,
+    fetchGetWorkHistoryExcelDownload,
+    fetchGetWorkPartLabel,
+    fetchGetWorkParts,
+    fetchPostBulkCreateWorkHistories,
+    fetchPostCreateWorkHistory,
+    fetchPostToggleSystemCheck,
+    fetchPutUpdateWorkHistory,
+    type BulkCreateWorkHistoryReq,
+    type BulkCreateWorkHistoryResp,
+    type CheckSystemStatusResp,
+    type CreateWorkHistoryReq,
+    type CreateWorkHistoryResp,
+    type SystemType,
+    type ToggleSystemCheckReq,
+    type ToggleSystemCheckResp,
+    type UnregisteredWorkHistoryDownloadReq,
+    type UpdateWorkHistoryReq,
+    type WorkCodeResp,
+    type WorkGroupWithParts,
+    type WorkHistoryResp,
+    type WorkHistorySearchCondition
 } from '@/lib/api/work'
 
 const workKeys = createQueryKeys('works')
@@ -157,5 +164,29 @@ export const useWorkHistoryExcelDownloadMutation = () => {
 export const useUnregisteredWorkHistoryExcelDownloadMutation = () => {
   return useMutation<Blob, Error, UnregisteredWorkHistoryDownloadReq>({
     mutationFn: (params: UnregisteredWorkHistoryDownloadReq) => fetchGetUnregisteredWorkHistoryExcelDownload(params)
+  })
+}
+
+// 시스템 체크 토글 Mutation 훅
+export const useToggleSystemCheckMutation = () => {
+  return useMutation<ToggleSystemCheckResp, Error, ToggleSystemCheckReq>({
+    mutationFn: (data: ToggleSystemCheckReq) => fetchPostToggleSystemCheck(data)
+  })
+}
+
+// 시스템 체크 상태 조회 훅
+export const useSystemCheckStatusQuery = (systemCode: SystemType) => {
+  return useQuery<CheckSystemStatusResp>({
+    queryKey: workKeys.list({ type: 'systemCheck', systemCode }),
+    queryFn: () => fetchGetSystemCheckStatus(systemCode),
+    enabled: !!systemCode
+  })
+}
+
+// 시스템 타입 목록 조회 훅
+export const useSystemTypesQuery = () => {
+  return useQuery<TypeResp[]>({
+    queryKey: workKeys.list({ type: 'systemTypes' }),
+    queryFn: () => fetchGetSystemTypes()
   })
 }

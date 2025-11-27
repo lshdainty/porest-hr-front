@@ -236,3 +236,47 @@ export async function fetchGetUnregisteredWorkHistoryExcelDownload(params: Unreg
 
   return resp as unknown as Blob;
 }
+
+// System Check API Types
+export type SystemType = 'SYSTEM1'; // Add more types as they are defined in backend
+
+export interface ToggleSystemCheckReq {
+  system_code: SystemType;
+}
+
+export interface ToggleSystemCheckResp {
+  checked: boolean;
+  message: string;
+}
+
+export interface CheckSystemStatusResp {
+  system_code: SystemType;
+  checked: boolean;
+}
+
+// System Check API Functions
+export async function fetchPostToggleSystemCheck(data: ToggleSystemCheckReq): Promise<ToggleSystemCheckResp> {
+  const resp: ApiResponse<ToggleSystemCheckResp> = await api.request({
+    method: 'post',
+    url: `/work/system-logs`,
+    data
+  });
+
+  if (resp.code !== 200) throw new Error(resp.message);
+
+  return resp.data;
+}
+
+export async function fetchGetSystemCheckStatus(systemCode: SystemType): Promise<CheckSystemStatusResp> {
+  const resp: ApiResponse<CheckSystemStatusResp> = await api.request({
+    method: 'get',
+    url: `/work/system-logs/status`,
+    params: {
+      system_code: systemCode
+    }
+  });
+
+  if (resp.code !== 200) throw new Error(resp.message);
+
+  return resp.data;
+}

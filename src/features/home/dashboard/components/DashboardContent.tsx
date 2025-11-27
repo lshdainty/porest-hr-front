@@ -168,7 +168,7 @@ const DashboardContent = ({
       component: <UserCompanyStatsWidget users={users} />
     },
     'system-check': {
-      title: '시스템 상태',
+      title: '시스템 데일리 체크',
       component: <SystemCheckWidget />
     }
   };

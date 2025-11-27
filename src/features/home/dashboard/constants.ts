@@ -14,7 +14,7 @@ export const WIDGETS = [
   { id: 'total-dues', label: '회비 현황', defaultH: 5, defaultW: 6 },
   { id: 'user-birth-dues', label: '월별 생일비 입금 현황', defaultH: 9, defaultW: 7 },
   { id: 'user-company-stats', label: '회사별 인원 현황', defaultH: 5, defaultW: 6 },
-  { id: 'system-check', label: '시스템 상태', defaultH: 8, defaultW: 6 },
+  { id: 'system-check', label: '시스템 데일리 체크', defaultH: 8, defaultW: 6 },
 ];
 
 export const defaultLayouts = {
