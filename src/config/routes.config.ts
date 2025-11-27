@@ -42,6 +42,7 @@ import TodoPage from '@/pages/TodoPage';
 import UsersDepartmentPage from '@/pages/UsersDepartmentPage';
 import UsersManagementPage from '@/pages/UsersManagementPage';
 import VacationPage from '@/pages/VacationPage';
+import WorkCodePage from '@/pages/WorkCodePage';
 
 import React from 'react';
 
@@ -252,6 +253,14 @@ export const routesConfig: RouteGroup[] = [
             component: HolidayPage,
             isDefault: true,
             requiredPermissions: ['HOLIDAY:MANAGE'],
+          },
+          {
+            id: 'admin-work',
+            name: 'Work Code',
+            path: '/admin/work',
+            icon: Briefcase,
+            component: WorkCodePage,
+            requiredPermissions: ['WORK:MANAGE'],
           },
         ],
       }
