@@ -5,6 +5,7 @@ import DuesWidget from '@/features/home/dashboard/components/widgets/DuesWidget'
 import MonthStatsWidget from '@/features/home/dashboard/components/widgets/MonthStatsWidget';
 import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
 import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
+import SystemCheckWidget from '@/features/home/dashboard/components/widgets/SystemCheckWidget';
 import TotalDuesWidget from '@/features/home/dashboard/components/widgets/TotalDuesWidget';
 import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
 import UserBirthDuesWidget from '@/features/home/dashboard/components/widgets/UserBirthDuesWidget';
@@ -165,6 +166,10 @@ const DashboardContent = ({
     'user-company-stats': {
       title: '회사별 인원 현황',
       component: <UserCompanyStatsWidget users={users} />
+    },
+    'system-check': {
+      title: '시스템 상태',
+      component: <SystemCheckWidget />
     }
   };
 
