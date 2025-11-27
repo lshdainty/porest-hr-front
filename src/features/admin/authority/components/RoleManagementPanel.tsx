@@ -4,17 +4,17 @@ import RoleList from "@/features/admin/authority/components/RoleList";
 import { Authority, Role } from "@/features/admin/authority/types";
 import { usePermissionsQuery } from "@/hooks/queries/usePermissions";
 import {
-    useDeleteRoleMutation,
-    usePostRoleMutation,
-    usePutRoleMutation,
-    usePutRolePermissionsMutation,
-    useRolesQuery
+  useDeleteRoleMutation,
+  usePostRoleMutation,
+  usePutRoleMutation,
+  usePutRolePermissionsMutation,
+  useRolesQuery
 } from "@/hooks/queries/useRoles";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const RoleManagementPanel = () => {
-  const { data: roles = [], isLoading: isRolesLoading } = useRolesQuery();
+  const { data: roles = [], isLoading: isRolesLoading, refetch: refetchRoles } = useRolesQuery();
   const { data: authorities = [], isLoading: isPermissionsLoading } = usePermissionsQuery();
 
   const { mutateAsync: createRole } = usePostRoleMutation();
@@ -64,22 +64,22 @@ const RoleManagementPanel = () => {
   useEffect(() => {
     if (selectedRole) {
       if ((selectedRole as any).isNew) {
-         // It's the new role, we might not need to do anything if editingRole is already set
-         // But if we clicked it from the list, we want to ensure editingRole matches
-         if (editingRole?.role_code !== selectedRole.role_code) {
-             setEditingRole(selectedRole);
-         }
+        // It's the new role, we might not need to do anything if editingRole is already set
+        // But if we clicked it from the list, we want to ensure editingRole matches
+        if (editingRole?.role_code !== selectedRole.role_code) {
+          setEditingRole(selectedRole);
+        }
       } else {
-          // Existing role from server (already mapped to Domain Role)
-          // Only update if the role code is different to avoid loop if object ref changes but content is same-ish
-          // OR if we strictly trust memoization now.
-          // Let's check if we really need to update.
-          setEditingRole(prev => {
-              if (prev?.role_code === selectedRole.role_code) {
-                  return prev; // Return same object to avoid re-render if code matches
-              }
-              return selectedRole;
-          });
+        // Existing role from server (already mapped to Domain Role)
+        // Only update if the role code is different to avoid loop if object ref changes but content is same-ish
+        // OR if we strictly trust memoization now.
+        // Let's check if we really need to update.
+        setEditingRole(prev => {
+          if (prev?.role_code === selectedRole.role_code) {
+            return prev; // Return same object to avoid re-render if code matches
+          }
+          return selectedRole;
+        });
       }
     } else {
       // If nothing selected, clear editing
@@ -108,17 +108,20 @@ const RoleManagementPanel = () => {
     const isServerRole = roles.some(r => r.role_code === roleCode);
 
     if (!isServerRole) {
-        // Just remove the temp role from UI
-        const firstRole = roles[0];
-        setSelectedRoleId(firstRole ? firstRole.role_code : null);
-        setEditingRole(null);
-        return;
+      // Just remove the temp role from UI
+      const firstRole = roles[0];
+      setSelectedRoleId(firstRole ? firstRole.role_code : null);
+      setEditingRole(null);
+      return;
     }
 
     if (confirm("Are you sure you want to delete this role?")) {
       try {
         await deleteRole(roleCode);
         
+        // Explicitly refetch roles
+        await refetchRoles();
+
         // If the deleted role was selected, select the first available role or null
         if (selectedRoleId === roleCode) {
           const remainingRoles = roles.filter(r => r.role_code !== roleCode);
@@ -153,8 +156,8 @@ const RoleManagementPanel = () => {
 
     // For new roles, ensure code doesn't conflict with existing (besides the temp one)
     if ((editingRole as any).isNew && editingRole.role_code === TEMP_ROLE_CODE) {
-         toast.error("Please enter a valid Role Code");
-         return;
+      toast.error("Please enter a valid Role Code");
+      return;
     }
 
     try {
@@ -191,7 +194,9 @@ const RoleManagementPanel = () => {
 
         toast.success("Role updated successfully");
       }
-      // React Query's invalidation will refetch roles and permissions automatically
+      
+      // Explicitly refetch roles
+      await refetchRoles();
     } catch (error) {
       console.error("Failed to save role:", error);
       toast.error("Failed to save role");

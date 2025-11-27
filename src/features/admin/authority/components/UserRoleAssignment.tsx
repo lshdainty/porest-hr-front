@@ -1,10 +1,10 @@
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
+import { Checkbox } from "@/components/shadcn/checkbox";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/shadcn/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
 import { Role, User } from "@/features/admin/authority/types";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 
 interface UserRoleAssignmentProps {
@@ -92,12 +92,10 @@ const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole }: UserRoleAssign
                             value={role.role_name}
                             onSelect={() => handleToggleRole(role.role_code)}
                           >
-                            <div className={cn(
-                              "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                              isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible"
-                            )}>
-                              <Check className={cn("h-4 w-4")} />
-                            </div>
+                            <Checkbox
+                              checked={isSelected}
+                              className="mr-2"
+                            />
                             <span>{role.role_name}</span>
                             <span className="ml-auto text-xs text-muted-foreground">{role.role_code}</span>
                           </CommandItem>

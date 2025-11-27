@@ -5,20 +5,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createQueryKeys } from '@/constants/query-keys'
 import { type PermissionResp } from '@/lib/api/permission'
 import {
-    fetchDeleteRole,
-    fetchDeleteRolePermission,
-    fetchGetRole,
-    fetchGetRolePermissions,
-    fetchGetRoles,
-    fetchPostRole,
-    fetchPostRolePermission,
-    fetchPutRole,
-    fetchPutRolePermissions,
-    type CreateRoleReq,
-    type RolePermissionReq,
-    type RoleResp,
-    type UpdateRolePermissionsReq,
-    type UpdateRoleReq
+  fetchDeleteRole,
+  fetchDeleteRolePermission,
+  fetchGetRole,
+  fetchGetRolePermissions,
+  fetchGetRoles,
+  fetchPostRole,
+  fetchPostRolePermission,
+  fetchPutRole,
+  fetchPutRolePermissions,
+  type CreateRoleReq,
+  type RolePermissionReq,
+  type RoleResp,
+  type UpdateRolePermissionsReq,
+  type UpdateRoleReq
 } from '@/lib/api/role'
 
 const roleKeys = createQueryKeys('roles')

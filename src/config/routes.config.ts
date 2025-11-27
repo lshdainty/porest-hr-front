@@ -159,6 +159,7 @@ export const routesConfig: RouteGroup[] = [
             path: '/culture/regulation',
             icon: Scale,
             component: RulePage,
+            requiredPermissions: ['REGULATION:READ']
           },
         ],
       }
