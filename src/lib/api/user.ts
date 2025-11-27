@@ -1,6 +1,18 @@
 import { api, type ApiResponse } from '@/lib/api';
 
 // Request/Response Types
+// Request/Response Types
+export interface RoleDetailResp {
+  role_code: string
+  role_name: string
+  permissions: PermissionDetailResp[]
+}
+
+export interface PermissionDetailResp {
+  permission_code: string
+  permission_name: string
+}
+
 export interface GetUserReq {
   user_id: string
 }
@@ -12,8 +24,10 @@ export interface GetUserResp {
   user_birth: string
   user_work_time: string
   join_date: string
-  user_role_type: string
+  roles: RoleDetailResp[]
+  user_roles: string[]
   user_role_name: string
+  permissions: string[]
   user_origin_company_type: string
   user_origin_company_name: string
   main_department_name_kr: string | null
@@ -25,7 +39,6 @@ export interface GetUserResp {
   invitation_status?: string
   registered_at?: string
   dashboard?: string
-  permissions?: string[]
 }
 
 export interface GetUsersResp {
@@ -35,8 +48,10 @@ export interface GetUsersResp {
   user_birth: string
   user_work_time: string
   join_date: string
-  user_role_type: string
+  roles: RoleDetailResp[]
+  user_roles: string[]
   user_role_name: string
+  permissions: string[]
   user_origin_company_type: string
   user_origin_company_name: string
   main_department_name_kr: string | null
@@ -47,6 +62,7 @@ export interface GetUsersResp {
   invitation_expires_at?: string
   invitation_status?: string
   registered_at?: string
+  dashboard?: string
 }
 
 export interface GetUserApproversReq {
@@ -57,8 +73,10 @@ export interface GetUserApproversResp {
   user_id: string
   user_name: string
   user_email: string
-  user_role_type: string
+  roles: RoleDetailResp[]
+  user_roles: string[]
   user_role_name: string
+  permissions: string[]
   department_id: number
   department_name: string
   department_name_kr: string
@@ -79,7 +97,6 @@ export interface PostUserReq {
   user_email: string
   user_birth: string
   user_origin_company_type: string
-  user_department_type: string
   user_work_time: string
   lunar_yn: string
   profile_url: string
@@ -87,17 +104,17 @@ export interface PostUserReq {
 }
 
 export interface PutUserReq {
-  user_id: string
+  user_id: string // Path variable
   user_name: string
   user_email: string
   user_birth: string
-  user_role_type: string
+  user_roles: string[]
   user_origin_company_type: string
-  user_department_type: string
   user_work_time: string
   lunar_yn: string
   profile_url: string
-  profile_uuid: string
+  profile_uuid?: string
+  dashboard?: string
 }
 
 export interface PutInvitedUserReq {
@@ -116,7 +133,7 @@ export interface PutInvitedUserResp {
   user_origin_company_type: string
   user_work_time: string
   join_date: string
-  user_role_type: string
+  user_roles: string[]
   invitation_sent_at: string
   invitation_expires_at: string
   invitation_status: string
@@ -138,7 +155,7 @@ export interface PostUserInviteResp {
   user_origin_company_type: string
   user_work_time: string
   join_date: string
-  user_role_type: string
+  user_roles: string[]
   invitation_sent_at: string
   invitation_expires_at: string
   invitation_status: string
@@ -214,10 +231,11 @@ export async function fetchPostUser(data: PostUserReq): Promise<any> {
 }
 
 export async function fetchPutUser(data: PutUserReq): Promise<any> {
+  const { user_id, ...rest } = data;
   const resp: ApiResponse = await api.request({
     method: 'put',
-    url: `/users/${data.user_id}`,
-    data
+    url: `/users/${user_id}`,
+    data: rest
   });
 
   if (resp.code !== 200) throw new Error(resp.message);

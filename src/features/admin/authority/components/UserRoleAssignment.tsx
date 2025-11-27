@@ -10,19 +10,23 @@ import { useState } from "react";
 interface UserRoleAssignmentProps {
   user: User;
   allRoles: Role[];
-  onUpdateUserRole: (userId: string, roleCode: string) => void;
+  onUpdateUserRole: (userId: string, roleCodes: string[]) => void;
 }
 
 const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole }: UserRoleAssignmentProps) => {
   const [open, setOpen] = useState(false);
 
-  // Assuming user has only one role code in the array
-  const currentRoleCode = user.role_codes[0];
-  const currentRole = allRoles.find(r => r.role_code === currentRoleCode);
+  // User can have multiple roles
+  const currentRoleCodes = user.role_codes || [];
+  const currentRoles = allRoles.filter(r => currentRoleCodes.includes(r.role_code));
 
-  const handleSelectRole = (roleCode: string) => {
-    onUpdateUserRole(user.id, roleCode);
-    setOpen(false);
+  const handleToggleRole = (roleCode: string) => {
+    const newRoleCodes = currentRoleCodes.includes(roleCode)
+      ? currentRoleCodes.filter(code => code !== roleCode)
+      : [...currentRoleCodes, roleCode];
+    
+    onUpdateUserRole(user.id, newRoleCodes);
+    // Keep popover open for multiple selection
   };
 
   return (
@@ -43,49 +47,62 @@ const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole }: UserRoleAssign
 
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Assigned Role</h3>
+          <h3 className="text-lg font-semibold">Assigned Roles</h3>
         </div>
 
         <div className="space-y-6">
           <div className="flex items-center justify-between p-4 border rounded-lg bg-card">
-            <div>
-              <div className="font-medium flex items-center gap-2">
-                {currentRole ? currentRole.role_name : "No Role Assigned"}
-                {currentRole && <Badge variant="secondary" className="text-xs font-normal">{currentRole.role_code}</Badge>}
+            <div className="flex-1">
+              <div className="font-medium flex flex-wrap items-center gap-2 mb-2">
+                {currentRoles.length > 0 ? (
+                  currentRoles.map(role => (
+                    <Badge key={role.role_code} variant="secondary" className="text-xs font-normal">
+                      {role.role_name} ({role.role_code})
+                    </Badge>
+                  ))
+                ) : (
+                  <span className="text-muted-foreground">No Roles Assigned</span>
+                )}
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                {currentRole ? currentRole.description : "Assign a role to this user."}
+              <p className="text-sm text-muted-foreground">
+                {currentRoles.length > 0 
+                  ? "Manage the roles assigned to this user." 
+                  : "Assign roles to this user to grant permissions."}
               </p>
             </div>
             
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
-                  {currentRole ? "Change Role" : "Assign Role"}
+                <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between ml-4">
+                  {currentRoles.length > 0 ? `${currentRoles.length} Roles Selected` : "Assign Roles"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
+              <PopoverContent className="w-[250px] p-0">
                 <Command>
                   <CommandInput placeholder="Search role..." />
                   <CommandList>
                     <CommandEmpty>No role found.</CommandEmpty>
                     <CommandGroup>
-                      {allRoles.map((role) => (
-                        <CommandItem
-                          key={role.role_code}
-                          value={role.role_name}
-                          onSelect={() => handleSelectRole(role.role_code)}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              currentRoleCode === role.role_code ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          {role.role_name}
-                        </CommandItem>
-                      ))}
+                      {allRoles.map((role) => {
+                        const isSelected = currentRoleCodes.includes(role.role_code);
+                        return (
+                          <CommandItem
+                            key={role.role_code}
+                            value={role.role_name}
+                            onSelect={() => handleToggleRole(role.role_code)}
+                          >
+                            <div className={cn(
+                              "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                              isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible"
+                            )}>
+                              <Check className={cn("h-4 w-4")} />
+                            </div>
+                            <span>{role.role_name}</span>
+                            <span className="ml-auto text-xs text-muted-foreground">{role.role_code}</span>
+                          </CommandItem>
+                        );
+                      })}
                     </CommandGroup>
                   </CommandList>
                 </Command>

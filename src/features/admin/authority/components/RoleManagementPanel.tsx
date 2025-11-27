@@ -1,7 +1,7 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import RoleDetail from "@/features/admin/authority/components/RoleDetail";
 import RoleList from "@/features/admin/authority/components/RoleList";
-import { Role } from "@/features/admin/authority/types";
+import { Authority, Role } from "@/features/admin/authority/types";
 import { usePermissionsQuery } from "@/hooks/queries/usePermissions";
 import {
     useDeleteRoleMutation,
@@ -10,7 +10,7 @@ import {
     usePutRolePermissionsMutation,
     useRolesQuery
 } from "@/hooks/queries/useRoles";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const RoleManagementPanel = () => {
@@ -25,48 +25,96 @@ const RoleManagementPanel = () => {
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
 
-  useEffect(() => {
-    if (roles.length > 0 && !selectedRoleId) {
-      setSelectedRoleId(roles[0].role_code);
+  // Temporary role constant
+  const TEMP_ROLE_CODE = "NEW_ROLE_TEMP";
+
+  // Map API roles to Domain roles
+  const domainRoles: Role[] = useMemo(() => roles.map(r => ({
+    ...r,
+    permissions: r.permissions
+      .map(code => authorities.find(a => a.code === code))
+      .filter((a): a is Authority => a !== undefined)
+  })), [roles, authorities]);
+
+  // Combine server roles with the temporary role if it exists
+  const displayRoles = useMemo(() => {
+    const list = [...domainRoles];
+    if (editingRole && (editingRole as any).isNew) {
+        // Only add if it's not already in the list (though with unique ID it shouldn't be)
+        if (!list.find(r => r.role_code === editingRole.role_code)) {
+            list.push(editingRole);
+        }
     }
-  }, [roles, selectedRoleId]);
+    return list;
+  }, [domainRoles, editingRole]);
 
-  const selectedRole = roles.find(r => r.role_code === selectedRoleId);
+  useEffect(() => {
+    if (domainRoles.length > 0 && selectedRoleId === null) {
+      setSelectedRoleId(domainRoles[0].role_code);
+    }
+  }, [domainRoles, selectedRoleId]);
 
-  // Update editingRole whenever selectedRole changes
+  const selectedRole = useMemo(() => 
+    displayRoles.find(r => r.role_code === selectedRoleId),
+    [displayRoles, selectedRoleId]
+  );
+
+  // Update editingRole whenever selectedRole changes, BUT only if it's an existing role
+  // If we selected the temp role, we don't want to overwrite it with "undefined" or re-fetch
   useEffect(() => {
     if (selectedRole) {
-      // API에서 permissions가 string[]로 오므로, Authority[] 형태로 변환
-      const permissionObjects = selectedRole.permissions
-        .map(code => authorities.find(auth => auth.code === code))
-        .filter(auth => auth !== undefined);
-
-      setEditingRole({
-        ...selectedRole,
-        permissions: permissionObjects
-      });
+      if ((selectedRole as any).isNew) {
+         // It's the new role, we might not need to do anything if editingRole is already set
+         // But if we clicked it from the list, we want to ensure editingRole matches
+         if (editingRole?.role_code !== selectedRole.role_code) {
+             setEditingRole(selectedRole);
+         }
+      } else {
+          // Existing role from server (already mapped to Domain Role)
+          // Only update if the role code is different to avoid loop if object ref changes but content is same-ish
+          // OR if we strictly trust memoization now.
+          // Let's check if we really need to update.
+          setEditingRole(prev => {
+              if (prev?.role_code === selectedRole.role_code) {
+                  return prev; // Return same object to avoid re-render if code matches
+              }
+              return selectedRole;
+          });
+      }
     } else {
+      // If nothing selected, clear editing
       setEditingRole(null);
     }
-  }, [selectedRole, authorities]);
+  }, [selectedRole]); // Removed authorities from deps as selectedRole is already mapped
 
   const isLoading = isRolesLoading || isPermissionsLoading;
 
   const handleAddRole = () => {
     // 임시 새 역할 객체 생성 (API 호출 없이)
     const tempRole: Role & { isNew?: boolean } = {
-      role_code: "",
-      role_name: "",
+      role_code: TEMP_ROLE_CODE,
+      role_name: "New Role",
       description: "",
       permissions: [],
       isNew: true // 새 역할 플래그
     };
 
     setEditingRole(tempRole);
-    setSelectedRoleId(null); // 선택된 역할 해제
+    setSelectedRoleId(TEMP_ROLE_CODE); 
   };
 
   const handleDeleteRole = async (roleCode: string) => {
+    // Check if it's a server role
+    const isServerRole = roles.some(r => r.role_code === roleCode);
+
+    if (!isServerRole) {
+        // Just remove the temp role from UI
+        const firstRole = roles[0];
+        setSelectedRoleId(firstRole ? firstRole.role_code : null);
+        setEditingRole(null);
+        return;
+    }
+
     if (confirm("Are you sure you want to delete this role?")) {
       try {
         await deleteRole(roleCode);
@@ -87,6 +135,11 @@ const RoleManagementPanel = () => {
   // This function now updates the local `editingRole` state
   const handleUpdateRole = (updatedRole: Role) => {
     setEditingRole(updatedRole);
+    
+    // If the role code changed, we must update selectedRoleId to keep it selected
+    if (selectedRoleId !== updatedRole.role_code) {
+        setSelectedRoleId(updatedRole.role_code);
+    }
   };
 
   const handleSave = async () => {
@@ -96,6 +149,12 @@ const RoleManagementPanel = () => {
     if (!editingRole.role_code || !editingRole.role_name) {
       toast.error("Role code and name are required");
       return;
+    }
+
+    // For new roles, ensure code doesn't conflict with existing (besides the temp one)
+    if ((editingRole as any).isNew && editingRole.role_code === TEMP_ROLE_CODE) {
+         toast.error("Please enter a valid Role Code");
+         return;
     }
 
     try {
@@ -143,7 +202,7 @@ const RoleManagementPanel = () => {
     <ResizablePanelGroup direction="horizontal" className="h-full rounded-lg border bg-background">
       <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
         <RoleList 
-          roles={roles} 
+          roles={displayRoles} 
           selectedRoleId={selectedRoleId} 
           onSelectRole={setSelectedRoleId}
           onAddRole={handleAddRole}
