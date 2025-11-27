@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 
 import { DayCell } from '@/features/home/calendar/components/month-view/day-cell';
+import { DragSelectProvider } from '@/features/home/calendar/contexts/drag-select-context';
 
 import { calculateMonthEventPositions, getCalendarCells } from '@/features/home/calendar/helpers';
 
@@ -28,33 +29,36 @@ const CalendarMonthView = ({ singleDayEvents, multiDayEvents }: IProps) => {
   );
 
   return (
-    <div className='flex flex-col h-full'>
-      {/* Fixed header with weekdays */}
-      <div className='grid grid-cols-7 divide-x border-b flex-shrink-0'>
-        {WEEK_DAYS.map((day, index) => {
-          const isSunday = index === 0;
-          const isSaturday = index === 6;
+    <DragSelectProvider>
+      <div className='flex flex-col h-full'>
+        {/* Fixed header with weekdays */}
+        <div className='grid grid-cols-7 divide-x border-b flex-shrink-0'>
+          {WEEK_DAYS.map((day, index) => {
+            const isSunday = index === 0;
+            const isSaturday = index === 6;
 
-          return (
-            <div key={day} className='flex items-center justify-center py-2'>
-              <span className='text-xs font-medium' style={{ color: isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined }}>
-                {day}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+            return (
+              <div key={day} className='flex items-center justify-center py-2'>
+                <span className='text-xs font-medium' style={{ color: isSunday ? '#ff6767' : isSaturday ? '#6767ff' : undefined }}>
+                  {day}
+                </span>
+              </div>
+            );
+          })}
+        </div>
 
-      {/* Scrollable calendar grid */}
-      <div className='flex-1 overflow-y-auto scrollbar-hide'>
-        <div className='grid grid-cols-7 auto-rows-fr h-full'>
-          {cells.map(cell => (
-            <DayCell key={cell.date.toISOString()} cell={cell} events={allEvents} eventPositions={eventPositions} />
-          ))}
+        {/* Scrollable calendar grid */}
+        <div className='flex-1 overflow-y-auto scrollbar-hide'>
+          <div className='grid grid-cols-7 auto-rows-fr h-full'>
+            {cells.map(cell => (
+              <DayCell key={cell.date.toISOString()} cell={cell} events={allEvents} eventPositions={eventPositions} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </DragSelectProvider>
   )
 }
 
-export { CalendarMonthView }
+export { CalendarMonthView };
+

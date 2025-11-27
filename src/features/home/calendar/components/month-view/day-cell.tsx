@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
+import { useDragSelect } from '@/features/home/calendar/contexts/drag-select-context';
 
 import { DroppableDayCell } from '@/features/home/calendar/components/dnd/droppable-day-cell';
 import { EventBullet } from '@/features/home/calendar/components/month-view/event-bullet';
@@ -23,6 +24,7 @@ const MAX_VISIBLE_EVENTS = 3;
 
 const DayCell = ({ cell, events, eventPositions }: IProps) => {
   const { setSelectedDate, setView, findHolidayByDate } = useCalendar();
+  const { isSelecting, selectionStart, selectionEnd, startSelection, updateSelection, endSelection } = useDragSelect();
 
   const { day, currentMonth, date } = cell;
 
@@ -48,9 +50,54 @@ const DayCell = ({ cell, events, eventPositions }: IProps) => {
     setView('day');
   };
 
+  const isSelected = useMemo(() => {
+    if (!selectionStart || !selectionEnd) return false;
+    
+    const start = dayjs(selectionStart).isBefore(selectionEnd) ? selectionStart : selectionEnd;
+    const end = dayjs(selectionStart).isBefore(selectionEnd) ? selectionEnd : selectionStart;
+    
+    // Compare dates (ignoring time)
+    const cellDate = dayjs(date).startOf('day');
+    const startDate = dayjs(start).startOf('day');
+    const endDate = dayjs(end).startOf('day');
+
+    return (cellDate.isSame(startDate) || cellDate.isAfter(startDate)) && 
+           (cellDate.isSame(endDate) || cellDate.isBefore(endDate));
+  }, [date, selectionStart, selectionEnd]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Prevent selection if clicking on a button or event
+    const target = e.target as HTMLElement;
+    if (
+      target.closest('button') || 
+      target.closest('[role="button"]') ||
+      target.closest('[draggable]')
+    ) {
+      return;
+    }
+    startSelection(date);
+  };
+
+  const handleMouseEnter = () => {
+    updateSelection(date);
+  };
+
+  const handleMouseUp = () => {
+    endSelection();
+  };
+
   return (
     <DroppableDayCell cell={cell}>
-      <div className={cn('flex h-full flex-col gap-1 border-l border-t py-1.5 lg:pb-2 lg:pt-1', isSunday && 'border-l-0')}>
+      <div 
+        className={cn(
+          'flex h-full flex-col gap-1 border-l border-t py-1.5 lg:pb-2 lg:pt-1 select-none', 
+          isSunday && 'border-l-0',
+          isSelected && 'bg-blue-100/50 dark:bg-blue-900/20 shadow-[inset_0_0_0_2px_rgba(59,130,246,0.5)]'
+        )}
+        onMouseDown={handleMouseDown}
+        onMouseEnter={handleMouseEnter}
+        onMouseUp={handleMouseUp}
+      >
         {/* 첫 번째 줄: 날짜와 공휴일 */}
         <div className='flex items-center justify-between px-1'>
           <div className='flex items-center gap-1 flex-1 min-w-0'>
@@ -115,4 +162,5 @@ const DayCell = ({ cell, events, eventPositions }: IProps) => {
   )
 }
 
-export { DayCell }
+export { DayCell };
+
