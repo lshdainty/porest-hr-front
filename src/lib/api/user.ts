@@ -108,7 +108,7 @@ export interface PutUserReq {
   user_name: string
   user_email: string
   user_birth: string
-  user_roles: string[]
+  user_roles?: string[]
   user_origin_company_type: string
   user_work_time: string
   lunar_yn: string

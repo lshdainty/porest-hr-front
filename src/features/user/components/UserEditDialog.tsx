@@ -12,13 +12,12 @@ import { Spinner } from '@/components/shadcn/spinner';
 import config from '@/config/config';
 import { usePostUploadProfileMutation } from '@/hooks/queries/useUsers';
 import { GetUsersResp, type PutUserReq } from '@/lib/api/user';
-import { companyOptions, departmentOptions } from '@/lib/constants';
+import { companyOptions } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import {
   AlertCircle,
-  Briefcase,
   Building2,
   Cake,
   Camera,
@@ -26,12 +25,9 @@ import {
   Loader2,
   Mail,
   Moon,
-  Shield,
   Trash2,
   Upload,
-  User as UserIcon,
-  UserRound,
-  UserRoundCog
+  User as UserIcon
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -43,10 +39,8 @@ const formSchema = z.object({
   user_email: z.string().email({ message: '유효한 이메일을 입력해주세요.' }),
   user_birth: z.string().min(1, { message: '생년월일을 입력해주세요.' }),
   user_origin_company_type: z.string().min(1, { message: '회사를 선택해주세요.' }),
-  user_department_type: z.string().min(1, { message: '부서를 선택해주세요.' }),
   lunar_yn: z.string().min(1, { message: '음력여부를 선택해주세요.' }),
   user_work_time: z.string().min(1, { message: '유연근무시간을 선택해주세요.' }),
-  user_role_type: z.string().min(1, { message: '권한을 선택해주세요.' }),
 });
 
 type UserFormValues = z.infer<typeof formSchema>;
@@ -116,10 +110,8 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       user_email: '',
       user_birth: dayjs().format('YYYY-MM-DD'),
       user_origin_company_type: companyOptions[0].company_type,
-      user_department_type: departmentOptions[0].department_type,
       lunar_yn: 'N',
       user_work_time: '9 ~ 6',
-      user_role_type: 'USER',
     },
   });
 
@@ -128,7 +120,6 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       form.reset({
         ...user,
         user_origin_company_type: user.user_origin_company_type || companyOptions[0].company_type,
-        user_department_type: (user as any).user_department_type || departmentOptions[0].department_type,
         lunar_yn: user.lunar_yn || 'N',
       });
       setProfileImage(getFullImageUrl(user.profile_url || ''));
@@ -207,6 +198,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
     onSave({ 
       ...user, 
       ...values, 
+      user_birth: dayjs(values.user_birth).format('YYYY-MM-DD'),
       profile_url: imagePathForSave, // 상대 경로로 저장
       profile_uuid: profileUUID
     });
@@ -218,13 +210,8 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
     { value: '9 ~ 6', className: 'text-sky-500 dark:text-sky-400' },
     { value: '10 ~ 7', className: 'text-emerald-500 dark:text-emerald-400' }
   ];
-  const roleOptions = [
-    { value: 'ADMIN', className: 'text-rose-500 dark:text-rose-400' },
-    { value: 'USER', className: 'text-sky-500 dark:text-sky-400' }
-  ];
 
   const selectedWorkTime = workTimeOptions.find(option => option.value === form.watch('user_work_time'));
-  const selectedRole = roleOptions.find(option => option.value === form.watch('user_role_type'));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -438,26 +425,6 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                   />
                   <Controller
                     control={form.control}
-                    name="user_department_type"
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel><Briefcase className='h-4 w-4 text-muted-foreground inline-block' /> 부서</FieldLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="부서 선택" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {departmentOptions.map(option => <SelectItem key={option.department_type} value={option.department_type}>{option.department_name}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                      </Field>
-                    )}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Controller
-                    control={form.control}
                     name="user_work_time"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
@@ -468,34 +435,6 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                           </SelectTrigger>
                           <SelectContent>
                             {workTimeOptions.map(option => <SelectItem key={option.value} value={option.value} className={option.className}>{option.value}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
-                        <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-                      </Field>
-                    )}
-                  />
-                  <Controller
-                    control={form.control}
-                    name="user_role_type"
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel><Shield className='h-4 w-4 text-muted-foreground inline-block' /> 권한</FieldLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="w-full">
-                            <div className={cn('flex items-center gap-2', selectedRole?.className)}>
-                              {field.value === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}
-                              {field.value}
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {roleOptions.map(option => (
-                              <SelectItem key={option.value} value={option.value}>
-                                <div className={cn('flex items-center gap-2', option.className)}>
-                                  {option.value === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}
-                                  {option.value}
-                                </div>
-                              </SelectItem>
-                            ))}
                           </SelectContent>
                         </Select>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />

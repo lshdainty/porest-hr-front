@@ -1,14 +1,14 @@
 'use client'
 
-import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths';
-import { useUserQuery, usePutUserMutation } from '@/hooks/queries/useUsers';
-import type { PutUserReq } from '@/lib/api/user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar';
-import UserEditDialog from '@/features/user/components/UserEditDialog';
 import config from '@/config/config';
 import { useUser } from '@/contexts/UserContext';
+import UserEditDialog from '@/features/user/components/UserEditDialog';
+import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths';
+import { usePutUserMutation, useUserQuery } from '@/hooks/queries/useUsers';
+import type { PutUserReq } from '@/lib/api/user';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { CircleUser, EllipsisVertical, LogOut } from 'lucide-react';
@@ -57,11 +57,9 @@ export function Footer() {
       user_id: user.user_id,
       user_name: user.user_name,
       user_email: user.user_email,
-      user_birth: dayjs(user.user_birth).format('YYYYMMDD'),
+      user_birth: dayjs(user.user_birth).format('YYYY-MM-DD'),
       user_origin_company_type: user.user_origin_company_type,
-      user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
-      user_role_type: user.user_role_type,
       lunar_yn: user.lunar_yn,
       profile_url: user.profile_url,
       profile_uuid: user.profile_uuid
@@ -72,7 +70,6 @@ export function Footer() {
     user_name: loginUser.user_name,
     user_email: loginUser.user_email,
     user_id: loginUser.user_id,
-    user_role: loginUser.user_role,
     profile_url: loginUser.profile_url
   } : defaultUser
 

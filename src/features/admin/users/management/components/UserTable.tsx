@@ -18,7 +18,7 @@ import { type GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
-import { EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2, UserRound, UserRoundCog } from 'lucide-react';
+import { EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2 } from 'lucide-react';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -45,11 +45,9 @@ const UserTable = ({ value: users }: UserTableProps) => {
       user_id: user.user_id,
       user_name: user.user_name,
       user_email: user.user_email,
-      user_birth: dayjs(user.user_birth).format('YYYYMMDD'),
+      user_birth: dayjs(user.user_birth).format('YYYY-MM-DD'),
       user_origin_company_type: user.user_origin_company_type,
-      user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
-      user_role_type: user.user_role_type,
       lunar_yn: user.lunar_yn,
       profile_url: user.profile_url,
       profile_uuid: user.profile_uuid
@@ -59,6 +57,8 @@ const UserTable = ({ value: users }: UserTableProps) => {
   const handleDeleteUser = (id: string) => {
     deleteUser(id);
   };
+
+  console.log('users', users);
 
   return (
     <Card className='flex-1'>
@@ -92,7 +92,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                   <TableHead className='min-w-[220px]'>Email</TableHead>
                   <TableHead className='min-w-[130px]'>유연근무시간</TableHead>
                   <TableHead className='min-w-[120px]'>소속 회사</TableHead>
-                  <TableHead className='min-w-[100px]'>권한</TableHead>
+                  <TableHead className='min-w-[120px]'>부서</TableHead>
                   <TableHead className='min-w-[120px]'>초대 상태</TableHead>
                   <TableHead className='min-w-[80px] pr-4'></TableHead>
                 </TableRow>
@@ -138,20 +138,9 @@ const UserTable = ({ value: users }: UserTableProps) => {
                       <span className='text-sm'>{row.user_origin_company_name}</span>
                     </TableCell>
                     <TableCell>
-                      <div className={cn(
-                        'flex items-center gap-1 text-sm font-semibold',
-                        {
-                          'text-rose-500': row.user_role_type === 'ADMIN',
-                          'text-sky-500': row.user_role_type === 'USER'
-                        }
-                      )}>
-                        {row.user_role_type === 'ADMIN' ?
-                          <UserRoundCog size={14} className='flex-shrink-0'/> :
-                          <UserRound size={14} className='flex-shrink-0'/>
-                        }
-                        <span className='whitespace-nowrap'>{row.user_role_type}</span>
-                      </div>
+                      <span className='text-sm'>{row.main_department_name_kr || '-'}</span>
                     </TableCell>
+
                     <TableCell>
                       <Badge className={cn(
                         'text-xs whitespace-nowrap',
