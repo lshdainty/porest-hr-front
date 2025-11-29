@@ -91,7 +91,7 @@ export async function fetchGetLoginCheck(): Promise<GetLoginCheck> {
     url: `/login/check`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -102,7 +102,7 @@ export async function fetchGetValidateInvitationToken(token: string): Promise<Ge
     url: `/oauth2/signup/validate?token=${token}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }

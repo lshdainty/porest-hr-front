@@ -70,7 +70,7 @@ export async function fetchGetYearDues(year: string): Promise<GetYearDuesResp[]>
     url: `/dues?year=${year}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -81,7 +81,7 @@ export async function fetchGetYearOperationDues(year: string): Promise<GetYearOp
     url: `/dues/operation?year=${year}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -92,7 +92,7 @@ export async function fetchGetMonthBirthDues(year: string, month: string): Promi
     url: `/dues/birth/month?year=${year}&month=${month}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -103,7 +103,7 @@ export async function fetchGetUsersMonthBirthDues(year: string): Promise<GetUser
     url: `/dues/users/birth/month?year=${year}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -115,7 +115,7 @@ export async function fetchPostDues(data: PostDuesReq): Promise<any> {
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -127,7 +127,7 @@ export async function fetchPutDues(data: PutDuesReq): Promise<any> {
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -138,7 +138,7 @@ export async function fetchDeleteDues(duesSeq: number): Promise<any> {
     url: `/dues/${duesSeq}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }

@@ -470,7 +470,7 @@ export async function fetchPostUseVacation(data: PostUseVacationReq): Promise<Po
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -481,7 +481,7 @@ export async function fetchGetUserVacationHistory(userId: string): Promise<GetUs
     url: `/users/${userId}/vacations`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -492,7 +492,7 @@ export async function fetchGetAllUsersVacationHistory(): Promise<GetAllUsersVaca
     url: `/vacations`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -503,7 +503,7 @@ export async function fetchGetAvailableVacations(userId: string, startDate: stri
     url: `/users/${userId}/vacations/available?startDate=${startDate}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -516,7 +516,7 @@ export async function fetchPutUpdateVacationUsage(data: PutUpdateVacationUsageRe
     data: requestData
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -527,7 +527,7 @@ export async function fetchDeleteVacationUsage(vacationUsageId: number): Promise
     url: `/vacation-usages/${vacationUsageId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -538,7 +538,7 @@ export async function fetchGetVacationUsagesByPeriod(startDate: string, endDate:
     url: `/vacation-usages?startDate=${startDate}&endDate=${endDate}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -549,7 +549,7 @@ export async function fetchGetUserVacationUsagesByPeriod(userId: string, startDa
     url: `/users/${userId}/vacation-usages?startDate=${startDate}&endDate=${endDate}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -560,7 +560,7 @@ export async function fetchGetUserMonthlyVacationStats(userId: string, year: str
     url: `/users/${userId}/vacation-usages/monthly-stats?year=${year}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -571,7 +571,7 @@ export async function fetchGetUserVacationStats(userId: string, baseDate: string
     url: `/users/${userId}/vacations/stats?baseDate=${baseDate}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -582,7 +582,7 @@ export async function fetchGetVacationPolicy(vacationPolicyId: number): Promise<
     url: `/vacation-policies/${vacationPolicyId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -593,7 +593,7 @@ export async function fetchGetVacationPolicies(): Promise<GetVacationPoliciesRes
     url: `/vacation-policies`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -605,7 +605,7 @@ export async function fetchPostVacationPolicy(data: PostVacationPolicyReq): Prom
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -616,7 +616,7 @@ export async function fetchDeleteVacationPolicy(vacationPolicyId: number): Promi
     url: `/vacation-policies/${vacationPolicyId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -630,7 +630,7 @@ export async function fetchPostAssignVacationPoliciesToUser(userId: string, vaca
     }
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -647,7 +647,7 @@ export async function fetchGetUserVacationPolicies(userId: string, grantMethod?:
     url: `/users/${userId}/vacation-policies${queryString}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -667,7 +667,7 @@ export async function fetchGetUserAssignedVacationPolicies(userId: string, vacat
     url: `/users/${userId}/vacation-policies/assigned${queryString}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -678,7 +678,7 @@ export async function fetchGetUserVacationPolicyAssignmentStatus(userId: string)
     url: `/users/${userId}/vacation-policies/assignment-status`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -689,7 +689,7 @@ export async function fetchDeleteRevokeVacationPolicyFromUser(userId: string, va
     url: `/users/${userId}/vacation-policies/${vacationPolicyId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -703,7 +703,7 @@ export async function fetchDeleteRevokeVacationPoliciesFromUser(userId: string, 
     }
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -716,7 +716,7 @@ export async function fetchPostManualGrantVacation(data: PostManualGrantVacation
     data: requestData
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -727,7 +727,7 @@ export async function fetchDeleteRevokeVacationGrant(vacationGrantId: number): P
     url: `/vacation-grants/${vacationGrantId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -740,7 +740,7 @@ export async function fetchPostRequestVacation(data: PostRequestVacationReq): Pr
     data: requestData
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -751,7 +751,7 @@ export async function fetchPostApproveVacation(approvalId: number, approverId: s
     url: `/vacation-approvals/${approvalId}/approve?approverId=${approverId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -763,7 +763,7 @@ export async function fetchPostRejectVacation(approvalId: number, approverId: st
     data: { rejection_reason: rejectionReason }
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -780,7 +780,7 @@ export async function fetchGetAllVacationsByApprover(approverId: string, status?
     url: `/users/${approverId}/vacation-approvals${queryString}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -791,7 +791,7 @@ export async function fetchGetUserRequestedVacations(userId: string): Promise<Ge
     url: `/users/${userId}/vacation-requests`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -802,7 +802,7 @@ export async function fetchGetUserRequestedVacationStats(userId: string): Promis
     url: `/users/${userId}/vacation-requests/stats`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -813,7 +813,7 @@ export async function fetchPostCancelVacationRequest(vacationGrantId: number, us
     url: `/vacation-requests/${vacationGrantId}/cancel?userId=${userId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }

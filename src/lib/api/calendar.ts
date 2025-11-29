@@ -26,7 +26,7 @@ export async function fetchGetEventsByPeriod(startDate: string, endDate: string)
     url: `/calendar/period?startDate=${startDate}&endDate=${endDate}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }

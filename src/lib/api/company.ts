@@ -62,7 +62,7 @@ export async function fetchGetCompany(): Promise<GetCompanyResp> {
     url: `/company`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -92,7 +92,7 @@ export async function fetchGetCompanyWithDepartments(companyId: string): Promise
     url: `/company/${companyId}/departments`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }

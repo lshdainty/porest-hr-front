@@ -101,7 +101,7 @@ export async function fetchPostDepartment(data: PostDepartmentReq): Promise<Post
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -127,7 +127,7 @@ export async function fetchGetDepartment(departmentId: number): Promise<GetDepar
     url: `/departments/${departmentId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -138,7 +138,7 @@ export async function fetchGetDepartmentWithChildren(departmentId: number): Prom
     url: `/departments/${departmentId}/children`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -149,7 +149,7 @@ export async function fetchGetDepartmentUsers(departmentId: number): Promise<Get
     url: `/departments/${departmentId}/users`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -161,7 +161,7 @@ export async function fetchPostDepartmentUsers(departmentId: number, data: PostD
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -180,7 +180,7 @@ export async function fetchGetCheckUserMainDepartment(userId: string): Promise<C
     url: `/users/${userId}/main-department/existence`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }

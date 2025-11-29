@@ -85,7 +85,7 @@ export async function fetchGetWorkGroups(): Promise<WorkCodeResp[]> {
     }
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -100,7 +100,7 @@ export async function fetchGetWorkPartLabel(parentWorkCodeSeq: number): Promise<
     }
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -115,7 +115,7 @@ export async function fetchGetWorkParts(parentWorkCodeSeq: number): Promise<Work
     }
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -130,7 +130,7 @@ export async function fetchGetWorkDivision(): Promise<WorkCodeResp[]> {
     }
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -142,7 +142,7 @@ export async function fetchPostCreateWorkHistory(data: CreateWorkHistoryReq): Pr
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -154,7 +154,7 @@ export async function fetchGetWorkHistories(params?: WorkHistorySearchCondition)
     params
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -167,7 +167,7 @@ export async function fetchPutUpdateWorkHistory(data: UpdateWorkHistoryReq): Pro
     data: requestData
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 export async function fetchDeleteWorkHistory(workHistorySeq: number): Promise<void> {
@@ -176,7 +176,7 @@ export async function fetchDeleteWorkHistory(workHistorySeq: number): Promise<vo
     url: `/work-histories/${workHistorySeq}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 export interface BulkCreateWorkHistoryReq {
@@ -194,7 +194,7 @@ export async function fetchPostBulkCreateWorkHistories(data: BulkCreateWorkHisto
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -205,7 +205,7 @@ export async function fetchGetAllWorkCodes(): Promise<WorkCodeResp[]> {
     url: `/work-codes/all`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -267,7 +267,7 @@ export async function fetchPostCreateWorkCode(data: CreateWorkCodeReq): Promise<
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -280,7 +280,7 @@ export async function fetchPutUpdateWorkCode(data: UpdateWorkCodeReq): Promise<v
     data: requestData
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 export async function fetchDeleteWorkCode(workCodeSeq: number): Promise<void> {
@@ -289,7 +289,7 @@ export async function fetchDeleteWorkCode(workCodeSeq: number): Promise<void> {
     url: `/work-codes/${workCodeSeq}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 // System Log
@@ -317,7 +317,7 @@ export async function fetchPostToggleSystemCheck(data: ToggleSystemCheckReq): Pr
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -331,7 +331,7 @@ export async function fetchGetSystemCheckStatus(systemCode: SystemType): Promise
     }
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }

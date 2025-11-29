@@ -37,7 +37,7 @@ export async function fetchGetMyPermissions(): Promise<string[]> {
     url: `/permissions/my`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -49,7 +49,7 @@ export async function fetchGetPermissions(): Promise<PermissionResp[]> {
     url: `/permissions`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -61,7 +61,7 @@ export async function fetchGetPermission(permissionCode: string): Promise<Permis
     url: `/permissions/${permissionCode}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -73,7 +73,7 @@ export async function fetchGetPermissionsByResource(resource: string): Promise<P
     url: `/permissions/resource/${resource}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -86,7 +86,7 @@ export async function fetchPostPermission(data: CreatePermissionReq): Promise<st
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -102,7 +102,7 @@ export async function fetchPutPermission(
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 // 권한 삭제
@@ -112,5 +112,5 @@ export async function fetchDeletePermission(permissionCode: string): Promise<voi
     url: `/permissions/${permissionCode}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }

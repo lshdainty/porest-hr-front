@@ -43,7 +43,7 @@ export async function fetchGetRoles(): Promise<RoleResp[]> {
     url: `/roles`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -55,7 +55,7 @@ export async function fetchGetRole(roleCode: string): Promise<RoleResp> {
     url: `/roles/${roleCode}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -68,7 +68,7 @@ export async function fetchPostRole(data: CreateRoleReq): Promise<string> {
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -81,7 +81,7 @@ export async function fetchPutRole(roleCode: string, data: UpdateRoleReq): Promi
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 // 역할 삭제
@@ -91,7 +91,7 @@ export async function fetchDeleteRole(roleCode: string): Promise<void> {
     url: `/roles/${roleCode}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 // 역할 권한 목록 조회
@@ -101,7 +101,7 @@ export async function fetchGetRolePermissions(roleCode: string): Promise<import(
     url: `/roles/${roleCode}/permissions`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -117,7 +117,7 @@ export async function fetchPutRolePermissions(
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 // 역할에 권한 추가
@@ -131,7 +131,7 @@ export async function fetchPostRolePermission(
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }
 
 // 역할에서 권한 제거
@@ -144,5 +144,5 @@ export async function fetchDeleteRolePermission(
     url: `/roles/${roleCode}/permissions/${permissionCode}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 }

@@ -50,7 +50,7 @@ export async function fetchGetHolidaysByStartEndDate(startDate: string, endDate:
     url: `/holidays/date?start=${startDate}&end=${endDate}&country_code=${countryCode}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -62,7 +62,7 @@ export async function fetchPostHoliday(data: PostHolidayReq): Promise<any> {
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -74,7 +74,7 @@ export async function fetchPutHoliday(data: PutHolidayReq): Promise<any> {
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -85,7 +85,7 @@ export async function fetchDeleteHoliday(holidaySeq: string): Promise<any> {
     url: `/holiday/${holidaySeq}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }

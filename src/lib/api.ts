@@ -16,14 +16,14 @@ interface CustomHeaders {
 }
 
 interface ApiResponse<T = any> {
-  code: number
+  code: string
   message: string
   count: number
   data: T
 }
 
 interface ApiErrorResponse {
-  code: number
+  code: string
   message: string
   count: number
   data?: {

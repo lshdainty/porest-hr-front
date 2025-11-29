@@ -30,7 +30,7 @@ export async function fetchPostSchedule(data: PostScheduleReq): Promise<any> {
     data
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -43,7 +43,7 @@ export async function fetchPutUpdateSchedule(data: PutUpdateScheduleReq): Promis
     data: requestData
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
@@ -54,7 +54,7 @@ export async function fetchDeleteSchedule(scheduleId: number): Promise<any> {
     url: `/schedule/${scheduleId}`
   });
 
-  if (resp.code !== 200) throw new Error(resp.message);
+  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
 
   return resp.data;
 }
