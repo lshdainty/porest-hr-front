@@ -9,9 +9,9 @@ const UserCompanyStatsWidget = ({ users }: UserCompanyStatsWidgetProps) => {
   const companyStats = getUserCompanyStatsConfig(users);
 
   return (
-    <div className='grid grid-cols-2 lg:grid-cols-5 gap-px bg-border h-full'>
+    <div className='grid grid-cols-1 lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-border h-full bg-card'>
       {companyStats.map((stat) => (
-        <div key={stat.id} className='p-6 bg-card h-full'>
+        <div key={stat.id} className='p-6 h-full'>
           <UserCompanyStatsItem {...stat} />
         </div>
       ))}
