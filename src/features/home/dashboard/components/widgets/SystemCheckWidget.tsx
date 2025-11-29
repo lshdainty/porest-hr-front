@@ -29,11 +29,11 @@ const SystemCheckWidget = () => {
   }, [systemTypes]);
 
   return (
-    <Card className="h-full flex flex-col border-none shadow-none py-0">
+    <Card className="h-full flex flex-col border-none shadow-none py-0 min-h-[200px]">
 
       <CardContent className="flex-1 p-0 min-h-0">
         <ScrollArea className="h-full">
-          <div className="grid grid-cols-2 gap-2 p-2 min-w-[300px]">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-2 p-2">
             {sortedSystems.map((system) => (
               <SystemRow key={system.id} system={system} />
             ))}

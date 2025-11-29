@@ -31,6 +31,7 @@ export const defaultLayouts = {
     { i: 'total-dues', x: 0, y: 14, w: 6, h: 5 },
     { i: 'user-birth-dues', x: 5, y: 19, w: 7, h: 9 },
     { i: 'user-company-stats', x: 6, y: 14, w: 6, h: 5 },
+    { i: 'system-check', x: 0, y: 19, w: 6, h: 8 },
   ],
   md: [
     { i: 'profile', x: 0, y: 0, w: 5, h: 14 },
@@ -45,6 +46,7 @@ export const defaultLayouts = {
     { i: 'total-dues', x: 0, y: 70, w: 10, h: 4 },
     { i: 'user-birth-dues', x: 0, y: 74, w: 10, h: 14 },
     { i: 'user-company-stats', x: 0, y: 88, w: 10, h: 4 },
+    { i: 'system-check', x: 0, y: 92, w: 10, h: 8 },
   ],
   sm: [
     { i: 'profile', x: 0, y: 0, w: 6, h: 14 },
@@ -59,5 +61,6 @@ export const defaultLayouts = {
     { i: 'total-dues', x: 0, y: 82, w: 6, h: 4 },
     { i: 'user-birth-dues', x: 0, y: 86, w: 6, h: 14 },
     { i: 'user-company-stats', x: 0, y: 100, w: 6, h: 4 },
+    { i: 'system-check', x: 0, y: 104, w: 6, h: 8 },
   ]
 };
