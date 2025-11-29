@@ -177,7 +177,7 @@ export async function fetchGetUser(userId: string): Promise<GetUserResp> {
     url: `/users/${userId}`
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -188,7 +188,7 @@ export async function fetchGetUsers(): Promise<GetUsersResp[]> {
     url: `/users`
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -199,7 +199,7 @@ export async function fetchGetUserApprovers(userId: string): Promise<GetUserAppr
     url: `/users/${userId}/approvers`
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -213,7 +213,7 @@ export async function fetchGetUserIdDuplicate(userId: string): Promise<GetUserId
     }
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -225,7 +225,7 @@ export async function fetchPostUser(data: PostUserReq): Promise<any> {
     data
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -238,7 +238,7 @@ export async function fetchPutUser(data: PutUserReq): Promise<any> {
     data: rest
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -256,7 +256,7 @@ export async function fetchPutInvitedUser(data: PutInvitedUserReq): Promise<PutI
     }
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -267,7 +267,7 @@ export async function fetchDeleteUser(userId: string): Promise<any> {
     url: `/users/${userId}`
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -279,7 +279,7 @@ export async function fetchPostUserInvite(data: PostUserInviteReq): Promise<Post
     data
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -297,7 +297,7 @@ export async function fetchPostUploadProfile(file: File): Promise<any> {
     }
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -308,7 +308,7 @@ export async function fetchPostResendInvitation(userId: string): Promise<any> {
     url: `/users/${userId}/invitations/resend`
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
@@ -320,7 +320,7 @@ export async function fetchUpdateDashboard(userId: string, data: UpdateDashboard
     data
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }

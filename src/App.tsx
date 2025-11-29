@@ -15,7 +15,7 @@ import '@ant-design/v5-patch-for-react-19'
 const App: React.FC = () => {
   return (
     <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
-      <Toaster />
+      <Toaster position="top-center" />
       <Providers>
         <BrowserRouter basename='/'>
           <UserProvider>

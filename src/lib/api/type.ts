@@ -18,7 +18,7 @@ export async function fetchGetTypes(enumName: string): Promise<TypeResp[]> {
     url: `/types/${enumName}`
   });
 
-  if (resp.code !== 'COMMON_200') throw new Error(resp.message);
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }

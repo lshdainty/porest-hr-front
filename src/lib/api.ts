@@ -1,3 +1,4 @@
+import { toast } from '@/components/shadcn/sonner'
 import config from '@/config/config'
 import axios, { type AxiosError, type AxiosResponse } from 'axios'
 
@@ -11,31 +12,27 @@ const api = axios.create({
   withCredentials: true, // 세션 쿠키 포함하여 요청 (Spring security에서 반환한 JSESSIONID, VALUE)
 })
 
-interface CustomHeaders {
-  [key: string]: any
-}
+// interface CustomHeaders {
+//   [key: string]: any
+// }
 
 interface ApiResponse<T = any> {
+  success: boolean
   code: string
   message: string
-  count: number
   data: T
 }
 
 interface ApiErrorResponse {
+  success: boolean
   code: string
   message: string
-  count: number
-  data?: {
-    code: number
-    message: string
-    url: string
-  }
+  data: null
 }
 
 api.interceptors.request.use(
   (config: any) => {
-    const headers = config.headers as CustomHeaders
+    // const headers = config.headers as CustomHeaders
 
     // login, logout API는 /api/v1 없이 호출
     if (config.url.includes('/oauth2')) {
@@ -58,6 +55,9 @@ api.interceptors.response.use(
   },
   async (err: AxiosError<ApiErrorResponse>) => {
     console.log('axios response error : ', err)
+
+    const message = err.response?.data?.message || err.message || '알 수 없는 오류가 발생했습니다.'
+    toast.error(message)
 
     // 401 Unauthorized 에러 발생 시 로그인 페이지로 리다이렉트
     if (err.response?.status === 401) {
