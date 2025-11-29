@@ -2,22 +2,22 @@ import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/shadcn/table';
 import { TypeResp } from '@/lib/api/type';
 import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
 import { getStatusBadge } from '@/utils/vacationStatus';
 import dayjs from 'dayjs';
 import {
-    Calendar,
-    EllipsisVertical,
-    Eye,
-    XCircle
+  Calendar,
+  EllipsisVertical,
+  Eye,
+  XCircle
 } from 'lucide-react';
 
 interface ApplicationTableContentProps {
@@ -35,17 +35,17 @@ const ApplicationTableContent = ({
 }: ApplicationTableContentProps) => {
   return (
     <div className='overflow-x-auto'>
-      <Table>
+      <Table className='min-w-[1000px]'>
         <TableHeader>
           <TableRow>
-            <TableHead className='min-w-[200px]'>제목</TableHead>
-            <TableHead>휴가 타입</TableHead>
-            <TableHead>신청일</TableHead>
-            <TableHead>대상일자</TableHead>
-            <TableHead>보상일수</TableHead>
-            <TableHead>현결재자</TableHead>
-            <TableHead>상태</TableHead>
-            <TableHead></TableHead>
+            <TableHead className='min-w-[200px] whitespace-nowrap'>제목</TableHead>
+            <TableHead className='min-w-[100px] whitespace-nowrap'>휴가 타입</TableHead>
+            <TableHead className='min-w-[120px] whitespace-nowrap'>신청일</TableHead>
+            <TableHead className='min-w-[150px] whitespace-nowrap'>대상일자</TableHead>
+            <TableHead className='min-w-[100px] whitespace-nowrap'>보상일수</TableHead>
+            <TableHead className='min-w-[100px] whitespace-nowrap'>현결재자</TableHead>
+            <TableHead className='min-w-[100px] whitespace-nowrap'>상태</TableHead>
+            <TableHead className='min-w-[50px]'></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
