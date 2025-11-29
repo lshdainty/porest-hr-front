@@ -1,5 +1,5 @@
 import loginBG from '@/assets/img/login_bg.jpg';
-import { toast } from '@/components/alert/toast';
+import { toast } from '@/components/shadcn/sonner';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { authKeys } from '@/hooks/queries/useAuths';
 import { cn } from '@/lib/utils';

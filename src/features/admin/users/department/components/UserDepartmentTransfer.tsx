@@ -1,6 +1,6 @@
 import { type UserInfo } from '@/lib/api/department'
 import { useCheckUserMainDepartmentQuery } from '@/hooks/queries/useDepartments'
-import { toast } from '@/components/alert/toast'
+import { toast } from '@/components/shadcn/sonner'
 import { Button } from '@/components/shadcn/button'
 import { Checkbox } from '@/components/shadcn/checkbox'
 import { Label } from '@/components/shadcn/label'

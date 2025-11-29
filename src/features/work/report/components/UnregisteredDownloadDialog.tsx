@@ -1,4 +1,4 @@
-import { toast } from '@/components/alert/toast';
+import { toast } from '@/components/shadcn/sonner';
 import { Button } from '@/components/shadcn/button';
 import {
   Dialog,

@@ -1,6 +1,6 @@
 import { useUpdateDashboardMutation } from '@/hooks/queries/useUsers';
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/components/shadcn/sonner';
 import { defaultLayouts, LAYOUT_STORAGE_KEY, WIDGETS, WIDGETS_STORAGE_KEY } from '../constants';
 
 interface DashboardContextType {

@@ -31,7 +31,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { toast } from '@/components/shadcn/sonner';
 import { z } from 'zod';
 
 const colorClassMap: Record<TEventColor, string> = {

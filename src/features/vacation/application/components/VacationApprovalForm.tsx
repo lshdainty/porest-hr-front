@@ -11,7 +11,7 @@ import {
 
 import { usePostApproveVacationMutation, usePostRejectVacationMutation } from '@/hooks/queries/useVacations';
 import type { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
-import { toast } from '@/components/alert/toast';
+import { toast } from '@/components/shadcn/sonner';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';

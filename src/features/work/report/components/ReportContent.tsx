@@ -1,4 +1,4 @@
-import { toast } from '@/components/alert/toast';
+import { toast } from '@/components/shadcn/sonner';
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { useUser } from '@/contexts/UserContext';
 import ExcelImportDialog from '@/features/work/report/components/ExcelImportDialog';

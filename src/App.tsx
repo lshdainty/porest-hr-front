@@ -1,4 +1,4 @@
-import { Toaster } from '@/components/alert/toast'
+import { Toaster } from '@/components/shadcn/sonner'
 import { ThemeProvider } from '@/components/shadcn/themeProvider'
 import { PermissionProvider } from '@/contexts/PermissionContext'
 import { UserProvider } from '@/contexts/UserContext'

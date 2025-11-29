@@ -1,4 +1,4 @@
-import { toast } from '@/components/alert/toast';
+import { toast } from '@/components/shadcn/sonner';
 import PermissionGuard from '@/components/auth/PermissionGuard';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';

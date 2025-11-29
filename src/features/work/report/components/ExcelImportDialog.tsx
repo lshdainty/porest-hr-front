@@ -28,7 +28,7 @@ import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
 import { AlertCircle, Check, Loader2, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/components/shadcn/sonner';
 
 interface ExcelImportDialogProps {
   open: boolean;
