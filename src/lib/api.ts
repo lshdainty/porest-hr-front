@@ -34,7 +34,7 @@ api.interceptors.request.use(
   (config: any) => {
     // const headers = config.headers as CustomHeaders
 
-    // login, logout API는 /api/v1 없이 호출
+    // oAuth2 API는 /api/v1 없이 호출
     if (config.url.includes('/oauth2')) {
       config.baseURL = import.meta.env.VITE_BASE_URL
     }
