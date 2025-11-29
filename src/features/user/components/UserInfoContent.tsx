@@ -2,8 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar'
 import { Separator } from '@/components/shadcn/separator';
 import config from '@/config/config';
 import { GetUsersResp } from '@/lib/api/user';
-import { cn } from '@/lib/utils';
-import { Briefcase, Building2, Cake, Clock, Mail, Shield, User as UserIcon, UserRound, UserRoundCog } from 'lucide-react';
+import { Briefcase, Building2, Cake, Clock, Mail, User as UserIcon } from 'lucide-react';
 
 interface UserInfoContentProps {
   user: GetUsersResp;
@@ -75,23 +74,7 @@ const UserInfoContent = ({ user }: UserInfoContentProps) => {
           <span className='font-semibold w-24'>유연근무시간</span>
           <span>{formatWorkTime(user.user_work_time)}</span>
         </div>
-        <div className='flex items-center'>
-          <Shield className='mr-3 h-4 w-4 text-muted-foreground' />
-          <span className='font-semibold w-24'>권한</span>
-          <div className={cn(
-            'flex flex-row items-center text-sm font-semibold gap-1',
-            {
-              'text-rose-500 dark:text-rose-400': user.user_role_type === 'ADMIN',
-              'text-sky-500 dark:text-sky-400': user.user_role_type === 'USER'
-            }
-          )}>
-            {user.user_role_type === 'ADMIN' ? 
-              <UserRoundCog size={16}/> : 
-              <UserRound size={16}/>
-            }
-            {user.user_role_type}
-          </div>
-        </div>
+
       </div>
     </div>
   );
