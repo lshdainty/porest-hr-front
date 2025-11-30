@@ -173,14 +173,37 @@ const DashboardContent = ({
     }
   };
 
+  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
+
+  const constrainedLayouts = useMemo(() => {
+    const newLayouts: any = {};
+    Object.keys(layouts).forEach(breakpoint => {
+      newLayouts[breakpoint] = layouts[breakpoint].map((item: any) => {
+        const widgetDef = WIDGETS.find(w => w.id === item.i);
+        if (widgetDef) {
+          const breakpointCols = cols[breakpoint as keyof typeof cols] || 12;
+          return {
+            ...item,
+            minW: Math.min(widgetDef.minW, breakpointCols),
+            maxW: widgetDef.maxW,
+            minH: widgetDef.minH,
+            maxH: widgetDef.maxH
+          };
+        }
+        return item;
+      });
+    });
+    return newLayouts;
+  }, [layouts]);
+
   return (
     <div className='min-h-screen bg-background relative overflow-hidden flex flex-col'>
       <div className='flex-1 overflow-y-auto'>
         <ResponsiveGridLayout
           className='layout min-h-screen'
-          layouts={layouts}
+          layouts={constrainedLayouts}
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-          cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+          cols={cols}
           rowHeight={30}
           draggableHandle='.drag-handle'
           onLayoutChange={handleLayoutChange}

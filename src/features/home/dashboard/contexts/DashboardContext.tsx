@@ -1,6 +1,6 @@
+import { toast } from '@/components/shadcn/sonner';
 import { useUpdateDashboardMutation } from '@/hooks/queries/useUsers';
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
-import { toast } from '@/components/shadcn/sonner';
 import { defaultLayouts, LAYOUT_STORAGE_KEY, WIDGETS, WIDGETS_STORAGE_KEY } from '../constants';
 
 interface DashboardContextType {
@@ -69,6 +69,7 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
   const handleLayoutChange = useCallback((layout: any, allLayouts: any) => {
     setLayouts(allLayouts);
     if (isEditing) {
+      console.log('Current Layout Dimensions:', layout.map((l: any) => ({ id: l.i, w: l.w, h: l.h })));
       localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(allLayouts));
     }
   }, [isEditing]);
