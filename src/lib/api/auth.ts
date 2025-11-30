@@ -66,12 +66,18 @@ export interface PostCompleteSignupResp {
 
 // API Functions
 export async function fetchPostLogin(formData: FormData): Promise<PostLoginResp> {
+  // FormData를 URLSearchParams로 변환 (Spring Security Form 로그인은 application/x-www-form-urlencoded를 사용)
+  const params = new URLSearchParams();
+  formData.forEach((value, key) => {
+    params.append(key, value.toString());
+  });
+
   const resp: ApiResponse<PostLoginResp> = await api.request({
     method: 'post',
     url: `/login`,
-    data: formData,
+    data: params,
     headers: {
-      'Content-Type': 'multipart/form-data'
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
   });
 

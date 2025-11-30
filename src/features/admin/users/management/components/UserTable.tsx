@@ -58,8 +58,6 @@ const UserTable = ({ value: users }: UserTableProps) => {
     deleteUser(id);
   };
 
-  console.log('users', users);
-
   return (
     <Card className='flex-1'>
       <CardHeader>

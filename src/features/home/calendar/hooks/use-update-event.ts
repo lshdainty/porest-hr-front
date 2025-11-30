@@ -1,7 +1,7 @@
-import { usePutUpdateScheduleMutation } from '@/hooks/queries/useSchedules';
-import { usePutUpdateVacationUsageMutation } from '@/hooks/queries/useVacations';
 import type { IEvent } from '@/features/home/calendar/interfaces';
 import { calendarTypes } from '@/features/home/calendar/types';
+import { usePutUpdateScheduleMutation } from '@/hooks/queries/useSchedules';
+import { usePutUpdateVacationUsageMutation } from '@/hooks/queries/useVacations';
 import dayjs from 'dayjs';
 
 export interface UpdateEventParams {
@@ -54,7 +54,6 @@ export const useUpdateEvent = () => {
           onSuccess: options?.onSuccess
         });
       } else {
-        console.log('testsetestesttsetesteste')
         payload.schedule_id = event.id;
         payload.schedule_type = event.type.id;
         payload.schedule_desc = event.description;

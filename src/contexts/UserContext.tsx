@@ -70,8 +70,6 @@ export function UserProvider({ children }: UserProviderProps) {
     refreshUser,
   }
 
-  console.log('loginUser', loginUser)
-
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }
 

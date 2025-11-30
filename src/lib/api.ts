@@ -12,6 +12,20 @@ const api = axios.create({
   withCredentials: true, // 세션 쿠키 포함하여 요청 (Spring security에서 반환한 JSESSIONID, VALUE)
 })
 
+/**
+ * 쿠키에서 특정 이름의 값을 읽어오는 유틸리티 함수
+ * @param name - 쿠키 이름
+ * @returns 쿠키 값 또는 null
+ */
+function getCookie(name: string): string | null {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) {
+    return parts.pop()?.split(';').shift() || null
+  }
+  return null
+}
+
 // interface CustomHeaders {
 //   [key: string]: any
 // }
@@ -37,6 +51,13 @@ api.interceptors.request.use(
     // oAuth2 API는 /api/v1 없이 호출
     if (config.url.includes('/oauth2')) {
       config.baseURL = import.meta.env.VITE_BASE_URL
+    }
+
+    // CSRF 토큰을 쿠키에서 읽어서 헤더에 추가 (Double Submit Cookie 패턴)
+    // Spring Security는 'XSRF-TOKEN' 쿠키를 생성하고, 'X-XSRF-TOKEN' 헤더를 검증합니다.
+    const csrfToken = getCookie('XSRF-TOKEN')
+    if (csrfToken) {
+      config.headers['X-XSRF-TOKEN'] = csrfToken
     }
 
     // 세션 쿠키는 withCredentials로 자동 포함됨

@@ -5,39 +5,39 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { createQueryKeys } from '@/constants/query-keys'
 import { fetchGetSystemTypes, type TypeResp } from '@/lib/api/type'
 import {
-    fetchDeleteWorkCode,
-    fetchDeleteWorkHistory,
-    fetchGetSystemCheckStatus,
-    fetchGetUnregisteredWorkHistoryExcelDownload,
-    fetchGetWorkDivision,
-    fetchGetWorkGroups,
-    fetchGetWorkHistories,
-    fetchGetWorkHistoryExcelDownload,
-    fetchGetWorkPartLabel,
-    fetchGetWorkParts,
-    fetchPostBulkCreateWorkHistories,
-    fetchPostCreateWorkCode,
-    fetchPostCreateWorkHistory,
-    fetchPostToggleSystemCheck,
-    fetchPutUpdateWorkCode,
-    fetchPutUpdateWorkHistory,
-    type BulkCreateWorkHistoryReq,
-    type BulkCreateWorkHistoryResp,
-    type CheckSystemStatusResp,
-    type CreateWorkCodeReq,
-    type CreateWorkCodeResp,
-    type CreateWorkHistoryReq,
-    type CreateWorkHistoryResp,
-    type SystemType,
-    type ToggleSystemCheckReq,
-    type ToggleSystemCheckResp,
-    type UnregisteredWorkHistoryDownloadReq,
-    type UpdateWorkCodeReq,
-    type UpdateWorkHistoryReq,
-    type WorkCodeResp,
-    type WorkGroupWithParts,
-    type WorkHistoryResp,
-    type WorkHistorySearchCondition
+  fetchDeleteWorkCode,
+  fetchDeleteWorkHistory,
+  fetchGetSystemCheckStatus,
+  fetchGetUnregisteredWorkHistoryExcelDownload,
+  fetchGetWorkDivision,
+  fetchGetWorkGroups,
+  fetchGetWorkHistories,
+  fetchGetWorkHistoryExcelDownload,
+  fetchGetWorkPartLabel,
+  fetchGetWorkParts,
+  fetchPostBulkCreateWorkHistories,
+  fetchPostCreateWorkCode,
+  fetchPostCreateWorkHistory,
+  fetchPostToggleSystemCheck,
+  fetchPutUpdateWorkCode,
+  fetchPutUpdateWorkHistory,
+  type BulkCreateWorkHistoryReq,
+  type BulkCreateWorkHistoryResp,
+  type CheckSystemStatusResp,
+  type CreateWorkCodeReq,
+  type CreateWorkCodeResp,
+  type CreateWorkHistoryReq,
+  type CreateWorkHistoryResp,
+  type SystemType,
+  type ToggleSystemCheckReq,
+  type ToggleSystemCheckResp,
+  type UnregisteredWorkHistoryDownloadReq,
+  type UpdateWorkCodeReq,
+  type UpdateWorkHistoryReq,
+  type WorkCodeResp,
+  type WorkGroupWithParts,
+  type WorkHistoryResp,
+  type WorkHistorySearchCondition
 } from '@/lib/api/work'
 
 const workKeys = createQueryKeys('works')
@@ -64,16 +64,11 @@ export const useWorkGroupsWithPartsQuery = () => {
       const labelsPromises = workGroups.map(group => fetchGetWorkPartLabel(group.work_code_seq))
       const labelsResults = await Promise.all(labelsPromises)
 
-      console.log('test : ', labelsResults)
-
       // 3. 모든 Label에 대한 Part 조회
       const allLabels = labelsResults.flat()
-      console.log(allLabels)
       const partsPromises = allLabels.map(label => fetchGetWorkParts(label.work_code_seq))
       const partsResults = await Promise.all(partsPromises)
       const allParts = partsResults.flat()
-      console.log('aprt : ', allParts)
-
 
       // 4. 데이터 병합 (Group -> Label -> Part)
       const mergedData: WorkGroupWithParts[] = workGroups.map(group => {

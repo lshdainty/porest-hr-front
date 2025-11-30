@@ -126,7 +126,6 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
       layouts,
       activeWidgets
     };
-    console.log('Dashboard Configuration Saved:', JSON.stringify(dashboardConfig, null, 2));
     
     updateDashboard(
       { 

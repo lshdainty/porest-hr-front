@@ -160,8 +160,6 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       
       const data = await uploadProfile(compressedFile);
 
-      console.log(data);
-
       // 성공 시 이미지 URL 업데이트 - 완전한 URL로 변환
       setProfileImage(getFullImageUrl(data.profile_url));
       setProfileUUID(data.profile_uuid);

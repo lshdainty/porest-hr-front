@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select';
+import { toast } from '@/components/shadcn/sonner';
 import { useUser } from '@/contexts/UserContext';
 import { useUpdateEvent } from '@/features/home/calendar/hooks/use-update-event';
 import type { TEventColor } from '@/features/home/calendar/types';
@@ -31,7 +32,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { toast } from '@/components/shadcn/sonner';
 import { z } from 'zod';
 
 import type { IEvent } from '@/features/home/calendar/interfaces';
@@ -151,8 +151,6 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
       });
     }
   }, [open, event, eventStartDate, eventEndDate, form]);
-
-  console.log('test log : ', event)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
