@@ -10,6 +10,7 @@ export interface TotalDuesItemProps {
   amount: number;
   description: string;
   colorClass: string;
+  iconBg: string;
 }
 
 const TotalDuesItem = ({
@@ -17,25 +18,25 @@ const TotalDuesItem = ({
   icon: Icon,
   amount,
   description,
-  colorClass
+  colorClass,
+  iconBg
 }: TotalDuesItemProps) => {
   return (
-    <div className='flex flex-col h-full'>
-      <div className='flex items-center gap-2 mb-4'>
-        <Icon className={cn('w-5 h-5', colorClass)} />
-        <h3 className='text-sm font-medium text-muted-foreground'>{title}</h3>
+    <div className='flex flex-col h-full justify-between'>
+      <div className='flex items-center justify-between mb-4'>
+        <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', iconBg)}>
+          <Icon className={cn('w-5 h-5', colorClass)} />
+        </div>
       </div>
-      <div className='flex-1'>
-        <div className='flex items-baseline gap-1 mb-2'>
-          <span className={cn('text-3xl font-bold', colorClass)}>
+      <div>
+        <h3 className='text-sm font-medium text-muted-foreground mb-1'>{title}</h3>
+        <div className='flex items-baseline gap-1 mb-1'>
+          <span className={cn('text-2xl font-bold', colorClass)}>
             {amount.toLocaleString('ko-KR')}
           </span>
-          <span className='text-lg text-muted-foreground opacity-60'>원</span>
+          <span className='text-sm text-muted-foreground opacity-60'>원</span>
         </div>
         <p className='text-xs text-muted-foreground opacity-70'>{description}</p>
-      </div>
-      <div className='absolute bottom-0 right-0 w-16 h-16 opacity-5 pointer-events-none'>
-        <Icon className='w-full h-full p-3' />
       </div>
     </div>
   );
@@ -54,7 +55,8 @@ export const getTotalDuesConfig = (
       icon: DollarSign,
       amount: totalDues?.total_dues ?? 0,
       description: '현재 보유한 총 운영비',
-      colorClass: 'text-blue-600'
+      colorClass: 'text-blue-600',
+      iconBg: 'bg-blue-100'
     },
     {
       id: 'deposit',
@@ -62,7 +64,8 @@ export const getTotalDuesConfig = (
       icon: BanknoteArrowUp,
       amount: totalDues?.total_deposit ?? 0,
       description: '올해 총 입금액',
-      colorClass: 'text-green-600'
+      colorClass: 'text-green-600',
+      iconBg: 'bg-green-100'
     },
     {
       id: 'withdrawal',
@@ -70,7 +73,8 @@ export const getTotalDuesConfig = (
       icon: BanknoteArrowDown,
       amount: Math.abs(totalDues?.total_withdrawal ?? 0),
       description: '올해 총 출금액',
-      colorClass: 'text-red-600'
+      colorClass: 'text-red-600',
+      iconBg: 'bg-red-100'
     },
     {
       id: 'birth',
@@ -78,7 +82,8 @@ export const getTotalDuesConfig = (
       icon: Users,
       amount: birthDues?.birth_month_dues ?? 0,
       description: '이번 달 생일비',
-      colorClass: 'text-purple-600'
+      colorClass: 'text-purple-600',
+      iconBg: 'bg-purple-100'
     }
   ];
 };

@@ -15,9 +15,9 @@ const TotalDuesWidget = ({ totalDues, birthDues }: TotalDuesWidgetProps) => {
   const duesConfig = getTotalDuesConfig(totalDues, birthDues);
 
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-border h-full bg-card'>
+    <div className='flex flex-col lg:grid lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-border h-full bg-card overflow-y-auto scrollbar-hide'>
       {duesConfig.map((item) => (
-        <div key={item.id} className='p-6 h-full relative overflow-hidden min-h-[120px]'>
+        <div key={item.id} className='p-4 h-auto lg:h-full relative overflow-hidden min-h-[120px] shrink-0'>
           <TotalDuesItem {...item} />
         </div>
       ))}
