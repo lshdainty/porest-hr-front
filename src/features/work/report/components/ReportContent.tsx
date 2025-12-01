@@ -1,5 +1,5 @@
-import { toast } from '@/components/shadcn/sonner';
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
+import { toast } from '@/components/shadcn/sonner';
 import { useUser } from '@/contexts/UserContext';
 import ExcelImportDialog from '@/features/work/report/components/ExcelImportDialog';
 import ReportFilter from '@/features/work/report/components/ReportFilter';
@@ -106,7 +106,7 @@ const ReportContent = () => {
       hours: 0,
       content: '',
     };
-    setWorkHistories([...workHistories, newRow]);
+    setWorkHistories([newRow, ...workHistories]);
     setEditingRow(newRow.no);
     setEditData(newRow);
   };
@@ -179,22 +179,18 @@ const ReportContent = () => {
       return;
     }
 
-    try {
-      await createWorkHistory.mutateAsync({
-        work_date: dayjs().format('YYYY-MM-DD'),
-        work_user_id: loginUser?.user_id || row.manager_id,
-        work_group_code: row.work_group.work_code,
-        work_part_code: row.work_part.work_code,
-        work_class_code: row.work_division.work_code,
-        work_hour: Number(row.hours) || 0,
-        work_content: row.content,
-      });
+    const maxNo = workHistories.length > 0 ? Math.max(...workHistories.map((item) => item.no)) : 0;
+    const newRow: WorkHistory = {
+      ...row,
+      no: maxNo + 1,
+      work_history_seq: undefined, // 새 항목으로 취급
+      date: dayjs().format('YYYY-MM-DD'), // 오늘 날짜로 설정
+      manager_id: loginUser?.user_id || row.manager_id,
+    };
 
-      await refetchWorkHistories();
-    } catch (error) {
-      console.error('복제 실패:', error);
-      toast.error('복제에 실패했습니다. 다시 시도해주세요.');
-    }
+    setWorkHistories([newRow, ...workHistories]);
+    setEditingRow(newRow.no);
+    setEditData(newRow);
   };
 
   const handleDuplicateSelected = async () => {
