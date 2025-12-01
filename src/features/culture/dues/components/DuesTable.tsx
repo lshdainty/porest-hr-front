@@ -68,10 +68,10 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
       isNew: true,
       tempId: tempId,
     };
-    const newTableData = [...tableData, newRow];
+    const newTableData = [newRow, ...tableData];
     setTableData(newTableData);
     setEditingRow(tempId);
-    setCurrentPage(Math.ceil(newTableData.length / rowsPerPage));
+    setCurrentPage(1);
   };
 
   const handleAdd = () => {
@@ -90,10 +90,10 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
       tempId: tempId,
     };
 
-    const newTableData = [...tableData, newRow];
+    const newTableData = [newRow, ...tableData];
     setTableData(newTableData);
     setEditingRow(tempId);
-    setCurrentPage(Math.ceil(newTableData.length / rowsPerPage));
+    setCurrentPage(1);
   };
 
   const handleEdit = (id: string) => {
