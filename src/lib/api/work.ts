@@ -313,6 +313,12 @@ export interface CheckSystemStatusBatchResp {
   statuses: CheckSystemStatusResp[];
 }
 
+export interface TodayWorkStatusResp {
+  total_hours: number;
+  required_hours: number;
+  is_completed: boolean;
+}
+
 // System Check API Functions
 export async function fetchPostToggleSystemCheck(data: ToggleSystemCheckReq): Promise<ToggleSystemCheckResp> {
   const resp: ApiResponse<ToggleSystemCheckResp> = await api.request({
@@ -333,6 +339,17 @@ export async function fetchGetSystemCheckStatus(systemCodes: SystemType[]): Prom
     params: {
       system_codes: systemCodes.join(',')
     }
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
+}
+
+export async function fetchGetTodayWorkStatus(): Promise<TodayWorkStatusResp> {
+  const resp: ApiResponse<TodayWorkStatusResp> = await api.request({
+    method: 'get',
+    url: `/work-histories/today/status`
   });
 
   if (!resp.success) throw new Error(resp.message);

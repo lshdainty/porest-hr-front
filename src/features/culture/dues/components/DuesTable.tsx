@@ -1,7 +1,7 @@
-import { toast } from '@/components/shadcn/sonner';
 import PermissionGuard from '@/components/auth/PermissionGuard';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { toast } from '@/components/shadcn/sonner';
 import { useDeleteDuesMutation, usePostDuesMutation, usePutDuesMutation } from '@/hooks/queries/useDues';
 import { GetYearDuesResp } from '@/lib/api/dues';
 import dayjs from 'dayjs';
@@ -79,7 +79,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
     const newRow: EditableDuesData = {
       id: tempId,
       dues_seq: 0,
-      dues_date: dayjs().format('YYYYMMDD'),
+      dues_date: dayjs().format('YYYY-MM-DD'),
       dues_user_name: '',
       dues_type: 'OPERATION',
       dues_detail: '',
@@ -151,7 +151,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
 
   const handleDateChange = (value: string | undefined, id: string) => {
     if (!value) return;
-    const formattedDate = dayjs(value).format('YYYYMMDD');
+    const formattedDate = dayjs(value).format('YYYY-MM-DD');
     setTableData(tableData.map((row) => {
       if (row.id === id) {
         return { ...row, dues_date: formattedDate };

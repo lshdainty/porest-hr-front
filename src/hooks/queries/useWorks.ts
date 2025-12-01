@@ -8,6 +8,7 @@ import {
   fetchDeleteWorkCode,
   fetchDeleteWorkHistory,
   fetchGetSystemCheckStatus,
+  fetchGetTodayWorkStatus,
   fetchGetUnregisteredWorkHistoryExcelDownload,
   fetchGetWorkDivision,
   fetchGetWorkGroups,
@@ -29,6 +30,7 @@ import {
   type CreateWorkHistoryReq,
   type CreateWorkHistoryResp,
   type SystemType,
+  type TodayWorkStatusResp,
   type ToggleSystemCheckReq,
   type ToggleSystemCheckResp,
   type UnregisteredWorkHistoryDownloadReq,
@@ -39,6 +41,25 @@ import {
   type WorkHistoryResp,
   type WorkHistorySearchCondition
 } from '@/lib/api/work'
+
+// ... existing code ...
+
+// 시스템 체크 상태 조회 훅
+export const useSystemCheckStatusQuery = (systemCodes: SystemType[]) => {
+  return useQuery<CheckSystemStatusBatchResp>({
+    queryKey: workKeys.list({ type: 'systemCheck', systemCodes }),
+    queryFn: () => fetchGetSystemCheckStatus(systemCodes),
+    enabled: systemCodes.length > 0
+  })
+}
+
+// 오늘 업무 시간 상태 조회 훅
+export const useTodayWorkStatusQuery = () => {
+  return useQuery<TodayWorkStatusResp>({
+    queryKey: workKeys.list({ type: 'todayStatus' }),
+    queryFn: () => fetchGetTodayWorkStatus()
+  })
+}
 
 const workKeys = createQueryKeys('works')
 
@@ -172,15 +193,6 @@ export const useUnregisteredWorkHistoryExcelDownloadMutation = () => {
 export const useToggleSystemCheckMutation = () => {
   return useMutation<ToggleSystemCheckResp, Error, ToggleSystemCheckReq>({
     mutationFn: (data: ToggleSystemCheckReq) => fetchPostToggleSystemCheck(data)
-  })
-}
-
-// 시스템 체크 상태 조회 훅
-export const useSystemCheckStatusQuery = (systemCodes: SystemType[]) => {
-  return useQuery<CheckSystemStatusBatchResp>({
-    queryKey: workKeys.list({ type: 'systemCheck', systemCodes }),
-    queryFn: () => fetchGetSystemCheckStatus(systemCodes),
-    enabled: systemCodes.length > 0
   })
 }
 
