@@ -17,6 +17,7 @@ export const WIDGETS = [
   { id: 'system-check', label: '시스템 데일리 체크', defaultH: 8, defaultW: 6, minW: 3, maxW: 12, minH: 6, maxH: 16 },
   { id: 'today-work-status', label: '오늘 업무 현황', defaultH: 6, defaultW: 3, minW: 3, maxW: 12, minH: 6, maxH: 8 },
   { id: 'missing-work-history', label: '업무 미작성 알림', defaultH: 8, defaultW: 2, minW: 2, maxW: 2, minH: 8, maxH: 8 },
+  { id: 'user-vacation-stats', label: '전체 유저 휴가 현황', defaultH: 8, defaultW: 6, minW: 4, maxW: 12, minH: 6, maxH: 12 },
 ];
 
 export const defaultLayouts = {
@@ -36,6 +37,7 @@ export const defaultLayouts = {
     { i: 'vacation-history', x: 0, y: 50, w: 6, h: 11 },
     { i: 'dues', x: 6, y: 50, w: 6, h: 11 },
     { i: 'missing-work-history', x: 0, y: 61, w: 2, h: 8 },
+    { i: 'user-vacation-stats', x: 2, y: 61, w: 6, h: 8 },
   ],
   md: [
     { i: 'profile', x: 0, y: 0, w: 5, h: 13 },
@@ -53,6 +55,7 @@ export const defaultLayouts = {
     { i: 'user-company-stats', x: 0, y: 92, w: 10, h: 5 },
     { i: 'system-check', x: 0, y: 97, w: 10, h: 8 },
     { i: 'missing-work-history', x: 0, y: 105, w: 2, h: 8 },
+    { i: 'user-vacation-stats', x: 2, y: 105, w: 6, h: 8 },
   ],
   sm: [
     { i: 'profile', x: 0, y: 0, w: 6, h: 13 },
@@ -70,5 +73,6 @@ export const defaultLayouts = {
     { i: 'user-company-stats', x: 0, y: 115, w: 6, h: 5 },
     { i: 'system-check', x: 0, y: 120, w: 6, h: 8 },
     { i: 'missing-work-history', x: 0, y: 128, w: 2, h: 8 },
+    { i: 'user-vacation-stats', x: 2, y: 128, w: 6, h: 8 },
   ],
 };

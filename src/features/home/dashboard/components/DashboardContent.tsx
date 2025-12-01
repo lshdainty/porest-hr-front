@@ -12,6 +12,7 @@ import TotalDuesWidget from '@/features/home/dashboard/components/widgets/TotalD
 import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
 import UserBirthDuesWidget from '@/features/home/dashboard/components/widgets/UserBirthDuesWidget';
 import UserCompanyStatsWidget from '@/features/home/dashboard/components/widgets/UserCompanyStatsWidget';
+import UserVacationStatsWidget from '@/features/home/dashboard/components/widgets/UserVacationStatsWidget';
 import VacationHistoryWidget from '@/features/home/dashboard/components/widgets/VacationHistoryWidget';
 import VacationRequestStatsWidget from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
 import VacationStatsWidget from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
@@ -180,6 +181,10 @@ const DashboardContent = ({
     'missing-work-history': {
       title: '업무 미작성 알림',
       component: <MissingWorkHistoryWidget />
+    },
+    'user-vacation-stats': {
+      title: '전체 유저 휴가 현황',
+      component: <UserVacationStatsWidget />
     }
   };
 
