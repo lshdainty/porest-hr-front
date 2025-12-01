@@ -23,7 +23,7 @@ import {
   fetchPutUpdateWorkHistory,
   type BulkCreateWorkHistoryReq,
   type BulkCreateWorkHistoryResp,
-  type CheckSystemStatusResp,
+  type CheckSystemStatusBatchResp,
   type CreateWorkCodeReq,
   type CreateWorkCodeResp,
   type CreateWorkHistoryReq,
@@ -176,11 +176,11 @@ export const useToggleSystemCheckMutation = () => {
 }
 
 // 시스템 체크 상태 조회 훅
-export const useSystemCheckStatusQuery = (systemCode: SystemType) => {
-  return useQuery<CheckSystemStatusResp>({
-    queryKey: workKeys.list({ type: 'systemCheck', systemCode }),
-    queryFn: () => fetchGetSystemCheckStatus(systemCode),
-    enabled: !!systemCode
+export const useSystemCheckStatusQuery = (systemCodes: SystemType[]) => {
+  return useQuery<CheckSystemStatusBatchResp>({
+    queryKey: workKeys.list({ type: 'systemCheck', systemCodes }),
+    queryFn: () => fetchGetSystemCheckStatus(systemCodes),
+    enabled: systemCodes.length > 0
   })
 }
 

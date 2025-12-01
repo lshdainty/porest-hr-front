@@ -309,6 +309,10 @@ export interface CheckSystemStatusResp {
   checked: boolean;
 }
 
+export interface CheckSystemStatusBatchResp {
+  statuses: CheckSystemStatusResp[];
+}
+
 // System Check API Functions
 export async function fetchPostToggleSystemCheck(data: ToggleSystemCheckReq): Promise<ToggleSystemCheckResp> {
   const resp: ApiResponse<ToggleSystemCheckResp> = await api.request({
@@ -322,12 +326,12 @@ export async function fetchPostToggleSystemCheck(data: ToggleSystemCheckReq): Pr
   return resp.data;
 }
 
-export async function fetchGetSystemCheckStatus(systemCode: SystemType): Promise<CheckSystemStatusResp> {
-  const resp: ApiResponse<CheckSystemStatusResp> = await api.request({
+export async function fetchGetSystemCheckStatus(systemCodes: SystemType[]): Promise<CheckSystemStatusBatchResp> {
+  const resp: ApiResponse<CheckSystemStatusBatchResp> = await api.request({
     method: 'get',
     url: `/work/system-logs/status`,
     params: {
-      system_code: systemCode
+      system_codes: systemCodes.join(',')
     }
   });
 
