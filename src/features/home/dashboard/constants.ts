@@ -15,7 +15,7 @@ export const WIDGETS = [
   { id: 'user-birth-dues', label: '월별 생일비 입금 현황', defaultH: 9, defaultW: 7, minW: 7, maxW: 12, minH: 6, maxH: 16 },
   { id: 'user-company-stats', label: '회사별 인원 현황', defaultH: 5, defaultW: 6, minW: 5, maxW: 12, minH: 5, maxH: 12 },
   { id: 'system-check', label: '시스템 데일리 체크', defaultH: 8, defaultW: 6, minW: 3, maxW: 12, minH: 6, maxH: 16 },
-  { id: 'today-work-status', label: '오늘 업무 현황', defaultH: 6, defaultW: 6, minW: 3, maxW: 12, minH: 4, maxH: 8 },
+  { id: 'today-work-status', label: '오늘 업무 현황', defaultH: 6, defaultW: 6, minW: 3, maxW: 12, minH: 6, maxH: 8 },
 ];
 
 export const defaultLayouts = {

@@ -6,6 +6,7 @@ import MonthStatsWidget from '@/features/home/dashboard/components/widgets/Month
 import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
 import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
 import SystemCheckWidget from '@/features/home/dashboard/components/widgets/SystemCheckWidget';
+import TodayWorkStatusWidget from '@/features/home/dashboard/components/widgets/TodayWorkStatusWidget';
 import TotalDuesWidget from '@/features/home/dashboard/components/widgets/TotalDuesWidget';
 import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
 import UserBirthDuesWidget from '@/features/home/dashboard/components/widgets/UserBirthDuesWidget';
@@ -170,6 +171,10 @@ const DashboardContent = ({
     'system-check': {
       title: '시스템 데일리 체크',
       component: <SystemCheckWidget />
+    },
+    'today-work-status': {
+      title: '오늘 업무 현황',
+      component: <TodayWorkStatusWidget />
     }
   };
 
