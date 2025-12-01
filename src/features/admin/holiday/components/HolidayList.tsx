@@ -2,10 +2,10 @@ import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
+import HolidayDeleteDialog from '@/features/admin/holiday/components/HolidayDeleteDialog';
 import { type GetHolidaysResp } from '@/lib/api/holiday';
 import dayjs from 'dayjs';
 import { Calendar, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
-import HolidayDeleteDialog from '@/features/admin/holiday/components/HolidayDeleteDialog';
 
 const holidayTypeColors = {
   PUBLIC: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900 dark:text-purple-200 dark:border-purple-800',
@@ -66,7 +66,7 @@ const HolidayList = ({
       {holidays?.map((holiday) => (
         <Card key={holiday.holiday_seq} className='hover:shadow-md transition-shadow'>
           <CardContent className='px-6'>
-            <div className='flex items-center justify-between'>
+            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
               <div className='flex items-center gap-4'>
                 <div className='text-3xl'>{(holiday.holiday_icon && holiday.holiday_icon.trim() !== '') ? holiday.holiday_icon : 'ㅤ'}</div>
                 <div>
@@ -88,7 +88,7 @@ const HolidayList = ({
                   </div>
                 </div>
               </div>
-              <div className='flex items-center gap-2'>
+              <div className='flex flex-wrap items-center gap-2 w-full sm:w-auto'>
                 <Badge className={holidayTypeColors[holiday.holiday_type as keyof typeof holidayTypeColors]}>
                   {holidayTypeLabels[holiday.holiday_type as keyof typeof holidayTypeLabels]}
                 </Badge>
@@ -107,7 +107,7 @@ const HolidayList = ({
                     <Button
                       variant='ghost'
                       size='sm'
-                      className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted'
+                      className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted ml-auto sm:ml-0'
                     >
                       <EllipsisVertical className='w-4 h-4' />
                     </Button>
