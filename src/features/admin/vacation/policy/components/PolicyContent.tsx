@@ -3,17 +3,17 @@ import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { usePolicyContext } from '@/features/admin/vacation/policy/contexts/PolicyContext';
 import {
-    useEffectiveTypesQuery,
-    useExpirationTypesQuery,
-    useGrantMethodTypesQuery,
-    useRepeatUnitTypesQuery,
-    useVacationTypesQuery
+  useEffectiveTypesQuery,
+  useExpirationTypesQuery,
+  useGrantMethodTypesQuery,
+  useRepeatUnitTypesQuery,
+  useVacationTypesQuery
 } from '@/hooks/queries/useTypes';
 import { useVacationPoliciesQuery } from '@/hooks/queries/useVacations';
 import {
-    Loader2,
-    Plus,
-    Search,
+  Loader2,
+  Plus,
+  Search,
 } from 'lucide-react';
 
 import { VacationPolicyFormDialog } from '@/features/admin/vacation/policy/components/VacationPolicyFormDialog';
@@ -57,15 +57,15 @@ const PolicyContent = () => {
         {/* 검색 및 리스트 영역 */}
         <div className="flex flex-col gap-4">
           {/* 검색 영역 */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   placeholder="휴가 정책 검색..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="pl-10 w-80"
+                  className="pl-10 w-full sm:w-80"
                 />
               </div>
               <div className="text-sm text-muted-foreground">총 {filteredPolicies.length}개 정책</div>
@@ -79,7 +79,7 @@ const PolicyContent = () => {
               expirationTypes={expirationTypes}
               repeatUnitTypes={repeatUnitTypes}
               trigger={
-                <Button className="flex items-center gap-2">
+                <Button className="flex items-center justify-center gap-2 w-full sm:w-auto">
                   <Plus className="h-4 w-4" />
                   새 휴가 정책 추가
                 </Button>
