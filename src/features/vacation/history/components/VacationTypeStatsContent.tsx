@@ -46,28 +46,21 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
     return vacationTypes?.reduce((total, item) => total + item.total_remain_time, 0)
   }, [vacationTypes]);
 
-  // 차트 크기 계산 - 최소 크기 보장
+  // 차트 크기 계산 - 반응형
   const chartConfig = useMemo(() => {
     const { width, height } = containerDimensions;
     
-    // 최소 크기 보장
-    const effectiveWidth = Math.max(width, minChartSize);
-    const effectiveHeight = Math.max(height, minChartSize);
+    // 컨테이너 크기에 맞춰 차트 크기 조정
+    const availableSize = Math.min(width, height) - 40; // 패딩 40px
+    const radius = Math.max(availableSize / 2, 60); // 최소 반지름 60px로 줄임
     
-    // 차트가 컨테이너보다 작아야 하므로 패딩 고려
-    const availableSize = Math.min(effectiveWidth, effectiveHeight) - 60; // 패딩 60px
-    const radius = Math.max(availableSize / 2, 80); // 최소 반지름 80px
-    
-    const strokeWidth = Math.max(Math.min(radius * 0.3, 40), 25); // 선 두께
+    const strokeWidth = Math.max(Math.min(radius * 0.25, 40), 20); // 선 두께 조정
     
     return {
-      containerWidth: effectiveWidth,
-      containerHeight: effectiveHeight,
       outerRadius: radius,
-      innerRadius: Math.max(radius - strokeWidth, 20),
-      needsScroll: width < minChartSize || height < minChartSize
+      innerRadius: Math.max(radius - strokeWidth, 10),
     };
-  }, [containerDimensions, minChartSize]);
+  }, [containerDimensions]);
 
   // 컨테이너 크기 추적
   useEffect(() => {
@@ -110,21 +103,11 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
   return (
     <div className={cn('flex flex-col h-full w-full', className)}>
       <div 
-        className='flex-1 pb-0 flex flex-col relative' 
+        className='flex-1 pb-0 flex flex-col relative min-h-[200px]' 
         ref={containerRef}
-        style={{ 
-          overflow: chartConfig.needsScroll ? 'auto' : 'visible',
-          minHeight: `${minChartSize}px`
-        }}
       >
         <div 
           className='flex items-center justify-center absolute inset-0'
-          style={{
-            width: chartConfig.needsScroll ? `${chartConfig.containerWidth}px` : '100%',
-            height: chartConfig.needsScroll ? `${chartConfig.containerHeight}px` : '100%',
-            minWidth: `${minChartSize}px`,
-            minHeight: `${minChartSize}px`
-          }}
         >
           <ResponsiveContainer 
             width='100%' 
