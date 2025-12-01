@@ -18,7 +18,9 @@ const App: React.FC = () => {
   useEffect(() => {
     // CSRF 토큰 발급용 API 호출
     // 서버가 응답 헤더(Set-Cookie)로 XSRF-TOKEN 쿠키를 브라우저에 심어줍니다.
-    api.get('/csrf-token')
+    api.get('/csrf-token').catch((err) => {
+      console.error('CSRF token fetch failed:', err)
+    })
   }, [])
 
   return (
