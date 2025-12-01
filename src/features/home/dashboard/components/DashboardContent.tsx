@@ -2,6 +2,7 @@ import { SpeedDial, SpeedDialAction } from '@/components/common/SpeedDial';
 import { Button } from '@/components/shadcn/button';
 import ApplicationTableWidget from '@/features/home/dashboard/components/widgets/ApplicationTableWidget';
 import DuesWidget from '@/features/home/dashboard/components/widgets/DuesWidget';
+import MissingWorkHistoryWidget from '@/features/home/dashboard/components/widgets/MissingWorkHistoryWidget';
 import MonthStatsWidget from '@/features/home/dashboard/components/widgets/MonthStatsWidget';
 import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
 import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
@@ -175,6 +176,10 @@ const DashboardContent = ({
     'today-work-status': {
       title: '오늘 업무 현황',
       component: <TodayWorkStatusWidget />
+    },
+    'missing-work-history': {
+      title: '업무 미작성 알림',
+      component: <MissingWorkHistoryWidget />
     }
   };
 

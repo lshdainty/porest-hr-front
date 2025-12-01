@@ -15,13 +15,14 @@ export const WIDGETS = [
   { id: 'user-birth-dues', label: '월별 생일비 입금 현황', defaultH: 9, defaultW: 7, minW: 7, maxW: 12, minH: 6, maxH: 16 },
   { id: 'user-company-stats', label: '회사별 인원 현황', defaultH: 5, defaultW: 6, minW: 5, maxW: 12, minH: 5, maxH: 12 },
   { id: 'system-check', label: '시스템 데일리 체크', defaultH: 8, defaultW: 6, minW: 3, maxW: 12, minH: 6, maxH: 16 },
-  { id: 'today-work-status', label: '오늘 업무 현황', defaultH: 6, defaultW: 6, minW: 3, maxW: 12, minH: 6, maxH: 8 },
+  { id: 'today-work-status', label: '오늘 업무 현황', defaultH: 6, defaultW: 3, minW: 3, maxW: 12, minH: 6, maxH: 8 },
+  { id: 'missing-work-history', label: '업무 미작성 알림', defaultH: 8, defaultW: 2, minW: 2, maxW: 2, minH: 8, maxH: 8 },
 ];
 
 export const defaultLayouts = {
   lg: [
     { i: 'profile', x: 0, y: 0, w: 3, h: 13 },
-    { i: 'today-work-status', x: 3, y: 0, w: 6, h: 6 },
+    { i: 'today-work-status', x: 3, y: 0, w: 3, h: 6 },
     { i: 'vacation-stats', x: 3, y: 6, w: 6, h: 4 },
     { i: 'month-stats', x: 3, y: 10, w: 6, h: 9 },
     { i: 'type-stats', x: 9, y: 0, w: 3, h: 13 },
@@ -34,10 +35,11 @@ export const defaultLayouts = {
     { i: 'vacation-application', x: 0, y: 42, w: 12, h: 8 },
     { i: 'vacation-history', x: 0, y: 50, w: 6, h: 11 },
     { i: 'dues', x: 6, y: 50, w: 6, h: 11 },
+    { i: 'missing-work-history', x: 0, y: 61, w: 2, h: 8 },
   ],
   md: [
     { i: 'profile', x: 0, y: 0, w: 5, h: 13 },
-    { i: 'today-work-status', x: 5, y: 0, w: 5, h: 6 },
+    { i: 'today-work-status', x: 5, y: 0, w: 3, h: 6 },
     { i: 'vacation-stats', x: 5, y: 6, w: 5, h: 4 },
     { i: 'type-stats', x: 5, y: 10, w: 5, h: 9 },
     { i: 'month-stats', x: 0, y: 13, w: 10, h: 9 },
@@ -50,10 +52,11 @@ export const defaultLayouts = {
     { i: 'user-birth-dues', x: 0, y: 78, w: 10, h: 14 },
     { i: 'user-company-stats', x: 0, y: 92, w: 10, h: 5 },
     { i: 'system-check', x: 0, y: 97, w: 10, h: 8 },
+    { i: 'missing-work-history', x: 0, y: 105, w: 2, h: 8 },
   ],
   sm: [
     { i: 'profile', x: 0, y: 0, w: 6, h: 13 },
-    { i: 'today-work-status', x: 0, y: 13, w: 6, h: 6 },
+    { i: 'today-work-status', x: 0, y: 13, w: 3, h: 6 },
     { i: 'vacation-stats', x: 0, y: 19, w: 6, h: 4 },
     { i: 'month-stats', x: 0, y: 23, w: 6, h: 9 },
     { i: 'type-stats', x: 0, y: 32, w: 6, h: 13 },
@@ -66,5 +69,6 @@ export const defaultLayouts = {
     { i: 'user-birth-dues', x: 0, y: 101, w: 6, h: 14 },
     { i: 'user-company-stats', x: 0, y: 115, w: 6, h: 5 },
     { i: 'system-check', x: 0, y: 120, w: 6, h: 8 },
+    { i: 'missing-work-history', x: 0, y: 128, w: 2, h: 8 },
   ],
 };
