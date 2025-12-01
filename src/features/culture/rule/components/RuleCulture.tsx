@@ -1,4 +1,4 @@
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/shadcn/hoverCard';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 
 const RuleCulture = () => {
   return (
@@ -13,13 +13,13 @@ const RuleCulture = () => {
             <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>생일</h3>
             <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
               😄 당신은 사랑받기 위해 태어난 사람~ 생일을 축하드리며
-              <HoverCard>
-                <HoverCardTrigger> <b><u>빠른 퇴근</u></b></HoverCardTrigger>
-                <HoverCardContent className='text-sm text-gray-600 dark:text-card-foreground'>
+              <Popover>
+                <PopoverTrigger>&nbsp;<b><u>빠른 퇴근</u></b></PopoverTrigger>
+                <PopoverContent className='text-sm text-gray-600 dark:text-card-foreground'>
                   서울 거주자: 1시간,<br/>
                   서울외 거주자: 1시간 30분
-                </HoverCardContent>
-              </HoverCard>하세요!
+                </PopoverContent>
+              </Popover>하세요!
             </p>
           </div>
         </div>
@@ -38,13 +38,13 @@ const RuleCulture = () => {
             <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>가족기념일</h3>
             <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
               가족생일, 결혼기념일엔 가족과 함께 보내야죠! 이 날도
-              <HoverCard>
-                <HoverCardTrigger> <b><u>빠른 퇴근</u></b></HoverCardTrigger>
-                <HoverCardContent className='text-sm text-gray-600 dark:text-card-foreground'>
+              <Popover>
+                <PopoverTrigger>&nbsp;<b><u>빠른 퇴근</u></b></PopoverTrigger>
+                <PopoverContent className='text-sm text-gray-600 dark:text-card-foreground'>
                   서울 거주자: 1시간,<br/>
                   서울외 거주자: 1시간 30분
-                </HoverCardContent>
-              </HoverCard>하세요!
+                </PopoverContent>
+              </Popover>하세요!
             </p>
           </div>
         </div>
@@ -54,14 +54,14 @@ const RuleCulture = () => {
             <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>기타사항</h3>
             <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
               조기 퇴근은
-              <HoverCard>
-                <HoverCardTrigger> <b><u>본인 및 가족</u></b></HoverCardTrigger>
-                <HoverCardContent className='text-sm text-gray-600 dark:text-card-foreground'>
+              <Popover>
+                <PopoverTrigger>&nbsp;<b><u>본인 및 가족</u></b></PopoverTrigger>
+                <PopoverContent className='text-sm text-gray-600 dark:text-card-foreground'>
                   가족 범위<br/>
                   🤵‍♂️남편, 👰‍♀️아내, 👶자녀까지 해당돼요<br/>
                   👴,👵부모님, 👫연인은 해당안돼요.
-                </HoverCardContent>
-              </HoverCard>만 해당해요. 단 기념일이 공휴일이거나 주말인 경우엔 해당되지 않아요.
+                </PopoverContent>
+              </Popover>만 해당해요. 단 기념일이 공휴일이거나 주말인 경우엔 해당되지 않아요.
             </p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/shadcn/hoverCard';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 
 const RuleAttire = () => {
   return (
@@ -40,14 +40,14 @@ const RuleAttire = () => {
             <h3 className='text-lg font-semibold text-gray-800 dark:text-card-foreground mb-2'>지양 복장</h3>
             <p className='text-sm text-gray-600 dark:text-card-foreground line-clamp-4'>
               🚫과도한 노출이나 불쾌감을 줄 수 있는 
-              <HoverCard>
-                <HoverCardTrigger> <b><u>복장</u></b></HoverCardTrigger>
-                <HoverCardContent className='text-sm text-gray-600 dark:text-card-foreground'>
+              <Popover>
+                <PopoverTrigger>&nbsp;<b><u>복장</u></b></PopoverTrigger>
+                <PopoverContent className='text-sm text-gray-600 dark:text-card-foreground'>
                   👔셔츠는 단추 잠구기<br/>
                   🙅‍♂️운동복, 츄리닝 안돼요!<br/>
                   🩴슬리퍼, 크록스 안돼요!<br/>
-                </HoverCardContent>
-              </HoverCard>
+                </PopoverContent>
+              </Popover>
               은 피해주세요.
             </p>
           </div>
