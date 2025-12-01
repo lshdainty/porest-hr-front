@@ -1,14 +1,14 @@
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
+import { VacationPolicyDeleteDialog } from '@/features/admin/vacation/policy/components/VacationPolicyDeleteDialog';
 import {
-    useEffectiveTypesQuery,
-    useExpirationTypesQuery,
-    useGrantMethodTypesQuery,
-    useVacationTypesQuery
+  useEffectiveTypesQuery,
+  useExpirationTypesQuery,
+  useGrantMethodTypesQuery,
+  useVacationTypesQuery
 } from '@/hooks/queries/useTypes';
 import { Calendar, CalendarClock, Repeat, Trash2 } from 'lucide-react';
-import { VacationPolicyDeleteDialog } from '@/features/admin/vacation/policy/components/VacationPolicyDeleteDialog';
 
 interface VacationPolicyListsProps {
   policies: any[]; // Replace 'any' with proper type if available, e.g., IVacationPolicy
@@ -32,10 +32,10 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
     <div className="flex flex-col gap-4">
       {policies.map(policy => (
         <Card key={policy.vacation_policy_id} className="transition-all hover:shadow-md">
-          <CardContent className="px-6">
-            <div className="flex items-start justify-between">
+          <CardContent className="p-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex flex-col gap-3 flex-1">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                   <h3 className="font-semibold text-lg">{policy.vacation_policy_name}</h3>
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="outline" className="text-xs">
@@ -49,7 +49,7 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
                 {policy.vacation_policy_desc && (
                   <p className="text-muted-foreground text-sm">{policy.vacation_policy_desc}</p>
                 )}
-                <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     <span>부여 시간: {policy.grant_time_str === '0' || policy.grant_time_str === '0일' ? '제한없음' : policy.grant_time_str}</span>
@@ -62,7 +62,7 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
                   )}
                 </div>
                 {(policy.effective_type || policy.expiration_type) && (
-                  <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <CalendarClock className="h-4 w-4" />
                       <span>
@@ -76,13 +76,15 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
               <VacationPolicyDeleteDialog
                 policy={policy}
                 trigger={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="self-end sm:self-auto">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 }
               />
             </div>
@@ -105,4 +107,5 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
   )
 }
 
-export { VacationPolicyLists }
+export { VacationPolicyLists };
+
