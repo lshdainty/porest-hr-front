@@ -462,6 +462,20 @@ export interface PostCancelVacationRequestResp {
   vacation_grant_id: number
 }
 
+export interface GetAllUsersVacationSummaryResp {
+  user_id: string
+  user_name: string
+  department_name: string
+  total_vacation_days: number
+  total_vacation_days_str: string
+  used_vacation_days: number
+  used_vacation_days_str: string
+  scheduled_vacation_days: number
+  scheduled_vacation_days_str: string
+  remaining_vacation_days: number
+  remaining_vacation_days_str: string
+}
+
 // API Functions
 export async function fetchPostUseVacation(data: PostUseVacationReq): Promise<PostUseVacationResp> {
   const resp: ApiResponse<PostUseVacationResp> = await api.request({
@@ -811,6 +825,17 @@ export async function fetchPostCancelVacationRequest(vacationGrantId: number, us
   const resp: ApiResponse<PostCancelVacationRequestResp> = await api.request({
     method: 'post',
     url: `/vacation-requests/${vacationGrantId}/cancel?userId=${userId}`
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
+}
+
+export async function fetchGetAllUsersVacationSummary(year: number): Promise<GetAllUsersVacationSummaryResp[]> {
+  const resp: ApiResponse<GetAllUsersVacationSummaryResp[]> = await api.request({
+    method: 'get',
+    url: `/vacations/summary?year=${year}`
   });
 
   if (!resp.success) throw new Error(resp.message);

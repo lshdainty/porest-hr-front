@@ -10,6 +10,7 @@ import {
     fetchDeleteVacationPolicy,
     fetchDeleteVacationUsage,
     fetchGetAllUsersVacationHistory,
+    fetchGetAllUsersVacationSummary,
     fetchGetAllVacationsByApprover,
     fetchGetAvailableVacations,
     fetchGetUserAssignedVacationPolicies,
@@ -38,6 +39,7 @@ import {
     type DeleteRevokeVacationPolicyFromUserResp,
     type DeleteVacationPolicyResp,
     type GetAllUsersVacationHistoryResp,
+    type GetAllUsersVacationSummaryResp,
     type GetAvailableVacationsResp,
     type GetUserAssignedVacationPoliciesResp,
     type GetUserMonthlyVacationStatsResp,
@@ -84,6 +86,15 @@ export const useAllUsersVacationHistoryQuery = () => {
   return useQuery<GetAllUsersVacationHistoryResp[]>({
     queryKey: vacationKeys.lists(),
     queryFn: () => fetchGetAllUsersVacationHistory()
+  })
+}
+
+// 전체 사용자 휴가 통계 조회 훅
+export const useAllUsersVacationSummaryQuery = (year: number) => {
+  return useQuery<GetAllUsersVacationSummaryResp[]>({
+    queryKey: vacationKeys.list({ type: 'summary', year }),
+    queryFn: () => fetchGetAllUsersVacationSummary(year),
+    enabled: !!year
   })
 }
 
