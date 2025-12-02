@@ -2,7 +2,7 @@ import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { Card, CardContent } from '@/components/shadcn/card';
-import { ScrollArea } from '@/components/shadcn/scrollArea';
+
 import { useSystemCheckStatusQuery, useSystemTypesQuery, useToggleSystemCheckMutation } from '@/hooks/queries/useWorks';
 import { SystemType } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
@@ -44,13 +44,13 @@ const SystemCheckWidget = () => {
     <Card className="h-full flex flex-col border-none shadow-none py-0 min-h-[200px]">
 
       <CardContent className="flex-1 p-0 min-h-0">
-        <ScrollArea className="h-full">
+        <div className="h-full overflow-y-auto">
           <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-2 p-2">
             {sortedSystems.map((system) => (
               <SystemRow key={system.id} system={system} onToggle={() => refetch()} />
             ))}
           </div>
-        </ScrollArea>
+        </div>
       </CardContent>
     </Card>
   );
