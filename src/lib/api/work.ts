@@ -316,7 +316,7 @@ export interface CheckSystemStatusBatchResp {
 export interface TodayWorkStatusResp {
   total_hours: number;
   required_hours: number;
-  is_completed: boolean;
+  completed: boolean;
 }
 
 // System Check API Functions

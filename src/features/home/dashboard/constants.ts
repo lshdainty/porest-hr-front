@@ -15,8 +15,8 @@ export const WIDGETS = [
   { id: 'user-birth-dues', label: '월별 생일비 입금 현황', defaultH: 9, defaultW: 7, minW: 7, maxW: 12, minH: 6, maxH: 16 },
   { id: 'user-company-stats', label: '회사별 인원 현황', defaultH: 5, defaultW: 6, minW: 5, maxW: 12, minH: 5, maxH: 12 },
   { id: 'system-check', label: '시스템 데일리 체크', defaultH: 8, defaultW: 6, minW: 3, maxW: 12, minH: 6, maxH: 16 },
-  { id: 'today-work-status', label: '오늘 업무 현황', defaultH: 6, defaultW: 3, minW: 3, maxW: 12, minH: 6, maxH: 8 },
-  { id: 'missing-work-history', label: '업무 미작성 알림', defaultH: 8, defaultW: 2, minW: 2, maxW: 2, minH: 8, maxH: 8 },
+  { id: 'today-work-status', label: '업무이력 작성 현황', defaultH: 6, defaultW: 3, minW: 3, maxW: 12, minH: 6, maxH: 8 },
+  { id: 'missing-work-history', label: '월별 업무 미작성 알림', defaultH: 8, defaultW: 2, minW: 2, maxW: 2, minH: 8, maxH: 8 },
   { id: 'user-vacation-stats', label: '전체 유저 휴가 현황', defaultH: 8, defaultW: 6, minW: 4, maxW: 12, minH: 6, maxH: 12 },
 ];
 

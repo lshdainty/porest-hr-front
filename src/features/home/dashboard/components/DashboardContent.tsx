@@ -175,11 +175,11 @@ const DashboardContent = ({
       component: <SystemCheckWidget />
     },
     'today-work-status': {
-      title: '오늘 업무 현황',
+      title: '업무이력 작성 현황',
       component: <TodayWorkStatusWidget />
     },
     'missing-work-history': {
-      title: '업무 미작성 알림',
+      title: '월별 업무 미작성 알림',
       component: <MissingWorkHistoryWidget />
     },
     'user-vacation-stats': {
