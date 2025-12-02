@@ -50,7 +50,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                 const isSaturday = dayOfWeek === 6;
 
                 // 공휴일 정보 가져오기
-                const holiday = findHolidayByDate(dayjs(day).format('YYYYMMDD'));
+                const holiday = findHolidayByDate(dayjs(day).format('YYYY-MM-DD'));
 
                 // 공휴일 색상 결정
                 let holidayColor = '';

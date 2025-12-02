@@ -4,7 +4,6 @@ import { Card, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import HolidayDeleteDialog from '@/features/admin/holiday/components/HolidayDeleteDialog';
 import { type GetHolidaysResp } from '@/lib/api/holiday';
-import dayjs from 'dayjs';
 import { Calendar, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 
 const holidayTypeColors = {
@@ -17,12 +16,6 @@ const holidayTypeLabels = {
   PUBLIC: '공휴일',
   ETC: '기타',
   SUBSTITUTE: '대체',
-};
-
-const formatYYYYMMDDToDisplay = (yyyymmdd: string) => {
-  if (!yyyymmdd || yyyymmdd.length !== 8) return '';
-  const formattedDate = `${yyyymmdd.substring(0, 4)}-${yyyymmdd.substring(4, 6)}-${yyyymmdd.substring(6, 8)}`;
-  return dayjs(formattedDate).format('YYYY-MM-DD');
 };
 
 interface HolidayListProps {
@@ -40,24 +33,13 @@ const HolidayList = ({
 }: HolidayListProps) => {
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
-    if (dateString.length === 8 && /^\d{8}$/.test(dateString)) {
-      const formattedDate = formatYYYYMMDDToDisplay(dateString);
-      const date = new Date(formattedDate);
-      return date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
-    }
     const date = new Date(dateString);
     return date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
   };
 
   const formatLunarDate = (lunarDate: string) => {
     if (!lunarDate) return '';
-    let formattedDate;
-    if (lunarDate.length === 8 && /^\d{8}$/.test(lunarDate)) {
-      formattedDate = formatYYYYMMDDToDisplay(lunarDate);
-    } else {
-      formattedDate = lunarDate;
-    }
-    const date = new Date(formattedDate);
+    const date = new Date(lunarDate);
     return `음력 ${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
 

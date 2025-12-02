@@ -31,7 +31,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
   const currentEvents = getCurrentEvents(singleDayEvents);
 
   // 공휴일 정보 가져오기
-  const holiday = findHolidayByDate(dayjs(selectedDate).format('YYYYMMDD'));
+  const holiday = findHolidayByDate(dayjs(selectedDate).format('YYYY-MM-DD'));
 
   // 공휴일 색상 결정
   let holidayColor = '';
@@ -46,19 +46,11 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
   // Calendar 컴포넌트를 위한 공휴일 modifiers 생성
   const publicHolidays = holidays
     .filter(h => h.holiday_type === 'PUBLIC' || h.holiday_type === 'SUBSTITUTE')
-    .map(h => new Date(
-      parseInt(h.holiday_date.substring(0, 4)),
-      parseInt(h.holiday_date.substring(4, 6)) - 1,
-      parseInt(h.holiday_date.substring(6, 8))
-    ));
+    .map(h => new Date(h.holiday_date));
 
   const etcHolidays = holidays
     .filter(h => h.holiday_type === 'ETC')
-    .map(h => new Date(
-      parseInt(h.holiday_date.substring(0, 4)),
-      parseInt(h.holiday_date.substring(4, 6)) - 1,
-      parseInt(h.holiday_date.substring(6, 8))
-    ));
+    .map(h => new Date(h.holiday_date));
 
   const dayEvents = singleDayEvents.filter(event => {
     const eventDate = parseISO(event.startDate);

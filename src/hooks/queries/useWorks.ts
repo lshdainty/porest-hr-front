@@ -9,6 +9,7 @@ import {
   fetchDeleteWorkHistory,
   fetchGetSystemCheckStatus,
   fetchGetTodayWorkStatus,
+  fetchGetUnregisteredWorkDates,
   fetchGetUnregisteredWorkHistoryExcelDownload,
   fetchGetWorkDivision,
   fetchGetWorkGroups,
@@ -33,6 +34,7 @@ import {
   type TodayWorkStatusResp,
   type ToggleSystemCheckReq,
   type ToggleSystemCheckResp,
+  type UnregisteredWorkDatesResp,
   type UnregisteredWorkHistoryDownloadReq,
   type UpdateWorkCodeReq,
   type UpdateWorkHistoryReq,
@@ -58,6 +60,14 @@ export const useTodayWorkStatusQuery = () => {
   return useQuery<TodayWorkStatusResp>({
     queryKey: workKeys.list({ type: 'todayStatus' }),
     queryFn: () => fetchGetTodayWorkStatus()
+  })
+}
+
+// 미작성 업무 날짜 조회 훅
+export const useUnregisteredWorkDatesQuery = (year: number, month: number) => {
+  return useQuery<UnregisteredWorkDatesResp>({
+    queryKey: workKeys.list({ type: 'unregisteredDates', year, month }),
+    queryFn: () => fetchGetUnregisteredWorkDates(year, month)
   })
 }
 

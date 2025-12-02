@@ -2,15 +2,15 @@ import dayjs from 'dayjs';
 import { createContext, ReactNode, useContext } from 'react';
 
 interface DuesContextType {
-  year: string;
-  month: string;
+  year: number;
+  month: number;
 }
 
 const DuesContext = createContext<DuesContextType | null>(null);
 
 export const DuesProvider = ({ children }: { children: ReactNode }) => {
-  const year = dayjs().format('YYYY');
-  const month = dayjs().format('MM');
+  const year = dayjs().year();
+  const month = dayjs().month() + 1;
 
   return (
     <DuesContext.Provider value={{ year, month }}>

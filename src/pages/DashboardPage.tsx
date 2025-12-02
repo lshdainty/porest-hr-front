@@ -38,10 +38,10 @@ const DashboardPage = () => {
   const { data: grantStatusTypes } = useGrantStatusTypesQuery();
   const { data: users, isLoading: usersLoading, error: usersError } = useUsersQuery();
   const { data: vacationHistory, isLoading: vacationHistoryLoading, error: vacationHistoryError } = useUserVacationHistoryQuery(user_id);
-  const { data: yearDues, isLoading: yearDuesLoading, error: yearDuesError } = useYearDuesQuery(dayjs().format('YYYY'));
-  const { data: totalDues, isLoading: totalDuesLoading, error: totalDuesError } = useYearOperationDuesQuery(dayjs().format('YYYY'));
-  const { data: birthDues, isLoading: birthDuesLoading, error: birthDuesError } = useMonthBirthDuesQuery(dayjs().format('YYYY'), dayjs().format('MM'));
-  const { data: usersBirthDues, isLoading: usersBirthDuesLoading, error: usersBirthDuesError } = useUsersMonthBirthDuesQuery(dayjs().format('YYYY'));
+  const { data: yearDues, isLoading: yearDuesLoading, error: yearDuesError } = useYearDuesQuery(dayjs().year());
+  const { data: totalDues, isLoading: totalDuesLoading, error: totalDuesError } = useYearOperationDuesQuery(dayjs().year());
+  const { data: birthDues, isLoading: birthDuesLoading, error: birthDuesError } = useMonthBirthDuesQuery(dayjs().year(), dayjs().month() + 1);
+  const { data: usersBirthDues, isLoading: usersBirthDuesLoading, error: usersBirthDuesError } = useUsersMonthBirthDuesQuery(dayjs().year());
 
   const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || vacationStatsLoading || usersLoading || vacationRequestsLoading || requestStatsLoading || vacationHistoryLoading || yearDuesLoading || totalDuesLoading || birthDuesLoading || usersBirthDuesLoading;
   const error = userError || vacationTypesError || monthStatsError || vacationStatsError || usersError || vacationRequestsError || requestStatsError || vacationHistoryError || yearDuesError || totalDuesError || birthDuesError || usersBirthDuesError;

@@ -356,3 +356,23 @@ export async function fetchGetTodayWorkStatus(): Promise<TodayWorkStatusResp> {
 
   return resp.data;
 }
+
+export interface UnregisteredWorkDatesResp {
+  unregistered_dates: string[];
+  total_unregistered_days: number;
+}
+
+export async function fetchGetUnregisteredWorkDates(year: number, month: number): Promise<UnregisteredWorkDatesResp> {
+  const resp: ApiResponse<UnregisteredWorkDatesResp> = await api.request({
+    method: 'get',
+    url: `/work-histories/unregistered-dates`,
+    params: {
+      year,
+      month
+    }
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
+}

@@ -22,7 +22,7 @@ import {
 const duesKeys = createQueryKeys('dues')
 
 // 연도별 회비 조회 훅
-export const useYearDuesQuery = (year: string) => {
+export const useYearDuesQuery = (year: number) => {
   return useQuery<GetYearDuesResp[]>({
     queryKey: duesKeys.list({ type: 'year', year }),
     queryFn: () => fetchGetYearDues(year),
@@ -31,7 +31,7 @@ export const useYearDuesQuery = (year: string) => {
 }
 
 // 연도별 운영비 조회 훅
-export const useYearOperationDuesQuery = (year: string) => {
+export const useYearOperationDuesQuery = (year: number) => {
   return useQuery<GetYearOperationDuesResp>({
     queryKey: duesKeys.list({ type: 'yearOperation', year }),
     queryFn: () => fetchGetYearOperationDues(year),
@@ -40,7 +40,7 @@ export const useYearOperationDuesQuery = (year: string) => {
 }
 
 // 월별 생일 회비 조회 훅
-export const useMonthBirthDuesQuery = (year: string, month: string) => {
+export const useMonthBirthDuesQuery = (year: number, month: number) => {
   return useQuery<GetMonthBirthDuesResp>({
     queryKey: duesKeys.list({ type: 'monthBirth', year, month }),
     queryFn: () => fetchGetMonthBirthDues(year, month),
@@ -49,7 +49,7 @@ export const useMonthBirthDuesQuery = (year: string, month: string) => {
 }
 
 // 사용자별 월별 생일 회비 조회 훅
-export const useUsersMonthBirthDuesQuery = (year: string) => {
+export const useUsersMonthBirthDuesQuery = (year: number) => {
   return useQuery<GetUsersMonthBirthDuesResp[]>({
     queryKey: duesKeys.list({ type: 'usersMonthBirth', year }),
     queryFn: () => fetchGetUsersMonthBirthDues(year),

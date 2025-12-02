@@ -18,15 +18,15 @@ import HolidayListSkeleton from '@/features/admin/holiday/components/HolidayList
 
 const formatDateToYYYYMMDD = (dateString: string) => {
   if (!dateString) return '';
-  return dayjs(dateString).format('YYYYMMDD');
+  return dayjs(dateString).format('YYYY-MM-DD');
 };
 
 const HolidayContent = () => {
   const { isDialogOpen, setIsDialogOpen, editingHoliday, setEditingHoliday } = useHolidayContext();
 
   const currentYear = new Date().getFullYear();
-  const startDate = `${currentYear}0101`;
-  const endDate = `${currentYear}1231`;
+  const startDate = `${currentYear}-01-01`;
+  const endDate = `${currentYear}-12-31`;
 
   const { data: holidays, isLoading: holidaysLoding, refetch } = useHolidaysByPeriodQuery(startDate, endDate, 'KR');
   const postMutation = usePostHolidayMutation();
@@ -62,21 +62,7 @@ const HolidayContent = () => {
   };
 
   const handleEdit = (holiday: GetHolidaysResp) => {
-    const formattedHoliday = {
-      ...holiday,
-      holiday_date: holiday.holiday_date.length === 8
-        ? dayjs(
-            `${holiday.holiday_date.substring(0, 4)}-${holiday.holiday_date.substring(4, 6)}-${holiday.holiday_date.substring(6, 8)}`
-          ).format('YYYY-MM-DD')
-        : holiday.holiday_date,
-      lunar_date:
-        holiday.lunar_date && holiday.lunar_date.length === 8
-          ? dayjs(
-              `${holiday.lunar_date.substring(0, 4)}-${holiday.lunar_date.substring(4, 6)}-${holiday.lunar_date.substring(6, 8)}`
-            ).format('YYYY-MM-DD')
-          : holiday.lunar_date,
-    };
-    setEditingHoliday(formattedHoliday);
+    setEditingHoliday(holiday);
     setIsDialogOpen(true);
   };
 

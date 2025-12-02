@@ -2,7 +2,7 @@ import { api, type ApiResponse } from '@/lib/api';
 
 // Request/Response Types
 export interface GetYearDuesReq {
-  year: string
+  year: number
 }
 
 export interface GetYearDuesResp {
@@ -17,7 +17,7 @@ export interface GetYearDuesResp {
 }
 
 export interface GetYearOperationDuesReq {
-  year: string
+  year: number
 }
 
 export interface GetYearOperationDuesResp {
@@ -27,8 +27,8 @@ export interface GetYearOperationDuesResp {
 }
 
 export interface GetMonthBirthDuesReq {
-  year: string
-  month: string
+  year: number
+  month: number
 }
 
 export interface GetMonthBirthDuesResp {
@@ -36,7 +36,7 @@ export interface GetMonthBirthDuesResp {
 }
 
 export interface GetUsersMonthBirthDuesReq {
-  year: string
+  year: number
 }
 
 export interface GetUsersMonthBirthDuesResp {
@@ -64,7 +64,7 @@ export interface PutDuesReq {
 }
 
 // API Functions
-export async function fetchGetYearDues(year: string): Promise<GetYearDuesResp[]> {
+export async function fetchGetYearDues(year: number): Promise<GetYearDuesResp[]> {
   const resp: ApiResponse<GetYearDuesResp[]> = await api.request({
     method: 'get',
     url: `/dues?year=${year}`
@@ -75,7 +75,7 @@ export async function fetchGetYearDues(year: string): Promise<GetYearDuesResp[]>
   return resp.data;
 }
 
-export async function fetchGetYearOperationDues(year: string): Promise<GetYearOperationDuesResp> {
+export async function fetchGetYearOperationDues(year: number): Promise<GetYearOperationDuesResp> {
   const resp: ApiResponse<GetYearOperationDuesResp> = await api.request({
     method: 'get',
     url: `/dues/operation?year=${year}`
@@ -86,7 +86,7 @@ export async function fetchGetYearOperationDues(year: string): Promise<GetYearOp
   return resp.data;
 }
 
-export async function fetchGetMonthBirthDues(year: string, month: string): Promise<GetMonthBirthDuesResp> {
+export async function fetchGetMonthBirthDues(year: number, month: number): Promise<GetMonthBirthDuesResp> {
   const resp: ApiResponse<GetMonthBirthDuesResp> = await api.request({
     method: 'get',
     url: `/dues/birth/month?year=${year}&month=${month}`
@@ -97,7 +97,7 @@ export async function fetchGetMonthBirthDues(year: string, month: string): Promi
   return resp.data;
 }
 
-export async function fetchGetUsersMonthBirthDues(year: string): Promise<GetUsersMonthBirthDuesResp[]> {
+export async function fetchGetUsersMonthBirthDues(year: number): Promise<GetUsersMonthBirthDuesResp[]> {
   const resp: ApiResponse<GetUsersMonthBirthDuesResp[]> = await api.request({
     method: 'get',
     url: `/dues/users/birth/month?year=${year}`

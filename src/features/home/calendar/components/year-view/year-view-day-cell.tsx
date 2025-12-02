@@ -22,7 +22,7 @@ const YearViewDayCell = ({ day, date, events }: IProps) => {
   const isSaturday = date.getDay() === 6;
 
   // 공휴일 정보 가져오기
-  const holiday = findHolidayByDate(dayjs(date).format('YYYYMMDD'));
+  const holiday = findHolidayByDate(dayjs(date).format('YYYY-MM-DD'));
 
   // 공휴일 색상 결정
   let holidayColor = '';
