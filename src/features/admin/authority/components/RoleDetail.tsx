@@ -1,21 +1,22 @@
+import { RequirePermission } from "@/components/auth/RequirePermission";
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
-import { RequirePermission } from "@/components/auth/RequirePermission";
 import { usePermission } from "@/contexts/PermissionContext";
 import PermissionMatrix from "@/features/admin/authority/components/PermissionMatrix";
 import { Authority, Role } from "@/features/admin/authority/types";
-import { Save } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 
 interface RoleDetailProps {
   role: Role;
   allAuthorities: Authority[];
   onUpdateRole: (updatedRole: Role) => void;
   onSave: () => void;
+  onBack?: () => void;
 }
 
-const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave }: RoleDetailProps) => {
+const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: RoleDetailProps) => {
   const { hasPermission } = usePermission();
   const canManageRoles = hasPermission("ROLE:MANAGE");
 
@@ -52,11 +53,18 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave }: RoleDetailPr
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-6 border-b bg-background sticky top-0 z-10">
+      <div className="p-6 border-b bg-background sticky top-0 z-20">
         <div className="flex justify-between items-start mb-6">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Role Details</h2>
-            <p className="text-muted-foreground">Manage role information and permissions.</p>
+          <div className="flex items-center gap-2">
+            {onBack && (
+              <Button variant="outline" size="icon" onClick={onBack} className="mr-2 md:hidden shrink-0">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Role Details</h2>
+              <p className="text-muted-foreground">Manage role information and permissions.</p>
+            </div>
           </div>
           <RequirePermission permission="ROLE:MANAGE">
             <Button onClick={onSave} className="gap-2">
@@ -108,7 +116,7 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave }: RoleDetailPr
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-6 bg-muted/10">
+      <div className="flex-1 overflow-y-auto p-6 bg-muted/10 pb-20">
         <h3 className="text-lg font-semibold mb-4">Permissions</h3>
         <PermissionMatrix
           authorities={allAuthorities}

@@ -13,7 +13,16 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { useIsMobile } from "@/hooks/useMobile";
+
 const RoleManagementPanel = () => {
+  const isMobile = useIsMobile();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const { data: roles = [], isLoading: isRolesLoading, refetch: refetchRoles } = useRolesQuery();
   const { data: authorities = [], isLoading: isPermissionsLoading } = usePermissionsQuery();
 
@@ -49,10 +58,10 @@ const RoleManagementPanel = () => {
   }, [domainRoles, editingRole]);
 
   useEffect(() => {
-    if (domainRoles.length > 0 && selectedRoleId === null) {
+    if (isMounted && !isMobile && domainRoles.length > 0 && selectedRoleId === null) {
       setSelectedRoleId(domainRoles[0].role_code);
     }
-  }, [domainRoles, selectedRoleId]);
+  }, [domainRoles, selectedRoleId, isMobile, isMounted]);
 
   const selectedRole = useMemo(() => 
     displayRoles.find(r => r.role_code === selectedRoleId),
@@ -202,6 +211,43 @@ const RoleManagementPanel = () => {
       toast.error("Failed to save role");
     }
   };
+
+  if (!isMounted) {
+    return null;
+  }
+
+  const handleBackToList = () => {
+    setSelectedRoleId(null);
+    setEditingRole(null);
+  };
+
+  if (isMobile) {
+    if (selectedRoleId && editingRole) {
+      return (
+        <div className="h-full bg-background">
+          <RoleDetail 
+            role={editingRole} 
+            allAuthorities={authorities}
+            onUpdateRole={handleUpdateRole}
+            onSave={handleSave}
+            onBack={handleBackToList}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="h-full bg-background">
+        <RoleList 
+          roles={displayRoles} 
+          selectedRoleId={selectedRoleId} 
+          onSelectRole={setSelectedRoleId}
+          onAddRole={handleAddRole}
+          onDeleteRole={handleDeleteRole}
+        />
+      </div>
+    );
+  }
 
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full rounded-lg border bg-background">
