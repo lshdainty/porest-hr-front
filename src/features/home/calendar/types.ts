@@ -4,6 +4,7 @@ export type TEventColor = 'blue' | 'green' | 'red' | 'yellow' | 'purple' | 'oran
 export type TCalendarType = {
   id: string
   name: string
+  nameKey: string
   type: 'vacation' | 'schedule'
   isDate: boolean
   color: TEventColor
@@ -17,6 +18,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'DAYOFF',
     name: '연차',
+    nameKey: 'types.dayoff',
     type: 'vacation',
     isDate: true,
     color: 'purple'
@@ -24,6 +26,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'MORNINGOFF',
     name: '오전반차',
+    nameKey: 'types.morningoff',
     type: 'vacation',
     isDate: false,
     color: 'blue'
@@ -31,6 +34,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'AFTERNOONOFF',
     name: '오후반차',
+    nameKey: 'types.afternoonoff',
     type: 'vacation',
     isDate: false,
     color: 'pink'
@@ -38,6 +42,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'ONETIMEOFF',
     name: '1시간 휴가',
+    nameKey: 'types.onetimeoff',
     type: 'vacation',
     isDate: false,
     color: 'yellow'
@@ -45,6 +50,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'TWOTIMEOFF',
     name: '2시간 휴가',
+    nameKey: 'types.twotimeoff',
     type: 'vacation',
     isDate: false,
     color: 'yellow'
@@ -52,6 +58,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'THREETIMEOFF',
     name: '3시간 휴가',
+    nameKey: 'types.threetimeoff',
     type: 'vacation',
     isDate: false,
     color: 'yellow'
@@ -59,6 +66,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'FIVETIMEOFF',
     name: '5시간 휴가',
+    nameKey: 'types.fivetimeoff',
     type: 'vacation',
     isDate: false,
     color: 'yellow'
@@ -66,6 +74,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'SIXTIMEOFF',
     name: '6시간 휴가',
+    nameKey: 'types.sixtimeoff',
     type: 'vacation',
     isDate: false,
     color: 'yellow'
@@ -73,6 +82,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'SEVENTIMEOFF',
     name: '7시간 휴가',
+    nameKey: 'types.seventimeoff',
     type: 'vacation',
     isDate: false,
     color: 'yellow'
@@ -80,6 +90,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'HALFTIMEOFF',
     name: '30분 휴가',
+    nameKey: 'types.halftimeoff',
     type: 'vacation',
     isDate: false,
     color: 'yellow'
@@ -87,6 +98,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'BUSINESSTRIP',
     name: '출장',
+    nameKey: 'types.businesstrip',
     type: 'schedule',
     isDate: true,
     color: 'green'
@@ -94,6 +106,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'EDUCATION',
     name: '교육',
+    nameKey: 'types.education',
     type: 'schedule',
     isDate: true,
     color: 'red'
@@ -101,6 +114,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'BIRTHDAY',
     name: '생일',
+    nameKey: 'types.birthday',
     type: 'schedule',
     isDate: true,
     color: 'orange'
@@ -108,6 +122,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'BIRTHPARTY',
     name: '생일파티',
+    nameKey: 'types.birthparty',
     type: 'schedule',
     isDate: true,
     color: 'orange'
@@ -115,6 +130,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'HEALTHCHECKHALF',
     name: '건강검진(반차)',
+    nameKey: 'types.healthcheckhalf',
     type: 'vacation',
     isDate: false,
     color: 'gray'
@@ -122,6 +138,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'DEFENSE',
     name: '민방위',
+    nameKey: 'types.defense',
     type: 'vacation',
     isDate: true,
     color: 'teal'
@@ -129,6 +146,7 @@ export const calendarTypes: TCalendarType[] = [
   {
     id: 'DEFENSEHALF',
     name: '민방위(반차)',
+    nameKey: 'types.defensehalf',
     type: 'vacation',
     isDate: false,
     color: 'teal'

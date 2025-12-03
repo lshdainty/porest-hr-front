@@ -16,7 +16,7 @@
     "operationDepositDesc": "올해 총 입금액",
     "operationWithdrawal": "운영비 출금",
     "operationWithdrawalDesc": "올해 총 출금액",
-    "monthBirthFee": "{month}월 생일비",
+    "monthBirthFee": "{{month}}월 생일비",
     "monthBirthFeeDesc": "이번 달 생일비",
     "transactionHistory": "입출금 내역",
     "tableDate": "날짜",
@@ -27,7 +27,7 @@
     "tableType": "유형",
     "tableTotal": "총액",
     "monthBirthDuesTitle": "월별 생일비 입금 현황",
-    "monthFormat": "{month}월"
+    "monthFormat": "{{month}}월"
   },
   "rule": {
     "title": "규정",

@@ -77,7 +77,7 @@ api.interceptors.response.use(
   async (err: AxiosError<ApiErrorResponse>) => {
     console.log('axios response error : ', err)
 
-    const message = err.response?.data?.message || err.message || '알 수 없는 오류가 발생했습니다.'
+    const message = err.response?.data?.message || err.message || 'An unknown error occurred.'
     toast.error(message)
 
     // 401 Unauthorized 에러 발생 시 로그인 페이지로 리다이렉트

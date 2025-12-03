@@ -16,7 +16,7 @@
     "operationDepositDesc": "Total deposits this year",
     "operationWithdrawal": "Operation Withdrawal",
     "operationWithdrawalDesc": "Total withdrawals this year",
-    "monthBirthFee": "Birthday Fee for {month}",
+    "monthBirthFee": "Birthday Fee for {{month}}",
     "monthBirthFeeDesc": "Birthday fee this month",
     "transactionHistory": "Transaction History",
     "tableDate": "Date",
@@ -27,7 +27,7 @@
     "tableType": "Type",
     "tableTotal": "Total",
     "monthBirthDuesTitle": "Monthly Birthday Dues Status",
-    "monthFormat": "{month} Mon"
+    "monthFormat": "{{month}} Mon"
   },
   "rule": {
     "title": "Regulation",

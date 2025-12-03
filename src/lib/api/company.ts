@@ -77,7 +77,7 @@ export async function fetchPutCompany(companyId: string, data: PutCompanyReq): P
 
 export async function fetchDeleteCompany(companyId: string): Promise<void> {
   if (!companyId || companyId.trim() === '') {
-    throw new Error('회사 ID가 필요합니다.');
+    throw new Error('Company ID is required.');
   }
 
   await api.request({

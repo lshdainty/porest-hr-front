@@ -268,7 +268,7 @@ const ReportContent = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `업무이력_${dayjs().format('YYYYMMDD')}.xlsx`);
+      link.setAttribute('download', `${t('report.fileNamePrefix')}_${dayjs().format('YYYYMMDD')}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();

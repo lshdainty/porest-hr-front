@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import SocialLoginButton from '@/features/login/components/SocialLoginButton';
 
 interface LoginContentProps extends React.ComponentProps<'div'> {}
@@ -118,6 +119,7 @@ import { useTheme } from '@/components/shadcn/themeProvider';
 import { usePostLoginMutation } from '@/hooks/queries/useAuths';
 
 const LoginFormWithSocial = () => {
+  const { t } = useTranslation('login');
   const navigate = useNavigate();
   const { theme } = useTheme();
   const queryClient = useQueryClient();
@@ -143,17 +145,17 @@ const LoginFormWithSocial = () => {
           <img src={theme == 'light' ? Logo : LogoDark} alt='logo'></img>
         </div>
         <div className='grid gap-3'>
-          <Label htmlFor='user_id'>ID</Label>
+          <Label htmlFor='user_id'>{t('idLabel')}</Label>
           <Input
             id='user_id'
             name='user_id'
             type='text'
-            placeholder='아이디를 입력하세요'
+            placeholder={t('idPlaceholder')}
             required
           />
         </div>
         <div className='grid gap-3'>
-          <Label htmlFor='user_pw'>Password</Label>
+          <Label htmlFor='user_pw'>{t('passwordLabel')}</Label>
           <Input
             id='user_pw'
             name='user_pw'
@@ -166,11 +168,11 @@ const LoginFormWithSocial = () => {
           className='w-full'
           disabled={loginMutation.isPending}
         >
-          {loginMutation.isPending ? 'Loading...' : 'Login'}
+          {loginMutation.isPending ? t('loadingBtn') : t('loginBtn')}
         </Button>
         <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
           <span className='bg-card text-muted-foreground relative z-10 px-2'>
-            Or continue with
+            {t('orContinueWith')}
           </span>
         </div>
         <SocialLoginButton />

@@ -8,6 +8,8 @@ import {
   Users,
   XCircle
 } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { usePostApproveVacationMutation, usePostRejectVacationMutation } from '@/hooks/queries/useVacations';
 import type { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
@@ -26,7 +28,6 @@ import { Separator } from '@/components/shadcn/separator'
 import { Textarea } from '@/components/shadcn/textarea'
 import { useUser } from '@/contexts/UserContext'
 import { getStatusBadge, getStatusConfig, getStatusIcon } from '@/utils/vacationStatus'
-import { useState } from 'react';
 
 interface VacationApprovalFormProps {
   open: boolean;
@@ -41,6 +42,8 @@ const VacationApprovalForm = ({
   requestData,
   applicantName,
 }: VacationApprovalFormProps) => {
+  const { t } = useTranslation('vacation')
+  const { t: tc } = useTranslation('common')
   const { loginUser } = useUser()
   const [showRejectReason, setShowRejectReason] = useState(false)
   const [rejectReason, setRejectReason] = useState('')
@@ -79,7 +82,7 @@ const VacationApprovalForm = ({
   const handleReject = () => {
     if (!currentApprovalId || !loginUser?.user_id) return
     if (!rejectReason.trim()) {
-      toast.error('반려 사유를 입력해주세요.')
+      toast.error(t('approval.rejectReasonRequired'))
       return
     }
 
@@ -101,7 +104,7 @@ const VacationApprovalForm = ({
       <DialogContent className='max-w-5xl max-h-[90vh] p-0 grid grid-rows-[auto_1fr_auto]'>
         <DialogHeader className='p-6 pb-4 border-b'>
           <DialogTitle className='text-2xl font-bold'>
-            휴가 신청 상세보기
+            {t('approval.title')}
           </DialogTitle>
         </DialogHeader>
 
@@ -116,7 +119,7 @@ const VacationApprovalForm = ({
                     <CardHeader>
                       <CardTitle className='flex items-center gap-2'>
                         <FileText className='w-5 h-5 text-blue-600' />
-                        기본 정보
+                        {t('approval.basicInfo')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className='space-y-4'>
@@ -125,23 +128,23 @@ const VacationApprovalForm = ({
                         <div className='bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-2 border-b'>
                           <div className='flex items-center gap-2'>
                             <User className='w-4 h-4 text-blue-600' />
-                            <h3 className='text-sm font-semibold text-blue-900'>신청자 정보</h3>
+                            <h3 className='text-sm font-semibold text-blue-900'>{t('approval.applicantInfo')}</h3>
                           </div>
                         </div>
                         <table className='w-full text-sm'>
                           <tbody>
                             <tr className='border-b'>
-                              <td className='bg-muted px-4 py-3 font-medium w-32'>신청자</td>
+                              <td className='bg-muted px-4 py-3 font-medium w-32'>{t('approval.applicantLabel')}</td>
                               <td className='px-4 py-3'>
-                                {applicantName || '정보 없음'}
+                                {applicantName || tc('noInfo')}
                               </td>
                             </tr>
                             <tr>
-                              <td className='bg-muted px-4 py-3 font-medium'>신청일시</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>{t('approval.requestDateLabel')}</td>
                               <td className='px-4 py-3'>
                                 {requestData?.create_date
                                   ? dayjs(requestData.create_date).format('YYYY-MM-DD HH:mm')
-                                  : '정보 없음'}
+                                  : tc('noInfo')}
                               </td>
                             </tr>
                           </tbody>
@@ -155,38 +158,38 @@ const VacationApprovalForm = ({
                         <div className='bg-gradient-to-r from-purple-50 to-purple-100 px-4 py-2 border-b'>
                           <div className='flex items-center gap-2'>
                             <Calendar className='w-4 h-4 text-purple-600' />
-                            <h3 className='text-sm font-semibold text-purple-900'>휴가 정책 정보</h3>
+                            <h3 className='text-sm font-semibold text-purple-900'>{t('approval.policyInfo')}</h3>
                           </div>
                         </div>
                         <table className='w-full text-sm'>
                           <tbody>
                             <tr className='border-b'>
-                              <td className='bg-muted px-4 py-3 font-medium w-32'>정책명</td>
+                              <td className='bg-muted px-4 py-3 font-medium w-32'>{t('approval.policyName')}</td>
                               <td className='px-4 py-3 font-medium'>
-                                {requestData?.policy_name || '정보 없음'}
+                                {requestData?.policy_name || tc('noInfo')}
                               </td>
                             </tr>
                             <tr className='border-b'>
-                              <td className='bg-muted px-4 py-3 font-medium'>휴가 종류</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>{t('approval.vacationType')}</td>
                               <td className='px-4 py-3'>
                                 <Badge variant='outline' className='bg-blue-50 text-blue-700'>
-                                  {requestData?.vacation_type_name || '정보 없음'}
+                                  {requestData?.vacation_type_name || tc('noInfo')}
                                 </Badge>
                               </td>
                             </tr>
                             <tr className='border-b'>
-                              <td className='bg-muted px-4 py-3 font-medium'>부여 기준 시간</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>{t('approval.grantStandardTime')}</td>
                               <td className='px-4 py-3'>
                                 <div className='flex items-center gap-2'>
                                   <Badge variant='outline' className='bg-green-50 text-green-700'>
-                                    {requestData?.policy_grant_time_str || '정보 없음'}
+                                    {requestData?.policy_grant_time_str || tc('noInfo')}
                                   </Badge>
                                 </div>
                               </td>
                             </tr>
                             {requestData?.grant_date && (
                               <tr className='border-b'>
-                                <td className='bg-muted px-4 py-3 font-medium'>부여일</td>
+                                <td className='bg-muted px-4 py-3 font-medium'>{t('approval.grantDate')}</td>
                                 <td className='px-4 py-3 text-foreground'>
                                   {dayjs(requestData.grant_date).format('YYYY-MM-DD')}
                                 </td>
@@ -194,7 +197,7 @@ const VacationApprovalForm = ({
                             )}
                             {requestData?.expiry_date && (
                               <tr>
-                                <td className='bg-muted px-4 py-3 font-medium'>만료일</td>
+                                <td className='bg-muted px-4 py-3 font-medium'>{t('approval.expiryDate')}</td>
                                 <td className='px-4 py-3'>
                                   <span className='text-red-600 font-medium'>
                                     {dayjs(requestData.expiry_date).format('YYYY-MM-DD')}
@@ -213,19 +216,19 @@ const VacationApprovalForm = ({
                         <div className='bg-gradient-to-r from-green-50 to-green-100 px-4 py-2 border-b'>
                           <div className='flex items-center gap-2'>
                             <FileText className='w-4 h-4 text-green-600' />
-                            <h3 className='text-sm font-semibold text-green-900'>신청 상세</h3>
+                            <h3 className='text-sm font-semibold text-green-900'>{t('approval.requestDetail')}</h3>
                           </div>
                         </div>
                         <table className='w-full text-sm'>
                           <tbody>
                             <tr className='border-b'>
-                              <td className='bg-muted px-4 py-3 font-medium w-32'>제목</td>
+                              <td className='bg-muted px-4 py-3 font-medium w-32'>{t('approval.titleLabel')}</td>
                               <td className='px-4 py-3 font-medium'>
-                                {requestData?.desc || '정보 없음'}
+                                {requestData?.desc || tc('noInfo')}
                               </td>
                             </tr>
                             <tr className='border-b'>
-                              <td className='bg-muted px-4 py-3 font-medium'>대상 일자</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>{t('approval.targetDate')}</td>
                               <td className='px-4 py-3'>
                                 {requestData?.request_start_time && requestData?.request_end_time ? (
                                   <div className='space-y-1'>
@@ -236,7 +239,7 @@ const VacationApprovalForm = ({
                                     </div>
                                     <div className='flex items-center gap-2 mt-2'>
                                       <Badge className='bg-blue-100 text-blue-800 border-blue-300 border'>
-                                        총 {requestData.grant_time_str}
+                                        {t('approval.totalTime', { time: requestData.grant_time_str })}
                                       </Badge>
                                     </div>
                                   </div>
@@ -246,16 +249,16 @@ const VacationApprovalForm = ({
                                       {dayjs(requestData.request_start_time).format('YYYY-MM-DD HH:mm')}
                                     </div>
                                     <Badge className='bg-blue-100 text-blue-800 border-blue-300 border mt-2'>
-                                      총 {requestData.grant_time_str}
+                                      {t('approval.totalTime', { time: requestData.grant_time_str })}
                                     </Badge>
                                   </div>
                                 ) : (
-                                  '정보 없음'
+                                  tc('noInfo')
                                 )}
                               </td>
                             </tr>
                             <tr className='border-b'>
-                              <td className='bg-muted px-4 py-3 font-medium'>현재 상태</td>
+                              <td className='bg-muted px-4 py-3 font-medium'>{t('approval.currentStatus')}</td>
                               <td className='px-4 py-3'>
                                 <div className='flex items-center gap-2'>
                                   {(() => {
@@ -264,20 +267,20 @@ const VacationApprovalForm = ({
                                     return (
                                       <Badge variant='outline' className={`${statusConfig?.color || ''} border`}>
                                         {StatusIcon && <StatusIcon className='w-3 h-3 mr-1' />}
-                                        {requestData?.grant_status_name || '정보 없음'}
+                                        {requestData?.grant_status_name || tc('noInfo')}
                                       </Badge>
                                     );
                                   })()}
                                   {requestData?.current_approver_name && (
                                     <span className='text-xs text-foreground/70'>
-                                      현재 결재자: <span className='font-medium'>{requestData.current_approver_name}</span>
+                                      {t('approval.currentApprover')}: <span className='font-medium'>{requestData.current_approver_name}</span>
                                     </span>
                                   )}
                                 </div>
                               </td>
                             </tr>
                             <tr className={rejectionInfo?.rejection_reason ? 'border-b' : ''}>
-                              <td className='bg-muted px-4 py-3 font-medium align-top'>신청 사유</td>
+                              <td className='bg-muted px-4 py-3 font-medium align-top'>{t('approval.requestReason')}</td>
                               <td className='px-4 py-3'>
                                 <div className='whitespace-pre-wrap text-foreground'>
                                   {requestData?.request_desc || '-'}
@@ -286,7 +289,7 @@ const VacationApprovalForm = ({
                             </tr>
                             {rejectionInfo?.rejection_reason && (
                               <tr>
-                                <td className='bg-muted px-4 py-3 font-medium align-top'>반려 사유</td>
+                                <td className='bg-muted px-4 py-3 font-medium align-top'>{t('approval.rejectionReason')}</td>
                                 <td className='px-4 py-3'>
                                   <div className='whitespace-pre-wrap text-red-600 font-medium'>
                                     {rejectionInfo.rejection_reason}
@@ -307,7 +310,7 @@ const VacationApprovalForm = ({
                     <CardHeader>
                       <CardTitle className='flex items-center gap-2'>
                         <Users className='w-5 h-5 text-purple-600' />
-                        결재선
+                        {t('approval.approvalLine')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -318,8 +321,8 @@ const VacationApprovalForm = ({
                               <Ban className='w-10 h-10 text-foreground' />
                             </div>
                             <div className='text-center'>
-                              <p className='text-lg font-semibold text-foreground mb-1'>신청 취소됨</p>
-                              <p className='text-sm text-foreground/70'>결재 승인이 필요하지 않습니다</p>
+                              <p className='text-lg font-semibold text-foreground mb-1'>{t('approval.canceled')}</p>
+                              <p className='text-sm text-foreground/70'>{t('approval.canceledDesc')}</p>
                             </div>
                           </div>
                         </div>
@@ -333,7 +336,7 @@ const VacationApprovalForm = ({
                                     key={`header-${approver.approval_id}`}
                                     className='bg-muted px-2 py-2 text-xs font-medium border-r last:border-r-0'
                                   >
-                                    {approvers.length > 1 ? `${index + 1}차 승인` : '승인'}
+                                    {approvers.length > 1 ? t('approval.nthApproval', { index: index + 1 }) : t('approval.approveBtn')}
                                   </th>
                                 ))}
                               </tr>
@@ -370,7 +373,7 @@ const VacationApprovalForm = ({
                           </table>
                         </div>
                       ) : (
-                        <p className='text-sm text-foreground/70 text-center py-4'>결재자 정보가 없습니다.</p>
+                        <p className='text-sm text-foreground/70 text-center py-4'>{t('approval.noApprovers')}</p>
                       )}
                     </CardContent>
                   </Card>
@@ -381,7 +384,7 @@ const VacationApprovalForm = ({
                       <CardHeader>
                         <CardTitle className='flex items-center gap-2'>
                           <CheckCircle className='w-5 h-5 text-green-600' />
-                          결재 처리
+                          {t('approval.approvalProcess')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className='space-y-4'>
@@ -389,12 +392,12 @@ const VacationApprovalForm = ({
                           <div className='space-y-4'>
                             <div>
                               <label className='text-sm font-medium mb-2 block'>
-                                반려 사유 <span className='text-red-500'>*</span>
+                                {t('approval.rejectReasonLabel')} <span className='text-red-500'>*</span>
                               </label>
                               <Textarea
                                 value={rejectReason}
                                 onChange={(e) => setRejectReason(e.target.value)}
-                                placeholder='반려 사유를 입력해주세요...'
+                                placeholder={t('approval.rejectReasonPlaceholder')}
                                 rows={4}
                                 className='resize-none'
                               />
@@ -408,7 +411,7 @@ const VacationApprovalForm = ({
                                 }}
                                 className='flex-1'
                               >
-                                취소
+                                {tc('cancel')}
                               </Button>
                               <Button
                                 variant='destructive'
@@ -416,7 +419,7 @@ const VacationApprovalForm = ({
                                 className='flex-1'
                               >
                                 <XCircle className='w-4 h-4 mr-2' />
-                                반려 확정
+                                {t('approval.confirmReject')}
                               </Button>
                             </div>
                           </div>
@@ -427,14 +430,14 @@ const VacationApprovalForm = ({
                               className='flex-1 bg-red-600 hover:bg-red-700 text-white'
                             >
                               <XCircle className='w-4 h-4 mr-2' />
-                              반려
+                              {t('approval.rejectBtn')}
                             </Button>
                             <Button
                               onClick={handleApprove}
                               className='flex-1 bg-green-600 hover:bg-green-700 text-white'
                             >
                               <CheckCircle className='w-4 h-4 mr-2' />
-                              승인
+                              {t('approval.approveBtn')}
                             </Button>
                           </div>
                         )}
@@ -451,7 +454,7 @@ const VacationApprovalForm = ({
         <div className='p-6 pt-4 border-t bg-muted/50'>
           <div className='flex justify-end gap-3'>
             <Button variant='outline' onClick={onClose} type='button'>
-              닫기
+              {tc('close')}
             </Button>
           </div>
         </div>

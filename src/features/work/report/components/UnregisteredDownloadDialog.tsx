@@ -36,7 +36,7 @@ const UnregisteredDownloadDialog = ({ open, onOpenChange }: UnregisteredDownload
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `미등록_업무시간_${downloadYear}년_${downloadMonth}월_${dayjs().format('YYYYMMDD')}.xlsx`);
+      link.setAttribute('download', `${t('unregistered.fileNamePrefix')}_${downloadYear}${t('unregistered.fileNameYear')}_${downloadMonth}${t('unregistered.fileNameMonth')}_${dayjs().format('YYYYMMDD')}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();

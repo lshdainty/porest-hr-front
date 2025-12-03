@@ -8,5 +8,9 @@
   "forgotPassword": "Forgot password?",
   "rememberMe": "Remember me",
   "idPlaceholder": "Enter your ID",
-  "orContinueWith": "Or continue with"
+  "orContinueWith": "Or continue with",
+  "idLabel": "ID",
+  "passwordLabel": "Password",
+  "loginBtn": "Login",
+  "loadingBtn": "Loading..."
 }

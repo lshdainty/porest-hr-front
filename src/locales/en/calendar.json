@@ -41,5 +41,24 @@
   },
   "agenda": {
     "dateFormat": "EEEE MMM dd yyyy"
+  },
+  "types": {
+    "dayoff": "Day Off",
+    "morningoff": "Morning Half-day",
+    "afternoonoff": "Afternoon Half-day",
+    "onetimeoff": "1 Hour Leave",
+    "twotimeoff": "2 Hour Leave",
+    "threetimeoff": "3 Hour Leave",
+    "fivetimeoff": "5 Hour Leave",
+    "sixtimeoff": "6 Hour Leave",
+    "seventimeoff": "7 Hour Leave",
+    "halftimeoff": "30 Min Leave",
+    "businesstrip": "Business Trip",
+    "education": "Education",
+    "birthday": "Birthday",
+    "birthparty": "Birthday Party",
+    "healthcheckhalf": "Health Check (Half-day)",
+    "defense": "Civil Defense",
+    "defensehalf": "Civil Defense (Half-day)"
   }
 }

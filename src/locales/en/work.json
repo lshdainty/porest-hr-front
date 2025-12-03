@@ -30,7 +30,7 @@
     "pleaseEnterData": "Please enter data.",
     "validationComplete": "Data validation complete.",
     "fixErrorsRequired": "Please fix items with errors.",
-    "errorCount": "{count} errors need to be fixed",
+    "errorCount": "{{count}} errors need to be fixed",
     "batchRegister": "Batch Register",
     "unregisteredDownloadFailed": "Failed to download unregistered list.",
     "fieldDate": "Date",
@@ -64,7 +64,8 @@
     "sortBy": "Sort By",
     "latest": "Latest First",
     "oldest": "Oldest First",
-    "search": "Search"
+    "search": "Search",
+    "fileNamePrefix": "WorkHistory"
   },
   "codeManagement": "Work Code Management",
   "codeManagementDesc": "Manage work groups and detail codes.",
@@ -81,7 +82,7 @@
   "order": "Order",
   "manage": "Manage",
   "codeDelete": "Delete Work Code",
-  "codeDeleteConfirm": "Are you sure you want to delete the '{name}' work code?",
+  "codeDeleteConfirm": "Are you sure you want to delete the '{{name}}' work code?",
   "codeDeleteWarning": "Deleted code cannot be recovered.",
   "codeEdit": "Edit Work Code",
   "codeCreate": "Create Work Code",
@@ -95,8 +96,8 @@
   "schedule": {
     "am": "AM",
     "pm": "PM",
-    "hoursMinutes": "{hours}h {minutes}m",
-    "hoursOnly": "{hours}h"
+    "hoursMinutes": "{{hours}}h {{minutes}}m",
+    "hoursOnly": "{{hours}}h"
   },
   "excel": {
     "title": "Excel Data Import",
@@ -131,6 +132,9 @@
     "year": "Year",
     "month": "Month",
     "downloading": "Downloading...",
-    "downloadFailed": "Failed to download unregistered list."
+    "downloadFailed": "Failed to download unregistered list.",
+    "fileNamePrefix": "Unregistered_WorkHours",
+    "fileNameYear": "year",
+    "fileNameMonth": "month"
   }
 }

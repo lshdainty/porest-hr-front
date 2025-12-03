@@ -176,7 +176,7 @@ const EventFilter = () => {
                     onClick={(e) => e.stopPropagation()}
                   />
                   <Badge className={`flex-1 ${colorClassMap[type.color]}`}>
-                    {type.name}
+                    {t(type.nameKey)}
                   </Badge>
                 </div>
               );

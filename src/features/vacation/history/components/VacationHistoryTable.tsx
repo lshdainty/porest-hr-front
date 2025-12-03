@@ -7,6 +7,7 @@ import { calendarTypes } from '@/features/home/calendar/types';
 import { useDeleteVacationUsageMutation } from '@/hooks/queries/useVacations';
 import { GetUserVacationHistoryResp } from '@/lib/api/vacation';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import VacationHistoryContent from './VacationHistoryContent';
 
 interface VacationHistoryTableProps {
@@ -15,6 +16,7 @@ interface VacationHistoryTableProps {
 }
 
 const VacationHistoryTable = ({ value: data, canAdd = false }: VacationHistoryTableProps) => {
+  const { t } = useTranslation('vacation');
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
@@ -42,7 +44,7 @@ const VacationHistoryTable = ({ value: data, canAdd = false }: VacationHistoryTa
   };
 
   const handleDelete = (id: number) => {
-    if (window.confirm('정말로 삭제하시겠습니까?')) {
+    if (window.confirm(t('history.deleteConfirm'))) {
       deleteVacationUsage(id);
     }
   };
@@ -52,10 +54,10 @@ const VacationHistoryTable = ({ value: data, canAdd = false }: VacationHistoryTa
       <Card className='flex-1'>
         <CardHeader>
           <div className='flex items-center justify-between'>
-            <CardTitle>휴가 이력</CardTitle>
+            <CardTitle>{t('history.vacationHistory')}</CardTitle>
             {canAdd && (
               <div className='flex gap-2'>
-                <Button className='text-sm h-8' size='sm' onClick={handleAddVacation}>휴가 사용</Button>
+                <Button className='text-sm h-8' size='sm' onClick={handleAddVacation}>{t('history.useVacation')}</Button>
               </div>
             )}
           </div>

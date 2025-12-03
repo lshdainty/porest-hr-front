@@ -27,5 +27,15 @@
   },
   "save": "Save",
   "hideWidget": "Hide Widget",
-  "saveError": "Failed to save dashboard settings."
+  "saveError": "Failed to save dashboard settings.",
+  "workHistory": {
+    "title": "Work History Status",
+    "loading": "Loading data...",
+    "noData": "Cannot load data.",
+    "hoursUnit": "hours",
+    "achieved": "Achieved",
+    "inProgress": "In Progress",
+    "achievedMessage": "You've completed all required work hours for today!",
+    "remainingMessage": "{{hours}} hours remaining to reach your goal."
+  }
 }

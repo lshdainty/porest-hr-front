@@ -32,20 +32,21 @@ import dayjs from 'dayjs'
 import { AlertCircle, Calendar, Clock, Users } from 'lucide-react'
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
-const formSchema = z.object({
-  vacationPolicyId: z.number().min(1, '휴가 정책을 선택해주세요.'),
-  title: z.string().min(1, '제목을 입력해주세요.'),
-  overtimeDate: z.string().min(1, '날짜를 선택해주세요.'),
+const createFormSchema = (t: (key: string) => string) => z.object({
+  vacationPolicyId: z.number().min(1, t('application.policyRequired')),
+  title: z.string().min(1, t('application.titleRequired')),
+  overtimeDate: z.string().min(1, t('application.dateRequired')),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
   grantTime: z.number().optional(),
-  reason: z.string().min(1, '사유를 입력해주세요.'),
+  reason: z.string().min(1, t('application.reasonRequired')),
   approvers: z.array(z.string()),
 })
 
-type OvertimeFormValues = z.infer<typeof formSchema>
+type OvertimeFormValues = z.infer<ReturnType<typeof createFormSchema>>
 
 interface ApplicationFormDialogProps {
   open: boolean
@@ -56,8 +57,12 @@ interface ApplicationFormDialogProps {
 }
 
 const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicies, approvers }: ApplicationFormDialogProps) => {
+  const { t } = useTranslation('vacation')
+  const { t: tc } = useTranslation('common')
   const { loginUser } = useUser()
   const { mutate: requestVacation } = usePostRequestVacationMutation()
+
+  const formSchema = createFormSchema(t)
 
   const form = useForm<OvertimeFormValues>({
     resolver: zodResolver(formSchema),
@@ -184,10 +189,10 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
         <DialogHeader className='p-6 pb-4'>
           <div>
             <DialogTitle className='text-2xl font-bold'>
-              {isOvertimeType ? '보상휴가 신청' : '휴가 신청'}
+              {isOvertimeType ? t('application.compVacation') : t('application.vacationRequest')}
             </DialogTitle>
             <DialogDescription className='mt-2'>
-              {dayjs().format('YYYY년 M월 D일 (ddd) 오후 HH:mm')} 작성
+              {t('application.writtenAt', { dateTime: dayjs().format('YYYY-MM-DD HH:mm') })}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -203,7 +208,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                       <div className='flex items-center gap-2'>
                         <Calendar className='w-5 h-5 text-blue-600' />
                         <CardTitle>
-                          {isOvertimeType ? '보상휴가 신청 정보' : '휴가 신청 정보'}
+                          {isOvertimeType ? t('application.compVacationInfo') : t('application.vacationInfo')}
                         </CardTitle>
                       </div>
                     </CardHeader>
@@ -214,15 +219,15 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                         render={({ field, fieldState }) => (
                           <Field data-invalid={!!fieldState.error}>
                             <FieldLabel>
-                              제목
+                              {t('application.titleLabel')}
                               <span className='text-destructive ml-0.5'>*</span>
                             </FieldLabel>
                             <Input
                               {...field}
                               placeholder={
                                 isOvertimeType
-                                  ? '예: 프로젝트 마감 초과근무'
-                                  : '예: 개인 사유'
+                                  ? t('application.titleCompPlaceholder')
+                                  : t('application.titleVacationPlaceholder')
                               }
                             />
                             <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
@@ -236,7 +241,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                         render={({ field, fieldState }) => (
                           <Field data-invalid={!!fieldState.error}>
                             <FieldLabel>
-                              휴가 정책
+                              {t('application.policyLabel')}
                               <span className='text-destructive ml-0.5'>*</span>
                             </FieldLabel>
                             <Select
@@ -249,7 +254,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                     {selectedPolicy.vacation_policy_name} ({selectedPolicy.grant_time_str})
                                   </span>
                                 ) : (
-                                  <span className='text-muted-foreground'>휴가 정책을 선택해주세요</span>
+                                  <span className='text-muted-foreground'>{t('application.policySelectPlaceholder')}</span>
                                 )}
                               </SelectTrigger>
                               <SelectContent>
@@ -282,7 +287,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                               render={({ field, fieldState }) => (
                                 <Field data-invalid={!!fieldState.error}>
                                   <FieldLabel>
-                                    초과근무일
+                                    {t('application.overtimeDateLabel')}
                                     <span className='text-destructive ml-0.5'>*</span>
                                   </FieldLabel>
                                   <InputDatePicker
@@ -299,7 +304,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                               render={({ field, fieldState }) => (
                                 <Field data-invalid={!!fieldState.error}>
                                   <FieldLabel>
-                                    시작 시간
+                                    {t('application.startTimeLabel')}
                                     <span className='text-destructive ml-0.5'>*</span>
                                   </FieldLabel>
                                   <InputTimePicker
@@ -317,7 +322,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                               render={({ field, fieldState }) => (
                                 <Field data-invalid={!!fieldState.error}>
                                   <FieldLabel>
-                                    종료 시간
+                                    {t('application.endTimeLabel')}
                                     <span className='text-destructive ml-0.5'>*</span>
                                   </FieldLabel>
                                   <InputTimePicker
@@ -351,7 +356,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                 return (
                                   <Field data-invalid={!!fieldState.error}>
                                     <FieldLabel>
-                                      부여 시간
+                                      {t('application.grantTimeLabel')}
                                       <span className='text-destructive ml-0.5'>*</span>
                                     </FieldLabel>
                                     <div className={`grid ${selectedPolicy?.minute_grant_yn === 'Y' ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
@@ -360,7 +365,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                           type='number'
                                           min='0'
                                           max='365'
-                                          placeholder='일'
+                                          placeholder={t('application.dayUnit')}
                                           className='w-full'
                                           value={days || ''}
                                           onChange={(e) => {
@@ -368,7 +373,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                             handleTimeChange(newDays, hours, minutes)
                                           }}
                                         />
-                                        <p className='text-xs text-muted-foreground mt-1'>일</p>
+                                        <p className='text-xs text-muted-foreground mt-1'>{t('application.dayUnit')}</p>
                                       </div>
                                       <div className='flex flex-col'>
                                         <Select
@@ -378,17 +383,17 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                           }}
                                         >
                                           <SelectTrigger className='w-full'>
-                                            <SelectValue placeholder='시간' />
+                                            <SelectValue placeholder={t('application.hourUnit')} />
                                           </SelectTrigger>
                                           <SelectContent>
                                             {[0, 1, 2, 3, 4, 5, 6, 7].map((h) => (
                                               <SelectItem key={h} value={h.toString()}>
-                                                {h}시간
+                                                {t('application.nHours', { n: h })}
                                               </SelectItem>
                                             ))}
                                           </SelectContent>
                                         </Select>
-                                        <p className='text-xs text-muted-foreground mt-1'>시간</p>
+                                        <p className='text-xs text-muted-foreground mt-1'>{t('application.hourUnit')}</p>
                                       </div>
                                       {selectedPolicy?.minute_grant_yn === 'Y' && (
                                         <div className='flex flex-col'>
@@ -399,25 +404,25 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                             }}
                                           >
                                             <SelectTrigger className='w-full'>
-                                              <SelectValue placeholder='분' />
+                                              <SelectValue placeholder={t('application.minuteUnit')} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                              <SelectItem value='0'>0분</SelectItem>
-                                              <SelectItem value='30'>30분</SelectItem>
+                                              <SelectItem value='0'>{t('application.nMinutes', { n: 0 })}</SelectItem>
+                                              <SelectItem value='30'>{t('application.nMinutes', { n: 30 })}</SelectItem>
                                             </SelectContent>
                                           </Select>
-                                          <p className='text-xs text-muted-foreground mt-1'>분</p>
+                                          <p className='text-xs text-muted-foreground mt-1'>{t('application.minuteUnit')}</p>
                                         </div>
                                       )}
                                     </div>
                                     <p className='text-sm text-muted-foreground mt-2'>
-                                      부여할 휴가를 일/시간{selectedPolicy?.minute_grant_yn === 'Y' ? '/분' : ''} 단위로 선택해주세요.
+                                      {selectedPolicy?.minute_grant_yn === 'Y' ? t('application.timeSelectDescWithMin') : t('application.timeSelectDesc')}
                                       {field.value && field.value > 0 && (
                                         <span className='block mt-1 font-medium text-primary'>
-                                          총 {[
-                                            days > 0 ? `${days}일` : '',
-                                            hours > 0 ? `${hours}시간` : '',
-                                            minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}분` : ''
+                                          {t('application.totalTimeLabel')} {[
+                                            days > 0 ? `${days}${tc('day')}` : '',
+                                            hours > 0 ? `${hours}${tc('hour')}` : '',
+                                            minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}${tc('minute')}` : ''
                                           ].filter(Boolean).join(' ')}
                                         </span>
                                       )}
@@ -431,16 +436,16 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
 
                           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             <div className='space-y-2'>
-                              <FieldLabel>초과근무 시간</FieldLabel>
+                              <FieldLabel>{t('application.overtimeHoursLabel')}</FieldLabel>
                               <div className='h-9 px-3 border rounded-md flex items-center bg-gray-50'>
                                 <Clock className='w-4 h-4 text-gray-400 mr-2' />
                                 <span className='font-semibold'>
-                                  {overtimeHours > 0 ? `${overtimeHours}시간` : '-'}
+                                  {overtimeHours > 0 ? t('application.nHours', { n: overtimeHours }) : '-'}
                                 </span>
                               </div>
                             </div>
                             <div className='space-y-2'>
-                              <FieldLabel>예상 보상 시간</FieldLabel>
+                              <FieldLabel>{t('application.expectedCompTime')}</FieldLabel>
                               <div className='h-9 px-3 border rounded-md flex items-center bg-gray-50'>
                                 <span className='text-lg font-bold text-blue-600'>
                                   {selectedPolicy?.is_flexible_grant === 'Y' && form.watch('grantTime')
@@ -451,12 +456,12 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                         const hours = Math.floor(remainder / 0.125)
                                         const minutes = (remainder - hours * 0.125) >= 0.0625 ? 30 : 0
                                         return [
-                                          days > 0 ? `${days}일` : '',
-                                          hours > 0 ? `${hours}시간` : '',
-                                          minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}분` : ''
+                                          days > 0 ? `${days}${tc('day')}` : '',
+                                          hours > 0 ? `${hours}${tc('hour')}` : '',
+                                          minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}${tc('minute')}` : ''
                                         ].filter(Boolean).join(' ') || '-'
                                       })()
-                                    : overtimeHours > 0 ? `${overtimeHours}시간` : '-'}
+                                    : overtimeHours > 0 ? t('application.nHours', { n: overtimeHours }) : '-'}
                                 </span>
                               </div>
                             </div>
@@ -470,7 +475,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                             render={({ field, fieldState }) => (
                               <Field data-invalid={!!fieldState.error}>
                                 <FieldLabel>
-                                  날짜
+                                  {t('application.dateLabel')}
                                   <span className='text-destructive ml-0.5'>*</span>
                                 </FieldLabel>
                                 <InputDatePicker
@@ -502,7 +507,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                 return (
                                   <Field data-invalid={!!fieldState.error}>
                                     <FieldLabel>
-                                      부여 시간
+                                      {t('application.grantTimeLabel')}
                                       <span className='text-destructive ml-0.5'>*</span>
                                     </FieldLabel>
                                     <div className={`grid ${selectedPolicy?.minute_grant_yn === 'Y' ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
@@ -511,7 +516,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                           type='number'
                                           min='0'
                                           max='365'
-                                          placeholder='일'
+                                          placeholder={t('application.dayUnit')}
                                           className='w-full'
                                           value={days || ''}
                                           onChange={(e) => {
@@ -519,7 +524,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                             handleTimeChange(newDays, hours, minutes)
                                           }}
                                         />
-                                        <p className='text-xs text-muted-foreground mt-1'>일</p>
+                                        <p className='text-xs text-muted-foreground mt-1'>{t('application.dayUnit')}</p>
                                       </div>
                                       <div className='flex flex-col'>
                                         <Select
@@ -529,17 +534,17 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                           }}
                                         >
                                           <SelectTrigger className='w-full'>
-                                            <SelectValue placeholder='시간' />
+                                            <SelectValue placeholder={t('application.hourUnit')} />
                                           </SelectTrigger>
                                           <SelectContent>
                                             {[0, 1, 2, 3, 4, 5, 6, 7].map((h) => (
                                               <SelectItem key={h} value={h.toString()}>
-                                                {h}시간
+                                                {t('application.nHours', { n: h })}
                                               </SelectItem>
                                             ))}
                                           </SelectContent>
                                         </Select>
-                                        <p className='text-xs text-muted-foreground mt-1'>시간</p>
+                                        <p className='text-xs text-muted-foreground mt-1'>{t('application.hourUnit')}</p>
                                       </div>
                                       {selectedPolicy?.minute_grant_yn === 'Y' && (
                                         <div className='flex flex-col'>
@@ -550,25 +555,25 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                                             }}
                                           >
                                             <SelectTrigger className='w-full'>
-                                              <SelectValue placeholder='분' />
+                                              <SelectValue placeholder={t('application.minuteUnit')} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                              <SelectItem value='0'>0분</SelectItem>
-                                              <SelectItem value='30'>30분</SelectItem>
+                                              <SelectItem value='0'>{t('application.nMinutes', { n: 0 })}</SelectItem>
+                                              <SelectItem value='30'>{t('application.nMinutes', { n: 30 })}</SelectItem>
                                             </SelectContent>
                                           </Select>
-                                          <p className='text-xs text-muted-foreground mt-1'>분</p>
+                                          <p className='text-xs text-muted-foreground mt-1'>{t('application.minuteUnit')}</p>
                                         </div>
                                       )}
                                     </div>
                                     <p className='text-sm text-muted-foreground mt-2'>
-                                      부여할 휴가를 일/시간{selectedPolicy?.minute_grant_yn === 'Y' ? '/분' : ''} 단위로 선택해주세요.
+                                      {selectedPolicy?.minute_grant_yn === 'Y' ? t('application.timeSelectDescWithMin') : t('application.timeSelectDesc')}
                                       {field.value && field.value > 0 && (
                                         <span className='block mt-1 font-medium text-primary'>
-                                          총 {[
-                                            days > 0 ? `${days}일` : '',
-                                            hours > 0 ? `${hours}시간` : '',
-                                            minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}분` : ''
+                                          {t('application.totalTimeLabel')} {[
+                                            days > 0 ? `${days}${tc('day')}` : '',
+                                            hours > 0 ? `${hours}${tc('hour')}` : '',
+                                            minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}${tc('minute')}` : ''
                                           ].filter(Boolean).join(' ')}
                                         </span>
                                       )}
@@ -588,7 +593,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                         render={({ field, fieldState }) => (
                           <Field data-invalid={!!fieldState.error}>
                             <FieldLabel>
-                              {isOvertimeType ? '초과근무 사유' : '휴가 사유'}
+                              {isOvertimeType ? t('application.compReasonLabel') : t('application.reasonLabel')}
                               <span className='text-destructive ml-0.5'>*</span>
                             </FieldLabel>
                             <Textarea
@@ -596,8 +601,8 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                               rows={4}
                               placeholder={
                                 isOvertimeType
-                                  ? '초과근무를 하게 된 사유를 상세히 기입해 주세요.'
-                                  : '휴가 사용 사유를 상세히 기입해 주세요.'
+                                  ? t('application.compReasonPlaceholder')
+                                  : t('application.vacationReasonPlaceholder')
                               }
                             />
                             <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
@@ -615,7 +620,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                     <CardHeader>
                       <CardTitle className='text-lg flex items-center gap-2'>
                         <Users className='w-5 h-5' />
-                        승인자 지정
+                        {t('application.approverTitle')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -626,16 +631,16 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                               {index > 0 && <Separator className='my-4' />}
                               <div className={index > 0 ? 'mt-4' : ''}>
                                 <h4 className='text-sm font-medium text-gray-700 mb-2'>
-                                  {index + 1}단계 인원 지정
+                                  {t('application.stepApprover', { step: index + 1 })}
                                 </h4>
                                 <Controller
                                   control={form.control}
                                   name={`approvers.${index}` as const}
-                                  rules={{ required: '승인자를 선택해주세요' }}
+                                  rules={{ required: t('application.approverRequired') }}
                                   render={({ field }) => (
                                     <Select value={field.value || ''} onValueChange={field.onChange}>
                                       <SelectTrigger>
-                                        <SelectValue placeholder='결재자를 선택해주세요' />
+                                        <SelectValue placeholder={t('application.approverSelectPlaceholder')} />
                                       </SelectTrigger>
                                       <SelectContent>
                                         {approvers.map((approver) => (
@@ -660,7 +665,7 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                           ))
                         ) : (
                           <div className='p-3 rounded-md border border-dashed border-gray-300 bg-gray-50'>
-                            <p className='text-sm text-gray-500 text-center'>휴가 정책을 먼저 선택해주세요</p>
+                            <p className='text-sm text-gray-500 text-center'>{t('application.selectPolicyFirst')}</p>
                           </div>
                         )}
                       </div>
@@ -671,31 +676,31 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                   {(form.watch('title') || (isOvertimeType && overtimeHours > 0)) && (
                     <Card>
                       <CardHeader>
-                        <CardTitle className='text-lg'>신청 요약</CardTitle>
+                        <CardTitle className='text-lg'>{t('application.summaryTitle')}</CardTitle>
                       </CardHeader>
                       <CardContent className='space-y-3'>
                         {form.watch('title') && (
                           <div>
-                            <p className='text-xs text-gray-500'>제목</p>
+                            <p className='text-xs text-gray-500'>{t('application.titleLabel')}</p>
                             <p className='text-sm font-medium'>{form.watch('title')}</p>
                           </div>
                         )}
                         {selectedPolicy && (
                           <div>
-                            <p className='text-xs text-gray-500'>휴가 정책</p>
+                            <p className='text-xs text-gray-500'>{t('application.summaryVacationPolicy')}</p>
                             <p className='text-sm font-medium'>{selectedPolicy.vacation_policy_name}</p>
                           </div>
                         )}
                         {isOvertimeType && overtimeHours > 0 && (
                           <>
                             <div>
-                              <p className='text-xs text-gray-500'>초과근무 시간</p>
-                              <p className='text-sm font-medium'>{overtimeHours}시간</p>
+                              <p className='text-xs text-gray-500'>{t('application.summaryOvertimeHours')}</p>
+                              <p className='text-sm font-medium'>{t('application.nHours', { n: overtimeHours })}</p>
                             </div>
                             <div>
-                              <p className='text-xs text-gray-500'>예상 보상 시간</p>
+                              <p className='text-xs text-gray-500'>{t('application.summaryExpectedComp')}</p>
                               <p className='text-sm font-bold text-blue-600'>
-                                {overtimeHours}시간
+                                {t('application.nHours', { n: overtimeHours })}
                               </p>
                             </div>
                           </>
@@ -713,19 +718,19 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
             <div className='w-full'>
               <div className='flex items-center gap-2 text-sm text-gray-600 mb-4'>
                 <AlertCircle className='w-4 h-4' />
-                승인 완료되면 변경 내역이 바로 반영됩니다.
+                {t('application.noticeMessage')}
               </div>
 
               <div className='flex gap-3'>
                 <Button type='button' variant='outline' onClick={handleClose} className='flex-1'>
-                  취소
+                  {t('application.cancelBtn')}
                 </Button>
                 <Button
                   type='submit'
                   className='flex-1'
                   disabled={!form.formState.isValid || !isApproversValid}
                 >
-                  결재 요청
+                  {t('application.submitBtn')}
                 </Button>
               </div>
             </div>

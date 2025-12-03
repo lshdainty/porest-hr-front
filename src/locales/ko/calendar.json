@@ -41,5 +41,24 @@
   },
   "agenda": {
     "dateFormat": "yyyy년 M월 dd일 EEEE"
+  },
+  "types": {
+    "dayoff": "연차",
+    "morningoff": "오전반차",
+    "afternoonoff": "오후반차",
+    "onetimeoff": "1시간 휴가",
+    "twotimeoff": "2시간 휴가",
+    "threetimeoff": "3시간 휴가",
+    "fivetimeoff": "5시간 휴가",
+    "sixtimeoff": "6시간 휴가",
+    "seventimeoff": "7시간 휴가",
+    "halftimeoff": "30분 휴가",
+    "businesstrip": "출장",
+    "education": "교육",
+    "birthday": "생일",
+    "birthparty": "생일파티",
+    "healthcheckhalf": "건강검진(반차)",
+    "defense": "민방위",
+    "defensehalf": "민방위(반차)"
   }
 }
