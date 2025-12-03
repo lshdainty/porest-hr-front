@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/shadcn/card';
 import type { GetUserVacationStatsResp } from '@/lib/api/vacation';
+import { useTranslation } from 'react-i18next';
 import VacationStatsItem, { getVacationStatsConfig } from './VacationStatsItem';
 
 interface VacationStatsCardProps {
@@ -7,11 +8,13 @@ interface VacationStatsCardProps {
 }
 
 const VacationStatsCard = ({ value: data }: VacationStatsCardProps) => {
+  const { t } = useTranslation('vacation');
+
   if (!data) {
     return null;
   }
 
-  const vacationStats = getVacationStatsConfig(data);
+  const vacationStats = getVacationStatsConfig(data, t);
 
   return (
     <div className='flex flex-wrap gap-6'>

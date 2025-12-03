@@ -112,6 +112,17 @@ admin,department.leaderPlaceholder,부서장을 선택해주세요,Select depart
 admin,department.color,부서 색상,Department Color
 admin,department.description,부서설명,Department Description
 admin,department.descriptionPlaceholder,부서에 대한 설명을 입력하세요,Enter description for this department
+admin,department.addBtn,부서 추가,Add Department
+admin,department.addSubBtn,하위 부서 추가,Add Sub-department
+admin,department.editBtn,수정,Edit
+admin,department.deleteBtn,삭제,Delete
+admin,department.hasChildrenError,하위 부서가 있어 삭제할 수 없습니다.,Cannot delete because it has sub-departments.
+admin,department.noDepartments,부서가 없습니다,No departments
+admin,department.chart,조직도,Organization Chart
+admin,department.totalCount,전체 부서: {count}개,Total departments: {count}
+admin,company.addCardTitle,회사 정보 추가하기,Add Company Info
+admin,company.addCardDesc,회사 정보를 입력하여 시작하세요,Enter company info to get started
+admin,company.addBtn,회사 추가하기,Add Company
 admin,holiday.title,공휴일 관리,Holiday Management
 admin,holiday.description,공휴일을 관리하고 추가/수정/삭제할 수 있습니다,Manage holidays - add/edit/delete
 admin,holiday.addTitle,새 공휴일 추가,Add New Holiday
@@ -124,6 +135,32 @@ admin,holiday.date,날짜,Date
 admin,holiday.dateRequired,날짜를 선택해주세요.,Please select a date.
 admin,holiday.type,공휴일 구분,Holiday Type
 admin,holiday.typeRequired,공휴일 구분을 선택해주세요.,Please select a holiday type.
+admin,holiday.typePublic,공휴일,Public Holiday
+admin,holiday.typeEtc,기타,Etc
+admin,holiday.typeSubstitute,대체,Substitute
+admin,holiday.lunar,음력,Lunar
+admin,holiday.lunarYn,음력 여부,Lunar Type
+admin,holiday.lunarYnRequired,음력 여부를 선택해주세요.,Please select lunar type.
+admin,holiday.lunarYes,음력,Lunar
+admin,holiday.lunarNo,양력,Solar
+admin,holiday.lunarDate,음력 날짜,Lunar Date
+admin,holiday.lunarDateFormat,음력 {month}월 {day}일,Lunar {month}/{day}
+admin,holiday.recurring,매년,Yearly
+admin,holiday.recurringYn,매년 반복,Yearly Repeat
+admin,holiday.recurringYnRequired,매년 반복 여부를 선택해주세요.,Please select recurring option.
+admin,holiday.recurringPlaceholder,반복 여부,Recurring
+admin,holiday.icon,아이콘 (이모지),Icon (Emoji)
+admin,holiday.iconMaxLength,이모지는 2자 이내로 입력해주세요.,Emoji must be 2 characters or less.
+admin,holiday.countryCode,국가 코드,Country Code
+admin,holiday.countryCodeRequired,국가 코드를 입력해주세요.,Please enter the country code.
+admin,holiday.countryCodePlaceholder,예: KR,e.g. KR
+admin,holiday.namePlaceholder,예: 추석,e.g. Chuseok
+admin,holiday.typePlaceholder,구분 선택,Select type
+admin,holiday.noHolidays,등록된 공휴일이 없습니다,No holidays registered
+admin,holiday.noHolidaysDesc,새로운 공휴일을 추가해보세요,Try adding a new holiday
+admin,holiday.addFirst,첫 번째 공휴일 추가,Add First Holiday
+admin,holiday.addBtn,추가,Add
+admin,holiday.formDescription,공휴일 정보를 입력해주세요.,Please enter holiday information.
 admin,user.title,사용자 관리,User Management
 admin,user.inviteTitle,사용자 초대,Invite User
 admin,user.editTitle,사용자 수정,Edit User
@@ -237,9 +274,88 @@ dashboard,widget.systemDailyCheck,시스템 데일리 체크,System Daily Check
 dashboard,widget.workHistoryStatus,업무이력 작성 현황,Work History Status
 dashboard,widget.monthlyWorkAlert,월별 업무 미작성 알림,Monthly Work Alert
 dashboard,widget.allUserVacationStatus,전체 유저 휴가 현황,All User Vacation Status
+dashboard,save,저장,Save
+dashboard,hideWidget,위젯 숨기기,Hide Widget
 work,report.title,업무 보고,Work Report
 work,report.excelImport,엑셀 가져오기,Import Excel
 work,report.excelImportDesc,엑셀 파일에서 업무 보고를 가져옵니다.,Import work reports from Excel file.
+work,codeManagement,업무 코드 관리,Work Code Management
+work,codeManagementDesc,업무 그룹 및 상세 코드를 관리합니다.,Manage work groups and detail codes.
+work,workPart,업무 파트,Work Part
+work,workDivision,업무 구분,Work Division
+work,workPartList,업무 파트 목록,Work Part List
+work,workDivisionList,업무 구분 목록,Work Division List
+work,addTopGroup,최상위 그룹 추가,Add Top Group
+work,addSubCode,하위 코드 추가,Add Sub Code
+work,addWorkDivision,업무 구분 추가,Add Work Division
+work,codeName,코드명,Code Name
+work,code,코드,Code
+work,type,타입,Type
+work,order,순서,Order
+work,manage,관리,Manage
+work,codeDelete,업무 코드 삭제,Delete Work Code
+work,codeDeleteConfirm,정말로 '{name}' 업무 코드를 삭제하시겠습니까?,Are you sure you want to delete the '{name}' work code?
+work,codeDeleteWarning,삭제된 코드는 복구할 수 없습니다.,Deleted code cannot be recovered.
+work,codeEdit,업무 코드 수정,Edit Work Code
+work,codeCreate,업무 코드 생성,Create Work Code
+work,codeRequired,코드를 입력해주세요.,Please enter the code.
+work,codeNameRequired,코드명을 입력해주세요.,Please enter the code name.
+work,codePlaceholder,WORK_CODE,WORK_CODE
+work,codeNamePlaceholder,업무 코드명,Work code name
+work,typeSelect,타입 선택,Select Type
+work,orderSeq,정렬 순서,Sort Order
+work,loading,로딩중...,Loading...
+work,report.selectPlaceholder,선택,Select
+work,report.assigneePlaceholder,담당자,Assignee
+work,report.filterAll,전체,All
+work,report.downloadProgress,다운로드 중...,Downloading...
+work,report.download,다운로드,Download
+work,report.dateRequired,일자,Date
+work,schedule.am,오전,AM
+work,schedule.pm,오후,PM
+vacation,history.compared,지난 달 대비,Compared to last month
+vacation,history.increase,증가,increase
+vacation,history.decrease,감소,decrease
+vacation,application.dayPlaceholder,일,Day
+vacation,application.hourPlaceholder,시간,Hour
+vacation,application.minutePlaceholder,분,Minute
+vacation,application.processing,처리 중...,Processing...
+vacation,application.approval,승인,Approval
+vacation,application.firstApproval,{index}차 승인,{index}st Approval
+vacation,request.cancel,취소,Cancel
+vacation,request.waiting,대기,Waiting
+vacation,request.progress,진행,In Progress
+vacation,request.approved,승인,Approved
+vacation,request.rejected,반려,Rejected
+calendar,addEvent.title,일정 등록,Add Event
+calendar,addEvent.description,일정 정보를 입력해주세요.,Please enter event information.
+calendar,addEvent.calendarType,일정 타입,Event Type
+calendar,addEvent.calendarTypeRequired,일정 타입을 선택해주세요.,Please select an event type.
+calendar,addEvent.vacation,휴가,Vacation
+calendar,addEvent.schedule,스케줄,Schedule
+calendar,addEvent.useVacation,사용 휴가,Use Vacation
+calendar,addEvent.useVacationRequired,사용 휴가를 선택해주세요.,Please select vacation to use.
+calendar,addEvent.eventReason,일정 사유,Event Reason
+calendar,addEvent.startDate,시작일,Start Date
+calendar,addEvent.startDateRequired,시작일을 입력해주세요.,Please enter start date.
+calendar,addEvent.endDate,종료일,End Date
+calendar,addEvent.endDateRequired,종료일을 입력해주세요.,Please enter end date.
+calendar,addEvent.endDateError,종료일은 시작일보다 빠를 수 없습니다.,End date cannot be earlier than start date.
+calendar,addEvent.hour,시,Hour
+calendar,addEvent.hourUnit,시,hour
+calendar,addEvent.minute,분,Minute
+calendar,addEvent.minuteUnit,분,minute
+calendar,addEvent.register,등록,Register
+calendar,editEvent.title,일정 수정,Edit Event
+calendar,editEvent.description,일정 정보를 수정해주세요.,Please edit event information.
+user,edit.processing,처리 중...,Processing...
+culture,dues.typeSelect,분류,Category
+culture,dues.typeOperation,운영비,Operation
+culture,dues.typeBirth,생일,Birthday
+culture,dues.typeFine,벌금,Fine
+culture,dues.calcTypeSelect,유형,Type
+culture,dues.calcPlus,입금,Deposit
+culture,dues.calcMinus,출금,Withdrawal
 culture,dues.title,회비,Dues
 culture,dues.deleteError,회비 삭제에 실패했습니다.,Failed to delete dues.
 culture,rule.title,규정,Regulation
@@ -288,6 +404,130 @@ admin,user.mainDepartment,메인부서,Main Department
 admin,user.mainDepartmentExists,이미 메인부서가 존재합니다,Main department already exists
 admin,user.selectDepartment,부서를 선택하세요,Please select a department
 admin,department.list,부서 목록,Department List
+vacation,policy.description,휴가 정책 설명,Policy Description
+vacation,policy.descriptionPlaceholder,휴가 정책에 대한 설명을 입력해주세요,Enter a description for the vacation policy
+vacation,policy.namePlaceholder,예: 연차 리프레시 휴가,e.g. Annual leave Refresh vacation
+vacation,policy.typePlaceholder,휴가 타입을 선택해주세요,Select vacation type
+vacation,policy.typeDescription,휴가의 종류를 선택해주세요 (연차 출산 결혼 등).,Select the type of vacation (annual maternity wedding etc.)
+vacation,policy.grantMethod,부여 방법,Grant Method
+vacation,policy.grantMethodRequired,부여 방법을 선택해주세요,Please select a grant method
+vacation,policy.grantMethodPlaceholder,부여 방법을 선택해주세요,Select grant method
+vacation,policy.minuteGrant,분단위 부여 여부,Minute Grant
+vacation,policy.minuteGrantRequired,분단위 부여 여부를 선택해주세요,Please select minute grant option
+vacation,policy.minuteGrantDesc,휴가를 부여할 때 분단위(30분)로 부여할 수 있는지 설정합니다.,Set whether vacation can be granted in minute units (30 min).
+vacation,policy.minuteGrantNo,N (불허),N (Not allowed)
+vacation,policy.minuteGrantYes,Y (허용),Y (Allowed)
+vacation,policy.flexibleGrant,가변 부여 여부,Flexible Grant
+vacation,policy.flexibleGrantRequired,가변 부여 여부를 선택해주세요,Please select flexible grant option
+vacation,policy.flexibleGrantNo,N (고정 시간),N (Fixed time)
+vacation,policy.flexibleGrantYes,Y (가변 시간),Y (Flexible time)
+vacation,policy.flexibleGrantFixedDesc,N (고정 시간): 정책에 등록된 부여 시간을 사용합니다.,N (Fixed time): Uses the grant time registered in the policy.
+vacation,policy.flexibleGrantFlexDesc,Y (가변 시간): 사용자 또는 관리자가 입력한 시간 값으로 부여합니다.,Y (Flexible time): Grants using the time value entered by user or admin.
+vacation,policy.grantTime,부여 시간,Grant Time
+vacation,policy.grantTimeRequired,부여 시간을 입력해주세요 (0보다 큰 값),Please enter grant time (value greater than 0)
+vacation,policy.grantTimeFixedRequired,고정 시간 부여 시 부여 시간을 입력해주세요 (0보다 큰 값),Please enter grant time for fixed time grant (value greater than 0)
+vacation,policy.effectiveType,유효기간 시작일자,Validity Start Date
+vacation,policy.effectiveTypeRequired,발효 타입을 선택해주세요,Please select effective type
+vacation,policy.effectiveTypePlaceholder,시작일자 선택,Select start date
+vacation,policy.effectiveTypeDesc,휴가가 언제부터 유효한지 선택해주세요.,Select when the vacation becomes valid.
+vacation,policy.expirationType,유효기간 만료일자,Validity End Date
+vacation,policy.expirationTypeRequired,만료 타입을 선택해주세요,Please select expiration type
+vacation,policy.expirationTypePlaceholder,만료일자 선택,Select end date
+vacation,policy.expirationTypeDesc,휴가가 언제까지 유효한지 선택해주세요.,Select until when the vacation is valid.
+vacation,policy.approvalCount,승인 필요 횟수,Approval Required Count
+vacation,policy.approvalCountDesc,신청 시 필요한 승인 횟수를 입력해주세요. (0은 승인 불필요),Enter the number of approvals required for application. (0 means no approval needed)
+vacation,policy.basicSettings,기본 설정,Basic Settings
+vacation,policy.basicSettingsDesc,휴가의 기본 정보와 부여 방식을 설정해주세요.,Set the basic information and grant method for vacation.
+vacation,policy.repeatSettings,반복 부여 설정,Repeat Grant Settings
+vacation,policy.repeatSettingsDesc,휴가를 자동으로 반복 부여하는 설정입니다.,Settings for automatically granting vacation repeatedly.
+vacation,policy.repeatUnit,반복 단위,Repeat Unit
+vacation,policy.repeatUnitRequired,반복 단위를 선택해주세요,Please select repeat unit
+vacation,policy.repeatUnitPlaceholder,반복 단위 선택,Select repeat unit
+vacation,policy.repeatUnitDesc,휴가를 얼마나 자주 부여할지 선택해주세요.,Select how often to grant vacation.
+vacation,policy.repeatInterval,반복 간격,Repeat Interval
+vacation,policy.repeatIntervalRequired,반복 간격을 입력해주세요 (0보다 큰 값),Please enter repeat interval (value greater than 0)
+vacation,policy.repeatIntervalDesc,반복 주기마다 몇 번째에 부여할지 설정 (예: 1=매번 2=격번),Set which cycle to grant (e.g. 1=every time 2=every other)
+vacation,policy.specificMonth,특정 월 (선택),Specific Month (Optional)
+vacation,policy.specificMonthPlaceholder,예: 1 (1월),e.g. 1 (January)
+vacation,policy.specificMonthDesc,매년 특정 월에 부여하려면 입력해주세요 (1-12). 미입력 시 첫 부여 날짜의 월 기준.,Enter to grant on a specific month each year (1-12). If not entered based on first grant date month.
+vacation,policy.specificDay,특정 일 (선택),Specific Day (Optional)
+vacation,policy.specificDayPlaceholder,예: 1 (1일),e.g. 1 (1st)
+vacation,policy.specificDayDesc,특정 일에 부여하려면 입력해주세요 (1-31). 해당 월에 없는 날짜는 자동으로 마지막 날로 조정됩니다.,Enter to grant on a specific day (1-31). Dates not in the month are automatically adjusted to the last day.
+vacation,policy.firstGrantDate,첫 부여 날짜,First Grant Date
+vacation,policy.firstGrantDateRequired,첫 부여 날짜를 선택해주세요,Please select first grant date
+vacation,policy.firstGrantDateDesc,스케줄러가 반복 부여를 계산하기 위한 기준일입니다.,This is the base date for the scheduler to calculate repeat grants.
+vacation,policy.isRecurring,반복 여부,Recurring
+vacation,policy.isRecurringRequired,반복 여부를 선택해주세요,Please select recurring option
+vacation,policy.isRecurringPlaceholder,반복 여부 선택,Select recurring option
+vacation,policy.isRecurringYes,Y (반복 부여),Y (Repeat grant)
+vacation,policy.isRecurringNo,N (1회성 부여),N (One-time grant)
+vacation,policy.isRecurringYesDesc,Y (반복 부여): 계속 반복하여 부여합니다.,Y (Repeat grant): Grants repeatedly.
+vacation,policy.isRecurringNoDesc,N (1회성 부여): 규칙에 따라 한번 부여된 뒤 더이상 부여되지 않습니다.,N (One-time grant): Granted once according to rules and no more.
+vacation,policy.maxGrantCount,최대 부여 횟수,Maximum Grant Count
+vacation,policy.maxGrantCountRequired,최대 부여 횟수를 입력해주세요 (0보다 큰 값),Please enter maximum grant count (value greater than 0)
+vacation,policy.maxGrantCountDesc,1회성 부여일 경우 최대 몇 번 부여할지 입력해주세요.,Enter how many times to grant maximum for one-time grants.
+vacation,policy.repeatGuideTitle,반복 부여 안내:,Repeat Grant Guide:
+vacation,policy.repeatGuideYearly,YEARLY: 매년 특정 월/일에 부여,YEARLY: Grant on specific month/day each year
+vacation,policy.repeatGuideMonthly,MONTHLY: 매월 특정 일에 부여 (특정 월 지정 불가),MONTHLY: Grant on specific day each month (cannot specify month)
+vacation,policy.repeatGuideQuarterly,QUARTERLY: 분기별 (1 4 7 10월) 특정 일에 부여,QUARTERLY: Grant on specific day quarterly (Jan Apr Jul Oct)
+vacation,policy.repeatGuideHalf,HALF: 반기별 (1 7월) 특정 일에 부여,HALF: Grant on specific day semi-annually (Jan Jul)
+vacation,policy.repeatGuideDaily,DAILY: 매일 부여 (특정 월/일 지정 불가),DAILY: Grant daily (cannot specify month/day)
+vacation,policy.yearlyMonthRequired,YEARLY는 특정 일만 지정할 수 없습니다. 특정 월을 함께 지정해주세요,YEARLY cannot specify only day. Please specify month together.
+vacation,policy.monthlyNoMonth,MONTHLY는 특정 월을 지정할 수 없습니다,MONTHLY cannot specify month
+vacation,policy.quarterlyNoMonth,QUARTERLY는 특정 월을 지정할 수 없습니다,QUARTERLY cannot specify month
+vacation,policy.halfNoMonth,HALF는 특정 월을 지정할 수 없습니다,HALF cannot specify month
+vacation,policy.dailyNoMonthDay,DAILY는 특정 월/일을 지정할 수 없습니다,DAILY cannot specify month/day
+vacation,policy.saveError,휴가 정책 저장 실패,Failed to save vacation policy
+vacation,policy.dayUnit,일,day
+vacation,policy.hourUnit,시간,hour
+vacation,policy.hourConversion,1시간 = 0.125일,1 hour = 0.125 day
+vacation,policy.minuteUnit,분,minute
+vacation,policy.minuteConversion,30분 = 0.0625일,30 min = 0.0625 day
+vacation,policy.totalTime,총,Total
+vacation,policy.fixedTimeDesc,고정 시간 부여: 정책에 등록된 부여 시간을 사용합니다.,Fixed time grant: Uses the grant time registered in the policy.
+vacation,policy.flexibleTimeDesc,가변 시간 부여: 사용자 또는 관리자가 입력한 시간 값으로 부여합니다. (이 값은 참고용입니다.),Flexible time grant: Grants using time entered by user or admin. (This value is for reference.)
+vacation,policy.selectTimeDesc,부여할 휴가를 일/시간 단위로 선택해주세요.,Select vacation to grant in day/hour units.
+vacation,policy.selectTimeWithMinuteDesc,부여할 휴가를 일/시간/분 단위로 선택해주세요.,Select vacation to grant in day/hour/minute units.
+vacation,policy.management,휴가 정책 관리,Vacation Policy Management
+vacation,policy.managementDesc,회사의 휴가 정책을 관리할 수 있습니다,You can manage company vacation policies
+vacation,policy.searchPlaceholder,휴가 정책 검색,Search vacation policy
+vacation,policy.totalCount,총 {count}개 정책,Total {count} policies
+vacation,policy.grantTimeLabel,부여 시간,Grant Time
+vacation,policy.noLimit,제한없음,No limit
+vacation,policy.validityPeriod,유효기간,Validity Period
+vacation,policy.noSearchResults,검색 결과가 없습니다.,No search results.
+vacation,policy.noPolicies,등록된 휴가 정책이 없습니다.,No vacation policies registered.
+vacation,stats.title,휴가 관리,Vacation Management
+vacation,stats.noUser,사용자 정보가 없습니다.,No user information available.
 auth,signup.socialRequired,최소 하나의 소셜 로그인을 연동해주세요.,Please link at least one social login.
 auth,signup.complete,회원가입이 완료되었습니다!,Sign up completed!
 auth,signup.oauthLinked,{oauth} 계정 연동이 완료되었습니다!,{oauth} account has been linked!
+vacation,history.remainVacation,잔여 휴가,Remaining Vacation
+vacation,history.usedVacation,사용 휴가,Used Vacation
+vacation,history.expectedVacation,사용 예정 휴가,Expected Vacation
+vacation,history.comparedDesc,지난 달 대비 {gap} {type},Compared to last month {gap} {type}
+vacation,request.totalRequest,총 신청,Total Requests
+vacation,request.thisMonth,이번 달 {count}건,{count} this month
+vacation,request.canceledLabel,취소,Canceled
+vacation,request.canceledDesc,신청 취소됨,Request canceled
+vacation,request.pendingLabel,대기,Pending
+vacation,request.avgProcessingTime,평균 처리시간 {days}일,Avg. processing time {days} days
+vacation,request.progressLabel,진행,In Progress
+vacation,request.progressDesc,처리중인 요청,Processing requests
+vacation,request.approvedLabel,승인,Approved
+vacation,request.approvalRate,승인율,Approval Rate
+vacation,request.rejectedLabel,반려,Rejected
+vacation,request.rejectedDesc,재신청 필요,Resubmission required
+vacation,request.acquiredVacation,획득 휴가,Acquired Vacation
+vacation,request.acquiredDesc,승인된 휴가,Approved vacation
+work,schedule.hoursMinutes,{hours}시간 {minutes}분,{hours}h {minutes}m
+work,schedule.hoursOnly,{hours}시간,{hours}h
+culture,dues.currencyUnit,원,KRW
+culture,dues.totalOperationFee,전체 운영비,Total Operation Fee
+culture,dues.totalOperationFeeDesc,현재 보유한 총 운영비,Total operation fee currently held
+culture,dues.operationDeposit,운영비 입금,Operation Deposit
+culture,dues.operationDepositDesc,올해 총 입금액,Total deposits this year
+culture,dues.operationWithdrawal,운영비 출금,Operation Withdrawal
+culture,dues.operationWithdrawalDesc,올해 총 출금액,Total withdrawals this year
+culture,dues.monthBirthFee,{month}월 생일비,Birthday Fee for {month}
+culture,dues.monthBirthFeeDesc,이번 달 생일비,Birthday fee this month

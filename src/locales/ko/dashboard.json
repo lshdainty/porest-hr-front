@@ -24,5 +24,7 @@
     "workHistoryStatus": "업무이력 작성 현황",
     "monthlyWorkAlert": "월별 업무 미작성 알림",
     "allUserVacationStatus": "전체 유저 휴가 현황"
-  }
+  },
+  "save": "저장",
+  "hideWidget": "위젯 숨기기"
 }

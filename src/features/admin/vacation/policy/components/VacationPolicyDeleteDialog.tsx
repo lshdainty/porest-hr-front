@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/shadcn/alertDialog'
 import { TriangleAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface VacationPolicyDeleteDialogProps {
   policy: GetVacationPoliciesResp
@@ -22,6 +23,8 @@ const VacationPolicyDeleteDialog = ({
   policy,
   trigger
 }: VacationPolicyDeleteDialogProps) => {
+  const { t } = useTranslation('vacation')
+  const { t: tc } = useTranslation('common')
   const deleteVacationPolicy = useDeleteVacationPolicyMutation()
 
   const handleDelete = async () => {
@@ -29,7 +32,7 @@ const VacationPolicyDeleteDialog = ({
       try {
         await deleteVacationPolicy.mutateAsync(policy.vacation_policy_id)
       } catch (error) {
-        console.error('휴가 정책 삭제 실패:', error)
+        console.error(t('policy.saveError'), error)
       }
     }
   }
@@ -43,22 +46,20 @@ const VacationPolicyDeleteDialog = ({
             <TriangleAlert className="h-6 w-6 text-red-600 dark:text-red-400" />
           </div>
           <AlertDialogHeader className="flex-1">
-            <AlertDialogTitle>휴가 정책 삭제</AlertDialogTitle>
+            <AlertDialogTitle>{t('policy.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              정말 '{policy.vacation_policy_name}' 휴가 정책을 삭제하시겠습니까?
-              <br />
-              기존에 부여된 휴가나 사용 내역은 삭제되지 않지만, 더 이상 새로운 휴가가 부여되지 않습니다.
+              {t('policy.deleteConfirm', { name: policy.vacation_policy_name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel>취소</AlertDialogCancel>
+          <AlertDialogCancel>{tc('cancel')}</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
             onClick={handleDelete}
             disabled={deleteVacationPolicy.isPending}
           >
-            {deleteVacationPolicy.isPending ? '삭제 중...' : '삭제'}
+            {deleteVacationPolicy.isPending ? tc('deleting') : tc('delete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

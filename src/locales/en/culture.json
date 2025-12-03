@@ -1,7 +1,23 @@
 {
   "dues": {
+    "typeSelect": "Category",
+    "typeOperation": "Operation",
+    "typeBirth": "Birthday",
+    "typeFine": "Fine",
+    "calcTypeSelect": "Type",
+    "calcPlus": "Deposit",
+    "calcMinus": "Withdrawal",
     "title": "Dues",
-    "deleteError": "Failed to delete dues."
+    "deleteError": "Failed to delete dues.",
+    "currencyUnit": "KRW",
+    "totalOperationFee": "Total Operation Fee",
+    "totalOperationFeeDesc": "Total operation fee currently held",
+    "operationDeposit": "Operation Deposit",
+    "operationDepositDesc": "Total deposits this year",
+    "operationWithdrawal": "Operation Withdrawal",
+    "operationWithdrawalDesc": "Total withdrawals this year",
+    "monthBirthFee": "Birthday Fee for {month}",
+    "monthBirthFeeDesc": "Birthday fee this month"
   },
   "rule": {
     "title": "Regulation",

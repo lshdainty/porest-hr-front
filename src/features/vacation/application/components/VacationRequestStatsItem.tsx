@@ -8,6 +8,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { ReactNode } from 'react';
+import { TFunction } from 'i18next';
 
 export interface VacationRequestStatsItemProps {
   id?: string;
@@ -49,7 +50,7 @@ const VacationRequestStatsItem = ({
   );
 };
 
-export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationStatsResp | undefined): VacationRequestStatsItemProps[] => {
+export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationStatsResp | undefined, t: TFunction<'vacation', undefined>): VacationRequestStatsItemProps[] => {
   const totalRequests = stats?.total_request_count || 0;
   const pendingRequests = stats?.pending_count || 0;
   const inProgressRequests = stats?.progress_count || 0;
@@ -72,9 +73,9 @@ export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationSta
           <span className='text-green-600 font-medium'>+{requestGrowth.toFixed(1)}%</span>
         </div>
       ),
-      title: '총 신청',
+      title: t('request.totalRequest'),
       value: totalRequests,
-      description: `이번 달 ${thisMonthRequests}건`
+      description: t('request.thisMonth', { count: thisMonthRequests })
     },
     {
       id: 'canceled',
@@ -82,12 +83,12 @@ export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationSta
       iconBg: 'bg-muted',
       headerRight: (
         <Badge variant='secondary'>
-          취소
+          {t('request.canceledLabel')}
         </Badge>
       ),
-      title: '취소',
+      title: t('request.canceledLabel'),
       value: canceledRequests,
-      description: '신청 취소됨'
+      description: t('request.canceledDesc')
     },
     {
       id: 'pending',
@@ -95,12 +96,12 @@ export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationSta
       iconBg: 'bg-yellow-100',
       headerRight: (
         <Badge variant='secondary' className='bg-yellow-100 text-yellow-800'>
-          대기
+          {t('request.pendingLabel')}
         </Badge>
       ),
-      title: '대기',
+      title: t('request.pendingLabel'),
       value: pendingRequests,
-      description: `평균 처리시간 ${averageProcessingDays.toFixed(1)}일`
+      description: t('request.avgProcessingTime', { days: averageProcessingDays.toFixed(1) })
     },
     {
       id: 'progress',
@@ -108,12 +109,12 @@ export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationSta
       iconBg: 'bg-blue-100',
       headerRight: (
         <Badge variant='secondary' className='bg-blue-100 text-blue-800'>
-          진행
+          {t('request.progressLabel')}
         </Badge>
       ),
-      title: '진행',
+      title: t('request.progressLabel'),
       value: inProgressRequests,
-      description: '처리중인 요청'
+      description: t('request.progressDesc')
     },
     {
       id: 'approved',
@@ -121,11 +122,11 @@ export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationSta
       iconBg: 'bg-green-100',
       headerRight: (
         <div className='text-right'>
-          <p className='text-xs text-foreground/70'>승인율</p>
+          <p className='text-xs text-foreground/70'>{t('request.approvalRate')}</p>
           <p className='text-sm font-semibold text-foreground'>{approvalRate.toFixed(0)}%</p>
         </div>
       ),
-      title: '승인',
+      title: t('request.approvedLabel'),
       value: approvedRequests,
       footer: (
         <div className='mt-2'>
@@ -139,20 +140,20 @@ export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationSta
       iconBg: 'bg-red-100',
       headerRight: (
         <Badge variant='secondary' className='bg-red-100 text-red-800'>
-          반려
+          {t('request.rejectedLabel')}
         </Badge>
       ),
-      title: '반려',
+      title: t('request.rejectedLabel'),
       value: rejectedRequests,
-      description: '재신청 필요'
+      description: t('request.rejectedDesc')
     },
     {
       id: 'acquired',
       icon: <CalendarDays className='w-6 h-6 text-purple-600' />,
       iconBg: 'bg-purple-100',
-      title: '획득 휴가',
+      title: t('request.acquiredVacation'),
       value: stats?.acquired_vacation_time_str || '0일',
-      description: '승인된 휴가'
+      description: t('request.acquiredDesc')
     }
   ];
 };

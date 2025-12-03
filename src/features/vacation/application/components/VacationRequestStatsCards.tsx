@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/shadcn/card';
 import { GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
+import { useTranslation } from 'react-i18next';
 
 import VacationRequestStatsItem, { getVacationRequestStatsConfig } from './VacationRequestStatsItem';
 
@@ -8,7 +9,8 @@ interface VacationRequestStatsCardsProps {
 }
 
 const VacationRequestStatsCards = ({ stats }: VacationRequestStatsCardsProps) => {
-  const cardConfig = getVacationRequestStatsConfig(stats);
+  const { t } = useTranslation('vacation');
+  const cardConfig = getVacationRequestStatsConfig(stats, t);
 
   return (
     <div className='grid grid-cols-2 lg:grid-cols-7 gap-4 mb-8'>

@@ -87,7 +87,7 @@ const DashboardContent = ({
       return [
         {
           icon: <Save className='w-5 h-5' />,
-          label: '저장',
+          label: t('save'),
           onClick: handleSave,
           variant: 'default',
           className: 'bg-green-600 hover:bg-green-700'

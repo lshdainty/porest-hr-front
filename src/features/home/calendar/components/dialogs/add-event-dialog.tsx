@@ -32,6 +32,7 @@ import dayjs from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from '@/components/shadcn/sonner';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
 const colorClassMap: Record<TEventColor, string> = {
@@ -46,12 +47,12 @@ const colorClassMap: Record<TEventColor, string> = {
   teal: 'border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800 dark:bg-teal-950 dark:text-teal-300',
 };
 
-const formSchema = z.object({
-  calendarType: z.string().min(1, '일정 타입을 선택해주세요.'),
+const createFormSchema = (t: (key: string) => string) => z.object({
+  calendarType: z.string().min(1, t('addEvent.calendarTypeRequired')),
   vacationType: z.string().optional(),
   desc: z.string().optional(),
-  startDate: z.string().min(1, '시작일을 입력해주세요.'),
-  endDate: z.string().min(1, '종료일을 입력해주세요.'),
+  startDate: z.string().min(1, t('addEvent.startDateRequired')),
+  endDate: z.string().min(1, t('addEvent.endDateRequired')),
   startHour: z.string().optional(),
   startMinute: z.string().optional(),
 }).superRefine((data, ctx) => {
@@ -59,13 +60,13 @@ const formSchema = z.object({
   if (selectedCalendar?.type === 'vacation' && !data.vacationType) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: '사용 휴가를 선택해주세요.',
+      message: t('addEvent.useVacationRequired'),
       path: ['vacationType'],
     });
   }
 });
 
-type AddEventFormValues = z.infer<typeof formSchema>;
+type AddEventFormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface AddEventDialogProps {
   children?: React.ReactNode;
@@ -84,8 +85,11 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   endDate: propEndDate,
   startTime
 }) => {
+  const { t } = useTranslation('calendar');
+  const { t: tc } = useTranslation('common');
   const [internalOpen, setInternalOpen] = React.useState(false)
   const { loginUser } = useUser()
+  const formSchema = createFormSchema(t);
 
   // open 상태 관리: props가 있으면 props 사용, 없으면 내부 상태 사용
   const open = propOpen !== undefined ? propOpen : internalOpen;
@@ -168,8 +172,8 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>일정 등록</DialogTitle>
-          <DialogDescription>일정 정보를 입력해주세요.</DialogDescription>
+          <DialogTitle>{t('addEvent.title')}</DialogTitle>
+          <DialogDescription>{t('addEvent.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="py-6 space-y-4">
@@ -180,16 +184,16 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={!!fieldState.error} className='flex-1'>
                     <FieldLabel>
-                      일정 타입
+                      {t('addEvent.calendarType')}
                       <span className='text-destructive ml-0.5'>*</span>
                     </FieldLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <SelectTrigger>
-                        <SelectValue placeholder="일정 타입" />
+                        <SelectValue placeholder={t('addEvent.calendarType')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>휴가</SelectLabel>
+                          <SelectLabel>{t('addEvent.vacation')}</SelectLabel>
                           {calendarTypes.filter(c => c.type === 'vacation').map(ct => (
                             <SelectItem key={ct.id} value={ct.id}>
                               <Badge className={colorClassMap[ct.color]}>
@@ -199,7 +203,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                           ))}
                         </SelectGroup>
                         <SelectGroup>
-                          <SelectLabel>스케줄</SelectLabel>
+                          <SelectLabel>{t('addEvent.schedule')}</SelectLabel>
                           {calendarTypes.filter(c => c.type === 'schedule').map(ct => (
                             <SelectItem key={ct.id} value={ct.id}>
                               <Badge className={colorClassMap[ct.color]}>
@@ -221,12 +225,12 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error} className='flex-1'>
                       <FieldLabel>
-                        사용 휴가
+                        {t('addEvent.useVacation')}
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder="사용 휴가" />
+                          <SelectValue placeholder={t('addEvent.useVacation')} />
                         </SelectTrigger>
                         <SelectContent>
                           {vacations?.map(v => (
@@ -248,9 +252,9 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    일정 사유
+                    {t('addEvent.eventReason')}
                   </FieldLabel>
-                  <Input placeholder="일정 사유" {...field} />
+                  <Input placeholder={t('addEvent.eventReason')} {...field} />
                   <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                 </Field>
               )}
@@ -262,13 +266,13 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={!!fieldState.error} className='flex-1'>
                     <FieldLabel>
-                      시작일
+                      {t('addEvent.startDate')}
                       <span className='text-destructive ml-0.5'>*</span>
                     </FieldLabel>
                     <InputDatePicker
                       value={field.value}
                       onValueChange={field.onChange}
-                      placeholder='시작일'
+                      placeholder={t('addEvent.startDate')}
                     />
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                   </Field>
@@ -281,7 +285,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={!!fieldState.error} className='flex-1'>
                     <FieldLabel>
-                      종료일
+                      {t('addEvent.endDate')}
                       <span className='text-destructive ml-0.5'>*</span>
                     </FieldLabel>
                     <InputDatePicker
@@ -290,13 +294,13 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                         const startDate = form.getValues('startDate');
                         if (startDate && date) {
                           if (dayjs(date).isBefore(dayjs(startDate))) {
-                            toast.error('종료일은 시작일보다 빠를 수 없습니다.');
+                            toast.error(t('addEvent.endDateError'));
                             return;
                           }
                         }
                         field.onChange(date);
                       }}
-                      placeholder='종료일'
+                      placeholder={t('addEvent.endDate')}
                     />
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                   </Field>
@@ -311,16 +315,16 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error} className='flex-1'>
                       <FieldLabel>
-                        시
+                        {t('addEvent.hour')}
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder="시" />
+                          <SelectValue placeholder={t('addEvent.hour')} />
                         </SelectTrigger>
                         <SelectContent>
                           {Array.from({ length: 11 }, (_, i) => (
-                            <SelectItem key={i+8} value={(i+8).toString()}>{`${i+8} 시`}</SelectItem>
+                            <SelectItem key={i+8} value={(i+8).toString()}>{`${i+8} ${t('addEvent.hourUnit')}`}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -334,16 +338,16 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error} className='flex-1'>
                       <FieldLabel>
-                        분
+                        {t('addEvent.minute')}
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder="분" />
+                          <SelectValue placeholder={t('addEvent.minute')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value={'0'}>{'0 분'}</SelectItem>
-                          <SelectItem value={'30'}>{'30 분'}</SelectItem>
+                          <SelectItem value={'0'}>{`0 ${t('addEvent.minuteUnit')}`}</SelectItem>
+                          <SelectItem value={'30'}>{`30 ${t('addEvent.minuteUnit')}`}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
@@ -355,9 +359,9 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant='outline' type="button">취소</Button>
+              <Button variant='outline' type="button">{tc('cancel')}</Button>
             </DialogClose>
-            <Button type='submit' disabled={!form.formState.isValid}>등록</Button>
+            <Button type='submit' disabled={!form.formState.isValid}>{t('addEvent.register')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

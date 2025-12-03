@@ -2,6 +2,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar"
 import { Badge } from "@/components/shadcn/badge";
 import { GetUsersResp } from "@/lib/api/user";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 
 // --- Types ---
 
@@ -54,10 +56,10 @@ const parseWorkTime = (workTime: string): { startTime: string; endTime: string }
   };
 };
 
-const formatTimeRange = (start: string, end: string) => {
-  const format = (t: string) => {
-    const [h, m] = t.split(':').map(Number);
-    const ampm = h < 12 ? '오전' : '오후';
+const formatTimeRange = (start: string, end: string, t: TFunction<'work', undefined>) => {
+  const format = (time: string) => {
+    const [h, m] = time.split(':').map(Number);
+    const ampm = h < 12 ? t('schedule.am') : t('schedule.pm');
     const formattedH = h > 12 ? h - 12 : h;
     return `${ampm} ${formattedH}:${m.toString().padStart(2, '0')}`;
   }
@@ -67,13 +69,13 @@ const formatTimeRange = (start: string, end: string) => {
 /**
  * Calculate total work hours from start and end time
  */
-const calculateWorkHours = (startTime: string, endTime: string): string => {
+const calculateWorkHours = (startTime: string, endTime: string, t: TFunction<'work', undefined>): string => {
   const [startH, startM] = startTime.split(':').map(Number);
   const [endH, endM] = endTime.split(':').map(Number);
   const totalMinutes = (endH * 60 + endM) - (startH * 60 + startM);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-  return minutes > 0 ? `${hours}시간 ${minutes}분` : `${hours}시간`;
+  return minutes > 0 ? t('schedule.hoursMinutes', { hours, minutes }) : t('schedule.hoursOnly', { hours });
 };
 
 // --- Components ---
@@ -134,7 +136,7 @@ const BackgroundGrid = () => {
   )
 }
 
-const ScheduleBar = ({ item }: { item: ScheduleItem }) => {
+const ScheduleBar = ({ item, t }: { item: ScheduleItem; t: TFunction<'work', undefined> }) => {
   const left = getPositionPercentage(item.startTime);
   const width = getPositionPercentage(item.endTime) - left;
 
@@ -146,7 +148,7 @@ const ScheduleBar = ({ item }: { item: ScheduleItem }) => {
       {/* Content Area */}
       <div className="flex flex-col justify-center px-3 z-10 font-medium whitespace-nowrap">
         <div className="opacity-80 text-[10px]">
-          {formatTimeRange(item.startTime, item.endTime)}
+          {formatTimeRange(item.startTime, item.endTime, t)}
         </div>
       </div>
     </div>
@@ -154,6 +156,7 @@ const ScheduleBar = ({ item }: { item: ScheduleItem }) => {
 };
 
 const ScheduleTable = ({ users }: ScheduleTableProps) => {
+  const { t } = useTranslation('work');
 
   return (
     <div className="bg-background overflow-hidden">
@@ -172,7 +175,7 @@ const ScheduleTable = ({ users }: ScheduleTableProps) => {
             {users.map((user) => {
               const workTime = parseWorkTime(user.user_work_time);
               const totalWorkTime = workTime
-                ? calculateWorkHours(workTime.startTime, workTime.endTime)
+                ? calculateWorkHours(workTime.startTime, workTime.endTime, t)
                 : '-';
 
               return (
@@ -206,6 +209,7 @@ const ScheduleTable = ({ users }: ScheduleTableProps) => {
                             startTime: workTime.startTime,
                             endTime: workTime.endTime
                           }}
+                          t={t}
                         />
                       )}
                     </div>

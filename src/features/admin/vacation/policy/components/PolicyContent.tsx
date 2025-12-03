@@ -15,11 +15,13 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { VacationPolicyFormDialog } from '@/features/admin/vacation/policy/components/VacationPolicyFormDialog';
 import { VacationPolicyLists } from '@/features/admin/vacation/policy/components/VacationPolicyLists';
 
 const PolicyContent = () => {
+  const { t } = useTranslation('vacation');
   const { searchQuery, setSearchQuery } = usePolicyContext();
 
   const { data: vacationPolicies, isLoading } = useVacationPoliciesQuery();
@@ -50,8 +52,8 @@ const PolicyContent = () => {
       <div className="flex flex-col gap-7">
         {/* 헤더 영역 */}
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight">휴가 정책 관리</h1>
-          <p className="text-muted-foreground">회사의 휴가 정책을 관리할 수 있습니다.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('policy.management')}</h1>
+          <p className="text-muted-foreground">{t('policy.managementDesc')}</p>
         </div>
 
         {/* 검색 및 리스트 영역 */}
@@ -62,13 +64,13 @@ const PolicyContent = () => {
               <div className="relative w-full sm:w-auto">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="휴가 정책 검색..."
+                  placeholder={t('policy.searchPlaceholder')}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className="pl-10 w-full sm:w-80"
                 />
               </div>
-              <div className="text-sm text-muted-foreground">총 {filteredPolicies.length}개 정책</div>
+              <div className="text-sm text-muted-foreground">{t('policy.totalCount', { count: filteredPolicies.length })}</div>
             </div>
 
             <VacationPolicyFormDialog
@@ -81,7 +83,7 @@ const PolicyContent = () => {
               trigger={
                 <Button className="flex items-center justify-center gap-2 w-full sm:w-auto">
                   <Plus className="h-4 w-4" />
-                  새 휴가 정책 추가
+                  {t('policy.addTitle')}
                 </Button>
               }
             />

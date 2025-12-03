@@ -23,8 +23,10 @@ import {
 } from '@/hooks/queries/useVacations';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const VacationContent = () => {
+  const { t } = useTranslation('vacation');
   const { loginUser } = useUser();
   const { selectedUserId, setSelectedUserId } = useVacationContext();
 
@@ -56,7 +58,7 @@ const VacationContent = () => {
   if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading || isLoadingRequests) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
-        <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
+        <h1 className='text-3xl font-bold mb-6'>{t('stats.title')}</h1>
         <div className='flex flex-col lg:flex-row gap-6'>
           <UserInfoCardSkeleton />
           <div className='flex flex-col gap-6 flex-1'>
@@ -82,15 +84,15 @@ const VacationContent = () => {
   if (!selectedUserId) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
-        <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
-        <div>사용자 정보가 없습니다.</div>
+        <h1 className='text-3xl font-bold mb-6'>{t('stats.title')}</h1>
+        <div>{t('stats.noUser')}</div>
       </div>
     );
   }
 
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
+      <h1 className='text-3xl font-bold mb-6'>{t('stats.title')}</h1>
       <div className='flex flex-col lg:flex-row gap-6'>
         <UserInfoCard
           value={users || []}

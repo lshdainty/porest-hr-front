@@ -24,5 +24,7 @@
     "workHistoryStatus": "Work History Status",
     "monthlyWorkAlert": "Monthly Work Alert",
     "allUserVacationStatus": "All User Vacation Status"
-  }
+  },
+  "save": "Save",
+  "hideWidget": "Hide Widget"
 }

@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { GripHorizontal, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface WidgetWrapperProps extends React.ComponentProps<'div'> {
   title: string;
@@ -8,6 +9,7 @@ interface WidgetWrapperProps extends React.ComponentProps<'div'> {
 }
 
 const WidgetWrapper = ({ children, title, onClose, isEditing, className, ...props }: WidgetWrapperProps) => {
+  const { t } = useTranslation('dashboard');
   return (
     <div className={`bg-card text-card-foreground rounded-xl shadow-sm border flex flex-col overflow-hidden h-full ${className}`} {...props}>
       <div className={cn(
@@ -27,7 +29,7 @@ const WidgetWrapper = ({ children, title, onClose, isEditing, className, ...prop
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             className='text-muted-foreground hover:text-destructive transition-colors'
-            title='위젯 숨기기'
+            title={t('hideWidget')}
           >
             <X className='w-4 h-4' />
           </button>

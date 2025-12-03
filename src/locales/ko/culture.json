@@ -1,7 +1,23 @@
 {
   "dues": {
+    "typeSelect": "분류",
+    "typeOperation": "운영비",
+    "typeBirth": "생일",
+    "typeFine": "벌금",
+    "calcTypeSelect": "유형",
+    "calcPlus": "입금",
+    "calcMinus": "출금",
     "title": "회비",
-    "deleteError": "회비 삭제에 실패했습니다."
+    "deleteError": "회비 삭제에 실패했습니다.",
+    "currencyUnit": "원",
+    "totalOperationFee": "전체 운영비",
+    "totalOperationFeeDesc": "현재 보유한 총 운영비",
+    "operationDeposit": "운영비 입금",
+    "operationDepositDesc": "올해 총 입금액",
+    "operationWithdrawal": "운영비 출금",
+    "operationWithdrawalDesc": "올해 총 출금액",
+    "monthBirthFee": "{month}월 생일비",
+    "monthBirthFeeDesc": "이번 달 생일비"
   },
   "rule": {
     "title": "규정",

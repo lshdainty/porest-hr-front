@@ -4,12 +4,14 @@ import CompanyFormDialog from '@/features/admin/company/components/CompanyFormDi
 import { PostCompanyReq } from '@/lib/api/company';
 import { Building2, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CompanyCreateCardProps {
   onCompanyCreate: (companyData: PostCompanyReq) => void;
 }
 
 const CompanyCreateCard = ({ onCompanyCreate }: CompanyCreateCardProps) => {
+  const { t } = useTranslation('admin');
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const handleSaveCompany = (formData: PostCompanyReq | { companyId: string; data: any }): void => {
@@ -27,18 +29,18 @@ const CompanyCreateCard = ({ onCompanyCreate }: CompanyCreateCardProps) => {
       <CardHeader className='text-center'>
         <CardTitle className='flex items-center justify-center space-x-2'>
           <Building2 className='text-blue-600' />
-          <span>회사 정보 추가하기</span>
+          <span>{t('company.addCardTitle')}</span>
         </CardTitle>
-        <CardDescription>회사 정보를 입력하여 시작하세요</CardDescription>
+        <CardDescription>{t('company.addCardDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button 
-          className='w-full' 
+        <Button
+          className='w-full'
           size='lg'
           onClick={() => setIsDialogOpen(true)}
         >
           <Plus className='mr-2' />
-          회사 추가하기
+          {t('company.addBtn')}
         </Button>
         <CompanyFormDialog
           isOpen={isDialogOpen}

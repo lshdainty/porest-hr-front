@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Tree, TreeNode } from 'react-organizational-chart';
 import { Building2, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/shadcn/card'
 import { GetCompanyWithDepartment } from '@/lib/api/company';
 
@@ -17,6 +18,7 @@ interface StyledNodeProps {
 const DepartmentChartPanel = ({
   departments
 }: DepartmentChartPanelProps) => {
+  const { t } = useTranslation('admin');
   const lineColor = useMemo(() => {
     return getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
   }, [])
@@ -121,11 +123,11 @@ const DepartmentChartPanel = ({
   return (
     <div className='h-full flex flex-col'>
       <div className='flex items-center justify-between p-4 border-b'>
-        <h2 className='text-lg font-semibold'>조직도</h2>
+        <h2 className='text-lg font-semibold'>{t('department.chart')}</h2>
         <div className='flex items-center space-x-2 h-8'>
           <Users size={16} className='text-muted-foreground' />
           <span className='text-sm text-muted-foreground'>
-            전체 부서: {getTotalDeptCount(departments)}개
+            {t('department.totalCount', { count: getTotalDeptCount(departments) })}
           </span>
         </div>
       </div>
@@ -139,7 +141,7 @@ const DepartmentChartPanel = ({
           ) : (
             <div className='text-center py-12'>
               <Building2 size={48} className='mx-auto text-muted-foreground mb-4' />
-              <p className='text-muted-foreground'>부서가 없습니다</p>
+              <p className='text-muted-foreground'>{t('department.noDepartments')}</p>
             </div>
           )}
         </div>

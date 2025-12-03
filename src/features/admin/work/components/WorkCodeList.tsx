@@ -11,10 +11,12 @@ import { useWorkGroupsWithPartsQuery } from '@/hooks/queries/useWorks';
 import { WorkCodeResp } from '@/lib/api/work';
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import WorkCodeDeleteDialog from './WorkCodeDeleteDialog';
 import WorkCodeEditDialog from './WorkCodeEditDialog';
 
 const WorkCodeList = () => {
+  const { t } = useTranslation('work');
   const { data: workGroups, isLoading } = useWorkGroupsWithPartsQuery();
   const [editingCode, setEditingCode] = useState<WorkCodeResp | null>(null);
   const [deletingCode, setDeletingCode] = useState<WorkCodeResp | null>(null);
@@ -40,7 +42,7 @@ const WorkCodeList = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{t('loading')}</div>;
   }
 
   return (
@@ -48,7 +50,7 @@ const WorkCodeList = () => {
       <div className="flex justify-end">
         <Button onClick={() => handleCreate()}>
           <Plus className="mr-2 h-4 w-4" />
-          최상위 그룹 추가
+          {t('addTopGroup')}
         </Button>
       </div>
 
@@ -56,11 +58,11 @@ const WorkCodeList = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[300px]">코드명</TableHead>
-              <TableHead>코드</TableHead>
-              <TableHead>타입</TableHead>
-              <TableHead>순서</TableHead>
-              <TableHead className="text-right">관리</TableHead>
+              <TableHead className="w-[300px]">{t('codeName')}</TableHead>
+              <TableHead>{t('code')}</TableHead>
+              <TableHead>{t('type')}</TableHead>
+              <TableHead>{t('order')}</TableHead>
+              <TableHead className="text-right">{t('manage')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -80,7 +82,7 @@ const WorkCodeList = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleCreate(group.work_code_seq)}
-                        title="하위 코드 추가"
+                        title={t('addSubCode')}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>

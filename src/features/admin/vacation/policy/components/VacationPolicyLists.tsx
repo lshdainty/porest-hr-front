@@ -9,6 +9,7 @@ import {
   useVacationTypesQuery
 } from '@/hooks/queries/useTypes';
 import { Calendar, CalendarClock, Repeat, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface VacationPolicyListsProps {
   policies: any[]; // Replace 'any' with proper type if available, e.g., IVacationPolicy
@@ -16,6 +17,7 @@ interface VacationPolicyListsProps {
 }
 
 const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps) => {
+  const { t } = useTranslation('vacation');
   const { data: grantMethodTypes } = useGrantMethodTypesQuery();
   const { data: effectiveTypes } = useEffectiveTypesQuery();
   const { data: expirationTypes } = useExpirationTypesQuery();
@@ -52,7 +54,7 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    <span>부여 시간: {policy.grant_time_str === '0' || policy.grant_time_str === '0일' ? '제한없음' : policy.grant_time_str}</span>
+                    <span>{t('policy.grantTimeLabel')}: {policy.grant_time_str === '0' || policy.grant_time_str === '0일' ? t('policy.noLimit') : policy.grant_time_str}</span>
                   </div>
                   {policy.repeat_grant_desc && (
                     <div className="flex items-center gap-1">
@@ -66,7 +68,7 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
                     <div className="flex items-center gap-1">
                       <CalendarClock className="h-4 w-4" />
                       <span>
-                        유효기간: {getDisplayName(policy.effective_type, effectiveTypes)} ~ {getDisplayName(policy.expiration_type, expirationTypes)}
+                        {t('policy.validityPeriod')}: {getDisplayName(policy.effective_type, effectiveTypes)} ~ {getDisplayName(policy.expiration_type, expirationTypes)}
                       </span>
                     </div>
                   </div>
@@ -97,7 +99,7 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
           <CardContent className="py-12">
             <div className="flex flex-col items-center gap-4 text-center">
               <p className="text-muted-foreground">
-                {searchQuery ? '검색 결과가 없습니다.' : '등록된 휴가 정책이 없습니다.'}
+                {searchQuery ? t('policy.noSearchResults') : t('policy.noPolicies')}
               </p>
             </div>
           </CardContent>

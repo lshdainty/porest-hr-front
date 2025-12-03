@@ -11,10 +11,12 @@ import { useWorkDivisionQuery } from '@/hooks/queries/useWorks';
 import { WorkCodeResp } from '@/lib/api/work';
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import WorkCodeDeleteDialog from './WorkCodeDeleteDialog';
 import WorkCodeEditDialog from './WorkCodeEditDialog';
 
 const WorkDivisionList = () => {
+  const { t } = useTranslation('work');
   const { data: workDivisions, isLoading } = useWorkDivisionQuery();
   const [editingCode, setEditingCode] = useState<WorkCodeResp | null>(null);
   const [deletingCode, setDeletingCode] = useState<WorkCodeResp | null>(null);
@@ -37,7 +39,7 @@ const WorkDivisionList = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>{t('loading')}</div>;
   }
 
   return (
@@ -45,7 +47,7 @@ const WorkDivisionList = () => {
       <div className="flex justify-end">
         <Button onClick={() => handleCreate()}>
           <Plus className="mr-2 h-4 w-4" />
-          업무 구분 추가
+          {t('addWorkDivision')}
         </Button>
       </div>
 
@@ -53,11 +55,11 @@ const WorkDivisionList = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[300px]">코드명</TableHead>
-              <TableHead>코드</TableHead>
-              <TableHead>타입</TableHead>
-              <TableHead>순서</TableHead>
-              <TableHead className="text-right">관리</TableHead>
+              <TableHead className="w-[300px]">{t('codeName')}</TableHead>
+              <TableHead>{t('code')}</TableHead>
+              <TableHead>{t('type')}</TableHead>
+              <TableHead>{t('order')}</TableHead>
+              <TableHead className="text-right">{t('manage')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

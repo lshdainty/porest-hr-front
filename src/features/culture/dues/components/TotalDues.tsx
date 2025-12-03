@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/shadcn/card';
 import { GetMonthBirthDuesResp, GetYearOperationDuesResp } from '@/lib/api/dues';
+import { useTranslation } from 'react-i18next';
 import TotalDuesItem, { getTotalDuesConfig } from './TotalDuesItem';
 
 interface TotalDuesProps {
@@ -8,7 +9,8 @@ interface TotalDuesProps {
 }
 
 const TotalDues = ({ totalDues, birthDues }: TotalDuesProps) => {
-  const duesConfig = getTotalDuesConfig(totalDues, birthDues);
+  const { t } = useTranslation('culture');
+  const duesConfig = getTotalDuesConfig(totalDues, birthDues, t);
 
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>

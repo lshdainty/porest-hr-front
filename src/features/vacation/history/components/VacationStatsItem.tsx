@@ -1,6 +1,7 @@
 import { Badge } from '@/components/shadcn/badge';
 import { GetUserVacationStatsResp } from '@/lib/api/vacation';
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
+import { TFunction } from 'i18next';
 
 export interface VacationStatsItemProps {
   id: string;
@@ -37,29 +38,29 @@ const VacationStatsItem = ({ title, value, change, changeType, description }: Va
   );
 };
 
-export const getVacationStatsConfig = (data: GetUserVacationStatsResp | undefined): VacationStatsItemProps[] => {
+export const getVacationStatsConfig = (data: GetUserVacationStatsResp | undefined, t: TFunction<'vacation', undefined>): VacationStatsItemProps[] => {
   if (!data) return [];
 
   return [
     {
       id: 'remain',
-      title: '잔여 휴가',
+      title: t('history.remainVacation'),
       value: `${data.remain_time_str}`,
       change: data.remain_time_gap,
       changeType: data.remain_time_gap > 0 ? 'increase' : data.remain_time_gap < 0 ? 'decrease' : '',
-      description: data.remain_time_gap !== 0 ? `지난 달 대비 ${data.remain_time_gap_str} ${data.remain_time_gap > 0 ? '증가' : '감소'}` : ''
+      description: data.remain_time_gap !== 0 ? t('history.comparedDesc', { gap: data.remain_time_gap_str, type: data.remain_time_gap > 0 ? t('history.increase') : t('history.decrease') }) : ''
     },
     {
       id: 'used',
-      title: '사용 휴가',
+      title: t('history.usedVacation'),
       value: `${data.used_time_str}`,
       change: data.used_time_gap,
       changeType: data.used_time_gap > 0 ? 'increase' : data.used_time_gap < 0 ? 'decrease' : '',
-      description: data.used_time_gap !== 0 ? `지난 달 대비 ${data.used_time_gap_str} ${data.used_time_gap > 0 ? '증가' : '감소'}` : ''
+      description: data.used_time_gap !== 0 ? t('history.comparedDesc', { gap: data.used_time_gap_str, type: data.used_time_gap > 0 ? t('history.increase') : t('history.decrease') }) : ''
     },
     {
       id: 'expect',
-      title: '사용 예정 휴가',
+      title: t('history.expectedVacation'),
       value: `${data.expect_used_time_str}`,
       change: 0,
       changeType: '',

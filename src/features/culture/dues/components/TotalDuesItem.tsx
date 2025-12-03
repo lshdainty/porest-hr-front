@@ -2,6 +2,8 @@ import { GetMonthBirthDuesResp, GetYearOperationDuesResp } from '@/lib/api/dues'
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 import { BanknoteArrowDown, BanknoteArrowUp, DollarSign, Users } from 'lucide-react';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 export interface TotalDuesItemProps {
   id: string;
@@ -21,6 +23,8 @@ const TotalDuesItem = ({
   colorClass,
   iconBg
 }: TotalDuesItemProps) => {
+  const { t } = useTranslation('culture');
+
   return (
     <div className='flex flex-col h-full justify-between'>
       <div className='flex items-center justify-between mb-4'>
@@ -34,7 +38,7 @@ const TotalDuesItem = ({
           <span className={cn('text-2xl font-bold', colorClass)}>
             {amount.toLocaleString('ko-KR')}
           </span>
-          <span className='text-sm text-muted-foreground opacity-60'>원</span>
+          <span className='text-sm text-muted-foreground opacity-60'>{t('dues.currencyUnit')}</span>
         </div>
         <p className='text-xs text-muted-foreground opacity-70'>{description}</p>
       </div>
@@ -43,45 +47,46 @@ const TotalDuesItem = ({
 };
 
 export const getTotalDuesConfig = (
-  totalDues?: GetYearOperationDuesResp,
-  birthDues?: GetMonthBirthDuesResp
+  totalDues: GetYearOperationDuesResp | undefined,
+  birthDues: GetMonthBirthDuesResp | undefined,
+  t: TFunction<'culture', undefined>
 ): TotalDuesItemProps[] => {
   const currentMonth = dayjs().format('MM');
 
   return [
     {
       id: 'total',
-      title: '전체 운영비',
+      title: t('dues.totalOperationFee'),
       icon: DollarSign,
       amount: totalDues?.total_dues ?? 0,
-      description: '현재 보유한 총 운영비',
+      description: t('dues.totalOperationFeeDesc'),
       colorClass: 'text-blue-600',
       iconBg: 'bg-blue-100'
     },
     {
       id: 'deposit',
-      title: '운영비 입금',
+      title: t('dues.operationDeposit'),
       icon: BanknoteArrowUp,
       amount: totalDues?.total_deposit ?? 0,
-      description: '올해 총 입금액',
+      description: t('dues.operationDepositDesc'),
       colorClass: 'text-green-600',
       iconBg: 'bg-green-100'
     },
     {
       id: 'withdrawal',
-      title: '운영비 출금',
+      title: t('dues.operationWithdrawal'),
       icon: BanknoteArrowDown,
       amount: Math.abs(totalDues?.total_withdrawal ?? 0),
-      description: '올해 총 출금액',
+      description: t('dues.operationWithdrawalDesc'),
       colorClass: 'text-red-600',
       iconBg: 'bg-red-100'
     },
     {
       id: 'birth',
-      title: `${currentMonth}월 생일비`,
+      title: t('dues.monthBirthFee', { month: currentMonth }),
       icon: Users,
       amount: birthDues?.birth_month_dues ?? 0,
-      description: '이번 달 생일비',
+      description: t('dues.monthBirthFeeDesc'),
       colorClass: 'text-purple-600',
       iconBg: 'bg-purple-100'
     }

@@ -38,17 +38,18 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import * as z from 'zod';
 
-// 폼 스키마 정의
-const formSchema = z.object({
-  name: z.string().min(1, '휴가 정책 이름을 입력해주세요'),
+// 폼 스키마 정의 (팩토리 함수)
+const createFormSchema = (t: (key: string) => string) => z.object({
+  name: z.string().min(1, t('policy.nameRequired')),
   description: z.string().optional(),
-  vacationType: z.string().min(1, '휴가 타입을 선택해주세요'),
-  grantMethod: z.string().min(1, '부여 방법을 선택해주세요'),
+  vacationType: z.string().min(1, t('policy.typeRequired')),
+  grantMethod: z.string().min(1, t('policy.grantMethodRequired')),
   grantTime: z.number().optional(),
   isFlexibleGrant: z.string().optional(),
-  minuteGrantYn: z.string().min(1, '분단위 부여 여부를 선택해주세요'),
+  minuteGrantYn: z.string().min(1, t('policy.minuteGrantRequired')),
   effectiveType: z.string().optional(),
   expirationType: z.string().optional(),
   approvalRequiredCount: z.number().optional(),
@@ -66,7 +67,7 @@ const formSchema = z.object({
     if (!data.isFlexibleGrant) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '가변 부여 여부를 선택해주세요',
+        message: t('policy.flexibleGrantRequired'),
         path: ['isFlexibleGrant']
       });
     }
@@ -75,7 +76,7 @@ const formSchema = z.object({
       if (!data.grantTime || data.grantTime <= 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: '고정 시간 부여 시 부여 시간을 입력해주세요 (0보다 큰 값)',
+          message: t('policy.grantTimeFixedRequired'),
           path: ['grantTime']
         });
       }
@@ -83,14 +84,14 @@ const formSchema = z.object({
     if (!data.effectiveType) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '발효 타입을 선택해주세요',
+        message: t('policy.effectiveTypeRequired'),
         path: ['effectiveType']
       });
     }
     if (!data.expirationType) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '만료 타입을 선택해주세요',
+        message: t('policy.expirationTypeRequired'),
         path: ['expirationType']
       });
     }
@@ -102,7 +103,7 @@ const formSchema = z.object({
     if (!data.isFlexibleGrant) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '가변 부여 여부를 선택해주세요',
+        message: t('policy.flexibleGrantRequired'),
         path: ['isFlexibleGrant']
       });
     }
@@ -111,7 +112,7 @@ const formSchema = z.object({
       if (!data.grantTime || data.grantTime <= 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: '고정 시간 부여 시 부여 시간을 입력해주세요 (0보다 큰 값)',
+          message: t('policy.grantTimeFixedRequired'),
           path: ['grantTime']
         });
       }
@@ -121,14 +122,14 @@ const formSchema = z.object({
     if (!data.effectiveType) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '발효 타입을 선택해주세요',
+        message: t('policy.effectiveTypeRequired'),
         path: ['effectiveType']
       });
     }
     if (!data.expirationType) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '만료 타입을 선택해주세요',
+        message: t('policy.expirationTypeRequired'),
         path: ['expirationType']
       });
     }
@@ -139,49 +140,49 @@ const formSchema = z.object({
     if (!data.grantTime || data.grantTime <= 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '부여 시간을 입력해주세요 (0보다 큰 값)',
+        message: t('policy.grantTimeRequired'),
         path: ['grantTime']
       });
     }
     if (!data.effectiveType) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '발효 타입을 선택해주세요',
+        message: t('policy.effectiveTypeRequired'),
         path: ['effectiveType']
       });
     }
     if (!data.expirationType) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '만료 타입을 선택해주세요',
+        message: t('policy.expirationTypeRequired'),
         path: ['expirationType']
       });
     }
     if (!data.repeatUnit) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '반복 단위를 선택해주세요',
+        message: t('policy.repeatUnitRequired'),
         path: ['repeatUnit']
       });
     }
     if (!data.repeatInterval || data.repeatInterval <= 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '반복 간격을 입력해주세요 (0보다 큰 값)',
+        message: t('policy.repeatIntervalRequired'),
         path: ['repeatInterval']
       });
     }
     if (!data.firstGrantDate) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '첫 부여 날짜를 선택해주세요',
+        message: t('policy.firstGrantDateRequired'),
         path: ['firstGrantDate']
       });
     }
     if (!data.isRecurring) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: '반복 여부를 선택해주세요',
+        message: t('policy.isRecurringRequired'),
         path: ['isRecurring']
       });
     }
@@ -191,7 +192,7 @@ const formSchema = z.object({
       if (!data.maxGrantCount || data.maxGrantCount <= 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: '최대 부여 횟수를 입력해주세요 (0보다 큰 값)',
+          message: t('policy.maxGrantCountRequired'),
           path: ['maxGrantCount']
         });
       }
@@ -203,7 +204,7 @@ const formSchema = z.object({
       if (!data.specificMonths && data.specificDays) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'YEARLY는 특정 일만 지정할 수 없습니다. 특정 월을 함께 지정해주세요',
+          message: t('policy.yearlyMonthRequired'),
           path: ['specificMonths']
         });
       }
@@ -212,16 +213,25 @@ const formSchema = z.object({
       if (data.specificMonths) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'MONTHLY는 특정 월을 지정할 수 없습니다',
+          message: t('policy.monthlyNoMonth'),
           path: ['specificMonths']
         });
       }
-    } else if (data.repeatUnit === 'QUARTERLY' || data.repeatUnit === 'HALF') {
+    } else if (data.repeatUnit === 'QUARTERLY') {
       // months 지정 불가
       if (data.specificMonths) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: `${data.repeatUnit}는 특정 월을 지정할 수 없습니다`,
+          message: t('policy.quarterlyNoMonth'),
+          path: ['specificMonths']
+        });
+      }
+    } else if (data.repeatUnit === 'HALF') {
+      // months 지정 불가
+      if (data.specificMonths) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t('policy.halfNoMonth'),
           path: ['specificMonths']
         });
       }
@@ -230,7 +240,7 @@ const formSchema = z.object({
       if (data.specificMonths || data.specificDays) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'DAILY는 특정 월/일을 지정할 수 없습니다',
+          message: t('policy.dailyNoMonthDay'),
           path: ['specificMonths']
         });
       }
@@ -238,7 +248,7 @@ const formSchema = z.object({
   }
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormData = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface VacationPolicyFormDialogProps {
   trigger: React.ReactNode;
@@ -261,9 +271,12 @@ const VacationPolicyFormDialog = ({
   expirationTypes = [],
   repeatUnitTypes = []
 }: VacationPolicyFormDialogProps) => {
+  const { t } = useTranslation('vacation');
+  const { t: tc } = useTranslation('common');
   const [open, setOpen] = useState(false);
   const { mutateAsync: postVacationPolicy, isPending } = usePostVacationPolicyMutation();
 
+  const formSchema = createFormSchema(t);
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -459,13 +472,13 @@ const VacationPolicyFormDialog = ({
       await postVacationPolicy(payload);
       setOpen(false);
     } catch (error) {
-      console.error('휴가 정책 저장 실패:', error);
+      console.error(t('policy.saveError'), error);
     }
   };
 
   const getDialogTitle = () => {
-    if (isEditing) return '휴가 정책 수정';
-    return '휴가 정책 추가';
+    if (isEditing) return t('policy.editTitle');
+    return t('policy.addTitle');
   };
 
   // 부여 방법에 따라 필요한 필드만 렌더링하는 헬퍼 함수
@@ -507,10 +520,10 @@ const VacationPolicyFormDialog = ({
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Calendar className='h-5 w-5' />
-                기본 설정
+                {t('policy.basicSettings')}
               </CardTitle>
               <CardDescription>
-                휴가의 기본 정보와 부여 방식을 설정해주세요.
+                {t('policy.basicSettingsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className='space-y-6'>
@@ -522,10 +535,10 @@ const VacationPolicyFormDialog = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        휴가 정책 이름
+                        {t('policy.name')}
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
-                      <Input placeholder='예: 연차, 리프레시 휴가' {...field} />
+                      <Input placeholder={t('policy.namePlaceholder')} {...field} />
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
                   )}
@@ -539,9 +552,9 @@ const VacationPolicyFormDialog = ({
                   name='description'
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
-                      <FieldLabel>휴가 정책 설명</FieldLabel>
+                      <FieldLabel>{t('policy.description')}</FieldLabel>
                       <Textarea
-                        placeholder='휴가 정책에 대한 설명을 입력해주세요'
+                        placeholder={t('policy.descriptionPlaceholder')}
                         className='min-h-[80px]'
                         {...field}
                       />
@@ -561,12 +574,12 @@ const VacationPolicyFormDialog = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        휴가 타입
+                        {t('policy.type')}
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder='휴가 타입을 선택해주세요' />
+                          <SelectValue placeholder={t('policy.typePlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
                           {vacationTypes.map((type) => (
@@ -577,7 +590,7 @@ const VacationPolicyFormDialog = ({
                         </SelectContent>
                       </Select>
                       <p className='text-sm text-muted-foreground'>
-                        휴가의 종류를 선택해주세요 (연차, 출산, 결혼 등).
+                        {t('policy.typeDescription')}
                       </p>
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
@@ -595,12 +608,12 @@ const VacationPolicyFormDialog = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        부여 방법
+                        {t('policy.grantMethod')}
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder='부여 방법을 선택해주세요' />
+                          <SelectValue placeholder={t('policy.grantMethodPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
                           {grantMethodTypes.map((type) => (
@@ -624,20 +637,20 @@ const VacationPolicyFormDialog = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        분단위 부여 여부
+                        {t('policy.minuteGrant')}
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder='선택해주세요' />
+                          <SelectValue placeholder={tc('select')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value='N'>N (불허)</SelectItem>
-                          <SelectItem value='Y'>Y (허용)</SelectItem>
+                          <SelectItem value='N'>{t('policy.minuteGrantNo')}</SelectItem>
+                          <SelectItem value='Y'>{t('policy.minuteGrantYes')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <p className='text-sm text-muted-foreground'>
-                        휴가를 부여할 때 분단위(30분)로 부여할 수 있는지 설정합니다.
+                        {t('policy.minuteGrantDesc')}
                       </p>
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
@@ -653,21 +666,21 @@ const VacationPolicyFormDialog = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        가변 부여 여부
+                        {t('policy.flexibleGrant')}
                         <span className='text-destructive ml-0.5'>*</span>
                       </FieldLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder='선택해주세요' />
+                          <SelectValue placeholder={tc('select')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value='N'>N (고정 시간)</SelectItem>
-                          <SelectItem value='Y'>Y (가변 시간)</SelectItem>
+                          <SelectItem value='N'>{t('policy.flexibleGrantNo')}</SelectItem>
+                          <SelectItem value='Y'>{t('policy.flexibleGrantYes')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <div className='text-sm text-muted-foreground space-y-1 mt-2'>
-                        <p><strong>N (고정 시간):</strong> 정책에 등록된 부여 시간을 사용합니다.</p>
-                        <p><strong>Y (가변 시간):</strong> 사용자 또는 관리자가 입력한 시간 값으로 부여합니다.</p>
+                        <p>{t('policy.flexibleGrantFixedDesc')}</p>
+                        <p>{t('policy.flexibleGrantFlexDesc')}</p>
                       </div>
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
@@ -697,7 +710,7 @@ const VacationPolicyFormDialog = ({
                     return (
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel>
-                          부여 시간
+                          {t('policy.grantTime')}
                           {/* REPEAT_GRANT는 항상 필수, ON_REQUEST/MANUAL_GRANT는 isFlexibleGrant가 N(고정)일 때만 필수 */}
                           {(watchGrantMethod === 'REPEAT_GRANT' ||
                             ((watchGrantMethod === 'ON_REQUEST' || watchGrantMethod === 'MANUAL_GRANT') && watchIsFlexibleGrant === 'N')) && (
@@ -710,7 +723,7 @@ const VacationPolicyFormDialog = ({
                               type='number'
                               min='0'
                               max='365'
-                              placeholder='일'
+                              placeholder={tc('day')}
                               className='w-full'
                               value={days || ''}
                               onChange={(e) => {
@@ -718,7 +731,7 @@ const VacationPolicyFormDialog = ({
                                 handleTimeChange(newDays, hours, minutes);
                               }}
                             />
-                            <p className='text-xs text-muted-foreground mt-1'>일</p>
+                            <p className='text-xs text-muted-foreground mt-1'>{t('policy.dayUnit')}</p>
                           </div>
                           <div className='flex flex-col'>
                             <Select
@@ -728,17 +741,17 @@ const VacationPolicyFormDialog = ({
                               }}
                             >
                               <SelectTrigger className='w-full'>
-                                <SelectValue placeholder='시간' />
+                                <SelectValue placeholder={tc('hour')} />
                               </SelectTrigger>
                               <SelectContent>
                                 {[0, 1, 2, 3, 4, 5, 6, 7].map((h) => (
                                   <SelectItem key={h} value={h.toString()}>
-                                    {h}시간
+                                    {h}{t('policy.hourUnit')}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
-                            <p className='text-xs text-muted-foreground mt-1'>시간 (1시간 = 0.125일)</p>
+                            <p className='text-xs text-muted-foreground mt-1'>{t('policy.hourConversion')}</p>
                           </div>
                           {watchMinuteGrantYn === 'Y' && (
                             <div className='flex flex-col'>
@@ -749,29 +762,29 @@ const VacationPolicyFormDialog = ({
                                 }}
                               >
                                 <SelectTrigger className='w-full'>
-                                  <SelectValue placeholder='분' />
+                                  <SelectValue placeholder={tc('minute')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value='0'>0분</SelectItem>
-                                  <SelectItem value='30'>30분</SelectItem>
+                                  <SelectItem value='0'>0{t('policy.minuteUnit')}</SelectItem>
+                                  <SelectItem value='30'>30{t('policy.minuteUnit')}</SelectItem>
                                 </SelectContent>
                               </Select>
-                              <p className='text-xs text-muted-foreground mt-1'>분 (30분 = 0.0625일)</p>
+                              <p className='text-xs text-muted-foreground mt-1'>{t('policy.minuteConversion')}</p>
                             </div>
                           )}
                         </div>
                         <p className='text-sm text-muted-foreground mt-2'>
                           {watchIsFlexibleGrant === 'N'
-                            ? '고정 시간 부여: 정책에 등록된 부여 시간을 사용합니다.'
+                            ? t('policy.fixedTimeDesc')
                             : watchIsFlexibleGrant === 'Y'
-                              ? '가변 시간 부여: 사용자 또는 관리자가 입력한 시간 값으로 부여합니다. (이 값은 참고용입니다.)'
-                              : `부여할 휴가를 일/시간${watchMinuteGrantYn === 'Y' ? '/분' : ''} 단위로 선택해주세요.`}
+                              ? t('policy.flexibleTimeDesc')
+                              : watchMinuteGrantYn === 'Y' ? t('policy.selectTimeWithMinuteDesc') : t('policy.selectTimeDesc')}
                           {field.value && field.value > 0 && (
                             <span className='block mt-1 font-medium text-primary'>
-                              총 {[
-                                days > 0 ? `${days}일` : '',
-                                hours > 0 ? `${hours}시간` : '',
-                                minutes > 0 && watchMinuteGrantYn === 'Y' ? `${minutes}분` : ''
+                              {t('policy.totalTime')} {[
+                                days > 0 ? `${days}${t('policy.dayUnit')}` : '',
+                                hours > 0 ? `${hours}${t('policy.hourUnit')}` : '',
+                                minutes > 0 && watchMinuteGrantYn === 'Y' ? `${minutes}${t('policy.minuteUnit')}` : ''
                               ].filter(Boolean).join(' ')}
                             </span>
                           )}
@@ -793,12 +806,12 @@ const VacationPolicyFormDialog = ({
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>
-                            유효기간 시작일자
+                            {t('policy.effectiveType')}
                             <span className='text-destructive ml-0.5'>*</span>
                           </FieldLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger>
-                              <SelectValue placeholder='시작일자 선택' />
+                              <SelectValue placeholder={t('policy.effectiveTypePlaceholder')} />
                             </SelectTrigger>
                             <SelectContent>
                               {effectiveTypes.map((type) => (
@@ -809,7 +822,7 @@ const VacationPolicyFormDialog = ({
                             </SelectContent>
                           </Select>
                           <p className='text-sm text-muted-foreground'>
-                            휴가가 언제부터 유효한지 선택해주세요.
+                            {t('policy.effectiveTypeDesc')}
                           </p>
                           <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                         </Field>
@@ -824,12 +837,12 @@ const VacationPolicyFormDialog = ({
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>
-                            유효기간 만료일자
+                            {t('policy.expirationType')}
                             <span className='text-destructive ml-0.5'>*</span>
                           </FieldLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger>
-                              <SelectValue placeholder='만료일자 선택' />
+                              <SelectValue placeholder={t('policy.expirationTypePlaceholder')} />
                             </SelectTrigger>
                             <SelectContent>
                               {expirationTypes.map((type) => (
@@ -840,7 +853,7 @@ const VacationPolicyFormDialog = ({
                             </SelectContent>
                           </Select>
                           <p className='text-sm text-muted-foreground'>
-                            휴가가 언제까지 유효한지 선택해주세요.
+                            {t('policy.expirationTypeDesc')}
                           </p>
                           <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                         </Field>
@@ -857,7 +870,7 @@ const VacationPolicyFormDialog = ({
                   name='approvalRequiredCount'
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
-                      <FieldLabel>승인 필요 횟수</FieldLabel>
+                      <FieldLabel>{t('policy.approvalCount')}</FieldLabel>
                       <Input
                         type='number'
                         min='0'
@@ -869,7 +882,7 @@ const VacationPolicyFormDialog = ({
                         }}
                       />
                       <p className='text-sm text-muted-foreground'>
-                        신청 시 필요한 승인 횟수를 입력해주세요. (0은 승인 불필요)
+                        {t('policy.approvalCountDesc')}
                       </p>
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
@@ -883,9 +896,9 @@ const VacationPolicyFormDialog = ({
           {watchGrantMethod === 'REPEAT_GRANT' && (
             <Card>
               <CardHeader>
-                <CardTitle>반복 부여 설정</CardTitle>
+                <CardTitle>{t('policy.repeatSettings')}</CardTitle>
                 <CardDescription>
-                  휴가를 자동으로 반복 부여하는 설정입니다.
+                  {t('policy.repeatSettingsDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-6'>
@@ -898,12 +911,12 @@ const VacationPolicyFormDialog = ({
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>
-                            반복 단위
+                            {t('policy.repeatUnit')}
                             <span className='text-destructive ml-0.5'>*</span>
                           </FieldLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger>
-                              <SelectValue placeholder='반복 단위 선택' />
+                              <SelectValue placeholder={t('policy.repeatUnitPlaceholder')} />
                             </SelectTrigger>
                             <SelectContent>
                               {repeatUnitTypes.map((type) => (
@@ -914,7 +927,7 @@ const VacationPolicyFormDialog = ({
                             </SelectContent>
                           </Select>
                           <p className='text-sm text-muted-foreground'>
-                            휴가를 얼마나 자주 부여할지 선택해주세요.
+                            {t('policy.repeatUnitDesc')}
                           </p>
                           <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                         </Field>
@@ -929,7 +942,7 @@ const VacationPolicyFormDialog = ({
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>
-                            반복 간격
+                            {t('policy.repeatInterval')}
                             <span className='text-destructive ml-0.5'>*</span>
                           </FieldLabel>
                           <Input
@@ -942,7 +955,7 @@ const VacationPolicyFormDialog = ({
                             onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 1)}
                           />
                           <p className='text-sm text-muted-foreground'>
-                            반복 주기마다 몇 번째에 부여할지 설정 (예: 1=매번, 2=격번)
+                            {t('policy.repeatIntervalDesc')}
                           </p>
                           <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                         </Field>
@@ -958,18 +971,18 @@ const VacationPolicyFormDialog = ({
                     name='specificMonths'
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>특정 월 (선택)</FieldLabel>
+                        <FieldLabel>{t('policy.specificMonth')}</FieldLabel>
                         <Input
                           type='number'
                           min='1'
                           max='12'
-                          placeholder='예: 1 (1월)'
+                          placeholder={t('policy.specificMonthPlaceholder')}
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                         />
                         <p className='text-sm text-muted-foreground'>
-                          매년 특정 월에 부여하려면 입력해주세요 (1-12). 미입력 시 첫 부여 날짜의 월 기준.
+                          {t('policy.specificMonthDesc')}
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -984,18 +997,18 @@ const VacationPolicyFormDialog = ({
                     name='specificDays'
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel>특정 일 (선택)</FieldLabel>
+                        <FieldLabel>{t('policy.specificDay')}</FieldLabel>
                         <Input
                           type='number'
                           min='1'
                           max='31'
-                          placeholder='예: 1 (1일)'
+                          placeholder={t('policy.specificDayPlaceholder')}
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                         />
                         <p className='text-sm text-muted-foreground'>
-                          특정 일에 부여하려면 입력해주세요 (1-31). 해당 월에 없는 날짜는 자동으로 마지막 날로 조정됩니다.
+                          {t('policy.specificDayDesc')}
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -1011,7 +1024,7 @@ const VacationPolicyFormDialog = ({
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel>
-                          첫 부여 날짜
+                          {t('policy.firstGrantDate')}
                           <span className='text-destructive ml-0.5'>*</span>
                         </FieldLabel>
                         <InputDatePicker
@@ -1019,7 +1032,7 @@ const VacationPolicyFormDialog = ({
                           onValueChange={field.onChange}
                         />
                         <p className='text-sm text-muted-foreground'>
-                          스케줄러가 반복 부여를 계산하기 위한 기준일입니다.
+                          {t('policy.firstGrantDateDesc')}
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -1037,21 +1050,21 @@ const VacationPolicyFormDialog = ({
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel>
-                          반복 여부
+                          {t('policy.isRecurring')}
                           <span className='text-destructive ml-0.5'>*</span>
                         </FieldLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <SelectTrigger>
-                            <SelectValue placeholder='반복 여부 선택' />
+                            <SelectValue placeholder={t('policy.isRecurringPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value='Y'>Y (반복 부여)</SelectItem>
-                            <SelectItem value='N'>N (1회성 부여)</SelectItem>
+                            <SelectItem value='Y'>{t('policy.isRecurringYes')}</SelectItem>
+                            <SelectItem value='N'>{t('policy.isRecurringNo')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <p className='text-sm text-muted-foreground'>
-                          <strong>Y (반복 부여):</strong> 계속 반복하여 부여합니다.<br />
-                          <strong>N (1회성 부여):</strong> 규칙에 따라 한번 부여된 뒤 더이상 부여되지 않습니다.
+                          {t('policy.isRecurringYesDesc')}<br />
+                          {t('policy.isRecurringNoDesc')}
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -1067,7 +1080,7 @@ const VacationPolicyFormDialog = ({
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel>
-                          최대 부여 횟수
+                          {t('policy.maxGrantCount')}
                           <span className='text-destructive ml-0.5'>*</span>
                         </FieldLabel>
                         <Input
@@ -1079,7 +1092,7 @@ const VacationPolicyFormDialog = ({
                           onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                         />
                         <p className='text-sm text-muted-foreground'>
-                          1회성 부여일 경우 최대 몇 번 부여할지 입력해주세요.
+                          {t('policy.maxGrantCountDesc')}
                         </p>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -1092,13 +1105,13 @@ const VacationPolicyFormDialog = ({
                   <div className='flex items-start gap-2'>
                     <Info className='h-5 w-5 text-blue-500 mt-0.5' />
                     <div className='text-sm text-blue-700 dark:text-blue-300 space-y-1'>
-                      <p className='font-medium'>반복 부여 안내:</p>
+                      <p className='font-medium'>{t('policy.repeatGuideTitle')}</p>
                       <ul className='list-disc list-inside space-y-1'>
-                        <li>YEARLY: 매년 특정 월/일에 부여</li>
-                        <li>MONTHLY: 매월 특정 일에 부여 (특정 월 지정 불가)</li>
-                        <li>QUARTERLY: 분기별 (1,4,7,10월) 특정 일에 부여</li>
-                        <li>HALF: 반기별 (1,7월) 특정 일에 부여</li>
-                        <li>DAILY: 매일 부여 (특정 월/일 지정 불가)</li>
+                        <li>{t('policy.repeatGuideYearly')}</li>
+                        <li>{t('policy.repeatGuideMonthly')}</li>
+                        <li>{t('policy.repeatGuideQuarterly')}</li>
+                        <li>{t('policy.repeatGuideHalf')}</li>
+                        <li>{t('policy.repeatGuideDaily')}</li>
                       </ul>
                     </div>
                   </div>
@@ -1110,11 +1123,11 @@ const VacationPolicyFormDialog = ({
           {/* 제출 버튼 */}
           <div className='flex justify-end gap-4 pt-4'>
             <Button type='button' variant='secondary' onClick={() => setOpen(false)}>
-              취소
+              {tc('cancel')}
             </Button>
             <Button type='submit' disabled={isPending || !isFormValid()}>
               {isPending && <Spinner />}
-              {isPending ? '저장 중...' : (isEditing ? '수정' : '저장')}
+              {isPending ? tc('saving') : (isEditing ? tc('edit') : tc('save'))}
             </Button>
           </div>
         </form>

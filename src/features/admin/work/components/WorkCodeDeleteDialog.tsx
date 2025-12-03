@@ -10,6 +10,7 @@ import {
 } from '@/components/shadcn/alertDialog';
 import { useDeleteWorkCodeMutation } from '@/hooks/queries/useWorks';
 import { WorkCodeResp } from '@/lib/api/work';
+import { useTranslation } from 'react-i18next';
 
 interface WorkCodeDeleteDialogProps {
   open: boolean;
@@ -24,6 +25,8 @@ const WorkCodeDeleteDialog = ({
   workCode,
   onSuccess
 }: WorkCodeDeleteDialogProps) => {
+  const { t } = useTranslation('work');
+  const { t: tc } = useTranslation('common');
   const { mutate: deleteWorkCode, isPending } = useDeleteWorkCodeMutation();
 
   const handleDelete = () => {
@@ -41,15 +44,15 @@ const WorkCodeDeleteDialog = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>업무 코드 삭제</AlertDialogTitle>
+          <AlertDialogTitle>{t('codeDelete')}</AlertDialogTitle>
           <AlertDialogDescription>
-            정말로 '{workCode?.work_code_name}' 업무 코드를 삭제하시겠습니까?
+            {t('codeDeleteConfirm', { name: workCode?.work_code_name })}
             <br />
-            삭제된 코드는 복구할 수 없습니다.
+            {t('codeDeleteWarning')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>취소</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>{tc('cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
@@ -58,7 +61,7 @@ const WorkCodeDeleteDialog = ({
             disabled={isPending}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isPending ? '삭제 중...' : '삭제'}
+            {isPending ? tc('deleting') : tc('delete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

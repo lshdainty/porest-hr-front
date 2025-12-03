@@ -1,17 +1,20 @@
 import VacationRequestStatsCardsSkeleton from '@/features/vacation/application/components/VacationRequestStatsCardsSkeleton';
 import VacationRequestStatsItem, { getVacationRequestStatsConfig } from '@/features/vacation/application/components/VacationRequestStatsItem';
 import { GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
+import { useTranslation } from 'react-i18next';
 
 interface VacationRequestStatsWidgetProps {
   stats?: GetUserRequestedVacationStatsResp;
 }
 
 const VacationRequestStatsWidget = ({ stats }: VacationRequestStatsWidgetProps) => {
+  const { t } = useTranslation('vacation');
+
   if (!stats) {
     return <VacationRequestStatsCardsSkeleton />;
   }
 
-  const statsConfig = getVacationRequestStatsConfig(stats);
+  const statsConfig = getVacationRequestStatsConfig(stats, t);
 
   return (
     <div className='w-full overflow-x-auto'>

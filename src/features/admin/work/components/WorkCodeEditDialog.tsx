@@ -27,17 +27,18 @@ import { CodeType, WorkCodeResp } from '@/lib/api/work';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import * as z from 'zod';
 
-const formSchema = z.object({
-  work_code: z.string().min(1, '코드를 입력해주세요.'),
-  work_code_name: z.string().min(1, '코드명을 입력해주세요.'),
+const createFormSchema = (t: (key: string) => string) => z.object({
+  work_code: z.string().min(1, t('codeRequired')),
+  work_code_name: z.string().min(1, t('codeNameRequired')),
   code_type: z.enum(['LABEL', 'OPTION']),
   parent_work_code_seq: z.number().optional(),
   order_seq: z.coerce.number().optional(),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface WorkCodeEditDialogProps {
   open: boolean;
@@ -54,11 +55,14 @@ const WorkCodeEditDialog = ({
   parentWorkCodeSeq,
   onSuccess
 }: WorkCodeEditDialogProps) => {
+  const { t } = useTranslation('work');
+  const { t: tc } = useTranslation('common');
   const { mutate: createWorkCode, isPending: isCreatePending } = usePostCreateWorkCodeMutation();
   const { mutate: updateWorkCode, isPending: isUpdatePending } = usePutUpdateWorkCodeMutation();
 
   const isPending = isCreatePending || isUpdatePending;
   const isEdit = !!workCode;
+  const formSchema = createFormSchema(t);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema) as any, // Temporary fix for type mismatch
@@ -127,7 +131,7 @@ const WorkCodeEditDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEdit ? '업무 코드 수정' : '업무 코드 생성'}</DialogTitle>
+          <DialogTitle>{isEdit ? t('codeEdit') : t('codeCreate')}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -136,9 +140,9 @@ const WorkCodeEditDialog = ({
               name="work_code"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>코드</FormLabel>
+                  <FormLabel>{t('code')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="WORK_CODE" {...field} />
+                    <Input placeholder={t('codePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -149,9 +153,9 @@ const WorkCodeEditDialog = ({
               name="work_code_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>코드명</FormLabel>
+                  <FormLabel>{t('codeName')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="업무 코드명" {...field} />
+                    <Input placeholder={t('codeNamePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -162,11 +166,11 @@ const WorkCodeEditDialog = ({
               name="code_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>타입</FormLabel>
+                  <FormLabel>{t('type')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="타입 선택" />
+                        <SelectValue placeholder={t('typeSelect')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -183,7 +187,7 @@ const WorkCodeEditDialog = ({
               name="order_seq"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>정렬 순서</FormLabel>
+                  <FormLabel>{t('orderSeq')}</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -193,7 +197,7 @@ const WorkCodeEditDialog = ({
             />
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
-                {isPending ? '저장 중...' : '저장'}
+                {isPending ? tc('saving') : tc('save')}
               </Button>
             </DialogFooter>
           </form>

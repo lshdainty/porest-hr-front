@@ -1,0 +1,27 @@
+{
+  "addEvent": {
+    "title": "일정 등록",
+    "description": "일정 정보를 입력해주세요.",
+    "calendarType": "일정 타입",
+    "calendarTypeRequired": "일정 타입을 선택해주세요.",
+    "vacation": "휴가",
+    "schedule": "스케줄",
+    "useVacation": "사용 휴가",
+    "useVacationRequired": "사용 휴가를 선택해주세요.",
+    "eventReason": "일정 사유",
+    "startDate": "시작일",
+    "startDateRequired": "시작일을 입력해주세요.",
+    "endDate": "종료일",
+    "endDateRequired": "종료일을 입력해주세요.",
+    "endDateError": "종료일은 시작일보다 빠를 수 없습니다.",
+    "hour": "시",
+    "hourUnit": "시",
+    "minute": "분",
+    "minuteUnit": "분",
+    "register": "등록"
+  },
+  "editEvent": {
+    "title": "일정 수정",
+    "description": "일정 정보를 수정해주세요."
+  }
+}

@@ -9,24 +9,24 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
-const formSchema = z.object({
-  holiday_name: z.string().min(1, { message: '공휴일 이름을 입력해주세요.' }),
+const createFormSchema = (t: (key: string) => string) => z.object({
+  holiday_name: z.string().min(1, { message: t('holiday.nameRequired') }),
   holiday_icon: z.string().optional().refine((val) => {
-    if (!val) return true; // optional이므로 빈 값 허용
-    // 이모지 길이 체크 (일반적으로 1-2 문자)
+    if (!val) return true;
     return val.length <= 2;
-  }, { message: '이모지는 2자 이내로 입력해주세요.' }),
-  holiday_date: z.string().min(1, { message: '날짜를 선택해주세요.' }),
-  holiday_type: z.string().min(1, { message: '공휴일 구분을 선택해주세요.' }),
-  lunar_yn: z.string().min(1, { message: '음력 여부를 선택해주세요.' }),
-  is_recurring: z.string().min(1, { message: '매년 반복 여부를 선택해주세요.' }),
+  }, { message: t('holiday.iconMaxLength') }),
+  holiday_date: z.string().min(1, { message: t('holiday.dateRequired') }),
+  holiday_type: z.string().min(1, { message: t('holiday.typeRequired') }),
+  lunar_yn: z.string().min(1, { message: t('holiday.lunarYnRequired') }),
+  is_recurring: z.string().min(1, { message: t('holiday.recurringYnRequired') }),
   lunar_date: z.string().optional(),
-  country_code: z.string().min(1, { message: '국가 코드를 입력해주세요.' }),
+  country_code: z.string().min(1, { message: t('holiday.countryCodeRequired') }),
 });
 
-type HolidayFormValues = z.infer<typeof formSchema>;
+type HolidayFormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface HolidayEditDialogProps {
   isOpen: boolean;
@@ -43,6 +43,10 @@ const HolidayEditDialog = ({
   onSave,
   trigger,
 }: HolidayEditDialogProps) => {
+  const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
+  const formSchema = createFormSchema(t);
+
   const form = useForm<HolidayFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,17 +93,17 @@ const HolidayEditDialog = ({
       ) : (
         <DialogTrigger asChild>
           <Button className='flex items-center gap-2'>
-            추가
+            {t('holiday.addBtn')}
           </Button>
         </DialogTrigger>
       )}
       <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>
-            {editingHoliday ? '공휴일 수정' : '새 공휴일 추가'}
+            {editingHoliday ? t('holiday.editTitle') : t('holiday.addTitle')}
           </DialogTitle>
           <DialogDescription>
-            공휴일 정보를 입력해주세요.
+            {t('holiday.formDescription')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -110,9 +114,9 @@ const HolidayEditDialog = ({
                 name='holiday_name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>공휴일 이름</FormLabel>
+                    <FormLabel>{t('holiday.name')}</FormLabel>
                     <FormControl>
-                      <Input placeholder='예: 추석' {...field} />
+                      <Input placeholder={t('holiday.namePlaceholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -123,7 +127,7 @@ const HolidayEditDialog = ({
                 name='holiday_icon'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>아이콘 (이모지)</FormLabel>
+                    <FormLabel>{t('holiday.icon')}</FormLabel>
                     <FormControl>
                       <Input
                         type='text'
@@ -144,7 +148,7 @@ const HolidayEditDialog = ({
                 name='holiday_date'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>날짜</FormLabel>
+                    <FormLabel>{t('holiday.date')}</FormLabel>
                     <FormControl>
                       <InputDatePicker
                         value={field.value ? dayjs(field.value).format('YYYY-MM-DD') : ''}
@@ -160,17 +164,17 @@ const HolidayEditDialog = ({
                 name='holiday_type'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>공휴일 구분</FormLabel>
+                    <FormLabel>{t('holiday.type')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder='구분 선택' />
+                          <SelectValue placeholder={t('holiday.typePlaceholder')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='PUBLIC'>공휴일</SelectItem>
-                        <SelectItem value='ETC'>기타</SelectItem>
-                        <SelectItem value='SUBSTITUTE'>대체</SelectItem>
+                        <SelectItem value='PUBLIC'>{t('holiday.typePublic')}</SelectItem>
+                        <SelectItem value='ETC'>{t('holiday.typeEtc')}</SelectItem>
+                        <SelectItem value='SUBSTITUTE'>{t('holiday.typeSubstitute')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -184,16 +188,16 @@ const HolidayEditDialog = ({
                 name='lunar_yn'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>음력 여부</FormLabel>
+                    <FormLabel>{t('holiday.lunarYn')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder='음력 여부' />
+                          <SelectValue placeholder={t('holiday.lunarYn')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='Y'>음력</SelectItem>
-                        <SelectItem value='N'>양력</SelectItem>
+                        <SelectItem value='Y'>{t('holiday.lunarYes')}</SelectItem>
+                        <SelectItem value='N'>{t('holiday.lunarNo')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -205,16 +209,16 @@ const HolidayEditDialog = ({
                 name='is_recurring'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>매년 반복</FormLabel>
+                    <FormLabel>{t('holiday.recurringYn')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder='반복 여부' />
+                          <SelectValue placeholder={t('holiday.recurringPlaceholder')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='Y'>예</SelectItem>
-                        <SelectItem value='N'>아니오</SelectItem>
+                        <SelectItem value='Y'>{tc('yes')}</SelectItem>
+                        <SelectItem value='N'>{tc('no')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -228,7 +232,7 @@ const HolidayEditDialog = ({
                 name='lunar_date'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>음력 날짜</FormLabel>
+                    <FormLabel>{t('holiday.lunarDate')}</FormLabel>
                     <FormControl>
                       <InputDatePicker
                         value={field.value ? dayjs(field.value).format('YYYY-MM-DD') : ''}
@@ -245,24 +249,24 @@ const HolidayEditDialog = ({
               name='country_code'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>국가 코드</FormLabel>
+                  <FormLabel>{t('holiday.countryCode')}</FormLabel>
                   <FormControl>
-                    <Input placeholder='예: KR' {...field} />
+                    <Input placeholder={t('holiday.countryCodePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <div className='flex justify-end gap-2 pt-4'>
-              <Button 
-                type='button' 
-                variant='outline' 
+              <Button
+                type='button'
+                variant='outline'
                 onClick={handleCancel}
               >
-                취소
+                {tc('cancel')}
               </Button>
               <Button type='submit'>
-                {editingHoliday ? '수정' : '추가'}
+                {editingHoliday ? tc('edit') : tc('add')}
               </Button>
             </div>
           </form>

@@ -5,6 +5,7 @@ import { GetCompanyWithDepartment } from '@/lib/api/company';
 import { PutDepartmentReq } from '@/lib/api/department';
 import { Building2, Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import DepartmentFormDialog from '@/features/admin/company/components/DepartmentFormDialog';
 
 interface DepartmentTreePanelProps {
@@ -27,11 +28,13 @@ const DepartmentTreePanel = ({
   onDeptUpdate,
   onDeptDelete,
   companyId,
-  title = '부서 관리',
+  title,
   showAddButton = true,
   showNodeActions = true,
   disableCollapse = false,
 }: DepartmentTreePanelProps) => {
+  const { t } = useTranslation('admin');
+  const displayTitle = title ?? t('department.title');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDept, setEditingDept] = useState<GetCompanyWithDepartment | null>(null);
   const [addingChildToId, setAddingChildToId] = useState<number | null>(null);
@@ -64,7 +67,7 @@ const DepartmentTreePanel = ({
 
   const handleDelete = (dept: GetCompanyWithDepartment) => {
     if (dept.children && dept.children.length > 0) {
-      toast.error('하위 부서가 있어 삭제할 수 없습니다.');
+      toast.error(t('department.hasChildrenError'));
       return;
     }
     onDeptDelete(dept.department_id);
@@ -129,7 +132,7 @@ const DepartmentTreePanel = ({
               handleAddChild(dept.department_id);
             }
           }}
-          title='하위 부서 추가'
+          title={t('department.addSubBtn')}
         >
           <Plus size={16} strokeWidth={1.5} />
         </div>
@@ -147,7 +150,7 @@ const DepartmentTreePanel = ({
               handleEdit(dept);
             }
           }}
-          title='수정'
+          title={t('department.editBtn')}
         >
           <Edit size={16} strokeWidth={1.5} />
         </div>
@@ -165,7 +168,7 @@ const DepartmentTreePanel = ({
               handleDelete(dept);
             }
           }}
-          title='삭제'
+          title={t('department.deleteBtn')}
         >
           <Trash2 size={16} strokeWidth={1.5} />
         </div>
@@ -196,7 +199,7 @@ const DepartmentTreePanel = ({
     <div className='h-full flex flex-col overflow-hidden'>
       {/* 헤더 - 고정 */}
       <div className='flex items-center justify-between p-4 border-b flex-shrink-0'>
-        <h2 className='text-lg font-semibold'>{title}</h2>
+        <h2 className='text-lg font-semibold'>{displayTitle}</h2>
         {showAddButton && (
           <Button
             size='sm'
@@ -208,7 +211,7 @@ const DepartmentTreePanel = ({
             }}
           >
             <Plus size={16} />
-            부서 추가
+            {t('department.addBtn')}
           </Button>
         )}
       </div>
@@ -228,7 +231,7 @@ const DepartmentTreePanel = ({
         ) : (
           <div className='flex flex-col items-center justify-center h-full text-muted-foreground'>
             <Building2 size={48} className='mb-4 text-muted-foreground' />
-            <p>부서가 없습니다</p>
+            <p>{t('department.noDepartments')}</p>
           </div>
         )}
       </div>
