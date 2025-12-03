@@ -1,0 +1,52 @@
+namespace,key,ko,en
+common,confirm,확인,Confirm
+common,cancel,취소,Cancel
+common,save,저장,Save
+common,delete,삭제,Delete
+common,edit,수정,Edit
+common,add,추가,Add
+common,close,닫기,Close
+common,search,검색,Search
+common,reset,초기화,Reset
+common,loading,로딩중...,Loading...
+common,error,오류가 발생했습니다,An error occurred
+common,success,성공,Success
+common,noData,데이터가 없습니다,No data available
+login,title,로그인,Sign In
+login,email,이메일,Email
+login,password,비밀번호,Password
+login,emailPlaceholder,이메일을 입력해주세요,Enter your email
+login,passwordPlaceholder,비밀번호를 입력해주세요,Enter your password
+login,loginButton,로그인,Sign In
+login,forgotPassword,비밀번호를 잊으셨나요?,Forgot password?
+login,rememberMe,로그인 상태 유지,Remember me
+sidebar,group.skc,SKC,SKC
+sidebar,group.admin,관리자,Admin
+sidebar,group.demo,데모,Demo
+sidebar,menu.home,홈,Home
+sidebar,menu.dashboard,대시보드,Dashboard
+sidebar,menu.calendar,캘린더,Calendar
+sidebar,menu.vacation,휴가,Vacation
+sidebar,menu.vacationHistory,휴가 현황,History
+sidebar,menu.vacationApplication,휴가 신청,Application
+sidebar,menu.work,업무,Work
+sidebar,menu.workReport,업무 보고,Report
+sidebar,menu.workSchedule,일정 관리,Schedule
+sidebar,menu.culture,조직문화,Culture
+sidebar,menu.cultureDues,회비,Dues
+sidebar,menu.cultureRegulation,규정,Regulation
+sidebar,menu.admin,관리자,Admin
+sidebar,menu.adminCompany,회사 관리,Company
+sidebar,menu.adminUsers,사용자 관리,Users
+sidebar,menu.adminUsersManagement,초대 및 관리,Invite & Management
+sidebar,menu.adminUsersDepartment,부서 관리,Department
+sidebar,menu.adminVacation,휴가 관리,Vacation
+sidebar,menu.adminVacationApproval,승인 및 부여,Approval & Grant
+sidebar,menu.adminVacationPolicy,휴가 정책,Policy
+sidebar,menu.adminAuthority,역할 및 권한,Role & Authority
+sidebar,menu.adminHoliday,공휴일 관리,Holiday
+sidebar,menu.adminWork,업무 코드,Work Code
+sidebar,menu.todo,Todo (Feature Arch),Todo (Feature Arch)
+sidebar,footer.account,계정,Account
+sidebar,footer.logout,로그아웃,Log out
+sidebar,footer.loggingOut,로그아웃 중...,Logging out...

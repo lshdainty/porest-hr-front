@@ -21,69 +21,69 @@ import {
   TreePalm,
   Users as UserIcon,
   UserRoundCog
-} from 'lucide-react';
+} from 'lucide-react'
 
 // 컴포넌트 직접 import
-import { TreeDataItem } from '@/components/shadcn/treeView';
+import { TreeDataItem } from '@/components/shadcn/treeView'
 
-import ApplicationPage from '@/pages/ApplicationPage';
-import AuthorityPage from '@/pages/AuthorityPage';
-import CalendarPage from '@/pages/CalendarPage';
-import CompanyPage from '@/pages/CompanyPage';
-import DashboardPage from '@/pages/DashboardPage';
-import DuesPage from '@/pages/DuesPage';
-import HistoryPage from '@/pages/HistoryPage';
-import HolidayPage from '@/pages/HolidayPage';
-import PolicyPage from '@/pages/PolicyPage';
-import ReportPage from '@/pages/ReportPage';
-import RulePage from '@/pages/RulePage';
-import SchedulePage from '@/pages/SchedulePage';
-import TodoPage from '@/pages/TodoPage';
-import UsersDepartmentPage from '@/pages/UsersDepartmentPage';
-import UsersManagementPage from '@/pages/UsersManagementPage';
-import VacationPage from '@/pages/VacationPage';
-import WorkCodePage from '@/pages/WorkCodePage';
+import ApplicationPage from '@/pages/ApplicationPage'
+import AuthorityPage from '@/pages/AuthorityPage'
+import CalendarPage from '@/pages/CalendarPage'
+import CompanyPage from '@/pages/CompanyPage'
+import DashboardPage from '@/pages/DashboardPage'
+import DuesPage from '@/pages/DuesPage'
+import HistoryPage from '@/pages/HistoryPage'
+import HolidayPage from '@/pages/HolidayPage'
+import PolicyPage from '@/pages/PolicyPage'
+import ReportPage from '@/pages/ReportPage'
+import RulePage from '@/pages/RulePage'
+import SchedulePage from '@/pages/SchedulePage'
+import TodoPage from '@/pages/TodoPage'
+import UsersDepartmentPage from '@/pages/UsersDepartmentPage'
+import UsersManagementPage from '@/pages/UsersManagementPage'
+import VacationPage from '@/pages/VacationPage'
+import WorkCodePage from '@/pages/WorkCodePage'
 
-import React from 'react';
+import React from 'react'
 
 export interface RouteConfig {
-  id: string;
-  name: string;
-  path: string;
-  icon?: any;
-  children?: RouteConfig[];
-  component?: React.ComponentType; // 문자열 대신 실제 컴포넌트
-  isDefault?: boolean;
-  hideInSidebar?: boolean; // 사이드바에 표시하지 않을 라우트
-  requiredPermissions?: string[]; // 접근에 필요한 권한 목록
+  id: string
+  nameKey: string // 다국어 키 (sidebar 네임스페이스 기준)
+  path: string
+  icon?: React.ComponentType<{ className?: string }>
+  children?: RouteConfig[]
+  component?: React.ComponentType
+  isDefault?: boolean
+  hideInSidebar?: boolean
+  requiredPermissions?: string[]
 }
 
 export interface RouteGroup {
-  label: string;
-  routes: RouteConfig[];
+  labelKey: string // 다국어 키
+  routes: RouteConfig[]
 }
 
 export const routesConfig: RouteGroup[] = [
   {
-    label: 'SKC',
+    labelKey: 'group.skc',
     routes: [
       {
         id: 'home',
-        name: 'Home',
+        nameKey: 'menu.home',
         path: '/',
         icon: Home,
         children: [
           {
             id: 'dashboard',
-            name: 'Dashboard',
+            nameKey: 'menu.dashboard',
             path: '/dashboard',
             icon: LayoutDashboard,
-            component: DashboardPage, // 직접 컴포넌트 참조
+            component: DashboardPage,
             isDefault: true,
           },
           {
             id: 'calendar',
-            name: 'Calendar',
+            nameKey: 'menu.calendar',
             path: '/calendar',
             icon: CalendarDays,
             component: CalendarPage,
@@ -92,13 +92,13 @@ export const routesConfig: RouteGroup[] = [
       },
       {
         id: 'vacation',
-        name: 'Vacation',
+        nameKey: 'menu.vacation',
         path: '/vacation',
         icon: TreePalm,
         children: [
           {
             id: 'vacation-history',
-            name: 'History',
+            nameKey: 'menu.vacationHistory',
             path: '/vacation/history',
             icon: ChartNoAxesCombined,
             component: HistoryPage,
@@ -107,7 +107,7 @@ export const routesConfig: RouteGroup[] = [
           },
           {
             id: 'vacation-application',
-            name: 'Application',
+            nameKey: 'menu.vacationApplication',
             path: '/vacation/application',
             icon: MessageSquarePlus,
             component: ApplicationPage,
@@ -117,14 +117,14 @@ export const routesConfig: RouteGroup[] = [
       },
       {
         id: 'work',
-        name: 'Work',
+        nameKey: 'menu.work',
         path: '/work',
         icon: Briefcase,
         requiredPermissions: ['WORK:READ'],
         children: [
           {
             id: 'work-report',
-            name: 'Report',
+            nameKey: 'menu.workReport',
             path: '/work/report',
             icon: NotebookPen,
             component: ReportPage,
@@ -132,7 +132,7 @@ export const routesConfig: RouteGroup[] = [
           },
           {
             id: 'work-schedule',
-            name: 'Schedule',
+            nameKey: 'menu.workSchedule',
             path: '/work/schedule',
             icon: ChartGantt,
             component: SchedulePage,
@@ -141,13 +141,13 @@ export const routesConfig: RouteGroup[] = [
       },
       {
         id: 'culture',
-        name: 'Culture',
+        nameKey: 'menu.culture',
         path: '/culture',
         icon: HeartHandshake,
         children: [
           {
             id: 'culture-dues',
-            name: 'Dues',
+            nameKey: 'menu.cultureDues',
             path: '/culture/dues',
             icon: CircleDollarSign,
             component: DuesPage,
@@ -156,7 +156,7 @@ export const routesConfig: RouteGroup[] = [
           },
           {
             id: 'culture-regulation',
-            name: 'Regulation',
+            nameKey: 'menu.cultureRegulation',
             path: '/culture/regulation',
             icon: Scale,
             component: RulePage,
@@ -167,17 +167,17 @@ export const routesConfig: RouteGroup[] = [
     ],
   },
   {
-    label: 'Admin',
+    labelKey: 'group.admin',
     routes: [
       {
         id: 'admin',
-        name: 'Admin',
+        nameKey: 'menu.admin',
         path: '/admin',
         icon: ShieldUser,
         children: [
           {
             id: 'admin-company',
-            name: 'Company',
+            nameKey: 'menu.adminCompany',
             path: '/admin/company',
             icon: Building2,
             component: CompanyPage,
@@ -186,7 +186,7 @@ export const routesConfig: RouteGroup[] = [
           },
           {
             id: 'admin-users',
-            name: 'Users',
+            nameKey: 'menu.adminUsers',
             path: '/admin/users',
             icon: UserIcon,
             isDefault: true,
@@ -194,7 +194,7 @@ export const routesConfig: RouteGroup[] = [
             children: [
               {
                 id: 'admin-users-management',
-                name: 'Invite & Management',
+                nameKey: 'menu.adminUsersManagement',
                 path: '/admin/users/management',
                 icon: UserRoundCog,
                 component: UsersManagementPage,
@@ -202,7 +202,7 @@ export const routesConfig: RouteGroup[] = [
               },
               {
                 id: 'users-department',
-                name: 'Department',
+                nameKey: 'menu.adminUsersDepartment',
                 path: '/admin/users/department',
                 icon: Network,
                 component: UsersDepartmentPage,
@@ -212,14 +212,14 @@ export const routesConfig: RouteGroup[] = [
           },
           {
             id: 'admin-vacation',
-            name: 'Vacation',
+            nameKey: 'menu.adminVacation',
             path: '/admin/vacation',
             icon: TreePalm,
             requiredPermissions: ['VACATION:APPROVE'],
             children: [
               {
                 id: 'admin-vacation-approval',
-                name: 'Approval & Grant',
+                nameKey: 'menu.adminVacationApproval',
                 path: '/admin/vacation/approval',
                 icon: ChartLine,
                 component: VacationPage,
@@ -228,7 +228,7 @@ export const routesConfig: RouteGroup[] = [
               },
               {
                 id: 'admin-vacation-policy',
-                name: 'Policy',
+                nameKey: 'menu.adminVacationPolicy',
                 path: '/admin/vacation/policy',
                 icon: ShieldEllipsis,
                 requiredPermissions: ['VACATION:MANAGE'],
@@ -238,7 +238,7 @@ export const routesConfig: RouteGroup[] = [
           },
           {
             id: 'admin-authority',
-            name: 'Role & Authority',
+            nameKey: 'menu.adminAuthority',
             path: '/admin/authority',
             icon: ShieldCheck,
             requiredPermissions: ['ROLE:MANAGE'],
@@ -247,7 +247,7 @@ export const routesConfig: RouteGroup[] = [
           },
           {
             id: 'admin-holiday',
-            name: 'Holiday',
+            nameKey: 'menu.adminHoliday',
             path: '/admin/holiday',
             icon: CalendarCog,
             component: HolidayPage,
@@ -256,7 +256,7 @@ export const routesConfig: RouteGroup[] = [
           },
           {
             id: 'admin-work',
-            name: 'Work Code',
+            nameKey: 'menu.adminWork',
             path: '/admin/work',
             icon: Briefcase,
             component: WorkCodePage,
@@ -267,127 +267,133 @@ export const routesConfig: RouteGroup[] = [
     ]
   },
   {
-    label: 'Demo',
+    labelKey: 'group.demo',
     routes: [
       {
         id: 'todo',
-        name: 'Todo (Feature Arch)',
+        nameKey: 'menu.todo',
         path: '/todo',
         icon: ListTodo,
         component: TodoPage,
       }
     ]
   }
-];
+]
 
 // 모든 그룹의 routes를 하나의 배열로 합치는 헬퍼 함수
 export const flattenRoutes = (groups: RouteGroup[]): RouteConfig[] => {
-  return groups.flatMap(group => group.routes);
-};
+  return groups.flatMap(group => group.routes)
+}
 
 export const createRouteMapping = (routes: RouteConfig[]): Record<string, string> => {
-  const mapping: Record<string, string> = {};
-  
+  const mapping: Record<string, string> = {}
+
   const traverse = (routeList: RouteConfig[]) => {
     routeList.forEach(route => {
       if (route.path && !route.children) {
-        mapping[route.id] = route.path;
+        mapping[route.id] = route.path
       }
       if (route.children) {
-        traverse(route.children);
+        traverse(route.children)
       }
-    });
-  };
-  
-  traverse(routes);
-  return mapping;
-};
+    })
+  }
+
+  traverse(routes)
+  return mapping
+}
 
 export const createPathToIdMapping = (routes: RouteConfig[]): Record<string, string> => {
-  const mapping: Record<string, string> = {};
-  
+  const mapping: Record<string, string> = {}
+
   const traverse = (routeList: RouteConfig[]) => {
     routeList.forEach(route => {
       if (route.path && !route.children) {
-        mapping[route.path] = route.id;
+        mapping[route.path] = route.id
       }
       if (route.children) {
-        traverse(route.children);
+        traverse(route.children)
       }
-    });
-  };
-  
-  traverse(routes);
-  return mapping;
-};
+    })
+  }
 
-export const convertToTreeData = (routes: RouteConfig[]): TreeDataItem[] => {
+  traverse(routes)
+  return mapping
+}
+
+// t 함수를 받아서 TreeData로 변환하는 함수
+export const convertToTreeData = (
+  routes: RouteConfig[],
+  t: (key: string) => string
+): TreeDataItem[] => {
   return routes
     .filter(route => !route.hideInSidebar)
     .map(route => ({
       id: route.id,
-      name: route.name,
+      name: t(route.nameKey),
       icon: route.icon,
-      children: route.children ? convertToTreeData(route.children) : undefined,
-    }));
-};
+      children: route.children ? convertToTreeData(route.children, t) : undefined,
+    }))
+}
 
-export const createBreadcrumbMapping = (routes: RouteConfig[]): Record<string, string> => {
-  const mapping: Record<string, string> = {};
-  
+// nameKey를 사용해서 breadcrumb 매핑 생성
+export const createBreadcrumbMapping = (
+  routes: RouteConfig[],
+  t: (key: string) => string
+): Record<string, string> => {
+  const mapping: Record<string, string> = {}
+
   const traverse = (routeList: RouteConfig[]) => {
     routeList.forEach(route => {
-      const pathSegments = route.path.split('/').filter(Boolean);
-      const lastSegment = pathSegments[pathSegments.length - 1];
+      const pathSegments = route.path.split('/').filter(Boolean)
+      const lastSegment = pathSegments[pathSegments.length - 1]
       if (lastSegment) {
-        mapping[lastSegment] = route.name;
+        mapping[lastSegment] = t(route.nameKey)
       }
-      
+
       if (route.children) {
-        traverse(route.children);
+        traverse(route.children)
       }
-    });
-  };
-  
-  traverse(routes);
-  return mapping;
-};
+    })
+  }
+
+  traverse(routes)
+  return mapping
+}
 
 export const createDefaultRedirects = (routes: RouteConfig[]): Record<string, string> => {
-  const redirects: Record<string, string> = {};
-  
+  const redirects: Record<string, string> = {}
+
   const traverse = (routeList: RouteConfig[]) => {
     routeList.forEach(route => {
       if (route.children) {
-        const defaultChild = route.children.find(child => child.isDefault);
+        const defaultChild = route.children.find(child => child.isDefault)
         if (defaultChild) {
-          redirects[route.path] = defaultChild.path;
+          redirects[route.path] = defaultChild.path
         }
-        traverse(route.children);
+        traverse(route.children)
       }
-    });
-  };
-  
-  traverse(routes);
-  return redirects;
-};
+    })
+  }
+
+  traverse(routes)
+  return redirects
+}
 
 // 그룹 정보를 포함하여 TreeData로 변환하는 함수
-export const convertGroupsToTreeData = (groups: RouteGroup[]): Array<{ label: string; treeData: TreeDataItem[] }> => {
+export const convertGroupsToTreeData = (
+  groups: RouteGroup[],
+  t: (key: string) => string
+): Array<{ label: string; treeData: TreeDataItem[] }> => {
   return groups.map(group => ({
-    label: group.label,
-    treeData: convertToTreeData(group.routes),
-  }));
-};
+    label: t(group.labelKey),
+    treeData: convertToTreeData(group.routes, t),
+  }))
+}
 
 // 기존 함수들은 flattenRoutes를 사용하여 호환성 유지
-const flattenedRoutes = flattenRoutes(routesConfig);
+const flattenedRoutes = flattenRoutes(routesConfig)
 
-export const routeMapping = createRouteMapping(flattenedRoutes);
-export const pathToIdMapping = createPathToIdMapping(flattenedRoutes);
-export const treeData = convertToTreeData(flattenedRoutes);
-export const breadcrumbMapping = createBreadcrumbMapping(flattenedRoutes);
-export const defaultRedirects = createDefaultRedirects(flattenedRoutes);
-
-// 그룹별 트리 데이터 export (새로운 방식)
-export const groupedTreeData = convertGroupsToTreeData(routesConfig);
+export const routeMapping = createRouteMapping(flattenedRoutes)
+export const pathToIdMapping = createPathToIdMapping(flattenedRoutes)
+export const defaultRedirects = createDefaultRedirects(flattenedRoutes)

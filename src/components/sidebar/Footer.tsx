@@ -1,19 +1,20 @@
 'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar';
-import config from '@/config/config';
-import { useUser } from '@/contexts/UserContext';
-import UserEditDialog from '@/features/user/components/UserEditDialog';
-import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths';
-import { usePutUserMutation, useUserQuery } from '@/hooks/queries/useUsers';
-import type { PutUserReq } from '@/lib/api/user';
-import { useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
-import { CircleUser, EllipsisVertical, LogOut } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar'
+import config from '@/config/config'
+import { useUser } from '@/contexts/UserContext'
+import UserEditDialog from '@/features/user/components/UserEditDialog'
+import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths'
+import { usePutUserMutation, useUserQuery } from '@/hooks/queries/useUsers'
+import type { PutUserReq } from '@/lib/api/user'
+import { useQueryClient } from '@tanstack/react-query'
+import dayjs from 'dayjs'
+import { CircleUser, EllipsisVertical, LogOut } from 'lucide-react'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const defaultUser = {
   user_name: 'Guest',
@@ -31,6 +32,7 @@ export function Footer() {
   const logoutMutation = usePostLogoutMutation()
   const { loginUser, clearLoginUser } = useUser()
   const { mutate: putUser } = usePutUserMutation()
+  const { t } = useTranslation('sidebar')
 
   // Dialog 상태 관리
   const [showEditDialog, setShowEditDialog] = useState(false)
@@ -120,14 +122,14 @@ export function Footer() {
               {userData && (
                 <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
                   <CircleUser />
-                  Account
+                  {t('footer.account')}
                 </DropdownMenuItem>
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} disabled={logoutMutation.isPending}>
               <LogOut />
-              {logoutMutation.isPending ? 'Logging out...' : 'Log out'}
+              {logoutMutation.isPending ? t('footer.loggingOut') : t('footer.logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

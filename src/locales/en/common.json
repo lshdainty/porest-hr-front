@@ -1,0 +1,15 @@
+{
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "close": "Close",
+  "search": "Search",
+  "reset": "Reset",
+  "loading": "Loading...",
+  "error": "An error occurred",
+  "success": "Success",
+  "noData": "No data available"
+}

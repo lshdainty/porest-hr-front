@@ -1,0 +1,38 @@
+{
+  "group": {
+    "skc": "SKC",
+    "admin": "관리자",
+    "demo": "데모"
+  },
+  "menu": {
+    "home": "홈",
+    "dashboard": "대시보드",
+    "calendar": "캘린더",
+    "vacation": "휴가",
+    "vacationHistory": "휴가 현황",
+    "vacationApplication": "휴가 신청",
+    "work": "업무",
+    "workReport": "업무 보고",
+    "workSchedule": "일정 관리",
+    "culture": "조직문화",
+    "cultureDues": "회비",
+    "cultureRegulation": "규정",
+    "admin": "관리자",
+    "adminCompany": "회사 관리",
+    "adminUsers": "사용자 관리",
+    "adminUsersManagement": "초대 및 관리",
+    "adminUsersDepartment": "부서 관리",
+    "adminVacation": "휴가 관리",
+    "adminVacationApproval": "승인 및 부여",
+    "adminVacationPolicy": "휴가 정책",
+    "adminAuthority": "역할 및 권한",
+    "adminHoliday": "공휴일 관리",
+    "adminWork": "업무 코드",
+    "todo": "Todo (Feature Arch)"
+  },
+  "footer": {
+    "account": "계정",
+    "logout": "로그아웃",
+    "loggingOut": "로그아웃 중..."
+  }
+}
