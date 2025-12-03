@@ -60,6 +60,12 @@ api.interceptors.request.use(
       config.headers['X-XSRF-TOKEN'] = csrfToken
     }
 
+    // i18n 언어 설정을 Accept-Language 헤더로 전달 (서버 다국어 지원)
+    const language = localStorage.getItem('i18nextLng')
+    if (language) {
+      config.headers['Accept-Language'] = language
+    }
+
     // 세션 쿠키는 withCredentials로 자동 포함됨
     return config
   },

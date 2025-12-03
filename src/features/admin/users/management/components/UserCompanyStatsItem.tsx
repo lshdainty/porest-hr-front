@@ -31,25 +31,31 @@ const UserCompanyStatsItem = ({ name, count, logo }: UserCompanyStatsItemProps) 
 };
 
 export const getUserCompanyStatsConfig = (users: GetUsersResp[] = []): UserCompanyStatsItemProps[] => {
-  const counts: { [key: string]: number } = {};
+  const counts: { [key: string]: { count: number; name: string } } = {};
 
   users.forEach((user: GetUsersResp) => {
-    (counts[user.user_origin_company_name]) ? counts[user.user_origin_company_name]++ : counts[user.user_origin_company_name] = 1;
+    const type = user.user_origin_company_type;
+    if (counts[type]) {
+      counts[type].count++;
+    } else {
+      counts[type] = { count: 1, name: user.user_origin_company_name };
+    }
   });
 
+  // enum 코드 기반 로고 매핑 (언어 변경에 영향받지 않음)
   const logoMap: { [key: string]: string } = {
-    'SK AX': SkaxLogo,
-    '디투엘': DtolLogo,
-    '인사이트온': InsightonLogo,
-    '씨앤토트플러스': CnthothLogo,
-    'BigxData': BigxdataLogo,
+    'SKAX': SkaxLogo,
+    'DTOL': DtolLogo,
+    'INSIGHTON': InsightonLogo,
+    'CNTHOTH': CnthothLogo,
+    'BIGXDATA': BigxdataLogo,
   };
 
-  return Object.keys(counts).map(companyName => ({
-    id: companyName,
-    name: companyName,
-    count: counts[companyName],
-    logo: logoMap[companyName]
+  return Object.keys(counts).map(companyType => ({
+    id: companyType,
+    name: counts[companyType].name,
+    count: counts[companyType].count,
+    logo: logoMap[companyType]
   }));
 };
 
