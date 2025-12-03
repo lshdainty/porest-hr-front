@@ -4,6 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { useCountryCodeTypesQuery } from '@/hooks/queries/useTypes';
 import { type GetHolidaysResp, type PostHolidayReq } from '@/lib/api/holiday';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
@@ -46,6 +47,7 @@ const HolidayEditDialog = ({
   const { t } = useTranslation('admin');
   const { t: tc } = useTranslation('common');
   const formSchema = createFormSchema(t);
+  const { data: countryTypes } = useCountryCodeTypesQuery();
 
   const form = useForm<HolidayFormValues>({
     resolver: zodResolver(formSchema),
@@ -250,9 +252,20 @@ const HolidayEditDialog = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('holiday.countryCode')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t('holiday.countryCodePlaceholder')} {...field} />
-                  </FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('holiday.countryPlaceholder')} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {countryTypes?.map((country) => (
+                        <SelectItem key={country.code} value={country.code}>
+                          {country.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

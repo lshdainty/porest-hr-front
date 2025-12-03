@@ -1,5 +1,6 @@
 import type { TypeResp } from '@/lib/api/type'
 import { useUserIdDuplicateQuery, usePostUserInviteMutation, usePutInvitedUserMutation } from '@/hooks/queries/useUsers'
+import { useCountryCodeTypesQuery } from '@/hooks/queries/useTypes'
 import { Button } from '@/components/shadcn/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog'
 import { Field, FieldError, FieldLabel } from '@/components/shadcn/field'
@@ -9,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Spinner } from '@/components/shadcn/spinner'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Building2, Calendar, Clock, Mail, User as UserIcon } from 'lucide-react'
+import { Building2, Calendar, Clock, Globe, Mail, User as UserIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -21,7 +22,8 @@ const createFormSchema = (t: (key: string) => string) => z.object({
   user_email: z.string().email(t('user.userEmailRequired')),
   join_date: z.string().min(1, t('user.joinDateRequired')),
   user_origin_company_type: z.string().min(1, t('user.companyRequired')),
-  user_work_time: z.string().min(1, t('user.workTimeRequired'))
+  user_work_time: z.string().min(1, t('user.workTimeRequired')),
+  country_code: z.string().min(1, t('user.countryCodeRequired'))
 })
 
 type UserInviteFormValues = z.infer<ReturnType<typeof createFormSchema>>
@@ -38,6 +40,7 @@ interface UserInviteDialogProps {
     user_origin_company_type: string
     user_work_time: string
     join_date: string
+    country_code: string
   }
 }
 
@@ -47,6 +50,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
   const [userIdToCheck, setUserIdToCheck] = useState('')
   const { mutateAsync: inviteUser, isPending: isInvitePending } = usePostUserInviteMutation()
   const { mutateAsync: updateInvitedUser, isPending: isUpdatePending } = usePutInvitedUserMutation()
+  const { data: countryCodeOptions } = useCountryCodeTypesQuery()
 
   const isEditMode = !!initialData?.user_id
   const isPending = isInvitePending || isUpdatePending
@@ -61,7 +65,8 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
       user_email: initialData?.user_email || '',
       user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
       user_work_time: initialData?.user_work_time || '9 ~ 6',
-      join_date: initialData?.join_date || ''
+      join_date: initialData?.join_date || '',
+      country_code: initialData?.country_code || 'KR'
     }
   })
 
@@ -108,7 +113,8 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
         user_email: initialData?.user_email || '',
         user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
         user_work_time: initialData?.user_work_time || '9 ~ 6',
-        join_date: initialData?.join_date || ''
+        join_date: initialData?.join_date || '',
+        country_code: initialData?.country_code || 'KR'
       })
       setUserIdToCheck('') // 다이얼로그 열릴 때 중복 체크 상태 초기화
     }
@@ -123,7 +129,8 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
         user_email: values.user_email,
         user_origin_company_type: values.user_origin_company_type,
         user_work_time: values.user_work_time,
-        join_date: values.join_date
+        join_date: values.join_date,
+        country_code: values.country_code
       })
     } else {
       // 신규 초대 모드: POST /users/invitations
@@ -245,6 +252,27 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
                     </SelectTrigger>
                     <SelectContent>
                       {workTimeOptions.map(option => <SelectItem key={option.value} value={option.value} className={option.className}>{option.value}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="country_code"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={!!fieldState.error}>
+                  <FieldLabel>
+                    <Globe className='h-4 w-4 text-muted-foreground inline-block' /> {t('user.countryCode')}
+                    <span className='text-destructive ml-0.5'>*</span>
+                  </FieldLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={t('user.countryCodePlaceholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countryCodeOptions?.map(option => <SelectItem key={option.code} value={option.code}>{option.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                   <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />

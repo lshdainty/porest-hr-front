@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/shadcn/skeleton';
 import { Spinner } from '@/components/shadcn/spinner';
 import config from '@/config/config';
 import { usePostUploadProfileMutation } from '@/hooks/queries/useUsers';
+import { useCountryCodeTypesQuery } from '@/hooks/queries/useTypes';
 import { GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { companyOptions } from '@/lib/constants';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ import {
   Cake,
   Camera,
   Clock,
+  Globe,
   Loader2,
   Mail,
   Moon,
@@ -42,6 +44,7 @@ const createFormSchema = (t: (key: string) => string) => z.object({
   user_origin_company_type: z.string().min(1, { message: t('edit.companyRequired') }),
   lunar_yn: z.string().min(1, { message: t('edit.lunarRequired') }),
   user_work_time: z.string().min(1, { message: t('edit.workTimeRequired') }),
+  country_code: z.string().min(1, { message: t('edit.countryCodeRequired') }),
 });
 
 type UserFormValues = z.infer<ReturnType<typeof createFormSchema>>;
@@ -99,6 +102,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
   const { t: tc } = useTranslation('common');
   const formSchema = createFormSchema(t);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfileMutation();
+  const { data: countryCodeOptions } = useCountryCodeTypesQuery();
   
   // 이미지 업로드 관련 상태 관리 - 초기값부터 완전한 URL로 설정
   const [profileImage, setProfileImage] = useState<string>(getFullImageUrl(user.profile_url || ''));
@@ -117,6 +121,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       user_origin_company_type: companyOptions[0].company_type,
       lunar_yn: 'N',
       user_work_time: '9 ~ 6',
+      country_code: 'KR',
     },
   });
 
@@ -126,6 +131,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
         ...user,
         user_origin_company_type: user.user_origin_company_type || companyOptions[0].company_type,
         lunar_yn: user.lunar_yn || 'N',
+        country_code: user.country_code || 'KR',
       });
       setProfileImage(getFullImageUrl(user.profile_url || ''));
       setProfileUUID('');
@@ -197,13 +203,14 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
     // 업데이트된 사용자 정보에 프로필 이미지 URL 포함
     // 저장할 때는 상대 경로만 저장 (서버에서 받은 원본 경로)
     const imagePathForSave = profileImage ? profileImage.replace(config.baseUrl, '') : '';
-    
-    onSave({ 
-      ...user, 
-      ...values, 
+
+    onSave({
+      ...user,
+      ...values,
       user_birth: dayjs(values.user_birth).format('YYYY-MM-DD'),
       profile_url: imagePathForSave, // 상대 경로로 저장
-      profile_uuid: profileUUID
+      profile_uuid: profileUUID,
+      country_code: values.country_code
     });
     onOpenChange(false);
   };
@@ -445,6 +452,24 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                     )}
                   />
                 </div>
+                <Controller
+                  control={form.control}
+                  name="country_code"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={!!fieldState.error}>
+                      <FieldLabel><Globe className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.countryCode')}</FieldLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t('edit.countryCodePlaceholder')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countryCodeOptions?.map(option => <SelectItem key={option.code} value={option.code}>{option.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                    </Field>
+                  )}
+                />
               </div>
             </div>
           <DialogFooter>

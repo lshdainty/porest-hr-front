@@ -43,11 +43,20 @@ export interface PutHolidayReq {
 }
 
 // API Functions
-export async function fetchGetHolidaysByStartEndDate(startDate: string, endDate: string, countryCode: string): Promise<GetHolidaysResp[]> {
-  countryCode = 'KR'
+export async function fetchGetHolidaysByStartEndDate(startDate: string, endDate: string, countryCode?: string): Promise<GetHolidaysResp[]> {
+  const params = new URLSearchParams({
+    start: startDate,
+    end: endDate
+  });
+
+  // countryCode가 있으면 파라미터에 추가 (없으면 백엔드에서 로그인 사용자의 국가 코드 사용)
+  if (countryCode) {
+    params.append('country_code', countryCode);
+  }
+
   const resp: ApiResponse<GetHolidaysResp[]> = await api.request({
     method: 'get',
-    url: `/holidays/date?start=${startDate}&end=${endDate}&country_code=${countryCode}`
+    url: `/holidays/date?${params.toString()}`
   });
 
   if (!resp.success) throw new Error(resp.message);

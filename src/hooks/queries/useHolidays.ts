@@ -16,11 +16,11 @@ import {
 const holidayKeys = createQueryKeys('holidays')
 
 // 기간별 공휴일 조회 훅
-export const useHolidaysByPeriodQuery = (startDate: string, endDate: string, countryCode: string) => {
+export const useHolidaysByPeriodQuery = (startDate: string, endDate: string, countryCode?: string) => {
   return useQuery<GetHolidaysResp[]>({
     queryKey: holidayKeys.list({ startDate, endDate, countryCode }),
     queryFn: () => fetchGetHolidaysByStartEndDate(startDate, endDate, countryCode),
-    enabled: !!startDate && !!endDate && !!countryCode
+    enabled: !!startDate && !!endDate
   })
 }
 

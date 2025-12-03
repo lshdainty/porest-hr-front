@@ -53,7 +53,8 @@ const UserTable = ({ value: users }: UserTableProps) => {
       user_work_time: user.user_work_time,
       lunar_yn: user.lunar_yn,
       profile_url: user.profile_url,
-      profile_uuid: user.profile_uuid
+      profile_uuid: user.profile_uuid,
+      country_code: user.country_code
     });
   };
 
@@ -289,7 +290,8 @@ const UserTable = ({ value: users }: UserTableProps) => {
               user_email: user.user_email,
               user_origin_company_type: user.user_origin_company_type,
               user_work_time: user.user_work_time,
-              join_date: user.join_date
+              join_date: user.join_date,
+              country_code: user.country_code
             }}
           />
         ) : null

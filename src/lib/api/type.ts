@@ -71,3 +71,7 @@ export async function fetchGetOriginCompanyTypes(): Promise<TypeResp[]> {
 export async function fetchGetSystemTypes(): Promise<TypeResp[]> {
   return fetchGetTypes('system-type');
 }
+
+export async function fetchGetCountryCodeTypes(): Promise<TypeResp[]> {
+  return fetchGetTypes('country-code');
+}

@@ -33,6 +33,7 @@ export interface GetUserResp {
   main_department_name_kr: string | null
   lunar_yn: string
   profile_url: string
+  country_code: string
   invitation_token?: string
   invitation_sent_at?: string
   invitation_expires_at?: string
@@ -57,6 +58,7 @@ export interface GetUsersResp {
   main_department_name_kr: string | null
   lunar_yn: string
   profile_url: string
+  country_code: string
   invitation_token?: string
   invitation_sent_at?: string
   invitation_expires_at?: string
@@ -114,6 +116,7 @@ export interface PutUserReq {
   lunar_yn: string
   profile_url: string
   profile_uuid?: string
+  country_code: string
   dashboard?: string
 }
 
@@ -124,6 +127,7 @@ export interface PutInvitedUserReq {
   user_origin_company_type: string
   user_work_time: string
   join_date: string
+  country_code: string
 }
 
 export interface PutInvitedUserResp {
@@ -133,6 +137,7 @@ export interface PutInvitedUserResp {
   user_origin_company_type: string
   user_work_time: string
   join_date: string
+  country_code: string
   user_roles: string[]
   invitation_sent_at: string
   invitation_expires_at: string
@@ -146,6 +151,7 @@ export interface PostUserInviteReq {
   user_origin_company_type: string
   user_work_time: string
   join_date: string
+  country_code: string
 }
 
 export interface PostUserInviteResp {
@@ -155,6 +161,7 @@ export interface PostUserInviteResp {
   user_origin_company_type: string
   user_work_time: string
   join_date: string
+  country_code: string
   user_roles: string[]
   invitation_sent_at: string
   invitation_expires_at: string
@@ -252,7 +259,8 @@ export async function fetchPutInvitedUser(data: PutInvitedUserReq): Promise<PutI
       user_email: data.user_email,
       user_origin_company_type: data.user_origin_company_type,
       user_work_time: data.user_work_time,
-      join_date: data.join_date
+      join_date: data.join_date,
+      country_code: data.country_code
     }
   });
 

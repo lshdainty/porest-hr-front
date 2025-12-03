@@ -1,4 +1,12 @@
+import { useState } from 'react'
 import { Button } from '@/components/shadcn/button'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/shadcn/select'
 import { useHolidayContext } from '@/features/admin/holiday/contexts/HolidayContext'
 import {
     useDeleteHolidayMutation,
@@ -6,6 +14,7 @@ import {
     usePostHolidayMutation,
     usePutHolidayMutation,
 } from '@/hooks/queries/useHolidays'
+import { useCountryCodeTypesQuery } from '@/hooks/queries/useTypes'
 import {
     type GetHolidaysResp,
     type PostHolidayReq,
@@ -22,16 +31,32 @@ const formatDateToYYYYMMDD = (dateString: string) => {
   return dayjs(dateString).format('YYYY-MM-DD')
 }
 
+// 연도 옵션 생성 (현재 연도 기준 -5 ~ +5년)
+const generateYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+  const years: number[] = []
+  for (let i = currentYear - 5; i <= currentYear + 5; i++) {
+    years.push(i)
+  }
+  return years
+}
+
 const HolidayContent = () => {
   const { t } = useTranslation('admin')
   const { t: tc } = useTranslation('common')
   const { isDialogOpen, setIsDialogOpen, editingHoliday, setEditingHoliday } = useHolidayContext()
 
   const currentYear = new Date().getFullYear()
-  const startDate = `${currentYear}-01-01`
-  const endDate = `${currentYear}-12-31`
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear)
+  const [selectedCountry, setSelectedCountry] = useState<string>('KR')
 
-  const { data: holidays, isLoading: holidaysLoding, refetch } = useHolidaysByPeriodQuery(startDate, endDate, 'KR')
+  const startDate = `${selectedYear}-01-01`
+  const endDate = `${selectedYear}-12-31`
+
+  const { data: countryTypes } = useCountryCodeTypesQuery()
+  const { data: holidays, isLoading: holidaysLoding, refetch } = useHolidaysByPeriodQuery(startDate, endDate, selectedCountry)
+
+  const yearOptions = generateYearOptions()
   const postMutation = usePostHolidayMutation()
   const putMutation = usePutHolidayMutation()
   const deleteMutation = useDeleteHolidayMutation()
@@ -92,6 +117,34 @@ const HolidayContent = () => {
               <p className='text-muted-foreground mt-1'>{t('holiday.description')}</p>
             </div>
           </div>
+          <div className='flex items-center gap-2'>
+            <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+              <SelectTrigger className='w-[140px]'>
+                <SelectValue placeholder={t('holiday.countryPlaceholder')} />
+              </SelectTrigger>
+              <SelectContent>
+                {countryTypes?.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    {country.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={String(selectedYear)} onValueChange={(value) => setSelectedYear(Number(value))}>
+              <SelectTrigger className='w-[100px]'>
+                <SelectValue placeholder={t('holiday.yearPlaceholder')} />
+              </SelectTrigger>
+              <SelectContent>
+                {yearOptions.map((year) => (
+                  <SelectItem key={year} value={String(year)}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className='flex items-center justify-end mb-4'>
           <HolidayEditDialog
             isOpen={isDialogOpen}
             onOpenChange={setIsDialogOpen}

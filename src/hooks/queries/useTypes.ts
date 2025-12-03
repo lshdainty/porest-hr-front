@@ -15,6 +15,7 @@ import {
   fetchGetScheduleTypes,
   fetchGetHolidayTypes,
   fetchGetOriginCompanyTypes,
+  fetchGetCountryCodeTypes,
   type TypeResp
 } from '@/lib/api/type'
 
@@ -105,5 +106,13 @@ export const useOriginCompanyTypesQuery = () => {
   return useQuery<TypeResp[]>({
     queryKey: typeKeys.list({ type: 'origin-company-type' }),
     queryFn: () => fetchGetOriginCompanyTypes()
+  })
+}
+
+// Country Code Types 조회 훅
+export const useCountryCodeTypesQuery = () => {
+  return useQuery<TypeResp[]>({
+    queryKey: typeKeys.list({ type: 'country-code' }),
+    queryFn: () => fetchGetCountryCodeTypes()
   })
 }
