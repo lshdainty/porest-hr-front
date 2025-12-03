@@ -12,18 +12,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Building2, Calendar, Clock, Mail, User as UserIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
-const formSchema = z.object({
-  user_id: z.string().min(1, '아이디를 입력해주세요.'),
-  user_name: z.string().min(1, '이름을 입력해주세요.'),
-  user_email: z.string().email('유효한 이메일을 입력해주세요.'),
-  join_date: z.string().min(1, '입사일을 입력해주세요.'),
-  user_origin_company_type: z.string().min(1, '회사를 선택해주세요.'),
-  user_work_time: z.string().min(1, '유연근무시간을 선택해주세요.')
+const createFormSchema = (t: (key: string) => string) => z.object({
+  user_id: z.string().min(1, t('user.userIdRequired')),
+  user_name: z.string().min(1, t('user.userNameRequired')),
+  user_email: z.string().email(t('user.userEmailRequired')),
+  join_date: z.string().min(1, t('user.joinDateRequired')),
+  user_origin_company_type: z.string().min(1, t('user.companyRequired')),
+  user_work_time: z.string().min(1, t('user.workTimeRequired'))
 })
 
-type UserInviteFormValues = z.infer<typeof formSchema>
+type UserInviteFormValues = z.infer<ReturnType<typeof createFormSchema>>
 
 interface UserInviteDialogProps {
   open: boolean
@@ -41,6 +42,8 @@ interface UserInviteDialogProps {
 }
 
 const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialData }: UserInviteDialogProps) => {
+  const { t } = useTranslation('admin')
+  const { t: tc } = useTranslation('common')
   const [userIdToCheck, setUserIdToCheck] = useState('')
   const { mutateAsync: inviteUser, isPending: isInvitePending } = usePostUserInviteMutation()
   const { mutateAsync: updateInvitedUser, isPending: isUpdatePending } = usePutInvitedUserMutation()
@@ -51,7 +54,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
   const { data: duplicateCheckResult, isLoading: isCheckingDuplicate } = useUserIdDuplicateQuery(userIdToCheck)
 
   const form = useForm<UserInviteFormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(createFormSchema(t)),
     defaultValues: {
       user_id: initialData?.user_id || '',
       user_name: initialData?.user_name || '',
@@ -68,13 +71,13 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
       if (duplicateCheckResult.duplicate) {
         form.setError('user_id', {
           type: 'manual',
-          message: '아이디가 중복됩니다.'
+          message: t('user.userIdDuplicate')
         })
       } else {
         form.clearErrors('user_id')
       }
     }
-  }, [duplicateCheckResult, userIdToCheck, form])
+  }, [duplicateCheckResult, userIdToCheck, form, t])
 
   const handleUserIdBlur = () => {
     const userId = form.getValues('user_id')
@@ -143,7 +146,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    이름
+                    {t('user.userName')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
                   <Input {...field} />
@@ -157,19 +160,19 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    <UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> 아이디
+                    <UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> {t('user.userId')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
                   <Input
                     {...field}
-                    onBlur={(e) => {
+                    onBlur={() => {
                       field.onBlur()
                       handleUserIdBlur()
                     }}
                     disabled={isCheckingDuplicate || !!initialData?.user_id}
                   />
                   {isCheckingDuplicate && (
-                    <div className="text-xs text-muted-foreground mt-1">중복 확인 중...</div>
+                    <div className="text-xs text-muted-foreground mt-1">{t('user.checkingDuplicate')}</div>
                   )}
                   <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                 </Field>
@@ -181,7 +184,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    <Mail className='h-4 w-4 text-muted-foreground inline-block' /> 이메일
+                    <Mail className='h-4 w-4 text-muted-foreground inline-block' /> {t('user.userEmail')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
                   <Input {...field} />
@@ -195,7 +198,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    <Calendar className='h-4 w-4 text-muted-foreground inline-block' /> 입사일
+                    <Calendar className='h-4 w-4 text-muted-foreground inline-block' /> {t('user.joinDate')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
                   <InputDatePicker
@@ -212,12 +215,12 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    <Building2 className='h-4 w-4 text-muted-foreground inline-block' /> 회사
+                    <Building2 className='h-4 w-4 text-muted-foreground inline-block' /> {t('user.company')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="회사 선택" />
+                      <SelectValue placeholder={t('user.companyPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {companyOptions.map(option => <SelectItem key={option.code} value={option.code}>{option.name}</SelectItem>)}
@@ -233,12 +236,12 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    <Clock className='h-4 w-4 text-muted-foreground inline-block' /> 유연근무시간
+                    <Clock className='h-4 w-4 text-muted-foreground inline-block' /> {t('user.workTime')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className={cn('w-full', selectedWorkTime?.className)}>
-                      <SelectValue placeholder="근무 시간 선택" />
+                      <SelectValue placeholder={t('user.workTimePlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {workTimeOptions.map(option => <SelectItem key={option.value} value={option.value} className={option.className}>{option.value}</SelectItem>)}
@@ -252,12 +255,12 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="secondary">
-                취소
+                {tc('cancel')}
               </Button>
             </DialogClose>
             <Button type="submit" disabled={!form.formState.isValid || isPending}>
               {isPending && <Spinner />}
-              {isPending ? '처리 중...' : isEditMode ? '수정' : '초대'}
+              {isPending ? tc('processing') : isEditMode ? tc('edit') : t('user.invite')}
             </Button>
           </DialogFooter>
         </form>

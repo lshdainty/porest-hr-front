@@ -1,0 +1,17 @@
+{
+  "dues": {
+    "title": "Dues",
+    "deleteError": "Failed to delete dues."
+  },
+  "rule": {
+    "title": "Regulation",
+    "educationTitle": "Education & OT",
+    "selfDevelopment": "Self Development",
+    "externalTraining": "External Training",
+    "overtime": "Overtime",
+    "additionalLeave": "Additional Leave",
+    "externalTrainingExample": "SK AI Summit AWS summit etc.",
+    "waitingTime": "Waiting Time",
+    "hourUnit": "Per hour unit"
+  }
+}

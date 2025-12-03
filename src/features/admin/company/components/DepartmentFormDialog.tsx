@@ -1,54 +1,55 @@
-import { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle
-} from '@/components/shadcn/dialog';
-import { Button } from '@/components/shadcn/button';
-import { Input } from '@/components/shadcn/input';
-import { Textarea } from '@/components/shadcn/textarea';
+} from '@/components/shadcn/dialog'
+import { Button } from '@/components/shadcn/button'
+import { Input } from '@/components/shadcn/input'
+import { Textarea } from '@/components/shadcn/textarea'
 import {
   Field,
   FieldLabel,
   FieldError
-} from '@/components/shadcn/field';
+} from '@/components/shadcn/field'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/shadcn/select';
-import { Spinner } from '@/components/shadcn/spinner';
-import { PostDepartmentReq, PutDepartmentReq } from '@/lib/api/department';
-import { useUsersQuery } from '@/hooks/queries/useUsers';
+} from '@/components/shadcn/select'
+import { Spinner } from '@/components/shadcn/spinner'
+import { PostDepartmentReq, PutDepartmentReq } from '@/lib/api/department'
+import { useUsersQuery } from '@/hooks/queries/useUsers'
 
-const departmentFormSchema = z.object({
-  department_name: z.string().min(1, { message: '영문 부서명을 입력해주세요.' }),
-  department_name_kr: z.string().min(1, { message: '한글 부서명을 입력해주세요.' }),
+type DepartmentFormValues = z.infer<ReturnType<typeof createDepartmentFormSchema>>
+
+const createDepartmentFormSchema = (t: (key: string) => string) => z.object({
+  department_name: z.string().min(1, { message: t('department.nameEnRequired') }),
+  department_name_kr: z.string().min(1, { message: t('department.nameKoRequired') }),
   parent_id: z.number().nullable(),
   head_user_id: z.string().optional(),
   color_code: z.string().optional(),
   tree_level: z.number().optional(),
   department_desc: z.string().optional(),
   company_id: z.string().optional(),
-});
-
-type DepartmentFormValues = z.infer<typeof departmentFormSchema>;
+})
 
 interface DepartmentFormDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSave: (formData: PostDepartmentReq | { departmentId: number; data: PutDepartmentReq }) => void;
-  initialData?: any;
-  isEditing?: boolean;
-  isAddingChild?: boolean;
-  parentId?: number | null;
-  companyId?: string;
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+  onSave: (formData: PostDepartmentReq | { departmentId: number; data: PutDepartmentReq }) => void
+  initialData?: any
+  isEditing?: boolean
+  isAddingChild?: boolean
+  parentId?: number | null
+  companyId?: string
 }
 
 const DepartmentFormDialog = ({
@@ -61,10 +62,12 @@ const DepartmentFormDialog = ({
   parentId,
   companyId
 }: DepartmentFormDialogProps) => {
-  const { data: users, isLoading: usersLoading } = useUsersQuery();
+  const { t } = useTranslation('admin')
+  const { t: tc } = useTranslation('common')
+  const { data: users, isLoading: usersLoading } = useUsersQuery()
 
   const form = useForm<DepartmentFormValues>({
-    resolver: zodResolver(departmentFormSchema),
+    resolver: zodResolver(createDepartmentFormSchema(t)),
     defaultValues: {
       department_name: '',
       department_name_kr: '',
@@ -76,7 +79,7 @@ const DepartmentFormDialog = ({
       company_id: '',
     },
     mode: 'onChange',
-  });
+  })
 
   useEffect(() => {
     if (isOpen) {
@@ -90,7 +93,7 @@ const DepartmentFormDialog = ({
           tree_level: initialData.tree_level || 0,
           department_desc: initialData.department_desc || '',
           company_id: initialData.company_id || companyId || '',
-        });
+        })
       } else {
         form.reset({
           department_name: '',
@@ -101,10 +104,10 @@ const DepartmentFormDialog = ({
           tree_level: isAddingChild && typeof parentId === 'number' && initialData ? (initialData.tree_level || 0) + 1 : 0,
           department_desc: '',
           company_id: companyId || '',
-        });
+        })
       }
     }
-  }, [isOpen, isEditing, initialData, form]);
+  }, [isOpen, isEditing, initialData, form])
 
   const onSubmit = (values: DepartmentFormValues): void => {
     if (isEditing && !isAddingChild && initialData?.department_id) {
@@ -118,8 +121,8 @@ const DepartmentFormDialog = ({
         tree_level: values.tree_level,
         department_desc: values.department_desc || undefined,
         company_id: values.company_id || undefined,
-      };
-      onSave({ departmentId: initialData.department_id, data: updateData });
+      }
+      onSave({ departmentId: initialData.department_id, data: updateData })
     } else {
       // 생성 모드 (새 부서 또는 하위 부서 추가)
       const createData: PostDepartmentReq = {
@@ -131,16 +134,16 @@ const DepartmentFormDialog = ({
         tree_level: values.tree_level,
         department_desc: values.department_desc || undefined,
         company_id: values.company_id || undefined,
-      };
-      onSave(createData);
+      }
+      onSave(createData)
     }
-  };
+  }
 
   const getDialogTitle = () => {
-    if (isAddingChild) return '하위 부서 추가';
-    if (isEditing) return '부서 수정';
-    return '부서 추가';
-  };
+    if (isAddingChild) return t('department.addSubTitle')
+    if (isEditing) return t('department.editTitle')
+    return t('department.addTitle')
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -156,10 +159,10 @@ const DepartmentFormDialog = ({
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    한글 부서명
+                    {t('department.nameKo')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
-                  <Input placeholder='예: 인사팀' {...field} />
+                  <Input placeholder={t('department.nameKoPlaceholder')} {...field} />
                   <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                 </Field>
               )}
@@ -170,10 +173,10 @@ const DepartmentFormDialog = ({
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    영문 부서명
+                    {t('department.nameEn')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
-                  <Input placeholder='예: HR Team' {...field} />
+                  <Input placeholder={t('department.nameEnPlaceholder')} {...field} />
                   <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                 </Field>
               )}
@@ -185,7 +188,7 @@ const DepartmentFormDialog = ({
               name='head_user_id'
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
-                  <FieldLabel>부서장</FieldLabel>
+                  <FieldLabel>{t('department.leader')}</FieldLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value === 'none' ? '' : value)
@@ -194,10 +197,10 @@ const DepartmentFormDialog = ({
                     disabled={usersLoading}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='부서장을 선택해주세요' />
+                      <SelectValue placeholder={t('department.leaderPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value='none'>선택 안 함</SelectItem>
+                      <SelectItem value='none'>{tc('selectNone')}</SelectItem>
                       {users?.map((user) => (
                         <SelectItem key={user.user_id} value={user.user_id}>
                           {user.user_name} ({user.user_id})
@@ -214,7 +217,7 @@ const DepartmentFormDialog = ({
               name='color_code'
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
-                  <FieldLabel>부서 색상</FieldLabel>
+                  <FieldLabel>{t('department.color')}</FieldLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value === 'none' ? '' : value)
@@ -222,43 +225,43 @@ const DepartmentFormDialog = ({
                     value={field.value || 'none'}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='색상 선택' />
+                      <SelectValue placeholder={tc('colorSelect')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value='none'>
                         <div className='flex items-center gap-2'>
                           <div className='size-4 rounded-full border-2 border-muted-foreground/30' />
-                          <span>선택 안 함</span>
+                          <span>{tc('selectNone')}</span>
                         </div>
                       </SelectItem>
                       <SelectItem value='chart-1'>
                         <div className='flex items-center gap-2'>
                           <div className='size-4 rounded-full bg-chart-1' />
-                          <span>파란색</span>
+                          <span>{tc('colorBlue')}</span>
                         </div>
                       </SelectItem>
                       <SelectItem value='chart-2'>
                         <div className='flex items-center gap-2'>
                           <div className='size-4 rounded-full bg-chart-2' />
-                          <span>녹색</span>
+                          <span>{tc('colorGreen')}</span>
                         </div>
                       </SelectItem>
                       <SelectItem value='chart-3'>
                         <div className='flex items-center gap-2'>
                           <div className='size-4 rounded-full bg-chart-3' />
-                          <span>노란색</span>
+                          <span>{tc('colorYellow')}</span>
                         </div>
                       </SelectItem>
                       <SelectItem value='chart-4'>
                         <div className='flex items-center gap-2'>
                           <div className='size-4 rounded-full bg-chart-4' />
-                          <span>보라색</span>
+                          <span>{tc('colorPurple')}</span>
                         </div>
                       </SelectItem>
                       <SelectItem value='chart-5'>
                         <div className='flex items-center gap-2'>
                           <div className='size-4 rounded-full bg-chart-5' />
-                          <span>빨간색</span>
+                          <span>{tc('colorRed')}</span>
                         </div>
                       </SelectItem>
                     </SelectContent>
@@ -273,9 +276,9 @@ const DepartmentFormDialog = ({
             name='department_desc'
             render={({ field, fieldState }) => (
               <Field data-invalid={!!fieldState.error}>
-                <FieldLabel>부서설명</FieldLabel>
+                <FieldLabel>{t('department.description')}</FieldLabel>
                 <Textarea
-                  placeholder='부서에 대한 설명을 입력하세요'
+                  placeholder={t('department.descriptionPlaceholder')}
                   rows={2}
                   {...field}
                 />
@@ -289,14 +292,14 @@ const DepartmentFormDialog = ({
               variant='secondary'
               onClick={() => onOpenChange(false)}
             >
-              취소
+              {tc('cancel')}
             </Button>
             <Button
               type='submit'
               disabled={!form.formState.isValid || form.formState.isSubmitting}
             >
               {form.formState.isSubmitting && <Spinner />}
-              {form.formState.isSubmitting ? '저장 중...' : '저장'}
+              {form.formState.isSubmitting ? tc('saving') : tc('save')}
             </Button>
           </div>
         </form>

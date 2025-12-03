@@ -1,0 +1,7 @@
+{
+  "report": {
+    "title": "Work Report",
+    "excelImport": "Import Excel",
+    "excelImportDesc": "Import work reports from Excel file."
+  }
+}

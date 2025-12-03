@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/shadcn/dialog'
 import { Loader2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface ResendEmailDialogProps {
   open: boolean
@@ -18,6 +19,8 @@ interface ResendEmailDialogProps {
 }
 
 const ResendEmailDialog = ({ open, onOpenChange, userId, userEmail }: ResendEmailDialogProps) => {
+  const { t } = useTranslation('admin')
+  const { t: tc } = useTranslation('common')
   const { mutateAsync: resendInvitation, isPending } = usePostResendInvitationMutation()
 
   const handleConfirm = async () => {
@@ -29,27 +32,27 @@ const ResendEmailDialog = ({ open, onOpenChange, userId, userEmail }: ResendEmai
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>초대 메일 재전송</DialogTitle>
+          <DialogTitle>{t('user.resendEmailTitle')}</DialogTitle>
         </DialogHeader>
         <div className="py-4">
           <p className="text-sm text-muted-foreground">
-            {userEmail}로 초대 메일을 재전송하시겠습니까?
+            {t('user.resendEmailConfirm', { email: userEmail })}
           </p>
         </div>
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="secondary" disabled={isPending}>
-              취소
+              {tc('cancel')}
             </Button>
           </DialogClose>
           <Button onClick={handleConfirm} disabled={isPending}>
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                전송 중...
+                {t('user.sending')}
               </>
             ) : (
-              '전송'
+              t('user.send')
             )}
           </Button>
         </DialogFooter>

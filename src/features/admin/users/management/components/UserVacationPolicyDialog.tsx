@@ -20,6 +20,7 @@ import {
 import TransferList, { type TransferItem } from '@/components/shadcn/transfer'
 import { Calendar, CalendarClock, Repeat } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface UserVacationPolicyDialogProps {
   open: boolean
@@ -34,6 +35,8 @@ const UserVacationPolicyDialog = ({
   userId,
   userName
 }: UserVacationPolicyDialogProps) => {
+  const { t } = useTranslation('admin')
+  const { t: tc } = useTranslation('common')
   const [leftItems, setLeftItems] = useState<TransferItem[]>([])
   const [rightItems, setRightItems] = useState<TransferItem[]>([])
   const [initialLeftPolicyIds, setInitialLeftPolicyIds] = useState<Set<string>>(new Set())
@@ -139,7 +142,7 @@ const UserVacationPolicyDialog = ({
       onOpenChange(false)
     } catch (error) {
       // 에러는 mutation의 onError에서 처리됨
-      console.error('휴가 정책 저장 중 오류:', error)
+      console.error(t('user.policySaveError'), error)
     }
   }
 
@@ -161,7 +164,7 @@ const UserVacationPolicyDialog = ({
         <div className='flex items-center gap-4 text-xs text-muted-foreground'>
           <div className='flex items-center gap-1'>
             <Calendar className='h-3 w-3' />
-            <span>부여: {item.grant_time_str === '0' || item.grant_time_str === '0일' ? '제한없음' : item.grant_time_str}</span>
+            <span>{t('user.grant')}: {item.grant_time_str === '0' || item.grant_time_str === '0일' ? t('user.grantNoLimit') : item.grant_time_str}</span>
           </div>
           {item.repeat_grant_desc && (
             <div className='flex items-center gap-1'>
@@ -174,7 +177,7 @@ const UserVacationPolicyDialog = ({
           <div className='flex items-center gap-1 text-xs text-muted-foreground'>
             <CalendarClock className='h-3 w-3' />
             <span>
-              유효: {getDisplayName(item.effective_type as string, effectiveTypes)} ~ {getDisplayName(item.expiration_type as string, expirationTypes)}
+              {t('user.effectiveRange')}: {getDisplayName(item.effective_type as string, effectiveTypes)} ~ {getDisplayName(item.expiration_type as string, expirationTypes)}
             </span>
           </div>
         )}
@@ -195,18 +198,18 @@ const UserVacationPolicyDialog = ({
       <DialogContent className='max-w-5xl max-h-[90vh]'>
         <DialogHeader>
           <DialogTitle>
-            휴가 정책 관리 {userName && `- ${userName}`}
+            {t('user.vacationPolicyTitle')} {userName && `- ${userName}`}
           </DialogTitle>
         </DialogHeader>
 
         <div className='py-4 h-[500px] flex flex-col'>
           {isLoading ? (
             <div className='flex items-center justify-center h-full'>
-              <div className='text-foreground/70'>로딩 중...</div>
+              <div className='text-foreground/70'>{tc('loading')}</div>
             </div>
           ) : isError ? (
             <div className='flex items-center justify-center h-full'>
-              <div className='text-red-500'>데이터를 불러오는 중 오류가 발생했습니다.</div>
+              <div className='text-red-500'>{t('user.policyError')}</div>
             </div>
           ) : (
             <TransferList
@@ -214,10 +217,10 @@ const UserVacationPolicyDialog = ({
               rightItems={rightItems}
               onLeftChange={setLeftItems}
               onRightChange={setRightItems}
-              leftTitle='부여되지 않은 휴가 정책'
-              rightTitle='부여된 휴가 정책'
-              leftPlaceholder='휴가 정책 검색...'
-              rightPlaceholder='휴가 정책 검색...'
+              leftTitle={t('user.unassignedPolicies')}
+              rightTitle={t('user.assignedPolicies')}
+              leftPlaceholder={t('user.searchPolicy')}
+              rightPlaceholder={t('user.searchPolicy')}
               renderItem={renderPolicyItem}
               renderRightItem={renderPolicyItem}
               filterItem={filterPolicyItem}
@@ -227,10 +230,10 @@ const UserVacationPolicyDialog = ({
 
         <DialogFooter>
           <Button variant='outline' onClick={() => onOpenChange(false)}>
-            취소
+            {tc('cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!hasChanges()}>
-            저장
+            {tc('save')}
           </Button>
         </DialogFooter>
       </DialogContent>

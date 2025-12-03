@@ -3,14 +3,16 @@ import UserCompanyCard from '@/features/admin/users/management/components/UserCo
 import UserCompanyCardSkeleton from '@/features/admin/users/management/components/UserCompanyCardSkeleton';
 import UserTable from '@/features/admin/users/management/components/UserTable';
 import UserTableSkeleton from '@/features/admin/users/management/components/UserTableSkeleton';
+import { useTranslation } from 'react-i18next';
 
 const ManagementContent = () => {
+  const { t } = useTranslation('admin');
   const { data: users, isLoading: usersLoading } = useUsersQuery();
 
   if (usersLoading) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
-        <h1 className='text-3xl font-bold mb-6'>사용자 관리</h1>
+        <h1 className='text-3xl font-bold mb-6'>{t('user.title')}</h1>
         <UserCompanyCardSkeleton />
         <UserTableSkeleton />
       </div>
@@ -19,7 +21,7 @@ const ManagementContent = () => {
 
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <h1 className='text-3xl font-bold mb-6'>사용자 관리</h1>
+      <h1 className='text-3xl font-bold mb-6'>{t('user.title')}</h1>
       <UserCompanyCard value={users || []} />
       <UserTable value={users || []} />
     </div>

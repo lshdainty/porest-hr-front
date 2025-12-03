@@ -1,0 +1,28 @@
+{
+  "title": "대시보드",
+  "edit": "대시보드 편집",
+  "widgetSettings": "위젯 설정",
+  "closeSettings": "설정 닫기",
+  "availableWidgets": "사용 가능한 위젯",
+  "widgetDragHint": "위젯을 드래그하여 대시보드에 추가하세요.",
+  "inUse": "사용 중",
+  "layoutReset": "레이아웃 초기화",
+  "widget": {
+    "myInfo": "내 정보",
+    "vacationStatus": "휴가 현황",
+    "monthlyVacationStats": "월별 휴가 통계",
+    "vacationTypeStats": "휴가 유형별 통계",
+    "workSchedule": "근무 일정",
+    "vacationApplicationHistory": "휴가 신청 내역",
+    "vacationApplicationStats": "휴가 신청 통계",
+    "vacationHistory": "휴가 내역",
+    "duesHistory": "회비 내역",
+    "duesStatus": "회비 현황",
+    "monthlyBirthdayDeposit": "월별 생일비 입금 현황",
+    "companyUserStats": "회사별 인원 현황",
+    "systemDailyCheck": "시스템 데일리 체크",
+    "workHistoryStatus": "업무이력 작성 현황",
+    "monthlyWorkAlert": "월별 업무 미작성 알림",
+    "allUserVacationStatus": "전체 유저 휴가 현황"
+  }
+}

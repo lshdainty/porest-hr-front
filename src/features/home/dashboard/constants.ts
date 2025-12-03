@@ -1,24 +1,25 @@
-export const LAYOUT_STORAGE_KEY = 'porest-dashboard-layouts';
-export const WIDGETS_STORAGE_KEY = 'porest-dashboard-widgets';
+export const LAYOUT_STORAGE_KEY = 'porest-dashboard-layouts'
+export const WIDGETS_STORAGE_KEY = 'porest-dashboard-widgets'
 
+// labelKey는 dashboard 네임스페이스의 번역 키
 export const WIDGETS = [
-  { id: 'profile', label: '내 정보', defaultH: 14, defaultW: 3, minW: 3, maxW: 6, minH: 10, maxH: 13 },
-  { id: 'vacation-stats', label: '휴가 현황', defaultH: 4, defaultW: 6, minW: 4, maxW: 12, minH: 4, maxH: 4 },
-  { id: 'month-stats', label: '월별 휴가 통계', defaultH: 9, defaultW: 6, minW: 4, maxW: 12, minH: 6, maxH: 9 },
-  { id: 'type-stats', label: '휴가 유형별 통계', defaultH: 14, defaultW: 3, minW: 3, maxW: 8, minH: 10, maxH: 20 },
-  { id: 'schedule', label: '근무 일정', defaultH: 9, defaultW: 7, minW: 7, maxW: 12, minH: 6, maxH: 16 },
-  { id: 'vacation-application', label: '휴가 신청 내역', defaultH: 8, defaultW: 12, minW: 6, maxW: 12, minH: 6, maxH: 20 },
-  { id: 'vacation-request-stats', label: '휴가 신청 통계', defaultH: 6, defaultW: 12, minW: 6, maxW: 12, minH: 6, maxH: 12 },
-  { id: 'vacation-history', label: '휴가 내역', defaultH: 11, defaultW: 6, minW: 4, maxW: 12, minH: 8, maxH: 20 },
-  { id: 'dues', label: '회비 내역', defaultH: 11, defaultW: 6, minW: 4, maxW: 12, minH: 8, maxH: 20 },
-  { id: 'total-dues', label: '회비 현황', defaultH: 5, defaultW: 6, minW: 5, maxW: 12, minH: 5, maxH: 10 },
-  { id: 'user-birth-dues', label: '월별 생일비 입금 현황', defaultH: 9, defaultW: 7, minW: 7, maxW: 12, minH: 6, maxH: 16 },
-  { id: 'user-company-stats', label: '회사별 인원 현황', defaultH: 5, defaultW: 6, minW: 5, maxW: 12, minH: 5, maxH: 12 },
-  { id: 'system-check', label: '시스템 데일리 체크', defaultH: 8, defaultW: 6, minW: 3, maxW: 12, minH: 6, maxH: 16 },
-  { id: 'today-work-status', label: '업무이력 작성 현황', defaultH: 6, defaultW: 3, minW: 3, maxW: 12, minH: 6, maxH: 8 },
-  { id: 'missing-work-history', label: '월별 업무 미작성 알림', defaultH: 8, defaultW: 2, minW: 2, maxW: 2, minH: 8, maxH: 8 },
-  { id: 'user-vacation-stats', label: '전체 유저 휴가 현황', defaultH: 8, defaultW: 6, minW: 4, maxW: 12, minH: 6, maxH: 12 },
-];
+  { id: 'profile', labelKey: 'widget.myInfo', defaultH: 14, defaultW: 3, minW: 3, maxW: 6, minH: 10, maxH: 13 },
+  { id: 'vacation-stats', labelKey: 'widget.vacationStatus', defaultH: 4, defaultW: 6, minW: 4, maxW: 12, minH: 4, maxH: 4 },
+  { id: 'month-stats', labelKey: 'widget.monthlyVacationStats', defaultH: 9, defaultW: 6, minW: 4, maxW: 12, minH: 6, maxH: 9 },
+  { id: 'type-stats', labelKey: 'widget.vacationTypeStats', defaultH: 14, defaultW: 3, minW: 3, maxW: 8, minH: 10, maxH: 20 },
+  { id: 'schedule', labelKey: 'widget.workSchedule', defaultH: 9, defaultW: 7, minW: 7, maxW: 12, minH: 6, maxH: 16 },
+  { id: 'vacation-application', labelKey: 'widget.vacationApplicationHistory', defaultH: 8, defaultW: 12, minW: 6, maxW: 12, minH: 6, maxH: 20 },
+  { id: 'vacation-request-stats', labelKey: 'widget.vacationApplicationStats', defaultH: 6, defaultW: 12, minW: 6, maxW: 12, minH: 6, maxH: 12 },
+  { id: 'vacation-history', labelKey: 'widget.vacationHistory', defaultH: 11, defaultW: 6, minW: 4, maxW: 12, minH: 8, maxH: 20 },
+  { id: 'dues', labelKey: 'widget.duesHistory', defaultH: 11, defaultW: 6, minW: 4, maxW: 12, minH: 8, maxH: 20 },
+  { id: 'total-dues', labelKey: 'widget.duesStatus', defaultH: 5, defaultW: 6, minW: 5, maxW: 12, minH: 5, maxH: 10 },
+  { id: 'user-birth-dues', labelKey: 'widget.monthlyBirthdayDeposit', defaultH: 9, defaultW: 7, minW: 7, maxW: 12, minH: 6, maxH: 16 },
+  { id: 'user-company-stats', labelKey: 'widget.companyUserStats', defaultH: 5, defaultW: 6, minW: 5, maxW: 12, minH: 5, maxH: 12 },
+  { id: 'system-check', labelKey: 'widget.systemDailyCheck', defaultH: 8, defaultW: 6, minW: 3, maxW: 12, minH: 6, maxH: 16 },
+  { id: 'today-work-status', labelKey: 'widget.workHistoryStatus', defaultH: 6, defaultW: 3, minW: 3, maxW: 12, minH: 6, maxH: 8 },
+  { id: 'missing-work-history', labelKey: 'widget.monthlyWorkAlert', defaultH: 8, defaultW: 2, minW: 2, maxW: 2, minH: 8, maxH: 8 },
+  { id: 'user-vacation-stats', labelKey: 'widget.allUserVacationStatus', defaultH: 8, defaultW: 6, minW: 4, maxW: 12, minH: 6, maxH: 12 },
+]
 
 export const defaultLayouts = {
   lg: [
@@ -75,4 +76,4 @@ export const defaultLayouts = {
     { i: 'missing-work-history', x: 0, y: 128, w: 2, h: 8 },
     { i: 'user-vacation-stats', x: 2, y: 128, w: 6, h: 8 },
   ],
-};
+}

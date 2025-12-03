@@ -6,10 +6,22 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import koCommon from '@/locales/ko/common.json'
 import koLogin from '@/locales/ko/login.json'
 import koSidebar from '@/locales/ko/sidebar.json'
+import koAdmin from '@/locales/ko/admin.json'
+import koVacation from '@/locales/ko/vacation.json'
+import koDashboard from '@/locales/ko/dashboard.json'
+import koWork from '@/locales/ko/work.json'
+import koCulture from '@/locales/ko/culture.json'
+import koAuth from '@/locales/ko/auth.json'
 
 import enCommon from '@/locales/en/common.json'
 import enLogin from '@/locales/en/login.json'
 import enSidebar from '@/locales/en/sidebar.json'
+import enAdmin from '@/locales/en/admin.json'
+import enVacation from '@/locales/en/vacation.json'
+import enDashboard from '@/locales/en/dashboard.json'
+import enWork from '@/locales/en/work.json'
+import enCulture from '@/locales/en/culture.json'
+import enAuth from '@/locales/en/auth.json'
 
 // 지원하는 언어 목록
 export const SUPPORTED_LANGUAGES = ['ko', 'en'] as const
@@ -22,7 +34,17 @@ export const LANGUAGE_LABELS: Record<SupportedLanguage, string> = {
 }
 
 // 네임스페이스 목록
-export const NAMESPACES = ['common', 'login', 'sidebar'] as const
+export const NAMESPACES = [
+  'common',
+  'login',
+  'sidebar',
+  'admin',
+  'vacation',
+  'dashboard',
+  'work',
+  'culture',
+  'auth'
+] as const
 export type Namespace = typeof NAMESPACES[number]
 
 // 리소스 번들
@@ -30,12 +52,24 @@ const resources = {
   ko: {
     common: koCommon,
     login: koLogin,
-    sidebar: koSidebar
+    sidebar: koSidebar,
+    admin: koAdmin,
+    vacation: koVacation,
+    dashboard: koDashboard,
+    work: koWork,
+    culture: koCulture,
+    auth: koAuth
   },
   en: {
     common: enCommon,
     login: enLogin,
-    sidebar: enSidebar
+    sidebar: enSidebar,
+    admin: enAdmin,
+    vacation: enVacation,
+    dashboard: enDashboard,
+    work: enWork,
+    culture: enCulture,
+    auth: enAuth
   }
 }
 

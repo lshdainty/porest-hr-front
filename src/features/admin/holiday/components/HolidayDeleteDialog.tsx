@@ -8,22 +8,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/shadcn/alertDialog';
-import { GetHolidaysResp } from '@/lib/api/holiday';
-import { TriangleAlert } from 'lucide-react';
+} from '@/components/shadcn/alertDialog'
+import { GetHolidaysResp } from '@/lib/api/holiday'
+import { TriangleAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface HolidayDeleteDialogProps {
-  holiday: GetHolidaysResp;
-  trigger: React.ReactNode;
-  onDelete: (holiday_seq: number) => void;
+  holiday: GetHolidaysResp
+  trigger: React.ReactNode
+  onDelete: (holiday_seq: number) => void
 }
 
 const HolidayDeleteDialog = ({ holiday, trigger, onDelete }: HolidayDeleteDialogProps) => {
+  const { t } = useTranslation('admin')
+  const { t: tc } = useTranslation('common')
+
   const handleDelete = () => {
     if (holiday.holiday_seq) {
-      onDelete(holiday.holiday_seq);
+      onDelete(holiday.holiday_seq)
     }
-  };
+  }
 
   return (
     <AlertDialog>
@@ -34,16 +38,16 @@ const HolidayDeleteDialog = ({ holiday, trigger, onDelete }: HolidayDeleteDialog
             <TriangleAlert className='h-6 w-6 text-red-600 dark:text-red-400' />
           </div>
           <AlertDialogHeader className='flex-1'>
-            <AlertDialogTitle>공휴일 삭제</AlertDialogTitle>
+            <AlertDialogTitle>{t('holiday.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              정말 "{holiday.holiday_name}" 공휴일을 삭제하시겠습니까? 이 작업은 되돌릴 수 없으며, 공휴일 정보가 영구적으로 삭제됩니다.
+              {t('holiday.deleteConfirm', { name: holiday.holiday_name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel>취소</AlertDialogCancel>
+          <AlertDialogCancel>{tc('cancel')}</AlertDialogCancel>
           <AlertDialogAction variant='destructive' onClick={handleDelete}>
-            삭제
+            {tc('delete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

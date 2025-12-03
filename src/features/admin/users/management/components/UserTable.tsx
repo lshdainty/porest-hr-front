@@ -19,12 +19,15 @@ import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import { EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface UserTableProps {
   value: GetUsersResp[];
 }
 
 const UserTable = ({ value: users }: UserTableProps) => {
+  const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const { mutate: putUser } = usePutUserMutation();
   const { mutate: deleteUser } = useDeleteUserMutation();
   const { data: companyTypes } = useOriginCompanyTypesQuery();
@@ -62,11 +65,11 @@ const UserTable = ({ value: users }: UserTableProps) => {
     <Card className='flex-1'>
       <CardHeader>
         <div className='flex items-center justify-between'>
-          <CardTitle>사용자 목록</CardTitle>
+          <CardTitle>{t('user.list')}</CardTitle>
           <div className='flex gap-2'>
             {hasPermission('USER:MANAGE') && (
               <Button className='text-sm h-8' size='sm' onClick={() => setShowInviteDialog(true)}>
-                초대
+                {t('user.invite')}
               </Button>
             )}
           </div>
@@ -78,20 +81,20 @@ const UserTable = ({ value: users }: UserTableProps) => {
             <Table className='min-w-[1000px]'>
               <TableHeader>
                 <TableRow>
-                  <TableHead 
+                  <TableHead
                     className={cn(
                       'min-w-[180px] w-[180px] pl-4',
                       'sticky left-0 z-5 bg-card'
                     )}
                   >
-                    이름
+                    {tc('name')}
                   </TableHead>
-                  <TableHead className='min-w-[120px]'>ID</TableHead>
-                  <TableHead className='min-w-[220px]'>Email</TableHead>
-                  <TableHead className='min-w-[130px]'>유연근무시간</TableHead>
-                  <TableHead className='min-w-[120px]'>소속 회사</TableHead>
-                  <TableHead className='min-w-[120px]'>부서</TableHead>
-                  <TableHead className='min-w-[120px]'>초대 상태</TableHead>
+                  <TableHead className='min-w-[120px]'>{t('user.tableId')}</TableHead>
+                  <TableHead className='min-w-[220px]'>{t('user.tableEmail')}</TableHead>
+                  <TableHead className='min-w-[130px]'>{t('user.tableWorkTime')}</TableHead>
+                  <TableHead className='min-w-[120px]'>{t('user.tableCompany')}</TableHead>
+                  <TableHead className='min-w-[120px]'>{t('user.tableDepartment')}</TableHead>
+                  <TableHead className='min-w-[120px]'>{t('user.tableInviteStatus')}</TableHead>
                   <TableHead className='min-w-[80px] pr-4'></TableHead>
                 </TableRow>
               </TableHeader>
@@ -149,10 +152,10 @@ const UserTable = ({ value: users }: UserTableProps) => {
                           'bg-red-500 text-white': row.invitation_status === 'EXPIRED'
                         }
                       )}>
-                        {row.invitation_status === 'PENDING' && '가입 대기'}
-                        {row.invitation_status === 'ACTIVE' && '가입 완료'}
-                        {row.invitation_status === 'INACTIVE' && '비활성'}
-                        {row.invitation_status === 'EXPIRED' && '토큰 만료'}
+                        {row.invitation_status === 'PENDING' && t('user.statusPending')}
+                        {row.invitation_status === 'ACTIVE' && t('user.statusActive')}
+                        {row.invitation_status === 'INACTIVE' && t('user.statusInactive')}
+                        {row.invitation_status === 'EXPIRED' && t('user.statusExpired')}
                         {!row.invitation_status && '-'}
                       </Badge>
                     </TableCell>
@@ -175,7 +178,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 onSelect={() => setShowResendDialog(row.user_id)}
                               >
                                 <MailPlus className='h-4 w-4' />
-                                <span>메일 재전송</span>
+                                <span>{t('user.resendEmail')}</span>
                               </DropdownMenuItem>
                             )}
                             {row.invitation_status === 'ACTIVE' && hasPermission('USER:MANAGE') && (
@@ -183,7 +186,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 onSelect={() => setShowEditDialog(row.user_id)}
                               >
                                 <Pencil className='h-4 w-4' />
-                                <span>사용자 수정</span>
+                                <span>{t('user.editTitle')}</span>
                               </DropdownMenuItem>
                             )}
                             {row.invitation_status === 'PENDING' && hasPermission('USER:MANAGE') && (
@@ -191,7 +194,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 onSelect={() => setShowInviteEditDialog(row.user_id)}
                               >
                                 <Pencil className='h-4 w-4' />
-                                <span>초대정보 수정</span>
+                                <span>{t('user.inviteEdit')}</span>
                               </DropdownMenuItem>
                             )}
                             {row.invitation_status !== 'ACTIVE' && row.invitation_status !== 'PENDING' && (
@@ -199,7 +202,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 disabled
                               >
                                 <Pencil className='h-4 w-4' />
-                                <span>사용자 수정</span>
+                                <span>{t('user.editTitle')}</span>
                               </DropdownMenuItem>
                             )}
                             {row.invitation_status === 'ACTIVE' && hasAllPermissions(['USER:MANAGE', 'VACATION:MANAGE']) && (
@@ -207,7 +210,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 onSelect={() => setPolicyDialog(row.user_id)}
                               >
                                 <ShieldEllipsis className='h-4 w-4' />
-                                <span>휴가정책 설정</span>
+                                <span>{t('user.vacationPolicy')}</span>
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -217,7 +220,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 className='text-destructive focus:text-destructive hover:!bg-destructive/20'
                               >
                                 <Trash2 className='h-4 w-4' />
-                                <span>삭제</span>
+                                <span>{tc('delete')}</span>
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -238,7 +241,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
       <UserInviteDialog
         open={showInviteDialog}
         onOpenChange={setShowInviteDialog}
-        title='사용자 초대'
+        title={t('user.inviteTitle')}
         companyOptions={companyTypes || []}
       />
 
@@ -278,7 +281,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
           <UserInviteDialog
             open={true}
             onOpenChange={(open) => !open && setShowInviteEditDialog(null)}
-            title='사용자 정보 수정'
+            title={t('user.inviteEdit')}
             companyOptions={companyTypes || []}
             initialData={{
               user_id: user.user_id,

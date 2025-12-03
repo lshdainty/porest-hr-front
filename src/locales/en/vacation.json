@@ -1,0 +1,65 @@
+{
+  "title": "Vacation",
+  "history": {
+    "title": "Vacation History"
+  },
+  "application": {
+    "title": "Vacation Application",
+    "compTitle": "Compensatory Leave Application",
+    "requestTitle": "Title",
+    "requestTitlePlaceholder": "e.g. Personal reason",
+    "requestTitleRequired": "Please enter a title.",
+    "policy": "Vacation Policy",
+    "policyPlaceholder": "Select vacation policy",
+    "policyRequired": "Please select a vacation policy.",
+    "overtimeDate": "Overtime Date",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "grantTime": "Grant Time",
+    "dateRequired": "Please select a date.",
+    "overtimeHours": "Overtime Hours",
+    "expectedCompTime": "Expected Compensation Time",
+    "overtimeReason": "Overtime Reason",
+    "overtimeReasonPlaceholder": "e.g. Project deadline overtime",
+    "reason": "Vacation Reason",
+    "reasonPlaceholder": "Enter vacation reason",
+    "approver": "Assign Approver",
+    "approverStep": "Assign step {step} approver",
+    "summary": "Application Summary",
+    "submitRequest": "Submit Request",
+    "customDateRange": "Set custom grant/expiry date"
+  },
+  "grant": {
+    "title": "Grant Vacation",
+    "targetUser": "Target User",
+    "targetUserPlaceholder": "Select user",
+    "targetUserRequired": "Please select a user.",
+    "policyRequired": "Please select a vacation policy.",
+    "customDateRange": "Set custom grant/expiry date",
+    "startDate": "Validity Start Date",
+    "endDate": "Validity End Date",
+    "grantTime": "Grant Time",
+    "grantReason": "Grant Reason",
+    "noPolicy": "No admin grant policy assigned",
+    "policyDefault": "Policy Default",
+    "startDateRule": "The vacation policy start date rule will be applied",
+    "endDateRule": "The vacation policy expiry date rule will be applied",
+    "fixedGrantTime": "This vacation policy uses fixed grant time."
+  },
+  "policy": {
+    "title": "Vacation Policy",
+    "addTitle": "Add Vacation Policy",
+    "editTitle": "Edit Vacation Policy",
+    "deleteTitle": "Delete Vacation Policy",
+    "deleteConfirm": "Are you sure you want to delete '{name}' vacation policy? Previously granted vacations or usage history will not be deleted but no new vacations will be granted.",
+    "name": "Policy Name",
+    "nameRequired": "Please enter the policy name",
+    "type": "Vacation Type",
+    "typeRequired": "Please select the vacation type"
+  },
+  "time": {
+    "hours": "{h} hours",
+    "zeroMin": "0 min",
+    "thirtyMin": "30 min"
+  }
+}

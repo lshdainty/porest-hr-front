@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/shadcn/checkbox'
 import { Label } from '@/components/shadcn/label'
 import TransferList, { type TransferItem } from '@/components/shadcn/transfer'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface UserDepartmentTransferProps {
   usersInDepartment: UserInfo[]
@@ -20,6 +21,8 @@ const UserDepartmentTransfer = ({
   onTransfer,
   isLoading = false,
 }: UserDepartmentTransferProps) => {
+  const { t } = useTranslation('admin')
+  const { t: tc } = useTranslation('common')
   // 초기 사용자 ID 추적을 위한 상태
   const [initialLeftUserIds, setInitialLeftUserIds] = useState<Set<string>>(new Set())
   const [initialRightUserIds, setInitialRightUserIds] = useState<Set<string>>(new Set())
@@ -98,7 +101,7 @@ const UserDepartmentTransfer = ({
 
       if (hasMainDepartment) {
         // 이미 메인부서가 있는 경우 - toast 표시
-        toast.error('이미 메인부서가 존재합니다')
+        toast.error(t('user.mainDepartmentExists'))
         setCheckingUserId('') // 체크 중인 userId 초기화
         return
       }
@@ -159,7 +162,7 @@ const UserDepartmentTransfer = ({
             htmlFor={`main-${item.key}`}
             className='text-xs text-muted-foreground cursor-pointer whitespace-nowrap'
           >
-            메인부서
+            {t('user.mainDepartment')}
           </Label>
         </div>
       </div>
@@ -175,14 +178,14 @@ const UserDepartmentTransfer = ({
   }
 
   if (isLoading) {
-    return <div className='flex items-center justify-center h-full'>Loading...</div>
+    return <div className='flex items-center justify-center h-full'>{tc('loading')}</div>
   }
 
   return (
     <div className='w-full h-full flex flex-col gap-4'>
       <div className='flex justify-end gap-2'>
         <Button onClick={handleSave} disabled={!hasChanges()}>
-          저장
+          {tc('save')}
         </Button>
       </div>
 
@@ -191,10 +194,10 @@ const UserDepartmentTransfer = ({
         rightItems={rightItems}
         onLeftChange={setLeftItems}
         onRightChange={setRightItems}
-        leftTitle='전체 사용자'
-        rightTitle='부서 소속 사용자'
-        leftPlaceholder='사용자 검색...'
-        rightPlaceholder='사용자 검색...'
+        leftTitle={t('user.allUsers')}
+        rightTitle={t('user.usersInDepartment')}
+        leftPlaceholder={t('user.searchUser')}
+        rightPlaceholder={t('user.searchUser')}
         renderItem={renderLeftUserItem}
         renderRightItem={renderRightUserItem}
         filterItem={filterUserItem}

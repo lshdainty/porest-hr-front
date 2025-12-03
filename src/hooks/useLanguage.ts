@@ -27,7 +27,6 @@ export function useLanguage() {
     changeLanguage,
     languages,
     isKorean: currentLanguage === 'ko',
-    isEnglish: currentLanguage === 'en',
-    isJapanese: currentLanguage === 'jp'
+    isEnglish: currentLanguage === 'en'
   }
 }

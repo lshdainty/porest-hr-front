@@ -1,29 +1,30 @@
-import { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Input } from '@/components/shadcn/input';
-import { Button } from '@/components/shadcn/button';
-import { Textarea } from '@/components/shadcn/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
-import { Field, FieldLabel, FieldError } from '@/components/shadcn/field';
-import { Spinner } from '@/components/shadcn/spinner';
-import { PostCompanyReq, PutCompanyReq } from '@/lib/api/company';
+import { useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
+import { Input } from '@/components/shadcn/input'
+import { Button } from '@/components/shadcn/button'
+import { Textarea } from '@/components/shadcn/textarea'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/shadcn/dialog'
+import { Field, FieldLabel, FieldError } from '@/components/shadcn/field'
+import { Spinner } from '@/components/shadcn/spinner'
+import { PostCompanyReq, PutCompanyReq } from '@/lib/api/company'
 
-const companyFormSchema = z.object({
-  company_id: z.string().min(1, { message: '회사 ID를 입력해주세요.' }),
-  company_name: z.string().min(1, { message: '회사명을 입력해주세요.' }),
+type CompanyFormValues = z.infer<ReturnType<typeof createCompanyFormSchema>>
+
+const createCompanyFormSchema = (t: (key: string) => string) => z.object({
+  company_id: z.string().min(1, { message: t('company.companyIdRequired') }),
+  company_name: z.string().min(1, { message: t('company.companyNameRequired') }),
   company_desc: z.string().optional(),
-});
-
-type CompanyFormValues = z.infer<typeof companyFormSchema>;
+})
 
 interface CompanyFormDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSave: (formData: PostCompanyReq | { companyId: string; data: PutCompanyReq }) => void;
-  initialData?: Partial<PostCompanyReq>;
-  mode?: 'create' | 'edit';
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+  onSave: (formData: PostCompanyReq | { companyId: string; data: PutCompanyReq }) => void
+  initialData?: Partial<PostCompanyReq>
+  mode?: 'create' | 'edit'
 }
 
 const CompanyFormDialog = ({
@@ -33,15 +34,18 @@ const CompanyFormDialog = ({
   initialData = {},
   mode = 'create'
 }: CompanyFormDialogProps) => {
+  const { t } = useTranslation('admin')
+  const { t: tc } = useTranslation('common')
+
   const form = useForm<CompanyFormValues>({
-    resolver: zodResolver(companyFormSchema),
+    resolver: zodResolver(createCompanyFormSchema(t)),
     defaultValues: {
       company_id: '',
       company_name: '',
       company_desc: '',
     },
     mode: 'onChange',
-  });
+  })
 
   useEffect(() => {
     if (isOpen && initialData) {
@@ -49,9 +53,9 @@ const CompanyFormDialog = ({
         company_id: initialData.company_id || '',
         company_name: initialData.company_name || '',
         company_desc: initialData.company_desc || '',
-      });
+      })
     }
-  }, [isOpen, form, initialData]);
+  }, [isOpen, form, initialData])
 
   const onSubmit = (values: CompanyFormValues): void => {
     if (mode === 'edit') {
@@ -61,28 +65,28 @@ const CompanyFormDialog = ({
           company_name: values.company_name,
           company_desc: values.company_desc || '',
         }
-      });
+      })
     } else {
       onSave({
         company_id: values.company_id,
         company_name: values.company_name,
         company_desc: values.company_desc || '',
-      });
+      })
     }
-  };
+  }
 
   const handleOpenChange = (open: boolean): void => {
     if (!open) {
-      form.reset();
+      form.reset()
     }
-    onOpenChange(open);
-  };
+    onOpenChange(open)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className='max-w-md'>
         <DialogHeader>
-          <DialogTitle>{mode === 'edit' ? '회사 정보 수정' : '회사 정보 입력'}</DialogTitle>
+          <DialogTitle>{mode === 'edit' ? t('company.editTitle') : t('company.createTitle')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
@@ -92,11 +96,11 @@ const CompanyFormDialog = ({
             render={({ field, fieldState }) => (
               <Field data-invalid={!!fieldState.error}>
                 <FieldLabel>
-                  회사 ID
+                  {t('company.companyId')}
                   <span className='text-destructive ml-0.5'>*</span>
                 </FieldLabel>
                 <Input
-                  placeholder='회사 ID를 입력하세요'
+                  placeholder={t('company.companyIdPlaceholder')}
                   {...field}
                   disabled={mode === 'edit'}
                 />
@@ -110,10 +114,10 @@ const CompanyFormDialog = ({
             render={({ field, fieldState }) => (
               <Field data-invalid={!!fieldState.error}>
                 <FieldLabel>
-                  회사명
+                  {t('company.companyName')}
                   <span className='text-destructive ml-0.5'>*</span>
                 </FieldLabel>
-                <Input placeholder='회사명을 입력하세요' {...field} />
+                <Input placeholder={t('company.companyNamePlaceholder')} {...field} />
                 <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
               </Field>
             )}
@@ -123,9 +127,9 @@ const CompanyFormDialog = ({
             name='company_desc'
             render={({ field, fieldState }) => (
               <Field data-invalid={!!fieldState.error}>
-                <FieldLabel>회사소개</FieldLabel>
+                <FieldLabel>{t('company.companyIntro')}</FieldLabel>
                 <Textarea
-                  placeholder='회사에 대한 간단한 소개를 입력하세요'
+                  placeholder={t('company.companyIntroPlaceholder')}
                   rows={4}
                   {...field}
                 />
@@ -139,14 +143,14 @@ const CompanyFormDialog = ({
               variant='secondary'
               onClick={() => handleOpenChange(false)}
             >
-              취소
+              {tc('cancel')}
             </Button>
             <Button
               type='submit'
               disabled={!form.formState.isValid || form.formState.isSubmitting}
             >
               {form.formState.isSubmitting && <Spinner />}
-              {form.formState.isSubmitting ? '저장 중...' : '저장'}
+              {form.formState.isSubmitting ? tc('saving') : tc('save')}
             </Button>
           </div>
         </form>

@@ -1,0 +1,17 @@
+{
+  "dues": {
+    "title": "회비",
+    "deleteError": "회비 삭제에 실패했습니다."
+  },
+  "rule": {
+    "title": "규정",
+    "educationTitle": "교육 & OT",
+    "selfDevelopment": "자기개발",
+    "externalTraining": "외부교육",
+    "overtime": "연장근무",
+    "additionalLeave": "추가 휴가",
+    "externalTrainingExample": "SK AI Summit AWS summit 등",
+    "waitingTime": "대기 시간",
+    "hourUnit": "1시간 단위"
+  }
+}

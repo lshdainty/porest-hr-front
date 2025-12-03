@@ -1,0 +1,65 @@
+{
+  "title": "휴가",
+  "history": {
+    "title": "휴가 현황"
+  },
+  "application": {
+    "title": "휴가 신청",
+    "compTitle": "보상휴가 신청",
+    "requestTitle": "제목",
+    "requestTitlePlaceholder": "예: 개인 사유",
+    "requestTitleRequired": "제목을 입력해주세요.",
+    "policy": "휴가 정책",
+    "policyPlaceholder": "휴가 정책을 선택하세요",
+    "policyRequired": "휴가 정책을 선택해주세요.",
+    "overtimeDate": "초과근무일",
+    "startTime": "시작 시간",
+    "endTime": "종료 시간",
+    "grantTime": "부여 시간",
+    "dateRequired": "날짜를 선택해주세요.",
+    "overtimeHours": "초과근무 시간",
+    "expectedCompTime": "예상 보상 시간",
+    "overtimeReason": "초과근무 사유",
+    "overtimeReasonPlaceholder": "예: 프로젝트 마감 초과근무",
+    "reason": "휴가 사유",
+    "reasonPlaceholder": "휴가 사유를 입력하세요",
+    "approver": "승인자 지정",
+    "approverStep": "{step}단계 인원 지정",
+    "summary": "신청 요약",
+    "submitRequest": "결재 요청",
+    "customDateRange": "부여일/만료일 직접 지정"
+  },
+  "grant": {
+    "title": "휴가 부여",
+    "targetUser": "대상 사용자",
+    "targetUserPlaceholder": "사용자를 선택하세요",
+    "targetUserRequired": "사용자를 선택해주세요.",
+    "policyRequired": "휴가 정책을 선택해주세요.",
+    "customDateRange": "부여일/만료일 직접 지정",
+    "startDate": "유효기간 시작일자",
+    "endDate": "유효기간 만료일자",
+    "grantTime": "부여 시간",
+    "grantReason": "부여 사유",
+    "noPolicy": "할당된 관리자 부여 정책이 없습니다",
+    "policyDefault": "정책 기본값",
+    "startDateRule": "휴가 정책의 시작일자 규칙이 적용됩니다",
+    "endDateRule": "휴가 정책의 만료일자 규칙이 적용됩니다",
+    "fixedGrantTime": "이 휴가 정책은 고정된 부여 시간을 사용합니다."
+  },
+  "policy": {
+    "title": "휴가 정책",
+    "addTitle": "휴가 정책 추가",
+    "editTitle": "휴가 정책 수정",
+    "deleteTitle": "휴가 정책 삭제",
+    "deleteConfirm": "정말 '{name}' 휴가 정책을 삭제하시겠습니까? 기존에 부여된 휴가나 사용 내역은 삭제되지 않지만 더 이상 새로운 휴가가 부여되지 않습니다.",
+    "name": "휴가 정책 이름",
+    "nameRequired": "휴가 정책 이름을 입력해주세요",
+    "type": "휴가 타입",
+    "typeRequired": "휴가 타입을 선택해주세요"
+  },
+  "time": {
+    "hours": "{h}시간",
+    "zeroMin": "0분",
+    "thirtyMin": "30분"
+  }
+}

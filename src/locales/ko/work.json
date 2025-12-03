@@ -1,0 +1,7 @@
+{
+  "report": {
+    "title": "업무 보고",
+    "excelImport": "엑셀 가져오기",
+    "excelImportDesc": "엑셀 파일에서 업무 보고를 가져옵니다."
+  }
+}

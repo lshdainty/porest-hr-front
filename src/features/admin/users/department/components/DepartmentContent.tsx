@@ -9,8 +9,10 @@ import { Building2 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useDepartmentContext } from '@/features/admin/users/department/contexts/DepartmentContext';
 import UserDepartmentTransfer from '@/features/admin/users/department/components/UserDepartmentTransfer';
+import { useTranslation } from 'react-i18next';
 
 const DepartmentContent = () => {
+  const { t } = useTranslation('admin');
   const { selectedDept, setSelectedDept } = useDepartmentContext();
 
   const { data: company, isLoading } = useCompanyQuery();
@@ -102,7 +104,7 @@ const DepartmentContent = () => {
               onDeptUpdate={() => {}}
               onDeptDelete={() => {}}
               companyId={company?.company_id || ''}
-              title="부서 목록"
+              title={t('department.list')}
               showAddButton={false}
               showNodeActions={false}
               disableCollapse={true}
@@ -124,7 +126,7 @@ const DepartmentContent = () => {
                 />
               ) : (
                 <div className='flex items-center justify-center h-full text-muted-foreground'>
-                  <p>부서를 선택하세요</p>
+                  <p>{t('user.selectDepartment')}</p>
                 </div>
               )}
             </div>

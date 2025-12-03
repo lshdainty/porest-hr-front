@@ -24,6 +24,7 @@ import { GetUserRequestedVacationsResp, GetUserRequestedVacationStatsResp, GetUs
 import { cn } from '@/lib/utils';
 import { GripVertical, Pencil, Plus, Save, Settings, X } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -46,7 +47,7 @@ interface DashboardContentProps {
   usersBirthDues?: any[];
 }
 
-const DashboardContent = ({ 
+const DashboardContent = ({
   user,
   vacationStats,
   monthStats,
@@ -61,6 +62,7 @@ const DashboardContent = ({
   birthDues,
   usersBirthDues
 }: DashboardContentProps) => {
+  const { t } = useTranslation('dashboard')
   const {
     layouts,
     activeWidgets,
@@ -92,13 +94,13 @@ const DashboardContent = ({
         },
         {
           icon: <X className='w-5 h-5' />,
-          label: '취소',
+          label: t('closeSettings'),
           onClick: handleCancel,
           variant: 'destructive'
         },
         {
           icon: <Settings className='w-5 h-5' />,
-          label: isToolboxOpen ? '설정 닫기' : '위젯 설정',
+          label: isToolboxOpen ? t('closeSettings') : t('widgetSettings'),
           onClick: () => setIsToolboxOpen(!isToolboxOpen),
           variant: 'secondary'
         }
@@ -107,38 +109,38 @@ const DashboardContent = ({
     return [
       {
         icon: <Pencil className='w-5 h-5' />,
-        label: '대시보드 편집',
+        label: t('edit'),
         onClick: () => setTimeout(() => setIsEditing(true), 300),
         variant: 'default'
       }
     ];
-  }, [isEditing, isToolboxOpen, handleSave, handleCancel, setIsEditing, setIsToolboxOpen]);
+  }, [isEditing, isToolboxOpen, handleSave, handleCancel, setIsEditing, setIsToolboxOpen, t]);
 
   const widgetConfig: Record<string, { title: string; component: React.ReactNode }> = {
     profile: {
-      title: '내 정보',
+      title: t('widget.myInfo'),
       component: <ProfileWidget user={user} />
     },
     'vacation-stats': {
-      title: '휴가 현황',
+      title: t('widget.vacationStatus'),
       component: <VacationStatsWidget vacationStats={vacationStats} />
     },
     'month-stats': {
-      title: '월별 휴가 통계',
+      title: t('widget.monthlyVacationStats'),
       component: <MonthStatsWidget monthStats={monthStats} />
     },
     'type-stats': {
-      title: '휴가 유형별 통계',
+      title: t('widget.vacationTypeStats'),
       component: <TypeStatsWidget vacationTypes={vacationTypes} />
     },
     schedule: {
-      title: '근무 일정',
+      title: t('widget.workSchedule'),
       component: <ScheduleWidget users={users} />
     },
     'vacation-application': {
-      title: '휴가 신청 내역',
+      title: t('widget.vacationApplicationHistory'),
       component: (
-        <ApplicationTableWidget 
+        <ApplicationTableWidget
           vacationRequests={vacationRequests}
           grantStatusTypes={grantStatusTypes || []}
           userId={user?.user_id || ''}
@@ -147,43 +149,43 @@ const DashboardContent = ({
       )
     },
     'vacation-request-stats': {
-      title: '휴가 신청 통계',
+      title: t('widget.vacationApplicationStats'),
       component: <VacationRequestStatsWidget stats={requestStats} />
     },
     'vacation-history': {
-      title: '휴가 내역',
+      title: t('widget.vacationHistory'),
       component: <VacationHistoryWidget vacationHistory={vacationHistory} />
     },
     'dues': {
-      title: '회비 내역',
+      title: t('widget.duesHistory'),
       component: <DuesWidget yearDues={yearDues} />
     },
     'total-dues': {
-      title: '회비 현황',
+      title: t('widget.duesStatus'),
       component: <TotalDuesWidget totalDues={totalDues} birthDues={birthDues} />
     },
     'user-birth-dues': {
-      title: '월별 생일비 입금 현황',
+      title: t('widget.monthlyBirthdayDeposit'),
       component: <UserBirthDuesWidget usersBirthDues={usersBirthDues} users={users} />
     },
     'user-company-stats': {
-      title: '회사별 인원 현황',
+      title: t('widget.companyUserStats'),
       component: <UserCompanyStatsWidget users={users} />
     },
     'system-check': {
-      title: '시스템 데일리 체크',
+      title: t('widget.systemDailyCheck'),
       component: <SystemCheckWidget />
     },
     'today-work-status': {
-      title: '업무이력 작성 현황',
+      title: t('widget.workHistoryStatus'),
       component: <TodayWorkStatusWidget />
     },
     'missing-work-history': {
-      title: '월별 업무 미작성 알림',
+      title: t('widget.monthlyWorkAlert'),
       component: <MissingWorkHistoryWidget />
     },
     'user-vacation-stats': {
-      title: '전체 유저 휴가 현황',
+      title: t('widget.allUserVacationStatus'),
       component: <UserVacationStatsWidget />
     }
   };
@@ -264,13 +266,13 @@ const DashboardContent = ({
         )}
       >
         <div className='p-6 pt-20'>
-          <h2 className='text-lg font-semibold mb-6'>위젯 설정</h2>
-          
+          <h2 className='text-lg font-semibold mb-6'>{t('widgetSettings')}</h2>
+
           <div className='space-y-4'>
             <div className='space-y-2'>
-              <h4 className='text-sm font-medium text-muted-foreground mb-4'>사용 가능한 위젯</h4>
+              <h4 className='text-sm font-medium text-muted-foreground mb-4'>{t('availableWidgets')}</h4>
               <p className='text-xs text-muted-foreground mb-4'>
-                위젯을 드래그하여 대시보드에 추가하세요.
+                {t('widgetDragHint')}
               </p>
               
               {WIDGETS.map(widget => {
@@ -298,21 +300,21 @@ const DashboardContent = ({
                   >
                     <div className='flex items-center gap-3'>
                       <GripVertical className='w-4 h-4 text-muted-foreground' />
-                      <span className='font-medium text-sm'>{widget.label}</span>
+                      <span className='font-medium text-sm'>{t(widget.labelKey)}</span>
                     </div>
-                    {isActive && <span className='text-xs text-green-600 font-medium'>사용 중</span>}
+                    {isActive && <span className='text-xs text-green-600 font-medium'>{t('inUse')}</span>}
                   </div>
                 );
               })}
             </div>
 
             <div className='pt-8 border-t mt-8'>
-              <Button 
-                variant='destructive' 
-                className='w-full' 
+              <Button
+                variant='destructive'
+                className='w-full'
                 onClick={resetLayout}
               >
-                레이아웃 초기화
+                {t('layoutReset')}
               </Button>
             </div>
           </div>
