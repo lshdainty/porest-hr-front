@@ -23,5 +23,23 @@
   "editEvent": {
     "title": "일정 수정",
     "description": "일정 정보를 수정해주세요."
+  },
+  "header": {
+    "addEvent": "일정 추가",
+    "allFilters": "전체 필터",
+    "selected": "선택됨",
+    "users": "사용자",
+    "types": "유형",
+    "allUsers": "전체 사용자",
+    "allTypes": "전체 유형"
+  },
+  "eventDetails": {
+    "user": "사용자",
+    "startDate": "시작일",
+    "endDate": "종료일",
+    "content": "내용"
+  },
+  "agenda": {
+    "dateFormat": "yyyy년 M월 dd일 EEEE"
   }
 }

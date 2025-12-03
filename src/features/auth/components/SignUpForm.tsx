@@ -4,14 +4,16 @@ import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Label } from '@/components/shadcn/label';
 import { Loader2 } from 'lucide-react';
 import { useSignUpContext } from '@/features/auth/contexts/SignUpContext';
+import { useTranslation } from 'react-i18next';
 
 const SignUpForm = () => {
+  const { t } = useTranslation('auth');
   const { formData, setFormData, connectedOAuth, isPending, handleSubmit } = useSignUpContext();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="birth">생년월일</Label>
+        <Label htmlFor="birth">{t('signup.birthDate')}</Label>
         <InputDatePicker
           value={formData.birth}
           onValueChange={(value) => setFormData({...formData, birth: value || ''})}
@@ -27,7 +29,7 @@ const SignUpForm = () => {
           }
         />
         <Label htmlFor="lunarYN" className="text-sm font-normal cursor-pointer">
-          음력 생일 사용
+          {t('signup.useLunarBirth')}
         </Label>
       </div>
 
@@ -39,10 +41,10 @@ const SignUpForm = () => {
         {isPending ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            처리 중...
+            {t('signup.processing')}
           </>
         ) : (
-          '회원가입 완료'
+          t('signup.completeBtn')
         )}
       </Button>
     </form>

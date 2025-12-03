@@ -8,6 +8,7 @@ import { usePostCancelVacationRequestMutation } from '@/hooks/queries/useVacatio
 import { TypeResp } from '@/lib/api/type';
 import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
 import { Activity, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ApplicationTableProps {
   vacationRequests: GetUserRequestedVacationsResp[]
@@ -24,6 +25,7 @@ const ApplicationTable = ({
   userName,
   showGrantButton = false
 }: ApplicationTableProps) => {
+  const { t } = useTranslation('vacation');
   const [detailOpen, setDetailOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
   const [grantDialogOpen, setGrantDialogOpen] = useState(false);
@@ -55,13 +57,13 @@ const ApplicationTable = ({
       <Card className='flex-1'>
         <CardHeader>
           <div className='flex items-center justify-between'>
-            <CardTitle>신청 내역</CardTitle>
+            <CardTitle>{t('application.requestHistory')}</CardTitle>
             <Activity mode={showGrantButton && hasAnyPermission(['VACATION:GRANT', 'VACATION:MANAGE']) ? 'visible' : 'hidden'}>
               <Button
                 onClick={() => setGrantDialogOpen(true)}
                 className='bg-blue-600 hover:bg-blue-700 text-white'
               >
-                휴가 부여
+                {t('application.grantVacation')}
               </Button>
             </Activity>
           </div>

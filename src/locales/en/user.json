@@ -23,5 +23,17 @@
     "changeImage": "Change Image",
     "uploadImage": "Upload Image",
     "deleteImage": "Delete Image"
+  },
+  "info": {
+    "title": "User Info",
+    "selectPlaceholder": "Select User",
+    "notFound": "User not found.",
+    "userId": "ID",
+    "email": "Email",
+    "birthDate": "Birth Date",
+    "birthFormat": "{year}/{month}/{day}",
+    "company": "Company",
+    "department": "Department",
+    "workTime": "Flexible Work Time"
   }
 }

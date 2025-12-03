@@ -19,6 +19,7 @@ import VacationStatsCard from '@/features/vacation/history/components/VacationSt
 import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton'
 import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard'
 import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton'
+import { useTranslation } from 'react-i18next'
 
 interface HistoryContentProps {
   user: any
@@ -35,9 +36,11 @@ const HistoryContentLayout = ({
   vacationTypes,
   histories
 }: HistoryContentProps) => {
+  const { t } = useTranslation('vacation')
+
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <h1 className='text-3xl font-bold mb-6'>휴가 내역 통계</h1>
+      <h1 className='text-3xl font-bold mb-6'>{t('history.pageTitle')}</h1>
       <div className='flex flex-col lg:flex-row gap-6'>
         {user && <UserInfoCard value={[user]} />}
         <div className='flex flex-col gap-6 flex-1'>
@@ -57,10 +60,10 @@ const HistoryContentLayout = ({
   )
 }
 
-const HistorySkeleton = () => {
+const HistorySkeleton = ({ title }: { title: string }) => {
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <h1 className='text-3xl font-bold mb-6'>휴가 내역 통계</h1>
+      <h1 className='text-3xl font-bold mb-6'>{title}</h1>
       <div className='flex flex-col lg:flex-row gap-6'>
         <UserInfoCardSkeleton />
         <div className='flex flex-col gap-6 flex-1'>
@@ -81,6 +84,8 @@ const HistorySkeleton = () => {
 }
 
 const HistoryContent = () => {
+  const { t } = useTranslation('vacation')
+  const { t: tc } = useTranslation('common')
   const { loginUser } = useUser()
   const { selectedYear } = useHistoryContext()
   const user_id = loginUser?.user_id || ''
@@ -106,11 +111,11 @@ const HistoryContent = () => {
   return (
     <QueryAsyncBoundary
       queryState={{ isLoading, error, data: user }}
-      loadingComponent={<HistorySkeleton />}
+      loadingComponent={<HistorySkeleton title={t('history.pageTitle')} />}
       errorComponent={
         <div className='p-4 sm:p-6 md:p-8'>
           <div className='p-8 text-center text-red-600'>
-            데이터를 불러오는데 실패했습니다.
+            {tc('loadFailed')}
           </div>
         </div>
       }

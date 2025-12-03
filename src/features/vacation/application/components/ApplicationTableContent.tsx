@@ -19,6 +19,7 @@ import {
   Eye,
   XCircle
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ApplicationTableContentProps {
   vacationRequests: GetUserRequestedVacationsResp[];
@@ -33,18 +34,20 @@ const ApplicationTableContent = ({
   onDetailView,
   onCancelRequest,
 }: ApplicationTableContentProps) => {
+  const { t } = useTranslation('vacation');
+
   return (
     <div className='overflow-x-auto'>
       <Table className='min-w-[1000px]'>
         <TableHeader>
           <TableRow>
-            <TableHead className='min-w-[200px] whitespace-nowrap'>제목</TableHead>
-            <TableHead className='min-w-[100px] whitespace-nowrap'>휴가 타입</TableHead>
-            <TableHead className='min-w-[120px] whitespace-nowrap'>신청일</TableHead>
-            <TableHead className='min-w-[150px] whitespace-nowrap'>대상일자</TableHead>
-            <TableHead className='min-w-[100px] whitespace-nowrap'>보상일수</TableHead>
-            <TableHead className='min-w-[100px] whitespace-nowrap'>현결재자</TableHead>
-            <TableHead className='min-w-[100px] whitespace-nowrap'>상태</TableHead>
+            <TableHead className='min-w-[200px] whitespace-nowrap'>{t('application.tableTitle')}</TableHead>
+            <TableHead className='min-w-[100px] whitespace-nowrap'>{t('application.tableVacationType')}</TableHead>
+            <TableHead className='min-w-[120px] whitespace-nowrap'>{t('application.tableRequestDate')}</TableHead>
+            <TableHead className='min-w-[150px] whitespace-nowrap'>{t('application.tableTargetDate')}</TableHead>
+            <TableHead className='min-w-[100px] whitespace-nowrap'>{t('application.tableGrantDays')}</TableHead>
+            <TableHead className='min-w-[100px] whitespace-nowrap'>{t('application.tableCurrentApprover')}</TableHead>
+            <TableHead className='min-w-[100px] whitespace-nowrap'>{t('application.tableStatus')}</TableHead>
             <TableHead className='min-w-[50px]'></TableHead>
           </TableRow>
         </TableHeader>
@@ -52,7 +55,7 @@ const ApplicationTableContent = ({
           {vacationRequests.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8} className='text-center py-8 text-muted-foreground'>
-                신청한 휴가가 없습니다.
+                {t('application.noRequests')}
               </TableCell>
             </TableRow>
           ) : (
@@ -134,7 +137,7 @@ const ApplicationTableContent = ({
                           onSelect={() => onDetailView(request)}
                         >
                           <Eye className='h-4 w-4' />
-                          <span>상세보기</span>
+                          <span>{t('application.viewDetail')}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
@@ -142,7 +145,7 @@ const ApplicationTableContent = ({
                           className='text-destructive focus:text-destructive hover:!bg-destructive/20'
                         >
                           <XCircle className='h-4 w-4' />
-                          <span>신청취소</span>
+                          <span>{t('application.cancelRequest')}</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

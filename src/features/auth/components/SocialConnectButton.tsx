@@ -1,18 +1,20 @@
 import { Button } from '@/components/shadcn/button';
 import { CheckCircle2, ExternalLink } from 'lucide-react';
 import { useSignUpContext } from '@/features/auth/contexts/SignUpContext';
+import { useTranslation } from 'react-i18next';
 
 const SocialConnectButton = () => {
+  const { t } = useTranslation('auth');
   const { connectedOAuth, handleOAuthConnect } = useSignUpContext();
 
   return (
     <div className="space-y-4">
       <div className="text-center">
         <h3 className="text-sm font-medium text-gray-900 mb-2">
-          소셜 로그인 연동 <span className="text-red-500">*</span>
+          {t('signup.socialConnect')} <span className="text-red-500">*</span>
         </h3>
         <p className="text-xs text-gray-500 mb-4">
-          최소 하나의 소셜 로그인을 연동해야 합니다
+          {t('signup.socialConnectRequired')}
         </p>
       </div>
 
@@ -41,7 +43,7 @@ const SocialConnectButton = () => {
               </svg>
             )}
             <span>
-              {connectedOAuth.includes('google') ? '구글 연동 완료' : 'Google로 연동하기'}
+              {connectedOAuth.includes('google') ? t('signup.googleConnected') : t('signup.connectWithGoogle')}
             </span>
             {!connectedOAuth.includes('google') && (
               <ExternalLink className="h-3 w-3 ml-auto" />

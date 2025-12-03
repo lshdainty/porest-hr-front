@@ -8,8 +8,10 @@ import UserBirthDuesSkeleton from '@/features/culture/dues/components/UserBirthD
 import { useDuesContext } from '@/features/culture/dues/contexts/DuesContext';
 import { useMonthBirthDuesQuery, useUsersMonthBirthDuesQuery, useYearDuesQuery, useYearOperationDuesQuery } from '@/hooks/queries/useDues';
 import { useUsersQuery } from '@/hooks/queries/useUsers';
+import { useTranslation } from 'react-i18next';
 
 const DuesContent = () => {
+  const { t } = useTranslation('common');
   const { year, month } = useDuesContext();
 
   const { data: totalDues, isLoading: totalDuesLoading, error: totalDuesError } = useYearOperationDuesQuery(year);
@@ -38,7 +40,7 @@ const DuesContent = () => {
       errorComponent={
         <div className='p-4 sm:p-6 md:p-8'>
           <div className='p-8 text-center text-red-600'>
-            데이터를 불러오는데 실패했습니다.
+            {t('loadFailed')}
           </div>
         </div>
       }

@@ -23,5 +23,23 @@
   "editEvent": {
     "title": "Edit Event",
     "description": "Please edit event information."
+  },
+  "header": {
+    "addEvent": "Add Event",
+    "allFilters": "All Filters",
+    "selected": "selected",
+    "users": "Users",
+    "types": "Types",
+    "allUsers": "All Users",
+    "allTypes": "All Types"
+  },
+  "eventDetails": {
+    "user": "User",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "content": "Content"
+  },
+  "agenda": {
+    "dateFormat": "EEEE MMM dd yyyy"
   }
 }

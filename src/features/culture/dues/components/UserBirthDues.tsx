@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { GetUsersMonthBirthDuesResp } from '@/lib/api/dues';
 import { GetUsersResp } from '@/lib/api/user';
+import { useTranslation } from 'react-i18next';
 import UserBirthDuesContent from './UserBirthDuesContent';
 
 interface UserBirthDuesProps {
@@ -9,11 +10,13 @@ interface UserBirthDuesProps {
 }
 
 const UserBirthDues = ({ usersBirthDues, users }: UserBirthDuesProps) => {
+  const { t } = useTranslation('culture');
+
   return (
     <div>
       <Card>
         <CardHeader>
-          <CardTitle>월별 생일비 입금 현황</CardTitle>
+          <CardTitle>{t('dues.monthBirthDuesTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
           <UserBirthDuesContent usersBirthDues={usersBirthDues} users={users} />

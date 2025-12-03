@@ -729,3 +729,159 @@ auth,signup.title,회원가입,Sign Up
 auth,signup.subtitle,초대받은 정보로 계정을 완성해주세요,Complete your account with the invitation info
 auth,signup.additionalInfo,추가 정보,Additional Info
 auth,signup.hasAccount,이미 계정이 있으신가요?,Already have an account?
+culture,rule.header.title,💁 POREST 🌲,💁 POREST 🌲
+culture,rule.header.subtitle,POREST팀은 이용자분들의 복지를 개선하기 위해 항상 노력하고 있어요,POREST team always strives to improve the welfare of our members
+culture,rule.vacation.title,🏖️ 휴가,🏖️ Vacation
+culture,rule.vacation.daysTitle,휴가 일수,Vacation Days
+culture,rule.vacation.daysDesc,휴가는 📅1년에 <b><u>총 15일</u></b> 지급으로 🕐<b><u>1시간 단위</u></b>로 자유롭게 사용 가능해요.,You receive 📅<b><u>15 days</u></b> per year with 🕐<b><u>hourly flexibility</u></b> to use vacation freely.
+culture,rule.vacation.timingTitle,지급 시기,Grant Timing
+culture,rule.vacation.timingTrigger,분기,Quarterly
+culture,rule.vacation.timingQ1,1분기: 4일,Q1: 4 days
+culture,rule.vacation.timingQ2,2분기: 4일,Q2: 4 days
+culture,rule.vacation.timingQ3,3분기: 4일,Q3: 4 days
+culture,rule.vacation.timingQ4,4분기: 3일,Q4: 3 days
+culture,rule.vacation.timingDesc,마다 제공되고 누적이 되지만 해당년도에 모두 소진해야 해요.,It accumulates but must be used within the year.
+culture,rule.vacation.specialTitle,경조 휴가,Special Leave
+culture,rule.vacation.happyTrigger,기쁠 때,Happy occasions
+culture,rule.vacation.happyMarriage,🤵👰결혼: 5일,🤵👰Marriage: 5 days
+culture,rule.vacation.happyBirth,🤱출산: 10일,🤱Childbirth: 10 days
+culture,rule.vacation.or,나,or
+culture,rule.vacation.sadTrigger,슬플 때,Sad occasions
+culture,rule.vacation.sadParents,🙇부친상 모친상: 5일,🙇Parents' death: 5 days
+culture,rule.vacation.sadInLaws,🙇빙부 빙모 시부 시모상: 3일,🙇In-laws' death: 3 days
+culture,rule.vacation.specialDesc,경조 휴가가 지급돼요. 운영팀은 항상 함께하고 있어요.,Special leave is provided. Our team is always with you.
+culture,rule.vacation.otherTitle,기타 휴가,Other Leave
+culture,rule.vacation.healthTrigger,건강검진,Health checkup
+culture,rule.vacation.healthDesc,2년에 한번 반차,Half-day every 2 years
+culture,rule.vacation.militaryTrigger,예비군(민방위),Reserve forces
+culture,rule.vacation.militaryMobilization,동원 훈련: 3일,Mobilization training: 3 days
+culture,rule.vacation.militaryLocal,동미참 훈련: 1일,Local training: 1 day
+culture,rule.vacation.otherDesc,대상자는 당연히 유급 휴가예요.,Eligible members get paid leave.
+culture,rule.attire.title,👔 복장,👔 Dress Code
+culture,rule.attire.basicTitle,기본 복장,Basic Attire
+culture,rule.attire.basicDesc,👕단정한 옷차림을 지향해요. 더운 날엔 반바지입고 편안하게 출근하세요.,👕We aim for neat attire. Feel free to wear shorts on hot days.
+culture,rule.attire.meetingTitle,외부 미팅,External Meetings
+culture,rule.attire.meetingDesc,👔고객 미팅 공식 행사 시에는 긴바지와 깔끔한 옷차림을 착용하여 전문성을 보여줘요.,👔Wear long pants and professional attire for client meetings and official events.
+culture,rule.attire.fieldTitle,현장 출장,Field Visits
+culture,rule.attire.fieldDesc,🏭생산 현장은 안전제일!<br/> 긴바지와 운동화가 필수예요.,🏭Safety first at production sites!<br/> Long pants and sneakers are required.
+culture,rule.attire.avoidTitle,지양 복장,Avoid Wearing
+culture,rule.attire.avoidIntro,🚫과도한 노출이나 불쾌감을 줄 수 있는,🚫Excessive exposure or potentially offensive
+culture,rule.attire.avoidTrigger,복장,attire
+culture,rule.attire.avoidShirt,👔셔츠는 단추 잠구기,👔Button up your shirt
+culture,rule.attire.avoidSportswear,🙅‍♂️운동복 츄리닝 안돼요!,🙅‍♂️No sportswear or tracksuits!
+culture,rule.attire.avoidSlippers,🩴슬리퍼 크록스 안돼요!,🩴No slippers or crocs!
+culture,rule.attire.avoidEnd,은 피해주세요.,should be avoided.
+culture,rule.education.title,👨‍💻 교육 & OT,👨‍💻 Education & Overtime
+culture,rule.education.selfDevTitle,자기개발,Self Development
+culture,rule.education.selfDevDesc,일할 때는 확실하게 일이 없다면 휴대폰은 잠시 내려두고 📖독서와 👨‍💻공부를 해보아요. 자기개발을 지향해요.,Work hard when working. When free put your phone down and try 📖reading and 👨‍💻studying. We encourage self-improvement.
+culture,rule.education.externalTitle,외부교육,External Training
+culture,rule.education.externalTrigger,외부 컨퍼런스,External conferences
+culture,rule.education.externalExample,SK AI Summit AWS summit 등,SK AI Summit AWS Summit etc.
+culture,rule.education.externalDesc,에 참여해서 최신 트랜드를 파악해봐요. 최대 연 2회 기간이 최대 3일 이내면 출근으로 인정돼요.,Participate to stay updated on trends. Up to 2 times/year 3 days max counts as work.
+culture,rule.education.overtimeTitle,연장근무,Overtime
+culture,rule.education.overtimeDesc,운영환경 특성상 🌙야간 작업 주말 작업 등이 발생할 수 있어요.,Due to operational nature 🌙night work and weekend work may occur.
+culture,rule.education.extraLeaveTitle,추가 휴가,Extra Leave
+culture,rule.education.extraLeaveDesc,SK AX와 동일하게 야간 주말 초과 근무에 대한 휴가가 부여돼요.,Like SK AX leave is granted for night and weekend overtime.
+culture,rule.education.waitTrigger,대기 시간,Waiting time
+culture,rule.education.waitDesc,시스템 반영 시스템 재부팅 등 작업과 관련없는 시간,Time unrelated to work like system updates and reboots
+culture,rule.education.excludeText,을 제외하고,is excluded and
+culture,rule.education.hourTrigger,1시간 단위,Per hour unit
+culture,rule.education.hourExample1,1시간 50분 -> 1시간 부여,1h 50min -> 1 hour granted
+culture,rule.education.hourExample2,2시간 10분 -> 2시간 부여,2h 10min -> 2 hours granted
+culture,rule.education.grantText,로 부여하고 있어요.,is how it's granted.
+culture,rule.culture.title,🥳 조직문화,🥳 Team Culture
+culture,rule.culture.birthdayTitle,생일,Birthday
+culture,rule.culture.birthdayIntro,😄 당신은 사랑받기 위해 태어난 사람~ 생일을 축하드리며,😄 You were born to be loved~ Happy birthday and
+culture,rule.culture.earlyLeaveTrigger,빠른 퇴근,Early leave
+culture,rule.culture.earlyLeaveSeoul,서울 거주자: 1시간,Seoul residents: 1 hour
+culture,rule.culture.earlyLeaveOther,서울외 거주자: 1시간 30분,Outside Seoul: 1.5 hours
+culture,rule.culture.earlyLeaveEnd,하세요!,enjoy!
+culture,rule.culture.partyTitle,생일파티,Birthday Party
+culture,rule.culture.partyDesc,한 달에 한 번 SK AX에서 제공하는 🎂케이크와 함께 팀원들이 구매한 🎁선물을 전달하는 🎉생일 파티를 진행해요,Once a month we have a 🎉birthday party with 🎂cake from SK AX and 🎁gifts from teammates
+culture,rule.culture.familyTitle,가족기념일,Family Anniversary
+culture,rule.culture.familyIntro,가족생일 결혼기념일엔 가족과 함께 보내야죠! 이 날도,Spend family birthdays and anniversaries with family! You also get
+culture,rule.culture.otherTitle,기타사항,Other Notes
+culture,rule.culture.otherIntro,조기 퇴근은,Early leave applies to
+culture,rule.culture.familyTrigger,본인 및 가족,Self and family
+culture,rule.culture.familyScope,가족 범위,Family scope
+culture,rule.culture.familyIncluded,🤵‍♂️남편 👰‍♀️아내 👶자녀까지 해당돼요,🤵‍♂️Husband 👰‍♀️Wife 👶Children included
+culture,rule.culture.familyExcluded,👴 👵부모님 👫연인은 해당안돼요.,👴 👵Parents 👫Partners not included.
+culture,rule.culture.otherEnd,만 해당해요. 단 기념일이 공휴일이거나 주말인 경우엔 해당되지 않아요.,only. Not applicable if the anniversary falls on a holiday or weekend.
+vacation,application.pageTitle,휴가 신청 관리,Vacation Application Management
+vacation,application.pageSubtitle,휴가를 신청하고 현황을 관리하세요,Apply for vacation and manage your requests
+vacation,application.newApplication,새 신청서 작성,New Application
+vacation,application.requestHistory,신청 내역,Request History
+vacation,application.grantVacation,휴가 부여,Grant Vacation
+vacation,application.tableTitle,제목,Title
+vacation,application.tableVacationType,휴가 타입,Vacation Type
+vacation,application.tableRequestDate,신청일,Request Date
+vacation,application.tableTargetDate,대상일자,Target Date
+vacation,application.tableGrantDays,보상일수,Grant Days
+vacation,application.tableCurrentApprover,현결재자,Current Approver
+vacation,application.tableStatus,상태,Status
+vacation,application.noRequests,신청한 휴가가 없습니다.,No vacation requests.
+vacation,application.viewDetail,상세보기,View Detail
+vacation,application.cancelRequest,신청취소,Cancel Request
+common,loadFailed,데이터를 불러오는데 실패했습니다.,Failed to load data.
+vacation,history.pageTitle,휴가 내역 통계,Vacation History Stats
+vacation,history.usageTab,사용 내역,Usage History
+vacation,history.grantTab,부여 내역,Grant History
+vacation,history.usagePeriod,사용 기간,Usage Period
+vacation,history.vacationType,휴가 종류,Vacation Type
+vacation,history.usageTime,사용 시간,Used Time
+vacation,history.content,내용,Content
+vacation,history.noUsage,사용 내역이 없습니다.,No usage history.
+vacation,history.grantTime,부여 시간,Grant Time
+vacation,history.remainTime,남은 시간,Remaining Time
+vacation,history.grantDate,부여일,Grant Date
+vacation,history.expiryDate,만료일,Expiry Date
+vacation,history.noGrant,부여 내역이 없습니다.,No grant history.
+vacation,history.tableDate,날짜,Date
+vacation,history.tableReason,사유,Reason
+culture,dues.transactionHistory,입출금 내역,Transaction History
+culture,dues.tableDate,날짜,Date
+culture,dues.tableName,이름,Name
+culture,dues.tableCategory,분류,Category
+culture,dues.tableContent,내용,Content
+culture,dues.tableAmount,금액,Amount
+culture,dues.tableType,유형,Type
+culture,dues.tableTotal,총액,Total
+culture,dues.monthBirthDuesTitle,월별 생일비 입금 현황,Monthly Birthday Dues Status
+culture,dues.monthFormat,{month}월,{month} Mon
+common,copy,복사,Copy
+common,imageFileOnly,이미지 파일만 업로드 가능합니다.,Only image files can be uploaded.
+common,fileSizeLimit,파일 크기는 5MB를 초과할 수 없습니다.,File size cannot exceed 5MB.
+common,unknownError,알 수 없는 오류가 발생했습니다.,An unknown error occurred.
+user,info.title,사용자 정보,User Info
+user,info.selectPlaceholder,사용자 선택,Select User
+user,info.notFound,사용자를 찾을 수 없습니다.,User not found.
+user,info.userId,아이디,ID
+user,info.email,이메일,Email
+user,info.birthDate,생년월일,Birth Date
+user,info.birthFormat,{year}년 {month}월 {day}일,{year}/{month}/{day}
+user,info.company,회사,Company
+user,info.department,부서,Department
+user,info.workTime,유연근무시간,Flexible Work Time
+auth,signup.birthDate,생년월일,Birth Date
+auth,signup.useLunarBirth,음력 생일 사용,Use Lunar Birthday
+auth,signup.processing,처리 중...,Processing...
+auth,signup.completeBtn,회원가입 완료,Complete Sign Up
+auth,signup.socialConnect,소셜 로그인 연동,Social Login Connect
+auth,signup.socialConnectRequired,최소 하나의 소셜 로그인을 연동해야 합니다,At least one social login must be connected
+auth,signup.invitationInfo,초대받은 정보,Invitation Info
+auth,signup.invitationName,이름,Name
+auth,signup.invitationEmail,이메일,Email
+auth,signup.invitationCompany,소속,Company
+common,login,로그인,Login
+calendar,header.addEvent,일정 추가,Add Event
+calendar,header.allFilters,전체 필터,All Filters
+calendar,header.selected,선택됨,selected
+calendar,header.users,사용자,Users
+calendar,header.types,유형,Types
+calendar,header.allUsers,전체 사용자,All Users
+calendar,header.allTypes,전체 유형,All Types
+calendar,eventDetails.user,사용자,User
+calendar,eventDetails.startDate,시작일,Start Date
+calendar,eventDetails.endDate,종료일,End Date
+calendar,eventDetails.content,내용,Content
+calendar,agenda.dateFormat,yyyy년 M월 dd일 EEEE,EEEE MMM dd yyyy

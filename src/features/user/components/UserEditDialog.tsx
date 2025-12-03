@@ -96,6 +96,7 @@ const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8
 const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProps) => {
   const { t } = useTranslation('user');
   const { t: ta } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const formSchema = createFormSchema(t);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfileMutation();
   

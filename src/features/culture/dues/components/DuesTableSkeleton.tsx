@@ -2,8 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 const DuesTableSkeleton = () => {
+  const { t } = useTranslation('culture');
+
   return (
     <Card className='flex-1'>
       <CardHeader>
@@ -22,12 +25,12 @@ const DuesTableSkeleton = () => {
           <Table className='min-w-[1000px]'>
             <TableHeader>
               <TableRow>
-                <TableHead className='min-w-[140px] pl-4'>날짜</TableHead>
-                <TableHead className='min-w-[120px]'>이름</TableHead>
-                <TableHead className='min-w-[250px]'>내용</TableHead>
-                <TableHead className='min-w-[140px]'>금액</TableHead>
-                <TableHead className='min-w-[100px]'>유형</TableHead>
-                <TableHead className='min-w-[140px]'>총액</TableHead>
+                <TableHead className='min-w-[140px] pl-4'>{t('dues.tableDate')}</TableHead>
+                <TableHead className='min-w-[120px]'>{t('dues.tableName')}</TableHead>
+                <TableHead className='min-w-[250px]'>{t('dues.tableContent')}</TableHead>
+                <TableHead className='min-w-[140px]'>{t('dues.tableAmount')}</TableHead>
+                <TableHead className='min-w-[100px]'>{t('dues.tableType')}</TableHead>
+                <TableHead className='min-w-[140px]'>{t('dues.tableTotal')}</TableHead>
                 <TableHead className='min-w-[80px] pr-4'></TableHead>
               </TableRow>
             </TableHeader>

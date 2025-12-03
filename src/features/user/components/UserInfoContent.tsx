@@ -3,12 +3,15 @@ import { Separator } from '@/components/shadcn/separator';
 import config from '@/config/config';
 import { GetUsersResp } from '@/lib/api/user';
 import { Briefcase, Building2, Cake, Clock, Mail, User as UserIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface UserInfoContentProps {
   user: GetUsersResp;
 }
 
 const UserInfoContent = ({ user }: UserInfoContentProps) => {
+  const { t } = useTranslation('user');
+
   const formatWorkTime = (time: string | undefined): string => {
     if (!time) {
       return '';
@@ -26,6 +29,13 @@ const UserInfoContent = ({ user }: UserInfoContentProps) => {
     return `${formattedStart} ~ ${formattedEnd}`;
   };
 
+  const formatBirthDate = (birth: string | undefined): string => {
+    if (!birth) return '-';
+    const parts = birth.split('-');
+    if (parts.length !== 3) return birth;
+    return t('info.birthFormat', { year: parts[0], month: parts[1], day: parts[2] });
+  };
+
   return (
     <div className='flex flex-col items-center text-center p-6'>
       <Avatar className='w-32 h-32 mb-4'>
@@ -41,37 +51,32 @@ const UserInfoContent = ({ user }: UserInfoContentProps) => {
       <div className='w-full text-left space-y-5 text-sm'>
         <div className='flex items-center'>
           <UserIcon className='mr-3 h-4 w-4 text-muted-foreground' />
-          <span className='font-semibold w-24'>아이디</span>
+          <span className='font-semibold w-24'>{t('info.userId')}</span>
           <span>{user.user_id}</span>
         </div>
         <div className='flex items-center'>
           <Mail className='mr-3 h-4 w-4 text-muted-foreground' />
-          <span className='font-semibold w-24'>이메일</span>
+          <span className='font-semibold w-24'>{t('info.email')}</span>
           <span>{user.user_email}</span>
         </div>
         <div className='flex items-center'>
           <Cake className='mr-3 h-4 w-4 text-muted-foreground' />
-          <span className='font-semibold w-24'>생년월일</span>
-          <span>
-            {user.user_birth ?
-              `${user.user_birth.split('-')[0]}년 ${user.user_birth.split('-')[1]}월 ${user.user_birth.split('-')[2]}일` :
-              '-'
-            }
-          </span>
+          <span className='font-semibold w-24'>{t('info.birthDate')}</span>
+          <span>{formatBirthDate(user.user_birth)}</span>
         </div>
         <div className='flex items-center'>
           <Building2 className='mr-3 h-4 w-4 text-muted-foreground' />
-          <span className='font-semibold w-24'>회사</span>
+          <span className='font-semibold w-24'>{t('info.company')}</span>
           <span>{user.user_origin_company_name}</span>
         </div>
         <div className='flex items-center'>
           <Briefcase className='mr-3 h-4 w-4 text-muted-foreground' />
-          <span className='font-semibold w-24'>부서</span>
+          <span className='font-semibold w-24'>{t('info.department')}</span>
           <span>{user.main_department_name_kr || '-'}</span>
         </div>
         <div className='flex items-center'>
           <Clock className='mr-3 h-4 w-4 text-muted-foreground' />
-          <span className='font-semibold w-24'>유연근무시간</span>
+          <span className='font-semibold w-24'>{t('info.workTime')}</span>
           <span>{formatWorkTime(user.user_work_time)}</span>
         </div>
 

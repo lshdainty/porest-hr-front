@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
@@ -7,6 +6,7 @@ import { GetUserVacationHistoryResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface VacationHistoryContentProps {
   data: GetUserVacationHistoryResp;
@@ -42,6 +42,8 @@ const formatDate = (dateString: string) => {
 };
 
 const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationHistoryContentProps) => {
+  const { t } = useTranslation('vacation');
+  const { t: tc } = useTranslation('common');
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
   const [activeTab, setActiveTab] = useState('usages');
@@ -65,8 +67,8 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
     <div className={cn('w-full', className)}>
       <Tabs defaultValue="usages" className="w-full" onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="usages">사용 내역</TabsTrigger>
-          <TabsTrigger value="grants">부여 내역</TabsTrigger>
+          <TabsTrigger value="usages">{t('history.usageTab')}</TabsTrigger>
+          <TabsTrigger value="grants">{t('history.grantTab')}</TabsTrigger>
         </TabsList>
 
         <div className='mt-4 overflow-x-auto relative min-h-[300px]'>
@@ -74,10 +76,10 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
             <Table className='min-w-[800px]'>
               <TableHeader>
                 <TableRow>
-                  <TableHead className='min-w-[200px] pl-4'>사용 기간</TableHead>
-                  <TableHead className='min-w-[150px]'>휴가 종류</TableHead>
-                  <TableHead className='min-w-[100px]'>사용 시간</TableHead>
-                  <TableHead className='min-w-[300px]'>내용</TableHead>
+                  <TableHead className='min-w-[200px] pl-4'>{t('history.usagePeriod')}</TableHead>
+                  <TableHead className='min-w-[150px]'>{t('history.vacationType')}</TableHead>
+                  <TableHead className='min-w-[100px]'>{t('history.usageTime')}</TableHead>
+                  <TableHead className='min-w-[300px]'>{t('history.content')}</TableHead>
                   <TableHead className='min-w-[80px] pr-4'></TableHead>
                 </TableRow>
               </TableHeader>
@@ -85,7 +87,7 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
                 {paginatedData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="h-24 text-center">
-                      사용 내역이 없습니다.
+                      {t('history.noUsage')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -129,7 +131,7 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
                                 {onEdit && (
                                   <DropdownMenuItem onClick={() => onEdit(item)}>
                                     <Pencil className='h-4 w-4' />
-                                    <span>수정</span>
+                                    <span>{tc('edit')}</span>
                                   </DropdownMenuItem>
                                 )}
                                 <DropdownMenuSeparator />
@@ -139,7 +141,7 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
                                     onClick={() => onDelete(item.vacation_usage_id)}
                                   >
                                     <Trash2 className='h-4 w-4' />
-                                    <span>삭제</span>
+                                    <span>{tc('delete')}</span>
                                   </DropdownMenuItem>
                                 )}
                               </DropdownMenuContent>
@@ -158,19 +160,19 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
             <Table className='min-w-[800px]'>
               <TableHeader>
                 <TableRow>
-                  <TableHead className='min-w-[150px] pl-4'>휴가 종류</TableHead>
-                  <TableHead className='min-w-[250px]'>내용</TableHead>
-                  <TableHead className='min-w-[100px]'>부여 시간</TableHead>
-                  <TableHead className='min-w-[100px]'>남은 시간</TableHead>
-                  <TableHead className='min-w-[150px]'>부여일</TableHead>
-                  <TableHead className='min-w-[150px]'>만료일</TableHead>
+                  <TableHead className='min-w-[150px] pl-4'>{t('history.vacationType')}</TableHead>
+                  <TableHead className='min-w-[250px]'>{t('history.content')}</TableHead>
+                  <TableHead className='min-w-[100px]'>{t('history.grantTime')}</TableHead>
+                  <TableHead className='min-w-[100px]'>{t('history.remainTime')}</TableHead>
+                  <TableHead className='min-w-[150px]'>{t('history.grantDate')}</TableHead>
+                  <TableHead className='min-w-[150px]'>{t('history.expiryDate')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
-                      부여 내역이 없습니다.
+                      {t('history.noGrant')}
                     </TableCell>
                   </TableRow>
                 ) : (

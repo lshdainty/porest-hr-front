@@ -2,8 +2,11 @@ import { Skeleton } from '@/components/shadcn/skeleton';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 const VacationHistoryTableSkeleton = () => {
+  const { t } = useTranslation('vacation');
+
   return (
     <Card className='flex-1'>
       <CardHeader>
@@ -21,9 +24,9 @@ const VacationHistoryTableSkeleton = () => {
           <Table className='min-w-[800px]'>
             <TableHeader>
               <TableRow>
-                <TableHead className='min-w-[200px] pl-4'>날짜</TableHead>
-                <TableHead className='min-w-[150px]'>휴가 종류</TableHead>
-                <TableHead className='min-w-[300px]'>사유</TableHead>
+                <TableHead className='min-w-[200px] pl-4'>{t('history.tableDate')}</TableHead>
+                <TableHead className='min-w-[150px]'>{t('history.vacationType')}</TableHead>
+                <TableHead className='min-w-[300px]'>{t('history.tableReason')}</TableHead>
                 <TableHead className='min-w-[80px] pr-4'></TableHead>
               </TableRow>
             </TableHeader>

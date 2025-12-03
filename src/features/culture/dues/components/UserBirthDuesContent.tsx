@@ -3,6 +3,7 @@ import { GetUsersResp } from '@/lib/api/user';
 import { cn } from '@/lib/utils';
 import { Gift } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface UserBirthDuesContentProps {
   usersBirthDues?: GetUsersMonthBirthDuesResp[];
@@ -11,12 +12,14 @@ interface UserBirthDuesContentProps {
 }
 
 const UserBirthDuesContent = ({ usersBirthDues, users, className }: UserBirthDuesContentProps) => {
+  const { t } = useTranslation('culture');
+
   return (
     <div className={cn('w-full overflow-x-auto', className)}>
       <div className='grid grid-cols-13 gap-x-2 gap-y-2 text-center text-sm items-center min-w-[780px]'>
         <div className='font-semibold'></div>
         {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-          <div key={month} className='font-semibold'>{month}월</div>
+          <div key={month} className='font-semibold'>{t('dues.monthFormat', { month })}</div>
         ))}
         {users?.map((user) => {
           const duesData = usersBirthDues?.find(d => d.dues_user_name === user.user_name);

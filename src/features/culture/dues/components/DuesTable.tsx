@@ -6,6 +6,7 @@ import { useDeleteDuesMutation, usePostDuesMutation, usePutDuesMutation } from '
 import { GetYearDuesResp } from '@/lib/api/dues';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import DuesTableContent, { EditableDuesData } from './DuesTableContent';
 
 interface DuesTableProps {
@@ -13,6 +14,8 @@ interface DuesTableProps {
 }
 
 const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
+  const { t } = useTranslation('culture');
+  const { t: tc } = useTranslation('common');
   const { mutate: postDues } = usePostDuesMutation();
   const { mutate: putDues } = usePutDuesMutation();
   const { mutate: deleteDues } = useDeleteDuesMutation();
@@ -52,8 +55,8 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
           setTableData(tableData.filter((dues) => dues.id !== id));
         },
         onError: (error) => {
-          console.error('회비 삭제 실패:', error);
-          toast.error('회비 삭제에 실패했습니다.');
+          console.error('Dues delete failed:', error);
+          toast.error(t('dues.deleteError'));
         }
       });
     }
@@ -112,8 +115,8 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
           setEditingRow(null);
         },
         onError: (error) => {
-          console.error('회비 등록 실패:', error);
-          toast.error('회비 등록에 실패했습니다.');
+          console.error('Dues create failed:', error);
+          toast.error(tc('saveFailed'));
         }
       });
     } else {
@@ -124,8 +127,8 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
           setEditingRow(null);
         },
         onError: (error) => {
-          console.error('회비 수정 실패:', error);
-          toast.error('회비 수정에 실패했습니다.');
+          console.error('Dues update failed:', error);
+          toast.error(tc('saveFailed'));
         }
       });
     }
@@ -164,9 +167,9 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
     <Card className='flex-1'>
       <CardHeader>
         <div className='flex items-center justify-between'>
-          <CardTitle>입출금 내역</CardTitle>
+          <CardTitle>{t('dues.transactionHistory')}</CardTitle>
           <PermissionGuard requiredPermission="DUES:MANAGE">
-            <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
+            <Button className='text-sm h-8' onClick={handleAdd}>{tc('add')}</Button>
           </PermissionGuard>
         </div>
       </CardHeader>

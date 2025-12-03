@@ -9,6 +9,7 @@ import { GetYearDuesResp } from '@/lib/api/dues';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Copy, EllipsisVertical, Pencil, Save, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export type EditableDuesData = GetYearDuesResp & { id: string; isNew?: boolean; tempId?: string };
 
@@ -43,6 +44,8 @@ const DuesTableContent = ({
   onDateChange,
   className
 }: DuesTableContentProps) => {
+  const { t } = useTranslation('culture');
+  const { t: tc } = useTranslation('common');
   const totalPages = data.length > 0 ? Math.ceil(data.length / rowsPerPage) : 1;
   const paginatedData = data.slice(
     (currentPage - 1) * rowsPerPage,
@@ -55,13 +58,13 @@ const DuesTableContent = ({
         <Table className='min-w-[1000px]'>
           <TableHeader>
             <TableRow>
-              <TableHead className='min-w-[140px] pl-4'>날짜</TableHead>
-              <TableHead className='min-w-[120px]'>이름</TableHead>
-              <TableHead className='min-w-[120px]'>분류</TableHead>
-              <TableHead className='min-w-[200px]'>내용</TableHead>
-              <TableHead className='min-w-[140px]'>금액</TableHead>
-              <TableHead className='min-w-[100px]'>유형</TableHead>
-              <TableHead className='min-w-[140px]'>총액</TableHead>
+              <TableHead className='min-w-[140px] pl-4'>{t('dues.tableDate')}</TableHead>
+              <TableHead className='min-w-[120px]'>{t('dues.tableName')}</TableHead>
+              <TableHead className='min-w-[120px]'>{t('dues.tableCategory')}</TableHead>
+              <TableHead className='min-w-[200px]'>{t('dues.tableContent')}</TableHead>
+              <TableHead className='min-w-[140px]'>{t('dues.tableAmount')}</TableHead>
+              <TableHead className='min-w-[100px]'>{t('dues.tableType')}</TableHead>
+              <TableHead className='min-w-[140px]'>{t('dues.tableTotal')}</TableHead>
               <TableHead className='min-w-[80px] pr-4'></TableHead>
             </TableRow>
           </TableHeader>
@@ -69,7 +72,7 @@ const DuesTableContent = ({
             {paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-24 text-center">
-                  데이터가 없습니다.
+                  {tc('noData')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -110,17 +113,17 @@ const DuesTableContent = ({
                           onValueChange={(value) => onSelectChange(value, row.id, 'dues_type')}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder='분류' />
+                            <SelectValue placeholder={t('dues.typeSelect')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value='OPERATION'>운영비</SelectItem>
-                            <SelectItem value='BIRTH'>생일</SelectItem>
-                            <SelectItem value='FINE'>벌금</SelectItem>
+                            <SelectItem value='OPERATION'>{t('dues.typeOperation')}</SelectItem>
+                            <SelectItem value='BIRTH'>{t('dues.typeBirth')}</SelectItem>
+                            <SelectItem value='FINE'>{t('dues.typeFine')}</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
                         <Badge className='text-xs whitespace-nowrap'>
-                          {row.dues_type === 'OPERATION' ? '운영비' : row.dues_type === 'BIRTH' ? '생일' : '벌금'}
+                          {row.dues_type === 'OPERATION' ? t('dues.typeOperation') : row.dues_type === 'BIRTH' ? t('dues.typeBirth') : t('dues.typeFine')}
                         </Badge>
                       )}
                     </TableCell>
@@ -154,21 +157,21 @@ const DuesTableContent = ({
                           onValueChange={(value) => onSelectChange(value, row.id, 'dues_calc')}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder='유형' />
+                            <SelectValue placeholder={t('dues.calcTypeSelect')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value='PLUS'>입금</SelectItem>
-                            <SelectItem value='MINUS'>출금</SelectItem>
+                            <SelectItem value='PLUS'>{t('dues.calcPlus')}</SelectItem>
+                            <SelectItem value='MINUS'>{t('dues.calcMinus')}</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
                         <Badge className={cn(
                           'text-xs whitespace-nowrap',
-                          row.dues_calc === 'PLUS' 
-                            ? 'bg-blue-100 text-blue-800' 
+                          row.dues_calc === 'PLUS'
+                            ? 'bg-blue-100 text-blue-800'
                             : 'bg-red-100 text-red-800'
                         )}>
-                          {row.dues_calc === 'PLUS' ? '입금' : '출금'}
+                          {row.dues_calc === 'PLUS' ? t('dues.calcPlus') : t('dues.calcMinus')}
                         </Badge>
                       )}
                     </TableCell>
@@ -194,20 +197,20 @@ const DuesTableContent = ({
                               {isEditing ? (
                                 <DropdownMenuItem onClick={() => onSaveRow?.(row.id)}>
                                   <Save className='h-4 w-4' />
-                                  <span>저장</span>
+                                  <span>{tc('save')}</span>
                                 </DropdownMenuItem>
                               ) : (
                                 onEdit && (
                                   <DropdownMenuItem onClick={() => onEdit(row.id)}>
                                     <Pencil className='h-4 w-4' />
-                                    <span>수정</span>
+                                    <span>{tc('edit')}</span>
                                   </DropdownMenuItem>
                                 )
                               )}
                               {onCopy && (
                                 <DropdownMenuItem onClick={() => onCopy(row)}>
                                   <Copy className='h-4 w-4' />
-                                  <span>복사</span>
+                                  <span>{tc('copy')}</span>
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuSeparator />
@@ -217,7 +220,7 @@ const DuesTableContent = ({
                                   onClick={() => onDelete(row.id)}
                                 >
                                   <Trash2 className='h-4 w-4' />
-                                  <span>삭제</span>
+                                  <span>{tc('delete')}</span>
                                 </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>

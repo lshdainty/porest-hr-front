@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import UserInfoContent from '@/features/user/components/UserInfoContent';
 import { GetUsersResp } from '@/lib/api/user';
+import { useTranslation } from 'react-i18next';
 
 interface UserInfoCardProps {
   title?: string;
@@ -11,29 +12,31 @@ interface UserInfoCardProps {
 }
 
 const UserInfoCard = ({
-  title = '사용자 정보',
+  title,
   value: users,
   selectedUserId,
   onUserChange,
 }: UserInfoCardProps) => {
+  const { t } = useTranslation('user');
+  const displayTitle = title || t('info.title');
   const isSingleUser = users.length === 1;
-  const selectedUser = isSingleUser 
-    ? users[0] 
+  const selectedUser = isSingleUser
+    ? users[0]
     : users.find(user => user.user_id === selectedUserId);
 
   if (!selectedUser) {
-    return <div>사용자를 찾을 수 없습니다.</div>;
+    return <div>{t('info.notFound')}</div>;
   }
 
   return (
     <div className='flex flex-col gap-6 h-full'>
       <Card className='h-full min-w-[350px]'>
         <CardHeader className='pb-4 flex flex-row items-center justify-between'>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle>{displayTitle}</CardTitle>
           {!isSingleUser && onUserChange && (
             <Select onValueChange={onUserChange} value={selectedUserId}>
               <SelectTrigger className='w-[150px]'>
-                <SelectValue placeholder='사용자 선택' />
+                <SelectValue placeholder={t('info.selectPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {users.map(user => (

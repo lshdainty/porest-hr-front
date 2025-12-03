@@ -1,6 +1,7 @@
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 import { calendarTypes } from '@/features/home/calendar/types';
 import { Filter as FilterIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import type { TEventColor } from '@/features/home/calendar/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
@@ -23,6 +24,7 @@ const colorClassMap: Record<TEventColor, string> = {
 };
 
 const EventFilter = () => {
+  const { t } = useTranslation('calendar');
   const { users, selectedUserIds, setSelectedUserIds, selectedTypeIds, setSelectedTypeIds } = useCalendar();
 
   // User handlers
@@ -95,7 +97,7 @@ const EventFilter = () => {
           <div className='flex items-center gap-2'>
             <FilterIcon className='w-4 h-4' />
             <span>
-              {totalFilters === maxFilters ? 'All Filters' : `${totalFilters} selected`}
+              {totalFilters === maxFilters ? t('header.allFilters') : `${totalFilters} ${t('header.selected')}`}
             </span>
           </div>
         </Button>
@@ -104,8 +106,8 @@ const EventFilter = () => {
       <PopoverContent align='end' className='w-80 p-0'>
         <Tabs defaultValue='users' className='w-full'>
           <TabsList className='w-full grid grid-cols-2'>
-            <TabsTrigger value='users'>Users ({selectedUserCount})</TabsTrigger>
-            <TabsTrigger value='types'>Types ({selectedTypeCount})</TabsTrigger>
+            <TabsTrigger value='users'>{t('header.users')} ({selectedUserCount})</TabsTrigger>
+            <TabsTrigger value='types'>{t('header.types')} ({selectedTypeCount})</TabsTrigger>
           </TabsList>
 
           <TabsContent value='users' className='p-2 space-y-1 max-h-[400px] overflow-y-auto'>
@@ -118,7 +120,7 @@ const EventFilter = () => {
                 onCheckedChange={handleToggleAllUsers}
                 onClick={(e) => e.stopPropagation()}
               />
-              <span className='text-sm flex-1'>All Users</span>
+              <span className='text-sm flex-1'>{t('header.allUsers')}</span>
             </div>
 
             {users.map(user => {
@@ -156,7 +158,7 @@ const EventFilter = () => {
                 onCheckedChange={handleToggleAllTypes}
                 onClick={(e) => e.stopPropagation()}
               />
-              <span className='text-sm flex-1'>All Types</span>
+              <span className='text-sm flex-1'>{t('header.allTypes')}</span>
             </div>
 
             {calendarTypes.map(type => {

@@ -2,6 +2,7 @@
 
 import { format, parseISO } from 'date-fns';
 import { Calendar, Clock, Text, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { useDeleteEvent } from '@/features/home/calendar/hooks/use-delete-event';
 import { EditEventDialog } from '@/features/home/calendar/components/dialogs/edit-event-dialog';
@@ -16,6 +17,8 @@ interface IProps {
 }
 
 export function EventDetailsDialog({ event, children }: IProps) {
+  const { t } = useTranslation('calendar');
+  const { t: tc } = useTranslation('common');
   const startDate = parseISO(event.startDate);
   const endDate = parseISO(event.endDate);
 
@@ -39,7 +42,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
             <div className='flex items-start gap-2'>
               <User className='mt-1 size-4 shrink-0' />
               <div>
-                <p className='text-sm font-medium'>사용자</p>
+                <p className='text-sm font-medium'>{t('eventDetails.user')}</p>
                 <p className='text-sm text-muted-foreground'>{event.user.name}</p>
               </div>
             </div>
@@ -47,7 +50,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
             <div className='flex items-start gap-2'>
               <Calendar className='mt-1 size-4 shrink-0' />
               <div>
-                <p className='text-sm font-medium'>시작일</p>
+                <p className='text-sm font-medium'>{t('eventDetails.startDate')}</p>
                 <p className='text-sm text-muted-foreground'>{format(startDate, 'yyyy.MM.dd hh:mm a')}</p>
               </div>
             </div>
@@ -55,7 +58,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
             <div className='flex items-start gap-2'>
               <Clock className='mt-1 size-4 shrink-0' />
               <div>
-                <p className='text-sm font-medium'>종료일</p>
+                <p className='text-sm font-medium'>{t('eventDetails.endDate')}</p>
                 <p className='text-sm text-muted-foreground'>{format(endDate, 'yyyy.MM.dd hh:mm a')}</p>
               </div>
             </div>
@@ -63,7 +66,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
             <div className='flex items-start gap-2'>
               <Text className='mt-1 size-4 shrink-0' />
               <div>
-                <p className='text-sm font-medium'>내용</p>
+                <p className='text-sm font-medium'>{t('eventDetails.content')}</p>
                 <p className='text-sm text-muted-foreground'>{event.description}</p>
               </div>
             </div>
@@ -72,11 +75,11 @@ export function EventDetailsDialog({ event, children }: IProps) {
           <DialogFooter>
             <EditEventDialog event={event}>
               <Button type='button' variant='outline'>
-                수정
+                {tc('edit')}
               </Button>
             </EditEventDialog>
             <Button type='button' variant='destructive' onClick={handleDelete}>
-              삭제
+              {tc('delete')}
             </Button>
           </DialogFooter>
         </DialogContent>

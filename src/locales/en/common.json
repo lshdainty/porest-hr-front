@@ -57,6 +57,9 @@
   "excelDownloadFailed": "Excel download failed.",
   "deleteConfirm": "Are you sure you want to delete?",
   "imageFileOnly": "Only image files can be uploaded.",
-  "fileSizeLimit": "File size must be 5MB or less.",
-  "unknownError": "An unknown error occurred."
+  "fileSizeLimit": "File size cannot exceed 5MB.",
+  "unknownError": "An unknown error occurred.",
+  "loadFailed": "Failed to load data.",
+  "copy": "Copy",
+  "login": "Login"
 }

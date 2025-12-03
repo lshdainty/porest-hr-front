@@ -1,4 +1,5 @@
 import { CalendarRange, Columns, Grid2x2, Grid3x3, List, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 import { Button } from '@/components/shadcn/button';
@@ -15,6 +16,7 @@ interface IProps {
 }
 
 export function CalendarHeader({ events }: IProps) {
+  const { t } = useTranslation('calendar');
   const { view, setView } = useCalendar();
   return (
     <div className='flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between'>
@@ -83,7 +85,7 @@ export function CalendarHeader({ events }: IProps) {
         <AddEventDialog>
           <Button className='w-full sm:w-auto'>
             <Plus />
-            Add Event
+            {t('header.addEvent')}
           </Button>
         </AddEventDialog>
       </div>
