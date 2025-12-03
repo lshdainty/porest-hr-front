@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import type { GetUserMonthlyVacationStatsResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 import MonthVacationStatsContent from './MonthVacationStatsContent';
 
 interface MonthVacationStatsCardProps {
@@ -9,10 +10,11 @@ interface MonthVacationStatsCardProps {
 }
 
 const MonthVacationStatsCard = ({ value: data, className }: MonthVacationStatsCardProps) => {
+  const { t } = useTranslation('vacation');
   return (
     <Card className={cn(className)}>
       <CardHeader>
-        <CardTitle>월별 휴가 사용 추이</CardTitle>
+        <CardTitle>{t('history.monthlyUsageTrend')}</CardTitle>
       </CardHeader>
       <CardContent>
         <MonthVacationStatsContent data={data} className='h-[350px]' />

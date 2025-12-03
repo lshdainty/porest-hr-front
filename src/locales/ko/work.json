@@ -65,6 +65,12 @@
     "latest": "최신순",
     "oldest": "오래된순",
     "search": "조회",
+    "pageTitle": "업무 이력 작성",
+    "filter": "필터",
+    "excelImportBtn": "엑셀 임포트",
+    "excelExportBtn": "엑셀 익스포트",
+    "downloadTemplate": "예시 파일 다운로드",
+    "downloadUnregistered": "미등록 리스트 다운로드",
     "fileNamePrefix": "업무이력"
   },
   "codeManagement": "업무 코드 관리",
@@ -96,6 +102,7 @@
   "schedule": {
     "am": "오전",
     "pm": "오후",
+    "title": "팀 근무 일정",
     "hoursMinutes": "{{hours}}시간 {{minutes}}분",
     "hoursOnly": "{{hours}}시간"
   },

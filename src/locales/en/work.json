@@ -65,6 +65,12 @@
     "latest": "Latest First",
     "oldest": "Oldest First",
     "search": "Search",
+    "pageTitle": "Work History Entry",
+    "filter": "Filter",
+    "excelImportBtn": "Excel Import",
+    "excelExportBtn": "Excel Export",
+    "downloadTemplate": "Download Template",
+    "downloadUnregistered": "Download Unregistered List",
     "fileNamePrefix": "WorkHistory"
   },
   "codeManagement": "Work Code Management",
@@ -96,6 +102,7 @@
   "schedule": {
     "am": "AM",
     "pm": "PM",
+    "title": "Team Work Schedule",
     "hoursMinutes": "{{hours}}h {{minutes}}m",
     "hoursOnly": "{{hours}}h"
   },

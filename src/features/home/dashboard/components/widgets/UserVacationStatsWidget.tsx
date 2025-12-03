@@ -9,8 +9,10 @@ import {
   TableRow,
 } from "@/components/shadcn/table"
 import { useAllUsersVacationSummaryQuery } from "@/hooks/queries/useVacations"
+import { useTranslation } from "react-i18next"
 
 const UserVacationStatsWidget = () => {
+  const { t } = useTranslation('vacation')
   const currentYear = new Date().getFullYear()
   const { data: vacationSummaries, isLoading } = useAllUsersVacationSummaryQuery(currentYear)
 
@@ -21,12 +23,12 @@ const UserVacationStatsWidget = () => {
           <Table>
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
-                <TableHead className="w-[80px] whitespace-nowrap">이름</TableHead>
-                <TableHead className="min-w-[100px] whitespace-nowrap">부서</TableHead>
-                <TableHead className="text-right min-w-[80px] whitespace-nowrap">총 연차</TableHead>
-                <TableHead className="text-right min-w-[80px] whitespace-nowrap">사용</TableHead>
-                <TableHead className="text-right min-w-[80px] whitespace-nowrap">예정</TableHead>
-                <TableHead className="text-right min-w-[80px] whitespace-nowrap">잔여</TableHead>
+                <TableHead className="w-[80px] whitespace-nowrap">{t('history.tableName')}</TableHead>
+                <TableHead className="min-w-[100px] whitespace-nowrap">{t('history.tableDepartment')}</TableHead>
+                <TableHead className="text-right min-w-[80px] whitespace-nowrap">{t('history.tableTotalAnnual')}</TableHead>
+                <TableHead className="text-right min-w-[80px] whitespace-nowrap">{t('history.tableUsed')}</TableHead>
+                <TableHead className="text-right min-w-[80px] whitespace-nowrap">{t('history.tableScheduled')}</TableHead>
+                <TableHead className="text-right min-w-[80px] whitespace-nowrap">{t('history.tableRemaining')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -51,7 +53,7 @@ const UserVacationStatsWidget = () => {
     return (
       <Card className="h-full flex flex-col border-none shadow-none py-0">
         <CardContent className="flex-1 flex items-center justify-center p-0">
-          <p className="text-muted-foreground text-sm">휴가 통계 데이터가 없습니다.</p>
+          <p className="text-muted-foreground text-sm">{t('history.noDataMessage')}</p>
         </CardContent>
       </Card>
     )
@@ -63,12 +65,12 @@ const UserVacationStatsWidget = () => {
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
-              <TableHead className="w-[80px] whitespace-nowrap">이름</TableHead>
-              <TableHead className="min-w-[100px] whitespace-nowrap">부서</TableHead>
-              <TableHead className="text-right min-w-[80px] whitespace-nowrap">총 연차</TableHead>
-              <TableHead className="text-right min-w-[80px] whitespace-nowrap">사용</TableHead>
-              <TableHead className="text-right min-w-[80px] whitespace-nowrap">예정</TableHead>
-              <TableHead className="text-right min-w-[80px] whitespace-nowrap">잔여</TableHead>
+              <TableHead className="w-[80px] whitespace-nowrap">{t('history.tableName')}</TableHead>
+              <TableHead className="min-w-[100px] whitespace-nowrap">{t('history.tableDepartment')}</TableHead>
+              <TableHead className="text-right min-w-[80px] whitespace-nowrap">{t('history.tableTotalAnnual')}</TableHead>
+              <TableHead className="text-right min-w-[80px] whitespace-nowrap">{t('history.tableUsed')}</TableHead>
+              <TableHead className="text-right min-w-[80px] whitespace-nowrap">{t('history.tableScheduled')}</TableHead>
+              <TableHead className="text-right min-w-[80px] whitespace-nowrap">{t('history.tableRemaining')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -313,9 +313,11 @@ work,report.download,다운로드,Download
 work,report.dateRequired,일자,Date
 work,schedule.am,오전,AM
 work,schedule.pm,오후,PM
+work,schedule.title,팀 근무 일정,Team Work Schedule
 vacation,history.compared,지난 달 대비,Compared to last month
 vacation,history.increase,증가,increase
 vacation,history.decrease,감소,decrease
+vacation,history.totalVacation,총 휴가,Total Vacation
 vacation,application.dayPlaceholder,일,Day
 vacation,application.hourPlaceholder,시간,Hour
 vacation,application.minutePlaceholder,분,Minute
@@ -660,6 +662,12 @@ work,report.sortSelect,정렬 선택,Select Sort
 work,report.latest,최신순,Latest First
 work,report.oldest,오래된순,Oldest First
 work,report.search,조회,Search
+work,report.pageTitle,업무 이력 작성,Work History Entry
+work,report.filter,필터,Filter
+work,report.excelImportBtn,엑셀 임포트,Excel Import
+work,report.excelExportBtn,엑셀 익스포트,Excel Export
+work,report.downloadTemplate,예시 파일 다운로드,Download Template
+work,report.downloadUnregistered,미등록 리스트 다운로드,Download Unregistered List
 work,excel.title,엑셀 데이터 임포트,Excel Data Import
 work,excel.inputDesc,엑셀이나 CSV 데이터를 복사하여 아래에 붙여넣으세요. (형식: 날짜{{comma}} 사번{{comma}} 업무분류{{comma}} 업무파트{{comma}} 업무구분{{comma}} 시간{{comma}} 내용),"Copy Excel or CSV data and paste below. (Format: Date, ID, Work Group, Work Part, Work Division, Hours, Content)"
 work,excel.previewDesc,데이터를 확인하고 오류가 있는 항목을 수정하세요.,Review the data and fix any errors.
@@ -838,6 +846,16 @@ vacation,history.expiryDate,만료일,Expiry Date
 vacation,history.noGrant,부여 내역이 없습니다.,No grant history.
 vacation,history.tableDate,날짜,Date
 vacation,history.tableReason,사유,Reason
+vacation,history.tableName,이름,Name
+vacation,history.tableDepartment,부서,Department
+vacation,history.tableTotalAnnual,총 연차,Total Annual
+vacation,history.tableUsed,사용,Used
+vacation,history.tableScheduled,예정,Scheduled
+vacation,history.tableRemaining,잔여,Remaining
+vacation,history.noDataMessage,휴가 통계 데이터가 없습니다.,No vacation statistics data available.
+vacation,history.monthlyUsageTrend,월별 휴가 사용 추이,Monthly Vacation Usage Trend
+vacation,history.vacationType,휴가 유형,Vacation Type
+vacation,history.vacationTypeDesc,잔여 휴가별 휴가 유형,Vacation type by remaining leave
 culture,dues.transactionHistory,입출금 내역,Transaction History
 culture,dues.tableDate,날짜,Date
 culture,dues.tableName,이름,Name

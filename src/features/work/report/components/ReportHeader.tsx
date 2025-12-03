@@ -8,6 +8,7 @@ import {
   FileUp,
   Filter,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { useReportContext } from '@/features/work/report/contexts/ReportContext';
 
@@ -24,6 +25,7 @@ const ReportHeader = ({
   handleDownloadTemplate,
   handleDownloadUnregistered,
 }: ReportHeaderProps) => {
+  const { t } = useTranslation('work');
   const {
     isFilterOpen,
     setIsFilterOpen,
@@ -31,7 +33,7 @@ const ReportHeader = ({
   } = useReportContext();
   return (
     <>
-      <h1 className='text-3xl font-bold mb-6'>업무 이력 작성</h1>
+      <h1 className='text-3xl font-bold mb-6'>{t('report.pageTitle')}</h1>
 
       {/* 필터 및 액션 영역 */}
       <div className='mb-6 space-y-4'>
@@ -44,10 +46,10 @@ const ReportHeader = ({
             className='relative'
           >
             <Filter className='w-4 h-4 mr-2' />
-            필터
+            {t('report.filter')}
             {activeFiltersCount > 0 && (
-              <Badge 
-                variant='secondary' 
+              <Badge
+                variant='secondary'
                 className='ml-2 h-5 min-w-5 rounded-full px-1 text-xs'
               >
                 {activeFiltersCount}
@@ -67,22 +69,22 @@ const ReportHeader = ({
           {/* 엑셀 관련 버튼들 */}
           <Button variant='outline' onClick={handleExcelImport}>
             <FileUp className='w-4 h-4 mr-2' />
-            엑셀 임포트
+            {t('report.excelImportBtn')}
           </Button>
 
           <Button variant='outline' onClick={handleExcelExport}>
             <FileDown className='w-4 h-4 mr-2' />
-            엑셀 익스포트
+            {t('report.excelExportBtn')}
           </Button>
 
           <Button variant='outline' onClick={handleDownloadTemplate}>
             <Download className='w-4 h-4 mr-2' />
-            예시 파일 다운로드
+            {t('report.downloadTemplate')}
           </Button>
 
           <Button variant='outline' onClick={handleDownloadUnregistered}>
             <Download className='w-4 h-4 mr-2' />
-            미등록 리스트 다운로드
+            {t('report.downloadUnregistered')}
           </Button>
         </div>
       </div>

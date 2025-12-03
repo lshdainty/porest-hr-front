@@ -1,6 +1,7 @@
 import { GetAvailableVacationsResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Cell, Label, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 const renderChartColor = (type: string) => {
@@ -27,6 +28,7 @@ interface VacationTypeStatsContentProps {
 }
 
 const VacationTypeStatsContent = ({ data, className, showLegend = true }: VacationTypeStatsContentProps) => {
+  const { t } = useTranslation('vacation');
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerDimensions, setContainerDimensions] = useState({ width: 400, height: 400 });
   const minChartSize = 300; // 최소 차트 크기
@@ -174,7 +176,7 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
                             className='fill-muted-foreground'
                             fontSize={smallFontSize}
                           >
-                            총 휴가
+                            {t('history.totalVacation')}
                           </tspan>
                         </text>
                       )
