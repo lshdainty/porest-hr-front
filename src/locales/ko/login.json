@@ -6,5 +6,7 @@
   "passwordPlaceholder": "비밀번호를 입력해주세요",
   "loginButton": "로그인",
   "forgotPassword": "비밀번호를 잊으셨나요?",
-  "rememberMe": "로그인 상태 유지"
+  "rememberMe": "로그인 상태 유지",
+  "idPlaceholder": "아이디를 입력하세요",
+  "orContinueWith": "Or continue with"
 }

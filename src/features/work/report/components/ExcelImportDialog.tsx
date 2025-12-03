@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils';
 import { AlertCircle, Check, Loader2, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/shadcn/sonner';
+import { useTranslation } from 'react-i18next';
 
 interface ExcelImportDialogProps {
   open: boolean;
@@ -66,6 +67,8 @@ const ExcelImportDialog = ({
   onRegister,
   isRegistering,
 }: ExcelImportDialogProps) => {
+  const { t } = useTranslation('work');
+  const { t: tc } = useTranslation('common');
   const [step, setStep] = useState<'input' | 'preview'>('input');
   const [inputText, setInputText] = useState('');
   const [parsedData, setParsedData] = useState<ParsedRow[]>([]);
@@ -89,13 +92,13 @@ const ExcelImportDialog = ({
 
     // Validate Date (Simple regex YYYY-MM-DD)
     if (!/^\d{4}-\d{2}-\d{2}$/.test(row.date)) {
-      errors.date = '날짜 형식이 올바르지 않습니다 (YYYY-MM-DD)';
+      errors.date = t('excel.invalidDate');
       isValid = false;
     }
 
     // Validate User (Name -> ID mapping happens before validation, so we check manager_id)
     if (!row.manager_id) {
-      errors.manager_id = '사용자를 찾을 수 없습니다';
+      errors.manager_id = t('excel.userNotFound');
       isValid = false;
     }
 
@@ -107,9 +110,9 @@ const ExcelImportDialog = ({
         // Fallback to name search if code is missing (initial parse)
         groupCode = workGroups.find(g => g.work_code_name === row.work_group_name);
     }
-    
+
     if (!groupCode) {
-      errors.work_group_name = '존재하지 않는 업무 분류입니다';
+      errors.work_group_name = t('excel.invalidWorkGroup');
       isValid = false;
     }
 
@@ -122,9 +125,9 @@ const ExcelImportDialog = ({
            partCode = groupCode.parts.find(p => p.work_code_name === row.work_part_name);
        }
     }
-    
+
     if (!partCode) {
-       errors.work_part_name = '존재하지 않는 업무 파트이거나 해당 분류에 속하지 않습니다';
+       errors.work_part_name = t('excel.invalidWorkPart');
        isValid = false;
     }
 
@@ -135,7 +138,7 @@ const ExcelImportDialog = ({
     }
 
     if (!divisionCode) {
-      errors.work_division_name = '존재하지 않는 업무 구분입니다';
+      errors.work_division_name = t('excel.invalidWorkDivision');
       isValid = false;
     }
 
@@ -154,7 +157,7 @@ const ExcelImportDialog = ({
 
   const parseAndValidate = () => {
     if (!inputText.trim()) {
-      toast.error('데이터를 입력해주세요.');
+      toast.error(t('excel.enterData'));
       return;
     }
 
@@ -211,7 +214,7 @@ const ExcelImportDialog = ({
       });
       setParsedData(revalidatedData);
       setValidationErrorCount(errorCount);
-      toast.success('데이터 검증이 완료되었습니다.');
+      toast.success(t('excel.validationComplete'));
   };
 
   const handleCellChange = (id: number, field: keyof ParsedRow, value: string) => {
@@ -269,7 +272,7 @@ const ExcelImportDialog = ({
 
   const handleRegister = async () => {
     if (validationErrorCount > 0) {
-      toast.error('오류가 있는 항목을 수정해주세요.');
+      toast.error(t('excel.fixErrors'));
       return;
     }
 
@@ -291,11 +294,11 @@ const ExcelImportDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='max-w-7xl max-h-[90vh] flex flex-col'>
         <DialogHeader>
-          <DialogTitle>엑셀 데이터 임포트</DialogTitle>
+          <DialogTitle>{t('excel.title')}</DialogTitle>
           <DialogDescription>
-            {step === 'input' 
-              ? '엑셀이나 CSV 데이터를 복사하여 아래에 붙여넣으세요. (형식: 날짜, 사번, 업무분류, 업무파트, 업무구분, 시간, 내용)' 
-              : '데이터를 확인하고 오류가 있는 항목을 수정하세요.'}
+            {step === 'input'
+              ? t('excel.inputDesc', { comma: ',' })
+              : t('excel.previewDesc')}
           </DialogDescription>
         </DialogHeader>
 
@@ -303,13 +306,13 @@ const ExcelImportDialog = ({
           {step === 'input' ? (
             <div className='flex flex-col h-[60vh] gap-2'>
               <div className='flex items-center gap-2'>
-                <span className='text-sm font-medium'>구분자 선택:</span>
+                <span className='text-sm font-medium'>{t('excel.delimiterLabel')}</span>
                 <Select value={delimiter} onValueChange={setDelimiter}>
                   <SelectTrigger className='w-[120px]'>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={'\t'}>Tab (엑셀)</SelectItem>
+                    <SelectItem value={'\t'}>{t('excel.tabExcel')}</SelectItem>
                     <SelectItem value={','}>Comma (,)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -326,14 +329,14 @@ const ExcelImportDialog = ({
               <Table>
                 <TableHeader className='sticky top-0 bg-white z-10'>
                   <TableRow>
-                    <TableHead className='w-[50px]'>상태</TableHead>
-                    <TableHead className='w-[100px]'>날짜</TableHead>
-                    <TableHead className='w-[120px]'>사용자</TableHead>
-                    <TableHead className='w-[140px]'>업무분류</TableHead>
-                    <TableHead className='w-[140px]'>업무파트</TableHead>
-                    <TableHead className='w-[140px]'>업무구분</TableHead>
-                    <TableHead className='w-[60px]'>시간</TableHead>
-                    <TableHead>내용</TableHead>
+                    <TableHead className='w-[50px]'>{t('excel.status')}</TableHead>
+                    <TableHead className='w-[100px]'>{t('excel.date')}</TableHead>
+                    <TableHead className='w-[120px]'>{t('excel.user')}</TableHead>
+                    <TableHead className='w-[140px]'>{t('excel.workGroup')}</TableHead>
+                    <TableHead className='w-[140px]'>{t('excel.workPart')}</TableHead>
+                    <TableHead className='w-[140px]'>{t('excel.workDivision')}</TableHead>
+                    <TableHead className='w-[60px]'>{t('excel.time')}</TableHead>
+                    <TableHead>{t('report.content')}</TableHead>
                     <TableHead className='w-[50px]'></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -366,7 +369,7 @@ const ExcelImportDialog = ({
                             onValueChange={(value) => handleCellChange(row.id, 'manager_id', value)}
                           >
                             <SelectTrigger className={cn('h-8 w-full', row.errors.manager_id && 'border-red-500')}>
-                              <SelectValue placeholder='선택' />
+                              <SelectValue placeholder={tc('select')} />
                             </SelectTrigger>
                             <SelectContent>
                               {users.map((user) => (
@@ -383,7 +386,7 @@ const ExcelImportDialog = ({
                             onValueChange={(value) => handleCodeChange(row.id, 'group', value)}
                           >
                             <SelectTrigger className={cn('h-8 w-full', row.errors.work_group_name && 'border-red-500')}>
-                              <SelectValue placeholder='선택' />
+                              <SelectValue placeholder={tc('select')} />
                             </SelectTrigger>
                             <SelectContent>
                               {workGroups.map((group) => (
@@ -401,7 +404,7 @@ const ExcelImportDialog = ({
                             disabled={!row.work_group_code}
                           >
                             <SelectTrigger className={cn('h-8 w-full', row.errors.work_part_name && 'border-red-500')}>
-                              <SelectValue placeholder='선택' />
+                              <SelectValue placeholder={tc('select')} />
                             </SelectTrigger>
                             <SelectContent>
                               {filteredParts.map((part) => (
@@ -418,7 +421,7 @@ const ExcelImportDialog = ({
                             onValueChange={(value) => handleCodeChange(row.id, 'division', value)}
                           >
                             <SelectTrigger className={cn('h-8 w-full', row.errors.work_division_name && 'border-red-500')}>
-                              <SelectValue placeholder='선택' />
+                              <SelectValue placeholder={tc('select')} />
                             </SelectTrigger>
                             <SelectContent>
                               {workDivision.map((division) => (
@@ -464,23 +467,23 @@ const ExcelImportDialog = ({
 
         <DialogFooter className='gap-2'>
           <Button variant='outline' onClick={() => onOpenChange(false)}>
-            취소
+            {tc('cancel')}
           </Button>
           {step === 'input' ? (
             <Button onClick={parseAndValidate}>
-              확인 및 검증
+              {t('excel.verify')}
             </Button>
           ) : (
             <>
               <Button variant='secondary' onClick={() => setStep('input')}>
-                다시 입력
+                {t('excel.reenter')}
               </Button>
               <Button variant='outline' onClick={handleRevalidate}>
-                데이터 검증
+                {t('excel.validate')}
               </Button>
               <Button onClick={handleRegister} disabled={validationErrorCount > 0 || isRegistering}>
                 {isRegistering && <Loader2 className='w-4 h-4 mr-2 animate-spin' />}
-                {validationErrorCount > 0 ? `${validationErrorCount}개 오류 수정 필요` : '일괄 등록'}
+                {validationErrorCount > 0 ? t('excel.errorsNeedFix', { count: validationErrorCount }) : t('excel.batchRegister')}
               </Button>
             </>
           )}

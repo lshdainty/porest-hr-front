@@ -47,5 +47,16 @@
   "colorGreen": "Green",
   "colorYellow": "Yellow",
   "colorPurple": "Purple",
-  "colorRed": "Red"
+  "colorRed": "Red",
+  "noInfo": "No info",
+  "saveFailed": "Save failed. Please try again.",
+  "deleteFailed": "Delete failed. Please try again.",
+  "duplicateFailed": "Clone failed. Please try again.",
+  "invalidData": "Invalid data.",
+  "batchRegisterFailed": "Batch registration failed.",
+  "excelDownloadFailed": "Excel download failed.",
+  "deleteConfirm": "Are you sure you want to delete?",
+  "imageFileOnly": "Only image files can be uploaded.",
+  "fileSizeLimit": "File size must be 5MB or less.",
+  "unknownError": "An unknown error occurred."
 }

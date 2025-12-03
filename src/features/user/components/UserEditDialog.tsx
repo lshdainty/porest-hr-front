@@ -31,19 +31,20 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
-const formSchema = z.object({
-  user_name: z.string().min(1, { message: '이름을 입력해주세요.' }),
-  user_id: z.string().min(1, { message: '아이디를 입력해주세요.' }),
-  user_email: z.string().email({ message: '유효한 이메일을 입력해주세요.' }),
-  user_birth: z.string().min(1, { message: '생년월일을 입력해주세요.' }),
-  user_origin_company_type: z.string().min(1, { message: '회사를 선택해주세요.' }),
-  lunar_yn: z.string().min(1, { message: '음력여부를 선택해주세요.' }),
-  user_work_time: z.string().min(1, { message: '유연근무시간을 선택해주세요.' }),
+const createFormSchema = (t: (key: string) => string) => z.object({
+  user_name: z.string().min(1, { message: t('edit.nameRequired') }),
+  user_id: z.string().min(1, { message: t('edit.idRequired') }),
+  user_email: z.string().email({ message: t('edit.emailRequired') }),
+  user_birth: z.string().min(1, { message: t('edit.birthRequired') }),
+  user_origin_company_type: z.string().min(1, { message: t('edit.companyRequired') }),
+  lunar_yn: z.string().min(1, { message: t('edit.lunarRequired') }),
+  user_work_time: z.string().min(1, { message: t('edit.workTimeRequired') }),
 });
 
-type UserFormValues = z.infer<typeof formSchema>;
+type UserFormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface UserEditDialogProps {
   open: boolean;
@@ -93,6 +94,9 @@ const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8
 };
 
 const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProps) => {
+  const { t } = useTranslation('user');
+  const { t: ta } = useTranslation('admin');
+  const formSchema = createFormSchema(t);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfileMutation();
   
   // 이미지 업로드 관련 상태 관리 - 초기값부터 완전한 URL로 설정
@@ -141,13 +145,13 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
 
     // 파일 타입 검증
     if (!file.type.startsWith('image/')) {
-      setUploadError('이미지 파일만 업로드 가능합니다.');
+      setUploadError(tc('imageFileOnly'));
       return;
     }
 
     // 파일 크기 검증 (5MB 제한)
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError('파일 크기는 5MB 이하여야 합니다.');
+      setUploadError(tc('fileSizeLimit'));
       return;
     }
 
@@ -169,7 +173,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       setTimeout(() => setUploadSuccess(false), 3000);
       
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+      setUploadError(error instanceof Error ? error.message : tc('unknownError'));
     } finally {
       // 파일 입력 초기화
       if (fileInputRef.current) {
@@ -215,7 +219,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
-          <DialogTitle>사용자 수정</DialogTitle>
+          <DialogTitle>{ta('user.editTitle')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col sm:flex-row gap-6 p-6">
@@ -233,7 +237,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="flex flex-col items-center gap-2">
                           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                          <span className="text-xs text-muted-foreground font-medium">처리 중...</span>
+                          <span className="text-xs text-muted-foreground font-medium">{tc('processing')}</span>
                         </div>
                       </div>
                       <style>{`
@@ -268,7 +272,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                                      hover:bg-primary/80 hover:scale-110 hover:shadow-lg hover:shadow-primary/30 
                                      transition-all duration-200 cursor-pointer group/upload"
                           onClick={handleImageSelect}
-                          title={profileImage ? "이미지 변경" : "이미지 업로드"}
+                          title={profileImage ? t('edit.changeImage') : t('edit.uploadImage')}
                         >
                           {profileImage ? (
                             <Camera className="h-5 w-5 text-white group-hover/upload:scale-110 transition-transform duration-200" />
@@ -284,7 +288,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                                        hover:bg-destructive/80 hover:scale-110 hover:shadow-lg hover:shadow-destructive/30 
                                        transition-all duration-200 cursor-pointer group/delete"
                             onClick={handleImageDelete}
-                            title="이미지 삭제"
+                            title={t('edit.deleteImage')}
                           >
                             <Trash2 className="h-5 w-5 text-white group-hover/delete:scale-110 transition-transform duration-200" />
                           </div>
@@ -323,7 +327,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                   <Alert className="w-full border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950" variant="default">
                     <AlertCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                     <AlertDescription className="text-green-800 dark:text-green-300">
-                      이미지가 성공적으로 처리되었습니다.
+                      {t('edit.imageSuccess')}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -337,7 +341,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                   name="user_name"
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
-                      <FieldLabel>이름</FieldLabel>
+                      <FieldLabel>{t('edit.name')}</FieldLabel>
                       <Input {...field} />
                       <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                     </Field>
@@ -349,7 +353,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                     name="user_id"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel><UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> 아이디</FieldLabel>
+                        <FieldLabel><UserIcon className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.id')}</FieldLabel>
                         <Input {...field} disabled={user.user_id !== ''} />
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -360,7 +364,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                     name="user_email"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel><Mail className='h-4 w-4 text-muted-foreground inline-block' /> 이메일</FieldLabel>
+                        <FieldLabel><Mail className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.email')}</FieldLabel>
                         <Input {...field} />
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
                       </Field>
@@ -373,7 +377,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                     name="user_birth"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel><Cake className='h-4 w-4 text-muted-foreground inline-block' /> 생년월일</FieldLabel>
+                        <FieldLabel><Cake className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.birth')}</FieldLabel>
                         <InputDatePicker
                           value={field.value}
                           onValueChange={(value) => field.onChange(value)}
@@ -387,10 +391,10 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                     name="lunar_yn"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel><Moon className='h-4 w-4 text-muted-foreground inline-block' /> 음력여부</FieldLabel>
+                        <FieldLabel><Moon className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.lunar')}</FieldLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="음력여부 선택" />
+                            <SelectValue placeholder={t('edit.lunarPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="Y">Y</SelectItem>
@@ -408,10 +412,10 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                     name="user_origin_company_type"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel><Building2 className='h-4 w-4 text-muted-foreground inline-block' /> 회사</FieldLabel>
+                        <FieldLabel><Building2 className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.company')}</FieldLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="회사 선택" />
+                            <SelectValue placeholder={t('edit.companyPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent>
                             {companyOptions.map(option => <SelectItem key={option.company_type} value={option.company_type}>{option.company_name}</SelectItem>)}
@@ -426,10 +430,10 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                     name="user_work_time"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
-                        <FieldLabel><Clock className='h-4 w-4 text-muted-foreground inline-block' /> 유연근무시간</FieldLabel>
+                        <FieldLabel><Clock className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.workTime')}</FieldLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <SelectTrigger className={cn('w-full', selectedWorkTime?.className)}>
-                            <SelectValue placeholder="근무 시간 선택" />
+                            <SelectValue placeholder={t('edit.workTimePlaceholder')} />
                           </SelectTrigger>
                           <SelectContent>
                             {workTimeOptions.map(option => <SelectItem key={option.value} value={option.value} className={option.className}>{option.value}</SelectItem>)}
@@ -445,12 +449,12 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="secondary">
-                취소
+                {tc('cancel')}
               </Button>
             </DialogClose>
             <Button type="submit" disabled={isUploading}>
               {isUploading && <Spinner />}
-              {isUploading ? '처리 중...' : '저장'}
+              {isUploading ? tc('processing') : tc('save')}
             </Button>
           </DialogFooter>
         </form>

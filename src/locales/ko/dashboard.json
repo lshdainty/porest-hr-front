@@ -26,5 +26,6 @@
     "allUserVacationStatus": "전체 유저 휴가 현황"
   },
   "save": "저장",
-  "hideWidget": "위젯 숨기기"
+  "hideWidget": "위젯 숨기기",
+  "saveError": "대시보드 설정 저장에 실패했습니다."
 }

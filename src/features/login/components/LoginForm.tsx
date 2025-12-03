@@ -7,10 +7,12 @@ import { useTheme } from '@/components/shadcn/themeProvider';
 import { authKeys, usePostLoginMutation } from '@/hooks/queries/useAuths';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { t } = useTranslation('login');
   const queryClient = useQueryClient();
   const loginMutation = usePostLoginMutation();
 
@@ -45,7 +47,7 @@ const LoginForm = () => {
             id='user_id'
             name='user_id'
             type='text'
-            placeholder='아이디를 입력하세요'
+            placeholder={t('idPlaceholder')}
             required
           />
         </div>
@@ -67,7 +69,7 @@ const LoginForm = () => {
         </Button>
         <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
           <span className='bg-card text-muted-foreground relative z-10 px-2'>
-            Or continue with
+            {t('orContinueWith')}
           </span>
         </div>
         {/* Social Login Button will be passed as children or rendered here if tightly coupled, 

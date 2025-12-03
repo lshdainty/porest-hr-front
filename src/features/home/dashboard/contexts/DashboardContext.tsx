@@ -1,5 +1,6 @@
 import { toast } from '@/components/shadcn/sonner';
 import { useUpdateDashboardMutation } from '@/hooks/queries/useUsers';
+import i18n from '@/config/i18n';
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 import { defaultLayouts, LAYOUT_STORAGE_KEY, WIDGETS, WIDGETS_STORAGE_KEY } from '../constants';
 
@@ -139,7 +140,7 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
           setTimeout(() => setIsEditing(false), 300);
         },
         onError: () => {
-          toast.error('대시보드 설정 저장에 실패했습니다.');
+          toast.error(i18n.t('dashboard:saveError'));
         }
       }
     );

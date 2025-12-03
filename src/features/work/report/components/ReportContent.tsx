@@ -23,8 +23,10 @@ import {
 import { WorkHistoryResp, WorkHistorySearchCondition } from '@/lib/api/work';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const ReportContent = () => {
+  const { t } = useTranslation('work');
   const { loginUser } = useUser();
   const {
     activeFilters,
@@ -120,13 +122,13 @@ const ReportContent = () => {
     if (!editData) return;
 
     const missingFields: string[] = [];
-    if (!editData.date) missingFields.push('일자');
-    if (!editData.work_group) missingFields.push('업무 분류');
-    if (!editData.work_part) missingFields.push('업무 파트');
-    if (!editData.work_division) missingFields.push('업무 구분');
+    if (!editData.date) missingFields.push(t('report.fieldDate'));
+    if (!editData.work_group) missingFields.push(t('report.fieldWorkGroup'));
+    if (!editData.work_part) missingFields.push(t('report.fieldWorkPart'));
+    if (!editData.work_division) missingFields.push(t('report.fieldWorkDivision'));
 
     if (missingFields.length > 0) {
-      toast.error(`다음 필드를 입력해주세요: ${missingFields.join(', ')}`);
+      toast.error(t('report.missingFields', { fields: missingFields.join(', ') }));
       return;
     }
 
@@ -160,8 +162,8 @@ const ReportContent = () => {
       setEditingRow(null);
       setEditData(null);
     } catch (error) {
-      console.error('저장 실패:', error);
-      toast.error('저장에 실패했습니다. 다시 시도해주세요.');
+      console.error('Save failed:', error);
+      toast.error(t('report.saveFailed'));
     }
   };
 
@@ -175,7 +177,7 @@ const ReportContent = () => {
 
   const handleDuplicate = async (row: WorkHistory) => {
     if (!row.work_group || !row.work_part || !row.work_division) {
-      toast.error('복제할 데이터가 유효하지 않습니다.');
+      toast.error(t('report.invalidDuplicateData'));
       return;
     }
 
@@ -205,7 +207,7 @@ const ReportContent = () => {
     );
 
     if (invalidRows.length > 0) {
-      toast.error('복제할 데이터 중 유효하지 않은 항목이 있습니다.');
+      toast.error(t('report.invalidSelectedData'));
       return;
     }
 
@@ -226,8 +228,8 @@ const ReportContent = () => {
       await refetchWorkHistories();
       setSelectedRows([]);
     } catch (error) {
-      console.error('복제 실패:', error);
-      toast.error('복제에 실패했습니다. 다시 시도해주세요.');
+      console.error('Duplicate failed:', error);
+      toast.error(t('report.duplicateFailed'));
     }
   };
 
@@ -242,8 +244,8 @@ const ReportContent = () => {
       await deleteWorkHistory.mutateAsync(row.work_history_seq);
       await refetchWorkHistories();
     } catch (error) {
-      console.error('삭제 실패:', error);
-      toast.error('삭제에 실패했습니다. 다시 시도해주세요.');
+      console.error('Delete failed:', error);
+      toast.error(t('report.deleteFailed'));
     }
   };
 
@@ -255,8 +257,8 @@ const ReportContent = () => {
       await createWorkHistoryBatch.mutateAsync({ work_histories: data });
       await refetchWorkHistories();
     } catch (error) {
-      console.error('일괄 등록 실패:', error);
-      toast.error('일괄 등록에 실패했습니다.');
+      console.error('Batch register failed:', error);
+      toast.error(t('report.batchRegisterFailed'));
     }
   };
 
@@ -272,8 +274,8 @@ const ReportContent = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('엑셀 다운로드 실패:', error);
-      toast.error('엑셀 다운로드에 실패했습니다.');
+      console.error('Excel download failed:', error);
+      toast.error(t('report.excelDownloadFailed'));
     }
   };
 
@@ -293,7 +295,7 @@ const ReportContent = () => {
       errorComponent={
         <div className='p-4 sm:p-6 md:p-8'>
           <div className='p-8 text-center text-red-600'>
-            데이터를 불러오는데 실패했습니다.
+            {t('report.dataLoadFailed')}
           </div>
         </div>
       }

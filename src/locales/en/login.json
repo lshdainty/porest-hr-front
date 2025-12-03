@@ -6,5 +6,7 @@
   "passwordPlaceholder": "Enter your password",
   "loginButton": "Sign In",
   "forgotPassword": "Forgot password?",
-  "rememberMe": "Remember me"
+  "rememberMe": "Remember me",
+  "idPlaceholder": "Enter your ID",
+  "orContinueWith": "Or continue with"
 }

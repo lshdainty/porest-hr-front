@@ -7,6 +7,7 @@ import { usePostCompleteSignupMutation, useValidateInvitationTokenQuery } from '
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import InvitationInfo from '@/features/auth/components/InvitationInfo';
 import SignUpForm from '@/features/auth/components/SignUpForm';
 import SocialConnectButton from '@/features/auth/components/SocialConnectButton';
@@ -17,6 +18,8 @@ interface FormData {
 }
 
 const SignUpContent = () => {
+  const { t } = useTranslation('auth');
+  const { t: tc } = useTranslation('common');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get('token') || '';
@@ -44,7 +47,7 @@ const SignUpContent = () => {
         }
         return prev;
       });
-      toast.success(`${oauth} 계정 연동이 완료되었습니다!`);
+      toast.success(t('signup.oauthConnected', { provider: oauth }));
       
       // URL 파라미터 정리 (token만 남기고 제거)
       navigate(`/signup?token=${token}`, { replace: true });
@@ -63,7 +66,7 @@ const SignUpContent = () => {
     e.preventDefault();
 
     if (connectedOAuth.length === 0) {
-      toast.error('최소 하나의 소셜 로그인을 연동해주세요.');
+      toast.error(t('signup.needOAuth'));
       return;
     }
 
@@ -75,7 +78,7 @@ const SignUpContent = () => {
       },
       {
         onSuccess: () => {
-          toast.success('회원가입이 완료되었습니다!');
+          toast.success(t('signup.complete'));
           navigate('/login');
         }
       }
@@ -97,12 +100,12 @@ const SignUpContent = () => {
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
               <p className="text-lg font-semibold">
-                {isError ? '초대 링크 확인에 실패했습니다.' :
-                 !validationData ? '유효하지 않은 초대 링크입니다.' :
-                 validationData.invitation_status === 'ACTIVE' ? '이미 가입이 완료된 링크입니다.' :
-                 validationData.invitation_status === 'EXPIRED' ? '만료된 초대 링크입니다.' :
-                 validationData.invitation_status === 'INACTIVE' ? '비활성화된 초대 링크입니다.' :
-                 '유효하지 않은 초대 링크입니다.'}
+                {isError ? t('signup.linkCheckFailed') :
+                 !validationData ? t('signup.invalidLink') :
+                 validationData.invitation_status === 'ACTIVE' ? t('signup.alreadyRegistered') :
+                 validationData.invitation_status === 'EXPIRED' ? t('signup.expiredLink') :
+                 validationData.invitation_status === 'INACTIVE' ? t('signup.inactiveLink') :
+                 t('signup.invalidLink')}
               </p>
             </div>
           </CardContent>
@@ -133,10 +136,10 @@ const SignUpContent = () => {
             </div>
 
             <CardTitle className="text-2xl font-semibold tracking-tight">
-              회원가입
+              {t('signup.title')}
             </CardTitle>
             <CardContent className="text-sm text-muted-foreground">
-              초대받은 정보로 계정을 완성해주세요
+              {t('signup.subtitle')}
             </CardContent>
           </CardHeader>
 
@@ -150,7 +153,7 @@ const SignUpContent = () => {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">추가 정보</span>
+                <span className="bg-background px-2 text-muted-foreground">{t('signup.additionalInfo')}</span>
               </div>
             </div>
 
@@ -158,13 +161,13 @@ const SignUpContent = () => {
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                이미 계정이 있으신가요?{' '}
+                {t('signup.hasAccount')}{' '}
                 <Button
                   variant="link"
                   className="p-0 h-auto font-semibold text-primary"
                   onClick={() => navigate('/login')}
                 >
-                  로그인
+                  {tc('login')}
                 </Button>
               </p>
             </div>

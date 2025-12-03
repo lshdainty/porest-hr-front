@@ -13,6 +13,7 @@ import { Label } from '@/components/shadcn/label';
 import { useUnregisteredWorkHistoryExcelDownloadMutation } from '@/hooks/queries/useWorks';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface UnregisteredDownloadDialogProps {
   open: boolean;
@@ -20,6 +21,8 @@ interface UnregisteredDownloadDialogProps {
 }
 
 const UnregisteredDownloadDialog = ({ open, onOpenChange }: UnregisteredDownloadDialogProps) => {
+  const { t } = useTranslation('work');
+  const { t: tc } = useTranslation('common');
   const [downloadYear, setDownloadYear] = useState(dayjs().year());
   const [downloadMonth, setDownloadMonth] = useState(dayjs().month() + 1);
   const downloadUnregisteredWorkHistoryExcel = useUnregisteredWorkHistoryExcelDownloadMutation();
@@ -40,8 +43,8 @@ const UnregisteredDownloadDialog = ({ open, onOpenChange }: UnregisteredDownload
       window.URL.revokeObjectURL(url);
       onOpenChange(false);
     } catch (error) {
-      console.error('미등록 리스트 다운로드 실패:', error);
-      toast.error('미등록 리스트 다운로드에 실패했습니다.');
+      console.error('Unregistered list download failed:', error);
+      toast.error(t('unregistered.downloadFailed'));
     }
   };
 
@@ -49,15 +52,15 @@ const UnregisteredDownloadDialog = ({ open, onOpenChange }: UnregisteredDownload
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>미등록 업무 시간 다운로드</DialogTitle>
+          <DialogTitle>{t('unregistered.title')}</DialogTitle>
           <DialogDescription>
-            다운로드할 연도와 월을 선택해주세요.
+            {t('unregistered.desc')}
           </DialogDescription>
         </DialogHeader>
         <div className='grid gap-4 py-4'>
           <div className='grid grid-cols-4 items-center gap-4'>
             <Label htmlFor='year' className='text-right'>
-              연도
+              {t('unregistered.year')}
             </Label>
             <Input
               id='year'
@@ -71,7 +74,7 @@ const UnregisteredDownloadDialog = ({ open, onOpenChange }: UnregisteredDownload
           </div>
           <div className='grid grid-cols-4 items-center gap-4'>
             <Label htmlFor='month' className='text-right'>
-              월
+              {t('unregistered.month')}
             </Label>
             <Input
               id='month'
@@ -90,14 +93,14 @@ const UnregisteredDownloadDialog = ({ open, onOpenChange }: UnregisteredDownload
             variant='outline'
             onClick={() => onOpenChange(false)}
           >
-            취소
+            {tc('cancel')}
           </Button>
           <Button
             type='button'
             onClick={handleConfirmUnregisteredDownload}
             disabled={downloadUnregisteredWorkHistoryExcel.isPending}
           >
-            {downloadUnregisteredWorkHistoryExcel.isPending ? '다운로드 중...' : '다운로드'}
+            {downloadUnregisteredWorkHistoryExcel.isPending ? t('unregistered.downloading') : tc('download')}
           </Button>
         </DialogFooter>
       </DialogContent>

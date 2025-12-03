@@ -40,7 +40,17 @@
     "minutePlaceholder": "분",
     "processing": "처리 중...",
     "approval": "승인",
-    "firstApproval": "{index}차 승인"
+    "firstApproval": "{index}차 승인",
+    "compVacationApplication": "보상휴가 신청",
+    "vacationApplication": "휴가 신청",
+    "compVacationInfo": "보상휴가 신청 정보",
+    "vacationInfo": "휴가 신청 정보",
+    "compTitleExample": "예: 프로젝트 마감 초과근무",
+    "vacationTitleExample": "예: 개인 사유",
+    "compReasonDesc": "초과근무를 하게 된 사유를 상세히 기입해 주세요.",
+    "vacationReasonDesc": "휴가 사용 사유를 상세히 기입해 주세요.",
+    "approverRequired": "승인자를 선택해주세요",
+    "approverPlaceholder": "결재자를 선택해주세요"
   },
   "grant": {
     "title": "휴가 부여",
@@ -57,7 +67,36 @@
     "policyDefault": "정책 기본값",
     "startDateRule": "휴가 정책의 시작일자 규칙이 적용됩니다",
     "endDateRule": "휴가 정책의 만료일자 규칙이 적용됩니다",
-    "fixedGrantTime": "이 휴가 정책은 고정된 부여 시간을 사용합니다."
+    "fixedGrantTime": "이 휴가 정책은 고정된 부여 시간을 사용합니다.",
+    "userPlaceholder": "사용자를 선택하세요",
+    "policyPlaceholder": "휴가 정책을 선택하세요",
+    "userLoadingPlaceholder": "로딩 중...",
+    "grantDateRequired": "유효기간 시작일자를 선택해주세요.",
+    "expiryDateRequired": "유효기간 만료일자를 선택해주세요.",
+    "grantReasonPlaceholder": "휴가 부여 사유를 입력하세요...",
+    "selectUser": "사용자를 선택해주세요.",
+    "selectPolicy": "휴가 정책을 선택해주세요.",
+    "enterGrantTime": "부여 시간을 입력해주세요.",
+    "enterReason": "부여 사유를 입력해주세요.",
+    "selectStartDate": "유효기간 시작일자를 선택해주세요.",
+    "selectEndDate": "유효기간 만료일자를 선택해주세요.",
+    "selectUserPlaceholder": "사용자를 선택하세요",
+    "policyLabel": "휴가 정책",
+    "selectPolicyPlaceholder": "휴가 정책을 선택하세요",
+    "noManualGrantPolicy": "할당된 관리자 부여 정책이 없습니다",
+    "customDateOption": "부여일{{comma}} 만료일 직접 지정",
+    "validityStart": "유효기간 시작일자",
+    "validityEnd": "유효기간 만료일자",
+    "day": "일",
+    "hour": "시간",
+    "minute": "분",
+    "nHours": "{{n}}시간",
+    "nMinutes": "{{n}}분",
+    "fixedTimePolicy": "이 휴가 정책은 고정된 부여 시간을 사용합니다.",
+    "selectTimeDesc": "부여할 휴가를 일/시간 단위로 선택해주세요.",
+    "selectTimeDescWithMin": "부여할 휴가를 일/시간/분 단위로 선택해주세요.",
+    "totalTime": "총 {{time}}",
+    "processing": "처리 중..."
   },
   "policy": {
     "title": "휴가 정책",
@@ -192,5 +231,18 @@
   "stats": {
     "title": "휴가 관리",
     "noUser": "사용자 정보가 없습니다."
+  },
+  "approval": {
+    "rejectReasonRequired": "반려 사유를 입력해주세요.",
+    "rejectReasonPlaceholder": "반려 사유를 입력해주세요...",
+    "nthApproval": "{index}차 승인",
+    "applicant": "신청자",
+    "requestDate": "신청 일시",
+    "vacationPolicy": "휴가 정책",
+    "vacationType": "휴가 유형",
+    "grantTime": "부여 시간",
+    "reason": "사유",
+    "period": "기간",
+    "status": "상태"
   }
 }

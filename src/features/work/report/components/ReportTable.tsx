@@ -38,6 +38,7 @@ import { usePermission } from '@/contexts/PermissionContext';
 import { useReportContext } from '@/features/work/report/contexts/ReportContext';
 import { WorkHistory } from '@/features/work/report/types';
 import { Activity } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ReportTableProps {
   workHistories: WorkHistory[];
@@ -70,6 +71,8 @@ const ReportTable = ({
   workDivision,
   isWorkDivisionLoading,
 }: ReportTableProps) => {
+  const { t } = useTranslation('work');
+  const { t: tc } = useTranslation('common');
   const {
     selectedRows,
     setSelectedRows,
@@ -78,7 +81,7 @@ const ReportTable = ({
     setEditData,
     updateEditData,
   } = useReportContext();
-  
+
   const { hasAnyPermission } = usePermission();
 
   const handleSelectAll = (checked: boolean) => {
@@ -104,7 +107,7 @@ const ReportTable = ({
     <Card>
       <CardHeader>
         <div className='flex items-center justify-between'>
-          <CardTitle>업무 이력 테이블</CardTitle>
+          <CardTitle>{t('report.tableTitle')}</CardTitle>
           <Activity mode={hasAnyPermission(['WORK:WRITE', 'WORK:MANAGE']) ? 'visible' : 'hidden'}>
             <div className='flex gap-2'>
               <Button
@@ -114,11 +117,11 @@ const ReportTable = ({
                 disabled={selectedRows.length === 0}
               >
                 <Copy className='w-4 h-4 mr-2' />
-                복제 ({selectedRows.length})
+                {t('report.duplicate')} ({selectedRows.length})
               </Button>
               <Button size='sm' onClick={handleAddRow}>
                 <Plus className='w-4 h-4 mr-2' />
-                추가
+                {t('report.add')}
               </Button>
             </div>
           </Activity>
@@ -127,7 +130,7 @@ const ReportTable = ({
       <CardContent>
         {isWorkHistoriesLoading ? (
           <div className='flex items-center justify-center py-8'>
-            <p className='text-muted-foreground'>로딩 중...</p>
+            <p className='text-muted-foreground'>{t('report.loading')}</p>
           </div>
         ) : workHistories && workHistories.length > 0 ? (
           <div className='overflow-x-auto'>
@@ -143,13 +146,13 @@ const ReportTable = ({
                     />
                   </TableHead>
                   <TableHead className='w-[60px]'>No</TableHead>
-                  <TableHead className='min-w-[140px]'>일자</TableHead>
-                  <TableHead className='min-w-[120px]'>담당자</TableHead>
-                  <TableHead className='min-w-[120px]'>업무 분류</TableHead>
-                  <TableHead className='min-w-[120px]'>업무 파트</TableHead>
-                  <TableHead className='min-w-[120px]'>업무 구분</TableHead>
-                  <TableHead className='min-w-[100px]'>소요시간</TableHead>
-                  <TableHead className='min-w-[300px]'>내용</TableHead>
+                  <TableHead className='min-w-[140px]'>{t('report.fieldDate')}</TableHead>
+                  <TableHead className='min-w-[120px]'>{t('report.manager')}</TableHead>
+                  <TableHead className='min-w-[120px]'>{t('report.fieldWorkGroup')}</TableHead>
+                  <TableHead className='min-w-[120px]'>{t('report.fieldWorkPart')}</TableHead>
+                  <TableHead className='min-w-[120px]'>{t('report.fieldWorkDivision')}</TableHead>
+                  <TableHead className='min-w-[100px]'>{t('report.hours')}</TableHead>
+                  <TableHead className='min-w-[300px]'>{t('report.content')}</TableHead>
                   <TableHead className='w-[80px]'></TableHead>
                 </TableRow>
               </TableHeader>
@@ -185,7 +188,7 @@ const ReportTable = ({
                               <CalendarIcon className='mr-2 h-4 w-4' />
                               {editData?.date
                                 ? dayjs(editData.date).format('YYYY-MM-DD')
-                                : '날짜 선택'}
+                                : t('report.selectDate')}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className='w-auto p-0' align='start'>
@@ -210,7 +213,7 @@ const ReportTable = ({
                           value={editData?.manager_name || ''}
                           disabled
                           className='bg-muted cursor-not-allowed'
-                          placeholder='담당자'
+                          placeholder={t('report.manager')}
                         />
                       ) : (
                         <span className='text-sm'>{row.manager_name}</span>
@@ -235,7 +238,7 @@ const ReportTable = ({
                           disabled={isWorkGroupsLoading}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={isWorkGroupsLoading ? '로딩 중...' : '업무 분류'} />
+                            <SelectValue placeholder={isWorkGroupsLoading ? t('report.loading') : t('report.fieldWorkGroup')} />
                           </SelectTrigger>
                           <SelectContent>
                             {workGroups?.map((group) => (
@@ -267,8 +270,8 @@ const ReportTable = ({
                           <SelectTrigger>
                             <SelectValue placeholder={
                               !editData?.work_group
-                                ? '업무 분류를 먼저 선택하세요'
-                                : '업무 파트'
+                                ? t('report.selectGroupFirst')
+                                : t('report.fieldWorkPart')
                             } />
                           </SelectTrigger>
                           <SelectContent>
@@ -298,7 +301,7 @@ const ReportTable = ({
                           disabled={isWorkDivisionLoading}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={isWorkDivisionLoading ? '로딩 중...' : '업무 구분'} />
+                            <SelectValue placeholder={isWorkDivisionLoading ? t('report.loading') : t('report.fieldWorkDivision')} />
                           </SelectTrigger>
                           <SelectContent>
                             {workDivision?.map((division) => (
@@ -339,7 +342,7 @@ const ReportTable = ({
                           value={editData?.content}
                           onChange={(e) => updateEditData('content', e.target.value)}
                           className='min-h-[80px] w-full resize-y'
-                          placeholder='업무 내용을 입력하세요'
+                          placeholder={t('report.contentPlaceholder')}
                         />
                       ) : (
                         <p className='text-sm line-clamp-2 text-muted-foreground'>
@@ -353,14 +356,14 @@ const ReportTable = ({
                       {editingRow === row.no ? (
                         <div className='flex gap-2'>
                           <Button size='sm' onClick={handleSave}>
-                            저장
+                            {tc('save')}
                           </Button>
                           <Button
                             size='sm'
                             variant='outline'
                             onClick={handleCancel}
                           >
-                            취소
+                            {tc('cancel')}
                           </Button>
                         </div>
                       ) : (
@@ -378,11 +381,11 @@ const ReportTable = ({
                             <DropdownMenuContent align='end' className='w-32'>
                               <DropdownMenuItem onClick={() => handleDuplicate(row)}>
                                 <Copy className='h-4 w-4 mr-2' />
-                                <span>복제</span>
+                                <span>{t('report.duplicate')}</span>
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => handleEdit(row)}>
                                 <Pencil className='h-4 w-4 mr-2' />
-                                <span>수정</span>
+                                <span>{tc('edit')}</span>
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
@@ -390,7 +393,7 @@ const ReportTable = ({
                                 className='text-destructive focus:text-destructive'
                               >
                                 <Trash2 className='h-4 w-4 mr-2' />
-                                <span>삭제</span>
+                                <span>{tc('delete')}</span>
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -403,7 +406,7 @@ const ReportTable = ({
             </Table>
           </div>
         ) : (
-          <Empty description='등록된 업무 이력이 없습니다' />
+          <Empty description={t('report.noHistory')} />
         )}
       </CardContent>
     </Card>

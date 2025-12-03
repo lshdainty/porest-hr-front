@@ -26,18 +26,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
-const formSchema = z.object({
-  selectedUser: z.string().min(1, { message: '사용자를 선택해주세요.' }),
-  vacationPolicy: z.string().min(1, { message: '휴가 정책을 선택해주세요.' }),
+const createFormSchema = (t: (key: string) => string) => z.object({
+  selectedUser: z.string().min(1, { message: t('grant.selectUser') }),
+  vacationPolicy: z.string().min(1, { message: t('grant.selectPolicy') }),
   grantDate: z.string().optional(),
   expiryDate: z.string().optional(),
-  grantTime: z.number().min(0.0625, { message: '부여 시간을 입력해주세요.' }),
-  description: z.string().min(1, { message: '부여 사유를 입력해주세요.' }),
+  grantTime: z.number().min(0.0625, { message: t('grant.enterGrantTime') }),
+  description: z.string().min(1, { message: t('grant.enterReason') }),
 });
 
-type VacationGrantFormValues = z.infer<typeof formSchema>;
+type VacationGrantFormValues = z.infer<ReturnType<typeof createFormSchema>>;
 
 interface VacationGrantDialogProps {
   open: boolean;
@@ -48,6 +49,9 @@ const VacationGrantDialog = ({
   open,
   onClose,
 }: VacationGrantDialogProps) => {
+  const { t } = useTranslation('vacation');
+  const { t: tc } = useTranslation('common');
+  const formSchema = createFormSchema(t);
   const { data: users, isLoading: isLoadingUsers } = useUsersQuery();
   const { mutate: grantVacation, isPending } = usePostManualGrantVacationMutation();
   const { data: effectiveTypes = [] } = useEffectiveTypesQuery();
@@ -146,11 +150,11 @@ const VacationGrantDialog = ({
     // 직접 지정을 선택한 경우 날짜 검증
     if (useCustomDates) {
       if (!values.grantDate) {
-        form.setError('grantDate', { message: '유효기간 시작일자를 선택해주세요.' });
+        form.setError('grantDate', { message: t('grant.selectStartDate') });
         return;
       }
       if (!values.expiryDate) {
-        form.setError('expiryDate', { message: '유효기간 만료일자를 선택해주세요.' });
+        form.setError('expiryDate', { message: t('grant.selectEndDate') });
         return;
       }
     }
@@ -178,7 +182,7 @@ const VacationGrantDialog = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
-          <DialogTitle>휴가 부여</DialogTitle>
+          <DialogTitle>{t('grant.title')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className='p-6 space-y-4'>
@@ -189,11 +193,11 @@ const VacationGrantDialog = ({
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    대상 사용자 <span className='text-red-500'>*</span>
+                    {t('grant.targetUser')} <span className='text-red-500'>*</span>
                   </FieldLabel>
                   <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingUsers}>
                     <SelectTrigger>
-                      <SelectValue placeholder={isLoadingUsers ? '로딩 중...' : '사용자를 선택하세요'} />
+                      <SelectValue placeholder={isLoadingUsers ? tc('loading') : t('grant.selectUserPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {users?.map((user) => (
@@ -217,7 +221,7 @@ const VacationGrantDialog = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        휴가 정책 <span className='text-red-500'>*</span>
+                        {t('grant.policyLabel')} <span className='text-red-500'>*</span>
                       </FieldLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -228,10 +232,10 @@ const VacationGrantDialog = ({
                           <SelectValue
                             placeholder={
                               isLoadingPolicies
-                                ? '로딩 중...'
+                                ? tc('loading')
                                 : vacationPolicies && vacationPolicies.length === 0
-                                  ? '할당된 관리자 부여 정책이 없습니다'
-                                  : '휴가 정책을 선택하세요'
+                                  ? t('grant.noManualGrantPolicy')
+                                  : t('grant.selectPolicyPlaceholder')
                             }
                           />
                         </SelectTrigger>
@@ -272,7 +276,7 @@ const VacationGrantDialog = ({
                     htmlFor='useCustomDates'
                     className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer'
                   >
-                    부여일, 만료일 직접 지정
+                    {t('grant.customDateOption', { comma: ',' })}
                   </label>
                 </div>
 
@@ -280,23 +284,23 @@ const VacationGrantDialog = ({
                   <div className='grid grid-cols-2 gap-4'>
                     {/* 유효기간 시작일자 정책 표시 */}
                     <Field>
-                      <FieldLabel>유효기간 시작일자</FieldLabel>
+                      <FieldLabel>{t('grant.validityStart')}</FieldLabel>
                       <div className='flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm'>
-                        {selectedPolicy.effective_type ? getEffectiveTypeName(selectedPolicy.effective_type) : '정책 기본값'}
+                        {selectedPolicy.effective_type ? getEffectiveTypeName(selectedPolicy.effective_type) : t('grant.policyDefault')}
                       </div>
                       <p className='text-xs text-muted-foreground mt-1'>
-                        휴가 정책의 시작일자 규칙이 적용됩니다
+                        {t('grant.startDateRule')}
                       </p>
                     </Field>
 
                     {/* 유효기간 만료일자 정책 표시 */}
                     <Field>
-                      <FieldLabel>유효기간 만료일자</FieldLabel>
+                      <FieldLabel>{t('grant.validityEnd')}</FieldLabel>
                       <div className='flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm'>
-                        {selectedPolicy.expiration_type ? getExpirationTypeName(selectedPolicy.expiration_type) : '정책 기본값'}
+                        {selectedPolicy.expiration_type ? getExpirationTypeName(selectedPolicy.expiration_type) : t('grant.policyDefault')}
                       </div>
                       <p className='text-xs text-muted-foreground mt-1'>
-                        휴가 정책의 만료일자 규칙이 적용됩니다
+                        {t('grant.endDateRule')}
                       </p>
                     </Field>
                   </div>
@@ -311,7 +315,7 @@ const VacationGrantDialog = ({
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>
-                            유효기간 시작일자 <span className='text-red-500'>*</span>
+                            {t('grant.validityStart')} <span className='text-red-500'>*</span>
                           </FieldLabel>
                           <InputDatePicker
                             value={field.value}
@@ -329,7 +333,7 @@ const VacationGrantDialog = ({
                       render={({ field, fieldState }) => (
                         <Field data-invalid={!!fieldState.error}>
                           <FieldLabel>
-                            유효기간 만료일자 <span className='text-red-500'>*</span>
+                            {t('grant.validityEnd')} <span className='text-red-500'>*</span>
                           </FieldLabel>
                           <InputDatePicker
                             value={field.value}
@@ -363,7 +367,7 @@ const VacationGrantDialog = ({
                     return (
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel>
-                          부여 시간 <span className='text-red-500'>*</span>
+                          {t('grant.grantTime')} <span className='text-red-500'>*</span>
                         </FieldLabel>
                         <div className={`grid ${selectedPolicy?.minute_grant_yn === 'Y' ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
                           <div className='flex flex-col'>
@@ -371,7 +375,7 @@ const VacationGrantDialog = ({
                               type='number'
                               min='0'
                               max='365'
-                              placeholder='일'
+                              placeholder={t('grant.day')}
                               className='w-full'
                               value={days || ''}
                               onChange={(e) => {
@@ -380,7 +384,7 @@ const VacationGrantDialog = ({
                               }}
                               disabled={isDisabled}
                             />
-                            <p className='text-xs text-muted-foreground mt-1'>일</p>
+                            <p className='text-xs text-muted-foreground mt-1'>{t('grant.day')}</p>
                           </div>
                           <div className='flex flex-col'>
                             <Select
@@ -391,17 +395,17 @@ const VacationGrantDialog = ({
                               disabled={isDisabled}
                             >
                               <SelectTrigger className='w-full'>
-                                <SelectValue placeholder='시간' />
+                                <SelectValue placeholder={t('grant.hour')} />
                               </SelectTrigger>
                               <SelectContent>
                                 {[0, 1, 2, 3, 4, 5, 6, 7].map((h) => (
                                   <SelectItem key={h} value={h.toString()}>
-                                    {h}시간
+                                    {t('grant.nHours', { n: h })}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
-                            <p className='text-xs text-muted-foreground mt-1'>시간</p>
+                            <p className='text-xs text-muted-foreground mt-1'>{t('grant.hour')}</p>
                           </div>
                           {selectedPolicy?.minute_grant_yn === 'Y' && (
                             <div className='flex flex-col'>
@@ -413,28 +417,28 @@ const VacationGrantDialog = ({
                                 disabled={isDisabled}
                               >
                                 <SelectTrigger className='w-full'>
-                                  <SelectValue placeholder='분' />
+                                  <SelectValue placeholder={t('grant.minute')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value='0'>0분</SelectItem>
-                                  <SelectItem value='30'>30분</SelectItem>
+                                  <SelectItem value='0'>{t('grant.nMinutes', { n: 0 })}</SelectItem>
+                                  <SelectItem value='30'>{t('grant.nMinutes', { n: 30 })}</SelectItem>
                                 </SelectContent>
                               </Select>
-                              <p className='text-xs text-muted-foreground mt-1'>분</p>
+                              <p className='text-xs text-muted-foreground mt-1'>{t('grant.minute')}</p>
                             </div>
                           )}
                         </div>
                         <p className='text-sm text-muted-foreground mt-2'>
                           {isDisabled
-                            ? '이 휴가 정책은 고정된 부여 시간을 사용합니다.'
-                            : `부여할 휴가를 일/시간${selectedPolicy?.minute_grant_yn === 'Y' ? '/분' : ''} 단위로 선택해주세요.`}
+                            ? t('grant.fixedTimePolicy')
+                            : selectedPolicy?.minute_grant_yn === 'Y' ? t('grant.selectTimeDescWithMin') : t('grant.selectTimeDesc')}
                           {field.value && field.value > 0 && (
                             <span className='block mt-1 font-medium text-primary'>
-                              총 {[
-                                days > 0 ? `${days}일` : '',
-                                hours > 0 ? `${hours}시간` : '',
-                                minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}분` : ''
-                              ].filter(Boolean).join(' ')}
+                              {t('grant.totalTime', { time: [
+                                days > 0 ? `${days}${t('grant.day')}` : '',
+                                hours > 0 ? `${hours}${t('grant.hour')}` : '',
+                                minutes > 0 && selectedPolicy?.minute_grant_yn === 'Y' ? `${minutes}${t('grant.minute')}` : ''
+                              ].filter(Boolean).join(' ') })}
                             </span>
                           )}
                         </p>
@@ -451,11 +455,11 @@ const VacationGrantDialog = ({
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
                       <FieldLabel>
-                        부여 사유 <span className='text-red-500'>*</span>
+                        {t('grant.grantReason')} <span className='text-red-500'>*</span>
                       </FieldLabel>
                       <Textarea
                         {...field}
-                        placeholder='휴가 부여 사유를 입력하세요...'
+                        placeholder={t('grant.grantReasonPlaceholder')}
                         rows={4}
                         className='resize-none'
                       />
@@ -470,11 +474,11 @@ const VacationGrantDialog = ({
           <DialogFooter>
             <DialogClose asChild>
               <Button type='button' variant='secondary' disabled={isPending}>
-                취소
+                {tc('cancel')}
               </Button>
             </DialogClose>
             <Button type='submit' disabled={isPending || !isFormValid()}>
-              {isPending ? '처리 중...' : '저장'}
+              {isPending ? t('grant.processing') : tc('save')}
             </Button>
           </DialogFooter>
         </form>

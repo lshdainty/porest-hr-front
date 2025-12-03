@@ -26,5 +26,6 @@
     "allUserVacationStatus": "All User Vacation Status"
   },
   "save": "Save",
-  "hideWidget": "Hide Widget"
+  "hideWidget": "Hide Widget",
+  "saveError": "Failed to save dashboard settings."
 }
