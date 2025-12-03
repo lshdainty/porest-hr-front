@@ -46,7 +46,7 @@ const HolidayContent = () => {
     if (editingHoliday) {
       const putData: PutHolidayReq = {
         ...payload,
-        holiday_seq: editingHoliday.holiday_seq,
+        holiday_id: editingHoliday.holiday_id,
       }
       putMutation.mutate(putData, {
         onSuccess: () => {
@@ -69,8 +69,8 @@ const HolidayContent = () => {
     setIsDialogOpen(true)
   }
 
-  const handleDelete = (holiday_seq: number) => {
-    deleteMutation.mutate(String(holiday_seq), {
+  const handleDelete = (holiday_id: number) => {
+    deleteMutation.mutate(String(holiday_id), {
       onSuccess: () => {
         refetch()
       }

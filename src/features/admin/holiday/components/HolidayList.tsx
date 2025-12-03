@@ -16,7 +16,7 @@ const holidayTypeColors = {
 interface HolidayListProps {
   holidays?: GetHolidaysResp[];
   onEdit: (holiday: GetHolidaysResp) => void;
-  onDelete: (holiday_seq: number) => void;
+  onDelete: (holiday_id: number) => void;
   onAddClick: () => void;
 }
 
@@ -50,7 +50,7 @@ const HolidayList = ({
   return (
     <div className='grid gap-4'>
       {holidays?.map((holiday) => (
-        <Card key={holiday.holiday_seq} className='hover:shadow-md transition-shadow'>
+        <Card key={holiday.holiday_id} className='hover:shadow-md transition-shadow'>
           <CardContent className='px-6'>
             <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
               <div className='flex items-center gap-4'>

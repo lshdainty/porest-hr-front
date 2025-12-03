@@ -12,7 +12,7 @@ const DuesWidget = ({ yearDues }: DuesWidgetProps) => {
   const data = useMemo(() => {
     return yearDues?.map((dues) => ({
       ...dues,
-      id: dues.dues_seq.toString(),
+      id: dues.dues_id.toString(),
     })) || [];
   }, [yearDues]);
 

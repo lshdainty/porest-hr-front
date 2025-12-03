@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next'
 interface HolidayDeleteDialogProps {
   holiday: GetHolidaysResp
   trigger: React.ReactNode
-  onDelete: (holiday_seq: number) => void
+  onDelete: (holiday_id: number) => void
 }
 
 const HolidayDeleteDialog = ({ holiday, trigger, onDelete }: HolidayDeleteDialogProps) => {
@@ -24,8 +24,8 @@ const HolidayDeleteDialog = ({ holiday, trigger, onDelete }: HolidayDeleteDialog
   const { t: tc } = useTranslation('common')
 
   const handleDelete = () => {
-    if (holiday.holiday_seq) {
-      onDelete(holiday.holiday_seq)
+    if (holiday.holiday_id) {
+      onDelete(holiday.holiday_id)
     }
   }
 

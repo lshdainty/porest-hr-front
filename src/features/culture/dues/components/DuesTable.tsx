@@ -28,7 +28,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
     if (yearDues) {
       const formattedDues = yearDues.map((dues) => ({
         ...dues,
-        id: dues.dues_seq.toString(),
+        id: dues.dues_id.toString(),
       }));
       setTableData(formattedDues);
     }
@@ -50,7 +50,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
       setTableData(tableData.filter((dues) => dues.id !== id));
     } else {
       // 기존 행 - DELETE API 호출
-      deleteDues(rowToDelete.dues_seq, {
+      deleteDues(rowToDelete.dues_id, {
         onSuccess: () => {
           setTableData(tableData.filter((dues) => dues.id !== id));
         },
@@ -67,7 +67,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
     const newRow: EditableDuesData = {
       ...row,
       id: tempId,
-      dues_seq: 0,
+      dues_id: 0,
       isNew: true,
       tempId: tempId,
     };
@@ -81,7 +81,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
     const tempId = `new_${Date.now()}`;
     const newRow: EditableDuesData = {
       id: tempId,
-      dues_seq: 0,
+      dues_id: 0,
       dues_date: dayjs().format('YYYY-MM-DD'),
       dues_user_name: '',
       dues_type: 'OPERATION',
@@ -109,7 +109,7 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
 
     if (rowToSave.isNew) {
       // 새로 생성된 행 - POST 호출
-      const { isNew, tempId, id: rowId, dues_seq, total_dues, ...duesData } = rowToSave;
+      const { isNew, tempId, id: rowId, dues_id, total_dues, ...duesData } = rowToSave;
       postDues(duesData, {
         onSuccess: () => {
           setEditingRow(null);

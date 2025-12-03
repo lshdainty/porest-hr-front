@@ -8,7 +8,7 @@ export interface GetHolidaysReq {
 }
 
 export interface GetHolidaysResp {
-  holiday_seq: number
+  holiday_id: number
   holiday_name: string
   holiday_date: string
   holiday_type: string
@@ -31,7 +31,7 @@ export interface PostHolidayReq {
 }
 
 export interface PutHolidayReq {
-  holiday_seq: number
+  holiday_id: number
   holiday_name: string
   holiday_date: string
   holiday_type: string
@@ -70,7 +70,7 @@ export async function fetchPostHoliday(data: PostHolidayReq): Promise<any> {
 export async function fetchPutHoliday(data: PutHolidayReq): Promise<any> {
   const resp: ApiResponse = await api.request({
     method: 'put',
-    url: `/holiday/${data.holiday_seq}`,
+    url: `/holiday/${data.holiday_id}`,
     data
   });
 
@@ -79,10 +79,10 @@ export async function fetchPutHoliday(data: PutHolidayReq): Promise<any> {
   return resp.data;
 }
 
-export async function fetchDeleteHoliday(holidaySeq: string): Promise<any> {
+export async function fetchDeleteHoliday(holidayId: string): Promise<any> {
   const resp: ApiResponse = await api.request({
     method: 'delete',
-    url: `/holiday/${holidaySeq}`
+    url: `/holiday/${holidayId}`
   });
 
   if (!resp.success) throw new Error(resp.message);

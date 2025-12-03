@@ -53,7 +53,7 @@ export const useDeleteHolidayMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation<any, Error, string>({
-    mutationFn: (holidaySeq: string) => fetchDeleteHoliday(holidaySeq),
+    mutationFn: (holidayId: string) => fetchDeleteHoliday(holidayId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: holidayKeys.lists() })
     }

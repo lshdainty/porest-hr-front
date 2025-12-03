@@ -6,7 +6,7 @@ export interface GetYearDuesReq {
 }
 
 export interface GetYearDuesResp {
-  dues_seq: number
+  dues_id: number
   dues_user_name: string
   dues_amount: number
   dues_type: 'OPERATION' | 'BIRTH' | 'FINE'
@@ -54,7 +54,7 @@ export interface PostDuesReq {
 }
 
 export interface PutDuesReq {
-  dues_seq: number
+  dues_id: number
   dues_amount: number
   dues_type: 'OPERATION' | 'BIRTH' | 'FINE'
   dues_calc: 'PLUS' | 'MINUS'
@@ -123,7 +123,7 @@ export async function fetchPostDues(data: PostDuesReq): Promise<any> {
 export async function fetchPutDues(data: PutDuesReq): Promise<any> {
   const resp: ApiResponse = await api.request({
     method: 'put',
-    url: `/dues/${data.dues_seq}`,
+    url: `/dues/${data.dues_id}`,
     data
   });
 
@@ -132,10 +132,10 @@ export async function fetchPutDues(data: PutDuesReq): Promise<any> {
   return resp.data;
 }
 
-export async function fetchDeleteDues(duesSeq: number): Promise<any> {
+export async function fetchDeleteDues(duesId: number): Promise<any> {
   const resp: ApiResponse = await api.request({
     method: 'delete',
-    url: `/dues/${duesSeq}`
+    url: `/dues/${duesId}`
   });
 
   if (!resp.success) throw new Error(resp.message);

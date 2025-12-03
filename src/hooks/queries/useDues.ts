@@ -86,7 +86,7 @@ export const useDeleteDuesMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation<any, Error, number>({
-    mutationFn: (duesSeq: number) => fetchDeleteDues(duesSeq),
+    mutationFn: (duesId: number) => fetchDeleteDues(duesId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: duesKeys.lists() })
     }
