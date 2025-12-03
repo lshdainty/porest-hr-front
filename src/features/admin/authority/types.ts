@@ -1,7 +1,7 @@
 export interface Authority {
   code: string;
   name: string;
-  description: string;
+  desc: string;
   resource: string;
   action: string;
 }
@@ -9,7 +9,7 @@ export interface Authority {
 export interface Role {
   role_code: string;
   role_name: string;
-  description: string;
+  desc: string;
   permissions: Authority[];
 }
 

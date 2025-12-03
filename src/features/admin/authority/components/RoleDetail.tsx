@@ -32,7 +32,7 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
   };
 
   const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onUpdateRole({ ...role, description: e.target.value });
+    onUpdateRole({ ...role, desc: e.target.value });
   };
 
   const handleToggleAuthority = (authCode: string, checked: boolean) => {
@@ -106,7 +106,7 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
             <Label htmlFor="role-desc">Description</Label>
             <Textarea
               id="role-desc"
-              value={role.description}
+              value={role.desc}
               onChange={handleDescChange}
               placeholder="Describe the role's responsibilities..."
               className="resize-none"

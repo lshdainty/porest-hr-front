@@ -103,7 +103,7 @@ const RoleManagementPanel = () => {
     const tempRole: Role & { isNew?: boolean } = {
       role_code: TEMP_ROLE_CODE,
       role_name: "New Role",
-      description: "",
+      desc: "",
       permissions: [],
       isNew: true // 새 역할 플래그
     };
@@ -177,7 +177,7 @@ const RoleManagementPanel = () => {
         await createRole({
           role_code: editingRole.role_code,
           role_name: editingRole.role_name,
-          description: editingRole.description,
+          desc: editingRole.desc,
           permission_codes: editingRole.permissions.map(p => p.code)
         });
 
@@ -185,11 +185,11 @@ const RoleManagementPanel = () => {
         toast.success("Role created successfully");
       } else {
         // 기존 역할 수정
-        // 1. Update Role Info (description only, based on API definition)
+        // 1. Update Role Info (desc only, based on API definition)
         await updateRoleMutation({
           roleCode: editingRole.role_code,
           data: {
-            description: editingRole.description
+            desc: editingRole.desc
           }
         });
 

@@ -54,7 +54,7 @@ const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority
                       {auth.name}
                     </Label>
                     <p className="text-sm text-muted-foreground leading-snug">
-                      {auth.description}
+                      {auth.desc}
                     </p>
                   </div>
                 </div>

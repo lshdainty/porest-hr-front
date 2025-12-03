@@ -6,7 +6,7 @@ import { api, type ApiResponse } from '@/lib/api';
 export interface RoleResp {
   role_code: string
   role_name: string
-  description: string
+  desc: string
   permissions: string[]
 }
 
@@ -14,13 +14,13 @@ export interface RoleResp {
 export interface CreateRoleReq {
   role_code: string
   role_name: string
-  description?: string
+  desc?: string
   permission_codes?: string[]
 }
 
 // 역할 수정 요청 DTO
 export interface UpdateRoleReq {
-  description?: string
+  desc?: string
   permission_codes?: string[]
 }
 
