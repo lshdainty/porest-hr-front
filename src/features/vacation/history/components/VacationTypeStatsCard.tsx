@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import VacationTypeStatsContent from './VacationTypeStatsContent';
 
 interface VacationTypeStatsCardProps {
-  value: GetAvailableVacationsResp[] | undefined
+  value: GetAvailableVacationsResp | undefined
   className: string | undefined;
 }
 

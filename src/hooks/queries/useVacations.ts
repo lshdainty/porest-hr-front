@@ -34,6 +34,7 @@ import {
     fetchPostUseVacation,
     fetchPostVacationPolicy,
     fetchPutUpdateVacationUsage,
+    type AvailableVacationByType,
     type DeleteRevokeVacationGrantResp,
     type DeleteRevokeVacationPoliciesFromUserResp,
     type DeleteRevokeVacationPolicyFromUserResp,
@@ -69,6 +70,8 @@ import {
     type PutUpdateVacationUsageResp
 } from '@/lib/api/vacation'
 
+export type { AvailableVacationByType, GetAvailableVacationsResp }
+
 const vacationKeys = createQueryKeys('vacations')
 const calendarKeys = createQueryKeys('calendars')
 
@@ -100,7 +103,7 @@ export const useAllUsersVacationSummaryQuery = (year: number) => {
 
 // 사용 가능한 휴가 조회 훅
 export const useAvailableVacationsQuery = (userId: string, startDate: string, options?: { enabled?: boolean }) => {
-  return useQuery<GetAvailableVacationsResp[]>({
+  return useQuery<GetAvailableVacationsResp>({
     queryKey: vacationKeys.list({ type: 'available', userId, startDate }),
     queryFn: () => fetchGetAvailableVacations(userId, startDate),
     enabled: (options?.enabled ?? true) && !!userId && !!startDate

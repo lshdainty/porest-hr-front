@@ -59,11 +59,17 @@ export interface GetAvailableVacationsReq {
   start_date: string
 }
 
-export interface GetAvailableVacationsResp {
+export interface AvailableVacationByType {
   vacation_type: string
   vacation_type_name: string
+  remain_time: number
+  remain_time_str: string
+}
+
+export interface GetAvailableVacationsResp {
   total_remain_time: number
   total_remain_time_str: string
+  vacations: AvailableVacationByType[]
 }
 
 export interface PutUpdateVacationUsageReq {
@@ -511,8 +517,8 @@ export async function fetchGetAllUsersVacationHistory(): Promise<GetAllUsersVaca
   return resp.data;
 }
 
-export async function fetchGetAvailableVacations(userId: string, startDate: string): Promise<GetAvailableVacationsResp[]> {
-  const resp: ApiResponse<GetAvailableVacationsResp[]> = await api.request({
+export async function fetchGetAvailableVacations(userId: string, startDate: string): Promise<GetAvailableVacationsResp> {
+  const resp: ApiResponse<GetAvailableVacationsResp> = await api.request({
     method: 'get',
     url: `/users/${userId}/vacations/available?startDate=${startDate}`
   });

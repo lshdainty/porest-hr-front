@@ -3,7 +3,7 @@ import VacationTypeStatsContent from '@/features/vacation/history/components/Vac
 import { GetAvailableVacationsResp } from '@/lib/api/vacation';
 
 interface TypeStatsWidgetProps {
-  vacationTypes?: GetAvailableVacationsResp[];
+  vacationTypes?: GetAvailableVacationsResp;
 }
 
 const TypeStatsWidget = ({ vacationTypes }: TypeStatsWidgetProps) => {

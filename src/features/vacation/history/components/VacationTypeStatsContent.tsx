@@ -1,4 +1,4 @@
-import { GetAvailableVacationsResp } from '@/lib/api/vacation';
+import { AvailableVacationByType, GetAvailableVacationsResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ const renderChartColor = (type: string) => {
 }
 
 interface VacationTypeStatsContentProps {
-  data: GetAvailableVacationsResp[] | undefined;
+  data: GetAvailableVacationsResp | undefined;
   className?: string;
   showLegend?: boolean;
 }
@@ -34,8 +34,8 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
   const minChartSize = 300; // 최소 차트 크기
 
   const vacationTypes = useMemo(() => {
-    if (data) {
-      const formattedTypes = data.map((type: GetAvailableVacationsResp) => ({
+    if (data?.vacations) {
+      const formattedTypes = data.vacations.map((type: AvailableVacationByType) => ({
         ...type,
         fill: renderChartColor(type.vacation_type)
       }));
@@ -43,10 +43,10 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
     }
     return [];
   }, [data]);
-  
+
   const totalVacationDays = useMemo(() => {
-    return vacationTypes?.reduce((total, item) => total + item.total_remain_time, 0)
-  }, [vacationTypes]);
+    return data?.total_remain_time_str ?? 0;
+  }, [data]);
 
   // 차트 크기 계산 - 반응형
   const chartConfig = useMemo(() => {
@@ -126,7 +126,7 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
                         <div className='flex items-center gap-2'>
                           <div className='h-3 w-3 rounded-full' style={{ backgroundColor: data.fill }}></div>
                           <span className='text-[0.85rem] text-muted-foreground'>{data.vacation_type_name}</span>
-                          <span className='ml-auto font-bold'>{data.total_remain_time_str}</span>
+                          <span className='ml-auto font-bold'>{data.remain_time_str}</span>
                         </div>
                       </div>
                     )
@@ -136,7 +136,7 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
               />
               <Pie
                 data={vacationTypes}
-                dataKey='total_remain_time'
+                dataKey='remain_time'
                 nameKey='vacation_type'
                 cx='50%'
                 cy='50%'

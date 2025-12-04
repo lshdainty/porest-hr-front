@@ -222,9 +222,9 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
                           <SelectValue placeholder={t('addEvent.useVacation')} />
                         </SelectTrigger>
                         <SelectContent>
-                          {vacations?.map(v => (
+                          {vacations?.vacations?.map(v => (
                             <SelectItem key={v.vacation_type} value={v.vacation_type}>
-                              {`${v.vacation_type_name} (${v.total_remain_time_str})`}
+                              {`${v.vacation_type_name} (${v.remain_time_str})`}
                             </SelectItem>
                           ))}
                         </SelectContent>

@@ -112,7 +112,7 @@ const VacationContent = () => {
       <div className='grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6'>
         <div className='xl:col-span-1 flex flex-col'>
           <VacationTypeStatsCard
-            value={vacationTypes || []}
+            value={vacationTypes}
             className='h-full'
           />
         </div>
