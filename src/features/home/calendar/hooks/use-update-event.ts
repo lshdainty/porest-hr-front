@@ -21,8 +21,10 @@ interface UseUpdateEventOptions {
 }
 
 export const useUpdateEvent = () => {
-  const { mutate: updateVacation } = usePutUpdateVacationUsageMutation();
-  const { mutate: updateSchedule } = usePutUpdateScheduleMutation();
+  const { mutate: updateVacation, isPending: isVacationPending } = usePutUpdateVacationUsageMutation();
+  const { mutate: updateSchedule, isPending: isSchedulePending } = usePutUpdateScheduleMutation();
+
+  const isPending = isVacationPending || isSchedulePending;
 
   // Drag & Drop에서 사용하는 IEvent 기반 업데이트 (날짜만 변경)
   function updateEvent(event: IEvent, options?: UseUpdateEventOptions): void;
@@ -155,5 +157,5 @@ export const useUpdateEvent = () => {
     }
   }
 
-  return { updateEvent };
+  return { updateEvent, isPending };
 }

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { Spinner } from '@/components/shadcn/spinner';
 import { EditEventDialog } from '@/features/home/calendar/components/dialogs/edit-event-dialog';
 import { useDeleteEvent } from '@/features/home/calendar/hooks/use-delete-event';
 
@@ -22,7 +23,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
   const startDate = parseISO(event.startDate);
   const endDate = parseISO(event.endDate);
 
-  const { deleteEvent } = useDeleteEvent();
+  const { deleteEvent, isPending } = useDeleteEvent();
 
   const handleDelete = () => {
     deleteEvent(event);
@@ -78,7 +79,8 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 {tc('edit')}
               </Button>
             </EditEventDialog>
-            <Button type='button' variant='destructive' onClick={handleDelete}>
+            <Button type='button' variant='destructive' onClick={handleDelete} disabled={isPending}>
+              {isPending && <Spinner />}
               {tc('delete')}
             </Button>
           </DialogFooter>

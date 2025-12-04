@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select';
+import { Spinner } from '@/components/shadcn/spinner';
 import { useUser } from '@/contexts/UserContext';
 import { useAddEvent } from '@/features/home/calendar/hooks/use-add-event';
 import type { TEventColor } from '@/features/home/calendar/types';
@@ -136,7 +137,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
     { enabled: open && !!watchedStartDate }
   );
 
-  const { addEvent } = useAddEvent();
+  const { addEvent, isPending } = useAddEvent();
 
   const onSubmit = (values: AddEventFormValues) => {
     addEvent({
@@ -361,7 +362,10 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
             <DialogClose asChild>
               <Button variant='outline' type="button">{tc('cancel')}</Button>
             </DialogClose>
-            <Button type='submit' disabled={!form.formState.isValid}>{t('addEvent.register')}</Button>
+            <Button type='submit' disabled={!form.formState.isValid || isPending}>
+              {isPending && <Spinner />}
+              {t('addEvent.register')}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

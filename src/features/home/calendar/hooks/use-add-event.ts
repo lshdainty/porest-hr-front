@@ -19,8 +19,10 @@ interface UseAddEventOptions {
 }
 
 export const useAddEvent = () => {
-  const { mutate: postUseVacation } = usePostUseVacationMutation()
-  const { mutate: postSchedule } = usePostScheduleMutation()
+  const { mutate: postUseVacation, isPending: isVacationPending } = usePostUseVacationMutation()
+  const { mutate: postSchedule, isPending: isSchedulePending } = usePostScheduleMutation()
+
+  const isPending = isVacationPending || isSchedulePending
 
   const addEvent = (params: AddEventParams, options?: UseAddEventOptions) => {
     const {
@@ -109,5 +111,5 @@ export const useAddEvent = () => {
     }
   }
 
-  return { addEvent }
+  return { addEvent, isPending }
 }

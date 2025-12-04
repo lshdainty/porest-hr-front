@@ -7,8 +7,10 @@ interface UseDeleteEventOptions {
 }
 
 export const useDeleteEvent = () => {
-  const { mutate: deleteVacation } = useDeleteVacationUsageMutation();
-  const { mutate: deleteSchedule } = useDeleteScheduleMutation();
+  const { mutate: deleteVacation, isPending: isVacationPending } = useDeleteVacationUsageMutation();
+  const { mutate: deleteSchedule, isPending: isSchedulePending } = useDeleteScheduleMutation();
+
+  const isPending = isVacationPending || isSchedulePending;
 
   const deleteEvent = (event: IEvent, options?: UseDeleteEventOptions) => {
     const isVacation = event.type.type === 'vacation';
@@ -24,5 +26,5 @@ export const useDeleteEvent = () => {
     }
   };
 
-  return { deleteEvent };
+  return { deleteEvent, isPending };
 };

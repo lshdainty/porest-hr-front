@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/shadcn/select';
 import { toast } from '@/components/shadcn/sonner';
+import { Spinner } from '@/components/shadcn/spinner';
 import { useUser } from '@/contexts/UserContext';
 import { useUpdateEvent } from '@/features/home/calendar/hooks/use-update-event';
 import type { TEventColor } from '@/features/home/calendar/types';
@@ -145,7 +146,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
     };
   }, [event.vacationType, vacations?.vacations, vacationTypes]);
 
-  const { updateEvent } = useUpdateEvent();
+  const { updateEvent, isPending } = useUpdateEvent();
 
   const onSubmit = (values: EditEventFormValues) => {
     updateEvent({
@@ -379,7 +380,10 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
             <DialogClose asChild>
               <Button variant='outline' type="button">{tc('cancel')}</Button>
             </DialogClose>
-            <Button type='submit' disabled={!form.formState.isValid}>{tc('edit')}</Button>
+            <Button type='submit' disabled={!form.formState.isValid || isPending}>
+              {isPending && <Spinner />}
+              {tc('edit')}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
