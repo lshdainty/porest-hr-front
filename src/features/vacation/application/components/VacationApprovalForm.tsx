@@ -16,6 +16,7 @@ import type { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
 import { toast } from '@/components/shadcn/sonner';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
+import { Spinner } from '@/components/shadcn/spinner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import {
   Dialog,
@@ -48,8 +49,8 @@ const VacationApprovalForm = ({
   const [showRejectReason, setShowRejectReason] = useState(false)
   const [rejectReason, setRejectReason] = useState('')
 
-  const { mutate: approveVacation } = usePostApproveVacationMutation()
-  const { mutate: rejectVacation } = usePostRejectVacationMutation()
+  const { mutate: approveVacation, isPending: isApprovePending } = usePostApproveVacationMutation()
+  const { mutate: rejectVacation, isPending: isRejectPending } = usePostRejectVacationMutation()
 
   const approvers = requestData?.approvers || []
 
@@ -417,8 +418,9 @@ const VacationApprovalForm = ({
                                 variant='destructive'
                                 onClick={handleReject}
                                 className='flex-1'
+                                disabled={isRejectPending}
                               >
-                                <XCircle className='w-4 h-4 mr-2' />
+                                {isRejectPending ? <Spinner /> : <XCircle className='w-4 h-4 mr-2' />}
                                 {t('approval.confirmReject')}
                               </Button>
                             </div>
@@ -428,6 +430,7 @@ const VacationApprovalForm = ({
                             <Button
                               onClick={() => setShowRejectReason(true)}
                               className='flex-1 bg-red-600 hover:bg-red-700 text-white'
+                              disabled={isApprovePending}
                             >
                               <XCircle className='w-4 h-4 mr-2' />
                               {t('approval.rejectBtn')}
@@ -435,8 +438,9 @@ const VacationApprovalForm = ({
                             <Button
                               onClick={handleApprove}
                               className='flex-1 bg-green-600 hover:bg-green-700 text-white'
+                              disabled={isApprovePending}
                             >
-                              <CheckCircle className='w-4 h-4 mr-2' />
+                              {isApprovePending ? <Spinner /> : <CheckCircle className='w-4 h-4 mr-2' />}
                               {t('approval.approveBtn')}
                             </Button>
                           </div>
