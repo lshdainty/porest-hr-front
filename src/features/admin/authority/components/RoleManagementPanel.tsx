@@ -1,3 +1,4 @@
+import { Dialog, DialogContent } from "@/components/shadcn/dialog";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import RoleDetail from "@/features/admin/authority/components/RoleDetail";
 import RoleList from "@/features/admin/authority/components/RoleList";
@@ -154,50 +155,51 @@ const RoleManagementPanel = () => {
     }
   };
 
-  const handleSave = async () => {
-    if (!editingRole) return;
+  const handleSave = async (roleToSave?: Role) => {
+    const role = roleToSave || editingRole;
+    if (!role) return;
 
     // 입력 값 검증
-    if (!editingRole.role_code || !editingRole.role_name) {
+    if (!role.role_code || !role.role_name) {
       toast.error("Role code and name are required");
       return;
     }
 
     // For new roles, ensure code doesn't conflict with existing (besides the temp one)
-    if ((editingRole as any).isNew && editingRole.role_code === TEMP_ROLE_CODE) {
+    if ((role as any).isNew && role.role_code === TEMP_ROLE_CODE) {
       toast.error("Please enter a valid Role Code");
       return;
     }
 
     try {
-      const isNewRole = (editingRole as any).isNew;
+      const isNewRole = (role as any).isNew;
 
       if (isNewRole) {
         // 새 역할 생성
         await createRole({
-          role_code: editingRole.role_code,
-          role_name: editingRole.role_name,
-          desc: editingRole.desc,
-          permission_codes: editingRole.permissions.map(p => p.code)
+          role_code: role.role_code,
+          role_name: role.role_name,
+          desc: role.desc,
+          permission_codes: role.permissions.map(p => p.code)
         });
 
-        setSelectedRoleId(editingRole.role_code);
+        setSelectedRoleId(role.role_code);
         toast.success("Role created successfully");
       } else {
         // 기존 역할 수정
         // 1. Update Role Info (desc only, based on API definition)
         await updateRoleMutation({
-          roleCode: editingRole.role_code,
+          roleCode: role.role_code,
           data: {
-            desc: editingRole.desc
+            desc: role.desc
           }
         });
 
         // 2. Update Permissions
         await updateRolePermissionsMutation({
-          roleCode: editingRole.role_code,
+          roleCode: role.role_code,
           data: {
-            permission_codes: editingRole.permissions.map(p => p.code)
+            permission_codes: role.permissions.map(p => p.code)
           }
         });
 
@@ -222,20 +224,6 @@ const RoleManagementPanel = () => {
   };
 
   if (isMobile) {
-    if (selectedRoleId && editingRole) {
-      return (
-        <div className="h-full bg-background">
-          <RoleDetail 
-            role={editingRole} 
-            allAuthorities={authorities}
-            onUpdateRole={handleUpdateRole}
-            onSave={handleSave}
-            onBack={handleBackToList}
-          />
-        </div>
-      );
-    }
-
     return (
       <div className="h-full bg-background">
         <RoleList 
@@ -245,6 +233,25 @@ const RoleManagementPanel = () => {
           onAddRole={handleAddRole}
           onDeleteRole={handleDeleteRole}
         />
+
+        <Dialog 
+          open={!!selectedRoleId && !!editingRole} 
+          onOpenChange={(open) => {
+            if (!open) handleBackToList();
+          }}
+        >
+          <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden">
+            {editingRole && (
+              <RoleDetail 
+                role={editingRole} 
+                allAuthorities={authorities}
+                onUpdateRole={handleUpdateRole}
+                onSave={handleSave}
+                onBack={handleBackToList}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }

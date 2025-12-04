@@ -4,15 +4,17 @@ import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
 import { usePermission } from "@/contexts/PermissionContext";
+import MobilePermissionDrawer from "@/features/admin/authority/components/MobilePermissionDrawer";
 import PermissionMatrix from "@/features/admin/authority/components/PermissionMatrix";
 import { Authority, Role } from "@/features/admin/authority/types";
+import { useIsMobile } from "@/hooks/useMobile";
 import { ArrowLeft, Save } from "lucide-react";
 
 interface RoleDetailProps {
   role: Role;
   allAuthorities: Authority[];
   onUpdateRole: (updatedRole: Role) => void;
-  onSave: () => void;
+  onSave: (role?: Role) => void;
   onBack?: () => void;
 }
 
@@ -51,9 +53,42 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
     onUpdateRole({ ...role, permissions: newPermissions });
   };
 
+  const handleToggleGroup = (authCodes: string[], checked: boolean) => {
+    const currentPermissions = role.permissions || [];
+    let newPermissions = [...currentPermissions];
+
+    if (checked) {
+      // Add all codes that are not already present
+      const authsToAdd = allAuthorities.filter(a => authCodes.includes(a.code));
+      authsToAdd.forEach(auth => {
+        if (!newPermissions.some(p => p.code === auth.code)) {
+          newPermissions.push(auth);
+        }
+      });
+    } else {
+      // Remove all codes
+      newPermissions = newPermissions.filter(p => !authCodes.includes(p.code));
+    }
+
+    onUpdateRole({ ...role, permissions: newPermissions });
+  };
+
+  const handleMobileSave = async (newPermissionCodes: string[]) => {
+    // Map codes back to Authority objects
+    const newPermissions = allAuthorities.filter(a => newPermissionCodes.includes(a.code));
+    
+    const updatedRole = { ...role, permissions: newPermissions };
+    
+    // Update local state
+    onUpdateRole(updatedRole);
+    
+    // Save to server
+    await onSave(updatedRole);
+  };
+
   return (
     <div className="flex flex-col h-full">
-      <div className="p-6 border-b bg-background sticky top-0 z-20">
+      <div className="p-4 md:p-6 border-b bg-background sticky top-0 z-20">
         <div className="flex justify-between items-start mb-6">
           <div className="flex items-center gap-2">
             {onBack && (
@@ -63,11 +98,13 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
             )}
             <div>
               <h2 className="text-2xl font-bold tracking-tight">Role Details</h2>
-              <p className="text-muted-foreground">Manage role information and permissions.</p>
+              {!useIsMobile() && (
+                <p className="text-muted-foreground">Manage role information and permissions.</p>
+              )}
             </div>
           </div>
           <RequirePermission permission="ROLE:MANAGE">
-            <Button onClick={onSave} className="gap-2">
+            <Button onClick={() => onSave()} className="gap-2">
               <Save className="w-4 h-4" />
               Save Changes
             </Button>
@@ -116,14 +153,24 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 bg-muted/10 pb-20">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-muted/10 pb-20">
         <h3 className="text-lg font-semibold mb-4">Permissions</h3>
-        <PermissionMatrix
-          authorities={allAuthorities}
-          selectedAuthorityIds={(role.permissions || []).filter(p => p && p.code).map(p => p.code)}
-          onToggleAuthority={handleToggleAuthority}
-          disabled={!canManageRoles}
-        />
+        {useIsMobile() ? (
+          <MobilePermissionDrawer
+            authorities={allAuthorities}
+            selectedAuthorityIds={(role.permissions || []).filter(p => p && p.code).map(p => p.code)}
+            onSave={handleMobileSave}
+            disabled={!canManageRoles}
+          />
+        ) : (
+          <PermissionMatrix
+            authorities={allAuthorities}
+            selectedAuthorityIds={(role.permissions || []).filter(p => p && p.code).map(p => p.code)}
+            onToggleAuthority={handleToggleAuthority}
+            onToggleGroup={handleToggleGroup}
+            disabled={!canManageRoles}
+          />
+        )}
       </div>
     </div>
   );

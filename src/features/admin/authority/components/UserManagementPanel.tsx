@@ -1,3 +1,4 @@
+import { Dialog, DialogContent } from "@/components/shadcn/dialog";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import UserList from "@/features/admin/authority/components/UserList";
 import UserRoleAssignment from "@/features/admin/authority/components/UserRoleAssignment";
@@ -5,6 +6,7 @@ import { Authority, Role, User } from "@/features/admin/authority/types";
 import { usePermissionsQuery } from "@/hooks/queries/usePermissions";
 import { useRolesQuery } from "@/hooks/queries/useRoles";
 import { usePutUserMutation, useUsersQuery } from "@/hooks/queries/useUsers";
+import { useIsMobile } from "@/hooks/useMobile";
 import { fetchGetUser } from "@/lib/api/user";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -14,6 +16,7 @@ const UserManagementPanel = () => {
   const { data: roles = [], isLoading: isRolesLoading } = useRolesQuery();
   const { data: authorities = [], isLoading: isPermissionsLoading } = usePermissionsQuery();
   const { mutateAsync: updateUser } = usePutUserMutation();
+  const isMobile = useIsMobile();
 
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -38,7 +41,11 @@ const UserManagementPanel = () => {
       }));
       setUsers(mappedUsers);
 
-      if (mappedUsers.length > 0 && !selectedUserId) {
+      // Check window width directly to avoid race condition with useIsMobile hook
+      // which defaults to false (desktop) on first render
+      const isDesktop = window.innerWidth >= 768;
+
+      if (isDesktop && mappedUsers.length > 0 && !selectedUserId) {
         setSelectedUserId(mappedUsers[0].id);
       }
     }
@@ -75,6 +82,36 @@ const UserManagementPanel = () => {
       toast.error("Failed to update user roles");
     }
   };
+
+  if (isMobile) {
+    return (
+      <div className="h-full bg-background">
+        <UserList 
+          users={users} 
+          selectedUserId={selectedUserId} 
+          onSelectUser={setSelectedUserId}
+        />
+
+        <Dialog 
+          open={!!selectedUserId} 
+          onOpenChange={(open) => {
+            if (!open) setSelectedUserId(null);
+          }}
+        >
+          <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden">
+            {selectedUser && (
+              <UserRoleAssignment 
+                user={selectedUser} 
+                allRoles={domainRoles}
+                onUpdateUserRole={handleUpdateUserRole}
+                onBack={() => setSelectedUserId(null)}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
 
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full rounded-lg border bg-background">

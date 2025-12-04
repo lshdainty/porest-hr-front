@@ -1,30 +1,30 @@
-import { useState } from 'react'
 import { Button } from '@/components/shadcn/button'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/shadcn/select'
-import { useHolidayContext } from '@/features/admin/holiday/contexts/HolidayContext'
-import {
-    useDeleteHolidayMutation,
-    useHolidaysByPeriodQuery,
-    usePostHolidayMutation,
-    usePutHolidayMutation,
-} from '@/hooks/queries/useHolidays'
-import { useCountryCodeTypesQuery } from '@/hooks/queries/useTypes'
-import {
-    type GetHolidaysResp,
-    type PostHolidayReq,
-    type PutHolidayReq,
-} from '@/lib/api/holiday'
-import dayjs from 'dayjs'
-import { useTranslation } from 'react-i18next'
 import HolidayEditDialog from '@/features/admin/holiday/components/HolidayEditDialog'
 import HolidayList from '@/features/admin/holiday/components/HolidayList'
 import HolidayListSkeleton from '@/features/admin/holiday/components/HolidayListSkeleton'
+import { useHolidayContext } from '@/features/admin/holiday/contexts/HolidayContext'
+import {
+  useDeleteHolidayMutation,
+  useHolidaysByPeriodQuery,
+  usePostHolidayMutation,
+  usePutHolidayMutation,
+} from '@/hooks/queries/useHolidays'
+import { useCountryCodeTypesQuery } from '@/hooks/queries/useTypes'
+import {
+  type GetHolidaysResp,
+  type PostHolidayReq,
+  type PutHolidayReq,
+} from '@/lib/api/holiday'
+import dayjs from 'dayjs'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const formatDateToYYYYMMDD = (dateString: string) => {
   if (!dateString) return ''
@@ -108,18 +108,17 @@ const HolidayContent = () => {
   }
 
   return (
-    <div className='flex w-full h-full p-6'>
+    <div className='flex w-full h-full p-4 md:p-6'>
       <div className='w-full max-w-4xl mx-auto'>
-        <div className='flex items-center justify-between mb-6'>
-          <div className='flex items-center gap-3'>
-            <div>
-              <h1 className='text-3xl font-bold text-card-foreground'>{t('holiday.title')}</h1>
-              <p className='text-muted-foreground mt-1'>{t('holiday.description')}</p>
-            </div>
+        <div className='flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4'>
+          <div>
+            <h1 className='text-2xl md:text-3xl font-bold text-card-foreground'>{t('holiday.title')}</h1>
+            <p className='text-sm md:text-base text-muted-foreground mt-1'>{t('holiday.description')}</p>
           </div>
+          
           <div className='flex items-center gap-2'>
             <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-              <SelectTrigger className='w-[140px]'>
+              <SelectTrigger className='flex-1 md:w-[140px]'>
                 <SelectValue placeholder={t('holiday.countryPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
@@ -142,20 +141,19 @@ const HolidayContent = () => {
                 ))}
               </SelectContent>
             </Select>
+            
+            <HolidayEditDialog
+              isOpen={isDialogOpen}
+              onOpenChange={setIsDialogOpen}
+              editingHoliday={editingHoliday}
+              onSave={handleSave}
+              trigger={
+                <Button className='flex items-center gap-2 shrink-0' onClick={handleAddClick}>
+                  {tc('add')}
+                </Button>
+              }
+            />
           </div>
-        </div>
-        <div className='flex items-center justify-end mb-4'>
-          <HolidayEditDialog
-            isOpen={isDialogOpen}
-            onOpenChange={setIsDialogOpen}
-            editingHoliday={editingHoliday}
-            onSave={handleSave}
-            trigger={
-              <Button className='flex items-center gap-2' onClick={handleAddClick}>
-                {tc('add')}
-              </Button>
-            }
-          />
         </div>
         {holidaysLoding ? (
           <HolidayListSkeleton />
