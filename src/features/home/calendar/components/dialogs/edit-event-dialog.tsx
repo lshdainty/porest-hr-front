@@ -28,6 +28,7 @@ import { useUpdateEvent } from '@/features/home/calendar/hooks/use-update-event'
 import type { TEventColor } from '@/features/home/calendar/types';
 import { calendarTypes } from '@/features/home/calendar/types';
 import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations';
+import { useVacationTypesQuery } from '@/hooks/queries/useTypes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
@@ -123,6 +124,26 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
     loginUser?.user_id || '',
     dayjs(eventStartDate).format('YYYY-MM-DDTHH:mm:ss')
   );
+
+  const { data: vacationTypes } = useVacationTypesQuery();
+
+  // 현재 이벤트의 vacationType이 available vacations에 없는 경우 추가로 표시
+  const currentVacationTypeNotInList = useMemo(() => {
+    if (!event.vacationType) return null;
+    const existsInAvailable = vacations?.vacations?.some(
+      v => v.vacation_type === event.vacationType
+    );
+    if (existsInAvailable) return null;
+
+    // vacationTypes에서 해당 타입 정보 찾기
+    const typeInfo = vacationTypes?.find(vt => vt.code === event.vacationType);
+    if (!typeInfo) return null;
+
+    return {
+      vacation_type: typeInfo.code,
+      vacation_type_name: typeInfo.name
+    };
+  }, [event.vacationType, vacations?.vacations, vacationTypes]);
 
   const { updateEvent } = useUpdateEvent();
 
@@ -222,6 +243,14 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
                           <SelectValue placeholder={t('addEvent.useVacation')} />
                         </SelectTrigger>
                         <SelectContent>
+                          {currentVacationTypeNotInList && (
+                            <SelectItem
+                              key={currentVacationTypeNotInList.vacation_type}
+                              value={currentVacationTypeNotInList.vacation_type}
+                            >
+                              {`${currentVacationTypeNotInList.vacation_type_name} (0일)`}
+                            </SelectItem>
+                          )}
                           {vacations?.vacations?.map(v => (
                             <SelectItem key={v.vacation_type} value={v.vacation_type}>
                               {`${v.vacation_type_name} (${v.remain_time_str})`}

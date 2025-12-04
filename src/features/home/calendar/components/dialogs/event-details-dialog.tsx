@@ -4,10 +4,10 @@ import { format, parseISO } from 'date-fns';
 import { Calendar, Clock, Text, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { useDeleteEvent } from '@/features/home/calendar/hooks/use-delete-event';
-import { EditEventDialog } from '@/features/home/calendar/components/dialogs/edit-event-dialog';
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { EditEventDialog } from '@/features/home/calendar/components/dialogs/edit-event-dialog';
+import { useDeleteEvent } from '@/features/home/calendar/hooks/use-delete-event';
 
 import type { IEvent } from '@/features/home/calendar/interfaces';
 
