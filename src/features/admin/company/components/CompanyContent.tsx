@@ -1,20 +1,25 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
 import { Skeleton } from '@/components/shadcn/skeleton';
-import { useCompanyContext } from '@/features/admin/company/contexts/CompanyContext';
-import { useCompanyQuery, useCompanyWithDepartmentsQuery, usePostCompanyMutation, usePutCompanyMutation } from '@/hooks/queries/useCompanies';
-import { useDeleteDepartmentMutation, usePostDepartmentMutation, usePutDepartmentMutation } from '@/hooks/queries/useDepartments';
-import { type PostCompanyReq, type PutCompanyReq } from '@/lib/api/company';
-import { type PostDepartmentReq, type PutDepartmentReq } from '@/lib/api/department';
-import { Building2, Pencil } from 'lucide-react';
-import { useMemo } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
 import CompanyCreateCard from '@/features/admin/company/components/CompanyCreateCard';
 import CompanyFormDialog from '@/features/admin/company/components/CompanyFormDialog';
 import DepartmentChartPanel from '@/features/admin/company/components/DepartmentChartPanel';
 import DepartmentChartPanelSkeleton from '@/features/admin/company/components/DepartmentChartPanelSkeleton';
 import DepartmentTreePanel from '@/features/admin/company/components/DepartmentTreePanel';
 import DepartmentTreePanelSkeleton from '@/features/admin/company/components/DepartmentTreePanelSkeleton';
+import { useCompanyContext } from '@/features/admin/company/contexts/CompanyContext';
+import { useCompanyQuery, useCompanyWithDepartmentsQuery, usePostCompanyMutation, usePutCompanyMutation } from '@/hooks/queries/useCompanies';
+import { useDeleteDepartmentMutation, usePostDepartmentMutation, usePutDepartmentMutation } from '@/hooks/queries/useDepartments';
+import { useIsMobile } from '@/hooks/useMobile';
+import { type PostCompanyReq, type PutCompanyReq } from '@/lib/api/company';
+import { type PostDepartmentReq, type PutDepartmentReq } from '@/lib/api/department';
+import { Building2, Pencil } from 'lucide-react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const CompanyContent = () => {
+  const { t } = useTranslation('admin');
+  const isMobile = useIsMobile();
   const { selectedDept, setSelectedDept, isCompanyEditDialogOpen, setIsCompanyEditDialogOpen } = useCompanyContext();
 
   const { data: company, isLoading } = useCompanyQuery();
@@ -118,31 +123,56 @@ const CompanyContent = () => {
           }}
           mode='edit'
         />
-        <ResizablePanelGroup direction='horizontal' className='flex-1 min-h-0 rounded-lg border'>
-          <ResizablePanel
-            defaultSize={25}
-            minSize={25}
-            style={{ overflow: 'hidden' }}
-          >
-            <DepartmentTreePanel
-              departments={departments}
-              selectedDept={selectedDept}
-              onDeptSelect={setSelectedDept}
-              onDeptUpdate={handleDeptUpdate}
-              onDeptDelete={handleDeptDelete}
-              companyId={company?.company_id || ''}
-            />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel
-            defaultSize={75}
-            style={{ overflow: 'hidden' }}
-          >
-            <DepartmentChartPanel
-              departments={departments}
-            />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+        
+        {isMobile ? (
+          <Tabs defaultValue="dept-list" className="flex-1 min-h-0 flex flex-col">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="dept-list">{t('department.title')}</TabsTrigger>
+              <TabsTrigger value="org-chart">{t('department.chart')}</TabsTrigger>
+            </TabsList>
+            <TabsContent value="dept-list" className="flex-1 min-h-0 mt-2 border rounded-lg overflow-hidden">
+              <DepartmentTreePanel
+                departments={departments}
+                selectedDept={selectedDept}
+                onDeptSelect={setSelectedDept}
+                onDeptUpdate={handleDeptUpdate}
+                onDeptDelete={handleDeptDelete}
+                companyId={company?.company_id || ''}
+              />
+            </TabsContent>
+            <TabsContent value="org-chart" className="flex-1 min-h-0 mt-2 border rounded-lg overflow-hidden">
+              <DepartmentChartPanel
+                departments={departments}
+              />
+            </TabsContent>
+          </Tabs>
+        ) : (
+          <ResizablePanelGroup direction='horizontal' className='flex-1 min-h-0 rounded-lg border'>
+            <ResizablePanel
+              defaultSize={25}
+              minSize={25}
+              style={{ overflow: 'hidden' }}
+            >
+              <DepartmentTreePanel
+                departments={departments}
+                selectedDept={selectedDept}
+                onDeptSelect={setSelectedDept}
+                onDeptUpdate={handleDeptUpdate}
+                onDeptDelete={handleDeptDelete}
+                companyId={company?.company_id || ''}
+              />
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel
+              defaultSize={75}
+              style={{ overflow: 'hidden' }}
+            >
+              <DepartmentChartPanel
+                departments={departments}
+              />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        )}
       </div>
     </div>
   );

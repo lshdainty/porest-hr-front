@@ -61,5 +61,9 @@
   "unknownError": "An unknown error occurred.",
   "loadFailed": "Failed to load data.",
   "copy": "Copy",
-  "login": "Login"
+  "login": "Login",
+  "clear": "Clear",
+  "previous": "Previous",
+  "next": "Next",
+  "dontShowToday": "Don't show again today"
 }

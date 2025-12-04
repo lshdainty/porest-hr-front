@@ -1,4 +1,5 @@
 import {
+  Bell,
   Briefcase,
   Building2,
   CalendarCog,
@@ -34,7 +35,9 @@ import DashboardPage from '@/pages/DashboardPage'
 import DuesPage from '@/pages/DuesPage'
 import HistoryPage from '@/pages/HistoryPage'
 import HolidayPage from '@/pages/HolidayPage'
+import NoticePage from '@/pages/NoticePage'
 import PolicyPage from '@/pages/PolicyPage'
+import UserNoticePage from '@/pages/UserNoticePage'
 import ReportPage from '@/pages/ReportPage'
 import RulePage from '@/pages/RulePage'
 import SchedulePage from '@/pages/SchedulePage'
@@ -87,6 +90,14 @@ export const routesConfig: RouteGroup[] = [
             path: '/calendar',
             icon: CalendarDays,
             component: CalendarPage,
+          },
+          {
+            id: 'notice',
+            nameKey: 'menu.notice',
+            path: '/notice',
+            icon: Bell,
+            component: UserNoticePage,
+            requiredPermissions: ['NOTICE:READ'],
           }
         ],
       },
@@ -261,6 +272,14 @@ export const routesConfig: RouteGroup[] = [
             icon: Briefcase,
             component: WorkCodePage,
             requiredPermissions: ['WORK:MANAGE'],
+          },
+          {
+            id: 'admin-notice',
+            nameKey: 'menu.adminNotice',
+            path: '/admin/notice',
+            icon: Bell,
+            component: NoticePage,
+            requiredPermissions: ['NOTICE:READ'],
           },
         ],
       }

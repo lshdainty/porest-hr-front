@@ -8,6 +8,7 @@
     "home": "홈",
     "dashboard": "대시보드",
     "calendar": "캘린더",
+    "notice": "공지사항",
     "vacation": "휴가",
     "vacationHistory": "휴가 현황",
     "vacationApplication": "휴가 신청",
@@ -28,6 +29,7 @@
     "adminAuthority": "역할 및 권한",
     "adminHoliday": "공휴일 관리",
     "adminWork": "업무 코드",
+    "adminNotice": "공지사항",
     "todo": "Todo (Feature Arch)"
   },
   "footer": {
