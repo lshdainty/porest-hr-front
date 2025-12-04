@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/shadcn/checkbox'
 import { Input } from '@/components/shadcn/input'
 import { Label } from '@/components/shadcn/label'
 import { cn } from '@/lib/utils'
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from 'lucide-react'
 import React from 'react'
 
 export type TransferItem = {
@@ -94,8 +94,8 @@ export default function TransferList({
   const defaultRenderItem = (item: TransferItem) => item.label
 
   return (
-    <div className='flex space-x-4 flex-1 h-full'>
-      <div className='w-1/2 bg-background rounded-sm flex flex-col'>
+    <div className='flex flex-col md:flex-row md:space-x-4 gap-4 md:gap-0 flex-1 h-full'>
+      <div className='w-full md:w-1/2 bg-background rounded-sm flex flex-col h-[300px] md:h-auto'>
         <div className='flex items-center justify-between flex-shrink-0'>
           <Input
             placeholder={leftPlaceholder}
@@ -127,24 +127,26 @@ export default function TransferList({
         </ul>
       </div>
 
-      <div className='flex flex-col items-center justify-center gap-2'>
+      <div className='flex flex-row md:flex-col items-center justify-center gap-2'>
         <Button
           onClick={moveToRight}
           size='icon'
           variant='outline'
           disabled={leftItems.filter(item => item.selected).length === 0}>
-          <ChevronRightIcon className='h-4 w-4' />
+          <ChevronRightIcon className='hidden md:block h-4 w-4' />
+          <ChevronDownIcon className='block md:hidden h-4 w-4' />
         </Button>
         <Button
           onClick={moveToLeft}
           size='icon'
           variant='outline'
           disabled={rightItems.filter(item => item.selected).length === 0}>
-          <ChevronLeftIcon className='h-4 w-4' />
+          <ChevronLeftIcon className='hidden md:block h-4 w-4' />
+          <ChevronUpIcon className='block md:hidden h-4 w-4' />
         </Button>
       </div>
 
-      <div className='w-1/2 bg-background rounded-sm flex flex-col'>
+      <div className='w-full md:w-1/2 bg-background rounded-sm flex flex-col h-[300px] md:h-auto'>
         <div className='flex items-center justify-between flex-shrink-0'>
           <Input
             placeholder={rightPlaceholder}
