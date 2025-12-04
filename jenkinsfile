@@ -31,6 +31,12 @@ pipeline {
             }
         }
         
+        stage('Generate i18n') {
+            steps {
+                sh 'npm run i18n:generate'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'npm run build:skip-check'
