@@ -1,10 +1,11 @@
-import { type UserInfo } from '@/lib/api/department'
-import { useCheckUserMainDepartmentQuery } from '@/hooks/queries/useDepartments'
-import { toast } from '@/components/shadcn/sonner'
 import { Button } from '@/components/shadcn/button'
 import { Checkbox } from '@/components/shadcn/checkbox'
 import { Label } from '@/components/shadcn/label'
+import { toast } from '@/components/shadcn/sonner'
+import { Spinner } from '@/components/shadcn/spinner'
 import TransferList, { type TransferItem } from '@/components/shadcn/transfer'
+import { useCheckUserMainDepartmentQuery } from '@/hooks/queries/useDepartments'
+import { type UserInfo } from '@/lib/api/department'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -13,6 +14,7 @@ interface UserDepartmentTransferProps {
   usersNotInDepartment: UserInfo[]
   onTransfer?: (addedUsers: UserInfo[], removedUsers: UserInfo[]) => void
   isLoading?: boolean
+  isSaving?: boolean
 }
 
 const UserDepartmentTransfer = ({
@@ -20,6 +22,7 @@ const UserDepartmentTransfer = ({
   usersNotInDepartment,
   onTransfer,
   isLoading = false,
+  isSaving = false,
 }: UserDepartmentTransferProps) => {
   const { t } = useTranslation('admin')
   const { t: tc } = useTranslation('common')
@@ -184,8 +187,9 @@ const UserDepartmentTransfer = ({
   return (
     <div className='w-full h-full flex flex-col gap-4'>
       <div className='flex justify-end gap-2'>
-        <Button onClick={handleSave} disabled={!hasChanges()}>
-          {tc('save')}
+        <Button onClick={handleSave} disabled={!hasChanges() || isSaving}>
+          {isSaving && <Spinner />}
+          {isSaving ? tc('processing') : tc('save')}
         </Button>
       </div>
 

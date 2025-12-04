@@ -134,6 +134,7 @@ const DepartmentContent = () => {
                   usersInDepartment={departmentUsers?.users_in_department || []}
                   usersNotInDepartment={departmentUsers?.users_not_in_department || []}
                   isLoading={isDepartmentUsersLoading}
+                  isSaving={postDepartmentUsers.isPending || deleteDepartmentUsers.isPending}
                   onTransfer={handleTransfer}
                 />
               )}
@@ -182,6 +183,7 @@ const DepartmentContent = () => {
                   usersInDepartment={departmentUsers?.users_in_department || []}
                   usersNotInDepartment={departmentUsers?.users_not_in_department || []}
                   isLoading={isDepartmentUsersLoading}
+                  isSaving={postDepartmentUsers.isPending || deleteDepartmentUsers.isPending}
                   onTransfer={handleTransfer}
                 />
               ) : (

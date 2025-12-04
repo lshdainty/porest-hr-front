@@ -3,13 +3,14 @@ import { Button } from "@/components/shadcn/button";
 import { Checkbox } from "@/components/shadcn/checkbox";
 import { Input } from "@/components/shadcn/input";
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
 } from "@/components/shadcn/sheet";
+import { Spinner } from "@/components/shadcn/spinner";
 import { Role } from "@/features/admin/authority/types";
 import { ChevronsUpDown, Search } from "lucide-react";
 import { useState } from "react";
@@ -17,7 +18,7 @@ import { useState } from "react";
 interface MobileRoleSelectorProps {
   allRoles: Role[];
   selectedRoleCodes: string[];
-  onSave: (roleCodes: string[]) => void;
+  onSave: (roleCodes: string[]) => Promise<void>;
   disabled?: boolean;
 }
 
@@ -30,6 +31,7 @@ const MobileRoleSelector = ({
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [localSelectedRoleCodes, setLocalSelectedRoleCodes] = useState<string[]>(selectedRoleCodes);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Sync local state when opening the sheet
   const handleOpenChange = (newOpen: boolean) => {
@@ -47,9 +49,16 @@ const MobileRoleSelector = ({
     );
   };
 
-  const handleSave = () => {
-    onSave(localSelectedRoleCodes);
-    setOpen(false);
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      await onSave(localSelectedRoleCodes);
+      setOpen(false);
+    } catch (error) {
+      console.error("Failed to save roles:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const selectedCount = selectedRoleCodes.length;
@@ -127,8 +136,9 @@ const MobileRoleSelector = ({
         </div>
 
         <div className="p-4 border-t bg-background">
-          <Button className="w-full" onClick={handleSave}>
-            Done
+          <Button className="w-full" onClick={handleSave} disabled={isSaving}>
+            {isSaving && <Spinner />}
+            {isSaving ? "Saving..." : "Done"}
           </Button>
         </div>
       </SheetContent>

@@ -12,7 +12,7 @@ import { useState } from "react";
 interface UserRoleAssignmentProps {
   user: User;
   allRoles: Role[];
-  onUpdateUserRole: (userId: string, roleCodes: string[]) => void;
+  onUpdateUserRole: (userId: string, roleCodes: string[]) => Promise<void>;
   onBack?: () => void;
 }
 
