@@ -285,7 +285,7 @@ work,workPart,업무 파트,Work Part
 work,workDivision,업무 구분,Work Division
 work,workPartList,업무 파트 목록,Work Part List
 work,workDivisionList,업무 구분 목록,Work Division List
-work,addTopGroup,최상위 그룹 추가,Add Top Group
+
 work,addSubCode,하위 코드 추가,Add Sub Code
 work,addWorkDivision,업무 구분 추가,Add Work Division
 work,codeName,코드명,Code Name
@@ -1069,3 +1069,5 @@ common,dontShowToday,오늘 하루 보지 않기,Don't show again today
 calendar,header.eventCount,{{count}}개 일정,{{count}} events
 calendar,dayView.happeningNow,진행 중,Happening now
 calendar,dayView.noAppointments,현재 진행 중인 일정이 없습니다,No appointments or consultations at the moment
+calendar,weekView.notAvailable,주간 뷰는 작은 화면에서 사용할 수 없습니다.,Weekly view is not available on smaller devices.
+calendar,weekView.switchView,일간 또는 월간 뷰로 전환해주세요.,Please switch to daily or monthly view.

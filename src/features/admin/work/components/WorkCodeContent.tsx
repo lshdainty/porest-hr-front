@@ -10,27 +10,27 @@ const WorkCodeContent = () => {
 
   return (
     <WorkCodeProvider>
-      <div className='h-full w-full'>
-        <div className='h-full flex flex-col p-4 sm:p-6 md:p-8 gap-6 overflow-hidden'>
-          <div className='flex items-center gap-2 flex-shrink-0'>
+      <div className='w-full'>
+        <div className='flex flex-col p-4 sm:p-6 md:p-8 gap-6'>
+          <div className='flex items-center gap-2 shrink-0'>
             <Briefcase />
             <h1 className='text-3xl font-bold'>{t('codeManagement')}</h1>
           </div>
 
-          <Tabs defaultValue="part" className="flex-1 min-h-0 flex flex-col">
-            <TabsList className="grid w-full grid-cols-2">
+          <Tabs defaultValue="part" className="flex flex-col gap-2">
+            <TabsList>
               <TabsTrigger value="part">{t('workPart')}</TabsTrigger>
               <TabsTrigger value="division">{t('workDivision')}</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="part" className="flex-1 min-h-0 mt-2 border rounded-lg overflow-hidden">
-              <div className="h-full overflow-y-auto p-4">
+            <TabsContent value="part" className="mt-0 border rounded-lg">
+              <div className="p-4">
                 <WorkCodeList />
               </div>
             </TabsContent>
 
-            <TabsContent value="division" className="flex-1 min-h-0 mt-2 border rounded-lg overflow-hidden">
-              <div className="h-full overflow-y-auto p-4">
+            <TabsContent value="division" className="mt-0 border rounded-lg">
+              <div className="p-4">
                 <WorkDivisionList />
               </div>
             </TabsContent>
