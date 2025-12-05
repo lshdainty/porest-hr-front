@@ -8,7 +8,6 @@
     "home": "Home",
     "dashboard": "Dashboard",
     "calendar": "Calendar",
-    "notice": "Notice",
     "vacation": "Vacation",
     "vacationHistory": "History",
     "vacationApplication": "Application",
@@ -29,8 +28,9 @@
     "adminAuthority": "Role & Authority",
     "adminHoliday": "Holiday",
     "adminWork": "Work Code",
-    "adminNotice": "Notice",
-    "todo": "Todo (Feature Arch)"
+    "todo": "Todo (Feature Arch)",
+    "notice": "Notice",
+    "adminNotice": "Notice"
   },
   "footer": {
     "account": "Account",

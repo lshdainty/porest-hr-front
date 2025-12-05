@@ -1021,4 +1021,48 @@ common,minute,분,m
 vacation,approval.rejectReasonRequired,반려 사유를 입력해주세요.,Please enter a rejection reason.
 vacation,approval.rejectReasonPlaceholder,반려 사유를 입력해주세요...,Please enter the rejection reason...
 vacation,approval.nthApproval,{{index}}차 승인,{{index}}st Approval
-vacation,application.approverRequired,승인자를 선택해주세요,Please select an approver
+admin,notice.title,공지사항 관리,Notice Management
+admin,notice.description,공지사항을 관리하고 추가/수정/삭제할 수 있습니다,Manage notices - add/edit/delete
+admin,notice.addTitle,새 공지사항 추가,Add New Notice
+admin,notice.editTitle,공지사항 수정,Edit Notice
+admin,notice.deleteTitle,공지사항 삭제,Delete Notice
+admin,notice.deleteConfirm,"정말 '{{title}}' 공지사항을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.","Are you sure you want to delete '{{title}}' notice? This action cannot be undone."
+admin,notice.formDescription,공지사항 정보를 입력해주세요.,Please enter notice information.
+admin,notice.titleLabel,제목,Title
+admin,notice.titlePlaceholder,공지사항 제목을 입력하세요,Enter notice title
+admin,notice.titleRequired,제목을 입력해주세요.,Please enter the title.
+admin,notice.contentLabel,내용,Content
+admin,notice.contentPlaceholder,공지사항 내용을 입력하세요,Enter notice content
+admin,notice.contentRequired,내용을 입력해주세요.,Please enter the content.
+admin,notice.type,공지 유형,Notice Type
+admin,notice.typePlaceholder,유형 선택,Select type
+admin,notice.typeRequired,공지 유형을 선택해주세요.,Please select notice type.
+admin,notice.typeGeneral,일반,General
+admin,notice.typeUrgent,긴급,Urgent
+admin,notice.typeEvent,이벤트,Event
+admin,notice.typeMaintenance,점검,Maintenance
+admin,notice.pinned,상단 고정,Pin to Top
+admin,notice.pinnedPlaceholder,고정 여부,Pin option
+admin,notice.pinnedRequired,고정 여부를 선택해주세요.,Please select pin option.
+admin,notice.startDate,시작일,Start Date
+admin,notice.startDateRequired,시작일을 선택해주세요.,Please select start date.
+admin,notice.endDate,종료일,End Date
+admin,notice.endDateRequired,종료일을 선택해주세요.,Please select end date.
+admin,notice.displayPeriod,노출 기간,Display Period
+admin,notice.statusActive,노출 중,Active
+admin,notice.statusInactive,노출 종료,Inactive
+admin,notice.noNotices,등록된 공지사항이 없습니다,No notices registered
+admin,notice.noNoticesDesc,새로운 공지사항을 추가해보세요,Try adding a new notice
+admin,notice.addFirst,첫 번째 공지사항 추가,Add First Notice
+admin,notice.addBtn,추가,Add
+admin,notice.searchPlaceholder,제목으로 검색...,Search by title...
+sidebar,menu.notice,공지사항,Notice
+sidebar,menu.adminNotice,공지사항,Notice
+notice,title,공지사항,Notice
+notice,description,중요 공지사항을 확인하세요,Check important notices
+notice,noNotices,등록된 공지사항이 없습니다,No notices available
+notice,pinned,고정,Pinned
+common,clear,초기화,Clear
+common,previous,이전,Previous
+common,next,다음,Next
+common,dontShowToday,오늘 하루 보지 않기,Don't show again today

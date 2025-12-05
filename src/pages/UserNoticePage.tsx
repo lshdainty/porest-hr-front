@@ -2,8 +2,10 @@ import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { UserNoticeContent } from '@/features/home/notice/components/UserNoticeContent';
 import { UserNoticeSkeleton } from '@/features/home/notice/components/UserNoticeSkeleton';
 import { useActiveNoticesQuery } from '@/hooks/queries/useNotices';
+import { useTranslation } from 'react-i18next';
 
 const UserNoticePage = () => {
+  const { t } = useTranslation('common');
   const { isLoading, error, data } = useActiveNoticesQuery(0, 10);
 
   return (
@@ -13,7 +15,7 @@ const UserNoticePage = () => {
       errorComponent={
         <div className="p-4 sm:p-6 md:p-8">
           <div className="p-8 text-center text-red-600">
-            데이터를 불러오는데 실패했습니다.
+            {t('loadFailed')}
           </div>
         </div>
       }

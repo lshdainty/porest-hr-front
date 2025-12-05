@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# i18n generated files (generated from i18n/translations.csv)
+/src/locales/
