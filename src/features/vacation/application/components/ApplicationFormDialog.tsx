@@ -53,16 +53,21 @@ interface ApplicationFormDialogProps {
   onClose: () => void
   onSubmitSuccess: () => void
   vacationPolicies: GetUserVacationPoliciesResp[]
-  approvers: GetUserApproversResp[]
+  approversData: GetUserApproversResp
 }
 
-const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicies, approvers }: ApplicationFormDialogProps) => {
+const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicies, approversData }: ApplicationFormDialogProps) => {
   const { t } = useTranslation('vacation')
   const { t: tc } = useTranslation('common')
   const { loginUser } = useUser()
   const { mutate: requestVacation } = usePostRequestVacationMutation()
 
   const formSchema = createFormSchema(t)
+
+  // 승인자 데이터 추출
+  const approvers = approversData?.approvers || []
+  const maxAvailableCount = approversData?.max_available_count || 0
+  const isAutoApproval = approversData?.is_auto_approval || false
 
   const form = useForm<OvertimeFormValues>({
     resolver: zodResolver(formSchema),
@@ -94,10 +99,14 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
   // overtime 타입인지 확인 (대소문자 무관하게 체크)
   const isOvertimeType = selectedPolicy?.vacation_type?.toLowerCase() === 'overtime'
 
+  // 실제 필요한 승인자 수 계산: min(정책 요구 인원, 가용 승인자 수)
+  const policyRequiredCount = selectedPolicy?.approval_required_count || 0
+  const actualRequiredCount = Math.min(policyRequiredCount, maxAvailableCount)
+
   // 승인자 선택 완료 여부 확인
-  const approvalRequiredCount = selectedPolicy?.approval_required_count || 0
-  const isApproversValid = approvalRequiredCount === 0 ||
-    (selectedApprovers && selectedApprovers.filter(a => a).length === approvalRequiredCount)
+  // 자동 승인이거나 실제 필요 인원이 0이면 승인자 선택 불필요
+  const isApproversValid = isAutoApproval || actualRequiredCount === 0 ||
+    (selectedApprovers && selectedApprovers.filter(a => a).length === actualRequiredCount)
 
   // 정책 변경 시 날짜와 시간 필드 초기화
   useEffect(() => {
@@ -625,8 +634,29 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                     </CardHeader>
                     <CardContent>
                       <div className='space-y-4'>
-                        {selectedPolicy?.approval_required_count ? (
-                          Array.from({ length: selectedPolicy.approval_required_count }).map((_, index) => (
+                        {/* 자동 승인 안내 메시지 */}
+                        {selectedPolicy && isAutoApproval && policyRequiredCount > 0 && (
+                          <div className='p-3 rounded-md border border-green-200 bg-green-50'>
+                            <p className='text-sm text-green-700 text-center'>
+                              {t('application.autoApprovalMessage')}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* 실제 필요 인원이 정책 요구 인원보다 적은 경우 안내 */}
+                        {selectedPolicy && !isAutoApproval && actualRequiredCount > 0 && actualRequiredCount < policyRequiredCount && (
+                          <div className='p-3 rounded-md border border-yellow-200 bg-yellow-50'>
+                            <p className='text-sm text-yellow-700 text-center'>
+                              {t('application.reducedApproverMessage', {
+                                required: policyRequiredCount,
+                                available: actualRequiredCount
+                              })}
+                            </p>
+                          </div>
+                        )}
+
+                        {selectedPolicy && actualRequiredCount > 0 && !isAutoApproval ? (
+                          Array.from({ length: actualRequiredCount }).map((_, index) => (
                             <div key={index}>
                               {index > 0 && <Separator className='my-4' />}
                               <div className={index > 0 ? 'mt-4' : ''}>
@@ -663,11 +693,17 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
                               </div>
                             </div>
                           ))
-                        ) : (
+                        ) : !selectedPolicy ? (
                           <div className='p-3 rounded-md border border-dashed border-gray-300 bg-gray-50'>
                             <p className='text-sm text-gray-500 text-center'>{t('application.selectPolicyFirst')}</p>
                           </div>
-                        )}
+                        ) : selectedPolicy && !isAutoApproval && actualRequiredCount === 0 && policyRequiredCount === 0 ? (
+                          <div className='p-3 rounded-md border border-green-200 bg-green-50'>
+                            <p className='text-sm text-green-700 text-center'>
+                              {t('application.noApprovalRequired')}
+                            </p>
+                          </div>
+                        ) : null}
                       </div>
                     </CardContent>
                   </Card>

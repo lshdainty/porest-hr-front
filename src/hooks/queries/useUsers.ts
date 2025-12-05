@@ -51,7 +51,7 @@ export const useUsersQuery = () => {
 
 // 사용자 결재자 조회 훅
 export const useUserApproversQuery = (userId: string) => {
-  return useQuery<GetUserApproversResp[]>({
+  return useQuery<GetUserApproversResp>({
     queryKey: userKeys.list({ type: 'approvers', userId }),
     queryFn: () => fetchGetUserApprovers(userId),
     enabled: !!userId // userId가 있을 때만 실행

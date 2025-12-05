@@ -23,7 +23,7 @@ const ApplicationContent = () => {
     loginUser?.user_id || '',
     'ON_REQUEST'
   );
-  const { data: approvers = [] } = useUserApproversQuery(loginUser?.user_id || '');
+  const { data: approversData } = useUserApproversQuery(loginUser?.user_id || '');
   const { data: vacationRequests = [], isLoading: isLoadingRequests, error: requestsError } = useUserRequestedVacationsQuery(
     loginUser?.user_id || ''
   );
@@ -95,7 +95,7 @@ const ApplicationContent = () => {
           onClose={handleCloseDialog}
           onSubmitSuccess={handleSubmitSuccess}
           vacationPolicies={vacationPolicies}
-          approvers={approvers}
+          approversData={approversData || { approvers: [], max_available_count: 0, is_auto_approval: false }}
         />
       </div>
     </QueryAsyncBoundary>

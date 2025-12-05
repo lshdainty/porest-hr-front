@@ -71,7 +71,7 @@ export interface GetUserApproversReq {
   user_id: string
 }
 
-export interface GetUserApproversResp {
+export interface ApproverDetailResp {
   user_id: string
   user_name: string
   user_email: string
@@ -83,6 +83,12 @@ export interface GetUserApproversResp {
   department_name: string
   department_name_kr: string
   department_level: number
+}
+
+export interface GetUserApproversResp {
+  approvers: ApproverDetailResp[]
+  max_available_count: number
+  is_auto_approval: boolean
 }
 
 export interface GetUserIdDuplicateReq {
@@ -200,8 +206,8 @@ export async function fetchGetUsers(): Promise<GetUsersResp[]> {
   return resp.data;
 }
 
-export async function fetchGetUserApprovers(userId: string): Promise<GetUserApproversResp[]> {
-  const resp: ApiResponse<GetUserApproversResp[]> = await api.request({
+export async function fetchGetUserApprovers(userId: string): Promise<GetUserApproversResp> {
+  const resp: ApiResponse<GetUserApproversResp> = await api.request({
     method: 'get',
     url: `/users/${userId}/approvers`
   });
