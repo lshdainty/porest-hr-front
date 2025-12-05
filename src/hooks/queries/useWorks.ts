@@ -1,6 +1,6 @@
 'use client'
 
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
 import { fetchGetSystemTypes, type TypeResp } from '@/lib/api/type'
@@ -216,19 +216,31 @@ export const useSystemTypesQuery = () => {
 
 // Work Code Mutations
 export const usePostCreateWorkCodeMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation<CreateWorkCodeResp, Error, CreateWorkCodeReq>({
-    mutationFn: (data: CreateWorkCodeReq) => fetchPostCreateWorkCode(data)
+    mutationFn: (data: CreateWorkCodeReq) => fetchPostCreateWorkCode(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workKeys.all() });
+    }
   });
 };
 
 export const usePutUpdateWorkCodeMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation<void, Error, UpdateWorkCodeReq>({
-    mutationFn: (data: UpdateWorkCodeReq) => fetchPutUpdateWorkCode(data)
+    mutationFn: (data: UpdateWorkCodeReq) => fetchPutUpdateWorkCode(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workKeys.all() });
+    }
   });
 };
 
 export const useDeleteWorkCodeMutation = () => {
+  const queryClient = useQueryClient();
   return useMutation<void, Error, number>({
-    mutationFn: (workCodeSeq: number) => fetchDeleteWorkCode(workCodeSeq)
+    mutationFn: (workCodeSeq: number) => fetchDeleteWorkCode(workCodeSeq),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workKeys.all() });
+    }
   });
 };
