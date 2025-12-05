@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 
@@ -14,11 +15,14 @@ interface IProps {
   multiDayEvents: IEvent[];
 }
 
-const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEK_DAYS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEK_DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
 
 const CalendarMonthView = ({ singleDayEvents, multiDayEvents }: IProps) => {
+  const { i18n } = useTranslation();
   const { selectedDate } = useCalendar();
 
+  const weekDays = i18n.language === 'ko' ? WEEK_DAYS_KO : WEEK_DAYS_EN;
   const allEvents = [...multiDayEvents, ...singleDayEvents];
 
   const cells = useMemo(() => getCalendarCells(selectedDate), [selectedDate]);
@@ -33,7 +37,7 @@ const CalendarMonthView = ({ singleDayEvents, multiDayEvents }: IProps) => {
       <div className='flex flex-col h-full'>
         {/* Fixed header with weekdays */}
         <div className='grid grid-cols-7 divide-x border-b flex-shrink-0'>
-          {WEEK_DAYS.map((day, index) => {
+          {weekDays.map((day, index) => {
             const isSunday = index === 0;
             const isSaturday = index === 6;
 

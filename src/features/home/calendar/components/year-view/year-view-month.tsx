@@ -1,5 +1,7 @@
 import { format, getDaysInMonth, isSameDay, parseISO, startOfMonth } from 'date-fns';
+import { enUS, ko } from 'date-fns/locale';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 
@@ -12,10 +14,16 @@ interface IProps {
   events: IEvent[];
 }
 
+const WEEK_DAYS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEK_DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
+
 const YearViewMonth = ({ month, events }: IProps) => {
+  const { i18n } = useTranslation();
   const { setSelectedDate, setView } = useCalendar();
 
-  const monthName = format(month, 'MMMM');
+  const locale = i18n.language === 'ko' ? ko : enUS;
+  const weekDays = i18n.language === 'ko' ? WEEK_DAYS_KO : WEEK_DAYS_EN;
+  const monthName = format(month, 'MMMM', { locale });
 
   const daysInMonth = useMemo(() => {
     const totalDays = getDaysInMonth(month);
@@ -26,8 +34,6 @@ const YearViewMonth = ({ month, events }: IProps) => {
 
     return [...blanks, ...days];
   }, [month]);
-
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const handleClick = () => {
     setSelectedDate(new Date(month.getFullYear(), month.getMonth(), 1));

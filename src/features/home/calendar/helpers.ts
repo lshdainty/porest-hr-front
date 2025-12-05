@@ -24,6 +24,7 @@ import {
   subMonths,
   subWeeks,
   subYears,
+  type Locale,
 } from 'date-fns';
 
 import type { GetEventsByPeriodResp } from '@/lib/api/calendar';
@@ -33,7 +34,7 @@ import { calendarTypes } from '@/features/home/calendar/types';
 
 // ================ Header helper functions ================ //
 
-export function rangeText(view: TCalendarView, date: Date) {
+export function rangeText(view: TCalendarView, date: Date, locale?: Locale) {
   const formatString = 'yyyy.MM.dd';
   let start: Date;
   let end: Date;
@@ -52,16 +53,16 @@ export function rangeText(view: TCalendarView, date: Date) {
       end = endOfMonth(date);
       break;
     case 'week':
-      start = startOfWeek(date);
-      end = endOfWeek(date);
+      start = startOfWeek(date, { locale });
+      end = endOfWeek(date, { locale });
       break;
     case 'day':
-      return format(date, formatString);
+      return format(date, formatString, { locale });
     default:
       return 'Error while formatting ';
   }
 
-  return `${format(start, formatString)} - ${format(end, formatString)}`;
+  return `${format(start, formatString, { locale })} - ${format(end, formatString, { locale })}`;
 }
 
 export function navigateDate(date: Date, view: TCalendarView, direction: 'previous' | 'next'): Date {

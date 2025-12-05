@@ -1,5 +1,8 @@
+import { format } from 'date-fns';
+import { enUS, ko } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 
@@ -17,11 +20,12 @@ interface IProps {
 }
 
 const DateNavigator = ({ view, events }: IProps) => {
+  const { t, i18n } = useTranslation('calendar');
   const { selectedDate, setSelectedDate } = useCalendar();
 
-  const year = selectedDate.getFullYear();
-  const month = selectedDate.getMonth() + 1;
-  const formattedDate = `${year}년 ${month}월`;
+  const locale = i18n.language === 'ko' ? ko : enUS;
+  const dateFormat = i18n.language === 'ko' ? 'yyyy년 M월' : 'MMMM yyyy';
+  const formattedDate = format(selectedDate, dateFormat, { locale });
 
   const eventCount = useMemo(() => getEventsCount(events, selectedDate, view), [events, selectedDate, view]);
 
@@ -35,7 +39,7 @@ const DateNavigator = ({ view, events }: IProps) => {
           {formattedDate}
         </span>
         <Badge variant='outline' className='px-1.5'>
-          {eventCount} events
+          {t('header.eventCount', { count: eventCount })}
         </Badge>
       </div>
 
@@ -44,7 +48,7 @@ const DateNavigator = ({ view, events }: IProps) => {
           <ChevronLeft />
         </Button>
 
-        <p className='text-sm text-muted-foreground'>{rangeText(view, selectedDate)}</p>
+        <p className='text-sm text-muted-foreground'>{rangeText(view, selectedDate, locale)}</p>
 
         <Button variant='outline' className='size-6.5 px-0 [&_svg]:size-4.5' onClick={handleNext}>
           <ChevronRight />

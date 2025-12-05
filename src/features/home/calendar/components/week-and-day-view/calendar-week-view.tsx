@@ -1,5 +1,7 @@
 import { addDays, areIntervalsOverlapping, format, isSameDay, parseISO, startOfWeek } from 'date-fns';
+import { enUS, ko } from 'date-fns/locale';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 
@@ -22,11 +24,13 @@ interface IProps {
 }
 
 export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
+  const { i18n } = useTranslation();
   const { selectedDate, workingHours, visibleHours, findHolidayByDate } = useCalendar();
 
+  const locale = i18n.language === 'ko' ? ko : enUS;
   const { hours, earliestEventHour, latestEventHour } = getVisibleHours(visibleHours, singleDayEvents);
 
-  const weekStart = startOfWeek(selectedDate);
+  const weekStart = startOfWeek(selectedDate, { locale });
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   return (
@@ -67,7 +71,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                 return (
                   <div key={index} className='py-2 text-center text-xs font-medium'>
                     <div style={{ color: textColor }}>
-                      {format(day, 'EE')} <span className='ml-1 font-semibold'>{format(day, 'd')}</span>
+                      {format(day, 'EE', { locale })} <span className='ml-1 font-semibold'>{format(day, 'd')}</span>
                     </div>
                     {holiday && (
                       <div className='text-xs mt-0.5' style={{ color: holidayColor }}>

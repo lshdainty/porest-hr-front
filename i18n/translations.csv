@@ -1066,3 +1066,6 @@ common,clear,초기화,Clear
 common,previous,이전,Previous
 common,next,다음,Next
 common,dontShowToday,오늘 하루 보지 않기,Don't show again today
+calendar,header.eventCount,{{count}}개 일정,{{count}} events
+calendar,dayView.happeningNow,진행 중,Happening now
+calendar,dayView.noAppointments,현재 진행 중인 일정이 없습니다,No appointments or consultations at the moment

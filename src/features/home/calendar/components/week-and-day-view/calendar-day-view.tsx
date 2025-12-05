@@ -1,6 +1,8 @@
 import { areIntervalsOverlapping, format, parseISO } from 'date-fns';
+import { enUS, ko } from 'date-fns/locale';
 import dayjs from 'dayjs';
 import { Calendar as CalendarIcon, Clock, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 
@@ -24,8 +26,10 @@ interface IProps {
 }
 
 export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
+  const { t, i18n } = useTranslation('calendar');
   const { selectedDate, setSelectedDate, users, visibleHours, workingHours, findHolidayByDate, holidays } = useCalendar();
 
+  const locale = i18n.language === 'ko' ? ko : enUS;
   const { hours, earliestEventHour, latestEventHour } = getVisibleHours(visibleHours, singleDayEvents);
 
   const currentEvents = getCurrentEvents(singleDayEvents);
@@ -74,7 +78,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
             <div className='w-18'></div>
             <div className='flex-1 border-l py-2 text-center text-xs font-medium'>
               <div style={{ color: holidayColor || (selectedDate.getDay() === 0 ? '#ff6767' : selectedDate.getDay() === 6 ? '#6767ff' : undefined) }}>
-                {format(selectedDate, 'EE')} <span className='font-semibold'>{format(selectedDate, 'd')}</span>
+                {format(selectedDate, 'EE', { locale })} <span className='font-semibold'>{format(selectedDate, 'd')}</span>
               </div>
               {holiday && (
                 <div className='text-xs mt-0.5' style={{ color: holidayColor }}>
@@ -162,6 +166,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
           mode='single'
           selected={selectedDate}
           onSelect={setSelectedDate}
+          locale={locale}
           initialFocus
           modifiers={{
             publicHoliday: publicHolidays,
@@ -181,10 +186,10 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                 <span className='relative inline-flex size-2.5 rounded-full bg-green-600'></span>
               </span>
 
-              <p className='text-sm font-semibold text-foreground'>Happening now</p>
+              <p className='text-sm font-semibold text-foreground'>{t('dayView.happeningNow')}</p>
             </div>
           ) : (
-            <p className='p-4 text-center text-sm italic text-muted-foreground'>No appointments or consultations at the moment</p>
+            <p className='p-4 text-center text-sm italic text-muted-foreground'>{t('dayView.noAppointments')}</p>
           )}
 
           {currentEvents.length > 0 && (
@@ -206,13 +211,13 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
 
                       <div className='flex items-center gap-1.5 text-muted-foreground'>
                         <CalendarIcon className='size-3.5' />
-                        <span className='text-sm'>{format(new Date(), 'MMM d, yyyy')}</span>
+                        <span className='text-sm'>{format(new Date(), i18n.language === 'ko' ? 'yyyy년 M월 d일' : 'MMM d, yyyy', { locale })}</span>
                       </div>
 
                       <div className='flex items-center gap-1.5 text-muted-foreground'>
                         <Clock className='size-3.5' />
                         <span className='text-sm'>
-                          {format(parseISO(event.startDate), 'h:mm a')} - {format(parseISO(event.endDate), 'h:mm a')}
+                          {format(parseISO(event.startDate), i18n.language === 'ko' ? 'a h:mm' : 'h:mm a', { locale })} - {format(parseISO(event.endDate), i18n.language === 'ko' ? 'a h:mm' : 'h:mm a', { locale })}
                         </span>
                       </div>
                     </div>
