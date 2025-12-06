@@ -2,12 +2,12 @@ import { api, type ApiResponse } from '@/lib/api';
 
 // Request/Response Types
 export interface WorkCodeResp {
-  work_code_seq: number
+  work_code_id: number
   work_code: string
   work_code_name: string
   code_type: string
   order_seq: number
-  parent_work_code_seq?: number
+  parent_work_code_id?: number
 }
 
 export interface WorkGroupWithParts extends WorkCodeResp {
@@ -15,11 +15,11 @@ export interface WorkGroupWithParts extends WorkCodeResp {
 }
 
 export interface GetWorkPartLabelReq {
-  parent_work_code_seq: number
+  parent_work_code_id: number
 }
 
 export interface GetWorkPartsReq {
-  parent_work_code_seq: number
+  parent_work_code_id: number
 }
 
 export interface CreateWorkHistoryReq {
@@ -33,11 +33,11 @@ export interface CreateWorkHistoryReq {
 }
 
 export interface CreateWorkHistoryResp {
-  work_history_seq: number
+  work_history_id: number
 }
 
 export interface UpdateWorkHistoryReq {
-  work_history_seq: number
+  work_history_id: number
   work_date: string
   work_user_id: string
   work_group_code: string
@@ -48,7 +48,7 @@ export interface UpdateWorkHistoryReq {
 }
 
 export interface WorkHistoryResp {
-  work_history_seq: number
+  work_history_id: number
   work_date: string
   work_user_id: string
   work_user_name: string
@@ -60,7 +60,7 @@ export interface WorkHistoryResp {
 }
 
 export interface DeleteWorkHistoryReq {
-  work_history_seq: number
+  work_history_id: number
 }
 
 export interface WorkHistorySearchCondition {
@@ -90,12 +90,12 @@ export async function fetchGetWorkGroups(): Promise<WorkCodeResp[]> {
   return resp.data;
 }
 
-export async function fetchGetWorkPartLabel(parentWorkCodeSeq: number): Promise<WorkCodeResp[]> {
+export async function fetchGetWorkPartLabel(parentWorkCodeId: number): Promise<WorkCodeResp[]> {
   const resp: ApiResponse<WorkCodeResp[]> = await api.request({
     method: 'get',
     url: `/work-codes`,
     params: {
-      parent_work_code_seq: parentWorkCodeSeq,
+      parent_work_code_id: parentWorkCodeId,
       type: 'LABEL'
     }
   });
@@ -105,12 +105,12 @@ export async function fetchGetWorkPartLabel(parentWorkCodeSeq: number): Promise<
   return resp.data;
 }
 
-export async function fetchGetWorkParts(parentWorkCodeSeq: number): Promise<WorkCodeResp[]> {
+export async function fetchGetWorkParts(parentWorkCodeId: number): Promise<WorkCodeResp[]> {
   const resp: ApiResponse<WorkCodeResp[]> = await api.request({
     method: 'get',
     url: `/work-codes`,
     params: {
-      parent_work_code_seq: parentWorkCodeSeq,
+      parent_work_code_id: parentWorkCodeId,
       type: 'OPTION'
     }
   });
@@ -160,20 +160,20 @@ export async function fetchGetWorkHistories(params?: WorkHistorySearchCondition)
 }
 
 export async function fetchPutUpdateWorkHistory(data: UpdateWorkHistoryReq): Promise<void> {
-  const { work_history_seq, ...requestData } = data;
+  const { work_history_id, ...requestData } = data;
   const resp: ApiResponse<void> = await api.request({
     method: 'put',
-    url: `/work-histories/${work_history_seq}`,
+    url: `/work-histories/${work_history_id}`,
     data: requestData
   });
 
   if (!resp.success) throw new Error(resp.message);
 }
 
-export async function fetchDeleteWorkHistory(workHistorySeq: number): Promise<void> {
+export async function fetchDeleteWorkHistory(workHistoryId: number): Promise<void> {
   const resp: ApiResponse<void> = await api.request({
     method: 'delete',
-    url: `/work-histories/${workHistorySeq}`
+    url: `/work-histories/${workHistoryId}`
   });
 
   if (!resp.success) throw new Error(resp.message);
@@ -184,7 +184,7 @@ export interface BulkCreateWorkHistoryReq {
 }
 
 export interface BulkCreateWorkHistoryResp {
-  work_history_seqs: number[]
+  work_history_ids: number[]
 }
 
 export async function fetchPostBulkCreateWorkHistories(data: BulkCreateWorkHistoryReq): Promise<BulkCreateWorkHistoryResp> {
@@ -244,19 +244,19 @@ export interface CreateWorkCodeReq {
   work_code: string;
   work_code_name: string;
   code_type: CodeType;
-  parent_work_code_seq?: number;
+  parent_work_code_id?: number;
   order_seq?: number;
 }
 
 export interface CreateWorkCodeResp {
-  work_code_seq: number;
+  work_code_id: number;
 }
 
 export interface UpdateWorkCodeReq {
-  work_code_seq: number; // Path variable
+  work_code_id: number; // Path variable
   work_code: string;
   work_code_name: string;
-  parent_work_code_seq?: number;
+  parent_work_code_id?: number;
   order_seq?: number;
 }
 
@@ -273,20 +273,20 @@ export async function fetchPostCreateWorkCode(data: CreateWorkCodeReq): Promise<
 }
 
 export async function fetchPutUpdateWorkCode(data: UpdateWorkCodeReq): Promise<void> {
-  const { work_code_seq, ...requestData } = data;
+  const { work_code_id, ...requestData } = data;
   const resp: ApiResponse<void> = await api.request({
     method: 'put',
-    url: `/work-codes/${work_code_seq}`,
+    url: `/work-codes/${work_code_id}`,
     data: requestData
   });
 
   if (!resp.success) throw new Error(resp.message);
 }
 
-export async function fetchDeleteWorkCode(workCodeSeq: number): Promise<void> {
+export async function fetchDeleteWorkCode(workCodeId: number): Promise<void> {
   const resp: ApiResponse<void> = await api.request({
     method: 'delete',
-    url: `/work-codes/${workCodeSeq}`
+    url: `/work-codes/${workCodeId}`
   });
 
   if (!resp.success) throw new Error(resp.message);

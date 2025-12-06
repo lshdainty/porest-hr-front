@@ -34,7 +34,7 @@ const createFormSchema = (t: (key: string) => string) => z.object({
   work_code: z.string().min(1, t('codeRequired')),
   work_code_name: z.string().min(1, t('codeNameRequired')),
   code_type: z.enum(['LABEL', 'OPTION']),
-  parent_work_code_seq: z.number().optional(),
+  parent_work_code_id: z.number().optional(),
   order_seq: z.coerce.number().optional(),
 });
 
@@ -44,7 +44,7 @@ interface WorkCodeEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   workCode: WorkCodeResp | null;
-  parentWorkCodeSeq?: number; // For creating child codes
+  parentWorkCodeId?: number; // For creating child codes
   onSuccess?: () => void;
 }
 
@@ -52,7 +52,7 @@ const WorkCodeEditDialog = ({
   open,
   onOpenChange,
   workCode,
-  parentWorkCodeSeq,
+  parentWorkCodeId,
   onSuccess
 }: WorkCodeEditDialogProps) => {
   const { t } = useTranslation('work');
@@ -70,7 +70,7 @@ const WorkCodeEditDialog = ({
       work_code: '',
       work_code_name: '',
       code_type: 'LABEL',
-      parent_work_code_seq: undefined,
+      parent_work_code_id: undefined,
       order_seq: 0,
     },
   });
@@ -82,7 +82,7 @@ const WorkCodeEditDialog = ({
           work_code: workCode.work_code,
           work_code_name: workCode.work_code_name,
           code_type: workCode.code_type as CodeType,
-          parent_work_code_seq: workCode.parent_work_code_seq,
+          parent_work_code_id: workCode.parent_work_code_id,
           order_seq: workCode.order_seq,
         });
       } else {
@@ -90,20 +90,20 @@ const WorkCodeEditDialog = ({
           work_code: '',
           work_code_name: '',
           code_type: 'LABEL',
-          parent_work_code_seq: parentWorkCodeSeq,
+          parent_work_code_id: parentWorkCodeId,
           order_seq: 0,
         });
       }
     }
-  }, [open, workCode, parentWorkCodeSeq, form]);
+  }, [open, workCode, parentWorkCodeId, form]);
 
   const onSubmit = (values: FormValues) => {
     if (isEdit && workCode) {
       updateWorkCode({
-        work_code_seq: workCode.work_code_seq,
+        work_code_id: workCode.work_code_id,
         work_code: values.work_code,
         work_code_name: values.work_code_name,
-        parent_work_code_seq: values.parent_work_code_seq,
+        parent_work_code_id: values.parent_work_code_id,
         order_seq: values.order_seq,
       }, {
         onSuccess: () => {
@@ -116,7 +116,7 @@ const WorkCodeEditDialog = ({
         work_code: values.work_code,
         work_code_name: values.work_code_name,
         code_type: values.code_type as CodeType,
-        parent_work_code_seq: values.parent_work_code_seq,
+        parent_work_code_id: values.parent_work_code_id,
         order_seq: values.order_seq,
       }, {
         onSuccess: () => {

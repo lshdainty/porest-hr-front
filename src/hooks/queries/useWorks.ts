@@ -92,24 +92,24 @@ export const useWorkGroupsWithPartsQuery = () => {
       if (!workGroups || workGroups.length === 0) return []
 
       // 2. 모든 업무 분류에 대한 Label 조회
-      const labelsPromises = workGroups.map(group => fetchGetWorkPartLabel(group.work_code_seq))
+      const labelsPromises = workGroups.map(group => fetchGetWorkPartLabel(group.work_code_id))
       const labelsResults = await Promise.all(labelsPromises)
 
       // 3. 모든 Label에 대한 Part 조회
       const allLabels = labelsResults.flat()
-      const partsPromises = allLabels.map(label => fetchGetWorkParts(label.work_code_seq))
+      const partsPromises = allLabels.map(label => fetchGetWorkParts(label.work_code_id))
       const partsResults = await Promise.all(partsPromises)
       const allParts = partsResults.flat()
 
       // 4. 데이터 병합 (Group -> Label -> Part)
       const mergedData: WorkGroupWithParts[] = workGroups.map(group => {
         // 해당 그룹의 라벨들 찾기
-        const groupLabels = allLabels.filter(label => label.parent_work_code_seq === group.work_code_seq)
-        const groupLabelSeqs = groupLabels.map(label => label.work_code_seq)
+        const groupLabels = allLabels.filter(label => label.parent_work_code_id === group.work_code_id)
+        const groupLabelIds = groupLabels.map(label => label.work_code_id)
 
         // 해당 라벨들의 파트들 찾기
         const groupParts = allParts.filter(part =>
-          part.parent_work_code_seq && groupLabelSeqs.includes(part.parent_work_code_seq)
+          part.parent_work_code_id && groupLabelIds.includes(part.parent_work_code_id)
         )
 
         return {
@@ -124,20 +124,20 @@ export const useWorkGroupsWithPartsQuery = () => {
 }
 
 // 업무 파트 라벨 조회 훅
-export const useWorkPartLabelQuery = (parentWorkCodeSeq: number) => {
+export const useWorkPartLabelQuery = (parentWorkCodeId: number) => {
   return useQuery<WorkCodeResp[]>({
-    queryKey: workKeys.list({ type: 'partLabel', parentWorkCodeSeq }),
-    queryFn: () => fetchGetWorkPartLabel(parentWorkCodeSeq),
-    enabled: !!parentWorkCodeSeq
+    queryKey: workKeys.list({ type: 'partLabel', parentWorkCodeId }),
+    queryFn: () => fetchGetWorkPartLabel(parentWorkCodeId),
+    enabled: !!parentWorkCodeId
   })
 }
 
 // 업무 파트 조회 훅
-export const useWorkPartsQuery = (parentWorkCodeSeq: number) => {
+export const useWorkPartsQuery = (parentWorkCodeId: number) => {
   return useQuery<WorkCodeResp[]>({
-    queryKey: workKeys.list({ type: 'parts', parentWorkCodeSeq }),
-    queryFn: () => fetchGetWorkParts(parentWorkCodeSeq),
-    enabled: !!parentWorkCodeSeq
+    queryKey: workKeys.list({ type: 'parts', parentWorkCodeId }),
+    queryFn: () => fetchGetWorkParts(parentWorkCodeId),
+    enabled: !!parentWorkCodeId
   })
 }
 
@@ -174,7 +174,7 @@ export const usePutUpdateWorkHistoryMutation = () => {
 // 업무 히스토리 삭제 Mutation 훅
 export const useDeleteWorkHistoryMutation = () => {
   return useMutation<void, Error, number>({
-    mutationFn: (workHistorySeq: number) => fetchDeleteWorkHistory(workHistorySeq)
+    mutationFn: (workHistoryId: number) => fetchDeleteWorkHistory(workHistoryId)
   })
 }
 
@@ -238,7 +238,7 @@ export const usePutUpdateWorkCodeMutation = () => {
 export const useDeleteWorkCodeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation<void, Error, number>({
-    mutationFn: (workCodeSeq: number) => fetchDeleteWorkCode(workCodeSeq),
+    mutationFn: (workCodeId: number) => fetchDeleteWorkCode(workCodeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: workKeys.all() });
     }

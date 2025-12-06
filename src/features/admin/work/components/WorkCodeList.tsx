@@ -22,17 +22,17 @@ const WorkCodeList = () => {
   const [deletingCode, setDeletingCode] = useState<WorkCodeResp | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [parentSeq, setParentSeq] = useState<number | undefined>(undefined);
+  const [parentId, setParentId] = useState<number | undefined>(undefined);
 
-  const handleCreate = (parentSeq?: number) => {
+  const handleCreate = (parentId?: number) => {
     setEditingCode(null);
-    setParentSeq(parentSeq);
+    setParentId(parentId);
     setIsEditOpen(true);
   };
 
   const handleEdit = (code: WorkCodeResp) => {
     setEditingCode(code);
-    setParentSeq(code.parent_work_code_seq);
+    setParentId(code.parent_work_code_id);
     setIsEditOpen(true);
   };
 
@@ -64,7 +64,7 @@ const WorkCodeList = () => {
             {workGroups?.map((group) => (
               <>
                 {/* Group Row */}
-                <TableRow key={group.work_code_seq} className="bg-muted/50">
+                <TableRow key={group.work_code_id} className="bg-muted/50">
                   <TableCell className="font-medium pl-4">
                     {group.work_code_name}
                   </TableCell>
@@ -76,7 +76,7 @@ const WorkCodeList = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleCreate(group.work_code_seq)}
+                        onClick={() => handleCreate(group.work_code_id)}
                         title={t('addSubCode')}
                       >
                         <Plus className="h-4 w-4" />
@@ -98,10 +98,10 @@ const WorkCodeList = () => {
                     </div>
                   </TableCell>
                 </TableRow>
-                
+
                 {/* Parts Rows */}
                 {group.parts?.map((part) => (
-                  <TableRow key={part.work_code_seq}>
+                  <TableRow key={part.work_code_id}>
                     <TableCell className="pl-12">
                       └ {part.work_code_name}
                     </TableCell>
@@ -138,7 +138,7 @@ const WorkCodeList = () => {
         open={isEditOpen}
         onOpenChange={setIsEditOpen}
         workCode={editingCode}
-        parentWorkCodeSeq={parentSeq}
+        parentWorkCodeId={parentId}
         onSuccess={() => {
           // Refetch is handled by React Query invalidation
         }}

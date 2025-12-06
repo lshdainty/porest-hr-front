@@ -32,7 +32,7 @@ const WorkCodeDeleteDialog = ({
   const handleDelete = () => {
     if (!workCode) return;
 
-    deleteWorkCode(workCode.work_code_seq, {
+    deleteWorkCode(workCode.work_code_id, {
       onSuccess: () => {
         onOpenChange(false);
         onSuccess?.();

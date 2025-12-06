@@ -2,7 +2,7 @@ import { WorkCodeResp } from '@/lib/api/work';
 
 export interface WorkHistory {
   no: number;
-  work_history_seq?: number;
+  work_history_id?: number;
   date: string;
   manager_id: string;
   manager_name: string;

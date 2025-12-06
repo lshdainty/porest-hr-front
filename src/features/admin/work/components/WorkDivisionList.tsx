@@ -64,7 +64,7 @@ const WorkDivisionList = () => {
           </TableHeader>
           <TableBody>
             {workDivisions?.map((division) => (
-              <TableRow key={division.work_code_seq}>
+              <TableRow key={division.work_code_id}>
                 <TableCell className="font-medium pl-4">
                   {division.work_code_name}
                 </TableCell>

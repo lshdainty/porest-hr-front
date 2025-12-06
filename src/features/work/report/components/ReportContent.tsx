@@ -48,14 +48,14 @@ const ReportContent = () => {
     startDate: activeFilters.startDate ? dayjs(activeFilters.startDate).format('YYYY-MM-DD') : undefined,
     endDate: activeFilters.endDate ? dayjs(activeFilters.endDate).format('YYYY-MM-DD') : undefined,
     userId: activeFilters.filterName && activeFilters.filterName !== 'all' ? activeFilters.filterName : undefined,
-    groupSeq: activeFilters.selectedWorkGroup !== 'all' 
-      ? workGroupsWithParts?.find(g => g.work_code === activeFilters.selectedWorkGroup)?.work_code_seq 
+    groupSeq: activeFilters.selectedWorkGroup !== 'all'
+      ? workGroupsWithParts?.find(g => g.work_code === activeFilters.selectedWorkGroup)?.work_code_id
       : undefined,
     partSeq: activeFilters.selectedWorkPart !== 'all'
-      ? workGroupsWithParts?.flatMap(g => g.parts).find(p => p.work_code === activeFilters.selectedWorkPart)?.work_code_seq
+      ? workGroupsWithParts?.flatMap(g => g.parts).find(p => p.work_code === activeFilters.selectedWorkPart)?.work_code_id
       : undefined,
     divisionSeq: activeFilters.selectedWorkDivision !== 'all'
-      ? workDivision?.find(d => d.work_code === activeFilters.selectedWorkDivision)?.work_code_seq
+      ? workDivision?.find(d => d.work_code === activeFilters.selectedWorkDivision)?.work_code_id
       : undefined,
     sortType: activeFilters.sortOrder === 'latest' ? 'LATEST' : 'OLDEST',
   };
@@ -79,7 +79,7 @@ const ReportContent = () => {
     if (workHistoriesData) {
       const convertedData: WorkHistory[] = workHistoriesData.map((item: WorkHistoryResp, index: number) => ({
         no: index + 1,
-        work_history_seq: item.work_history_seq,
+        work_history_id: item.work_history_id,
         date: item.work_date,
         manager_id: item.work_user_id,
         manager_name: item.work_user_name,
@@ -98,7 +98,7 @@ const ReportContent = () => {
     const maxNo = workHistories.length > 0 ? Math.max(...workHistories.map((item) => item.no)) : 0;
     const newRow: WorkHistory = {
       no: maxNo + 1,
-      work_history_seq: undefined,
+      work_history_id: undefined,
       date: dayjs().format('YYYY-MM-DD'),
       manager_id: loginUser?.user_id || '',
       manager_name: loginUser?.user_name || '',
@@ -133,7 +133,7 @@ const ReportContent = () => {
     }
 
     try {
-      const isNew = !editData.work_history_seq;
+      const isNew = !editData.work_history_id;
 
       if (isNew) {
         await createWorkHistory.mutateAsync({
@@ -147,7 +147,7 @@ const ReportContent = () => {
         });
       } else {
         await updateWorkHistory.mutateAsync({
-          work_history_seq: editData.work_history_seq!,
+          work_history_id: editData.work_history_id!,
           work_date: editData.date,
           work_user_id: editData.manager_id,
           work_group_code: editData.work_group!.work_code,
@@ -168,7 +168,7 @@ const ReportContent = () => {
   };
 
   const handleCancel = () => {
-    if (editData && !editData.work_history_seq) {
+    if (editData && !editData.work_history_id) {
       setWorkHistories(workHistories.filter((item) => item.no !== editData.no));
     }
     setEditingRow(null);
@@ -185,7 +185,7 @@ const ReportContent = () => {
     const newRow: WorkHistory = {
       ...row,
       no: maxNo + 1,
-      work_history_seq: undefined, // 새 항목으로 취급
+      work_history_id: undefined, // 새 항목으로 취급
       date: dayjs().format('YYYY-MM-DD'), // 오늘 날짜로 설정
       manager_id: loginUser?.user_id || row.manager_id,
     };
@@ -234,14 +234,14 @@ const ReportContent = () => {
   };
 
   const handleDelete = async (row: WorkHistory) => {
-    if (!row.work_history_seq) {
+    if (!row.work_history_id) {
       setWorkHistories(workHistories.filter((item) => item.no !== row.no));
       setSelectedRows(selectedRows.filter((rowNo) => rowNo !== row.no));
       return;
     }
 
     try {
-      await deleteWorkHistory.mutateAsync(row.work_history_seq);
+      await deleteWorkHistory.mutateAsync(row.work_history_id);
       await refetchWorkHistories();
     } catch (error) {
       console.error('Delete failed:', error);
