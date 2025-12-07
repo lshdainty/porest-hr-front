@@ -66,7 +66,7 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
   return (
     <div className={cn('w-full', className)}>
       <Tabs defaultValue="usages" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList>
           <TabsTrigger value="usages">{t('history.usageTab')}</TabsTrigger>
           <TabsTrigger value="grants">{t('history.grantTab')}</TabsTrigger>
         </TabsList>

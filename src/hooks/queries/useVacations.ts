@@ -76,10 +76,11 @@ const vacationKeys = createQueryKeys('vacations')
 const calendarKeys = createQueryKeys('calendars')
 
 // 사용자 휴가 히스토리 조회 훅
-export const useUserVacationHistoryQuery = (userId: string) => {
+export const useUserVacationHistoryQuery = (userId: string, year?: number) => {
+  const queryYear = year ?? new Date().getFullYear()
   return useQuery<GetUserVacationHistoryResp>({
-    queryKey: vacationKeys.list({ type: 'history', userId }),
-    queryFn: () => fetchGetUserVacationHistory(userId),
+    queryKey: vacationKeys.list({ type: 'history', userId, year: queryYear }),
+    queryFn: () => fetchGetUserVacationHistory(userId, queryYear),
     enabled: !!userId
   })
 }

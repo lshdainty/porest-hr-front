@@ -16,6 +16,7 @@ export interface PostUseVacationResp {
 
 export interface GetUserVacationHistoryReq {
   user_id: string
+  year: number
 }
 
 export interface VacationGrantInfo {
@@ -495,10 +496,10 @@ export async function fetchPostUseVacation(data: PostUseVacationReq): Promise<Po
   return resp.data;
 }
 
-export async function fetchGetUserVacationHistory(userId: string): Promise<GetUserVacationHistoryResp> {
+export async function fetchGetUserVacationHistory(userId: string, year: number): Promise<GetUserVacationHistoryResp> {
   const resp: ApiResponse<GetUserVacationHistoryResp> = await api.request({
     method: 'get',
-    url: `/users/${userId}/vacations`
+    url: `/users/${userId}/vacations?year=${year}`
   });
 
   if (!resp.success) throw new Error(resp.message);

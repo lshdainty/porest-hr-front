@@ -24,25 +24,41 @@ import {
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@/components/shadcn/select';
+
+const getYearOptions = () => {
+  const currentYear = new Date().getFullYear();
+  const years: string[] = [];
+  for (let i = currentYear - 5; i <= currentYear + 1; i++) {
+    years.push(i.toString());
+  }
+  return years;
+};
 
 const VacationContent = () => {
   const { t } = useTranslation('vacation');
   const { loginUser } = useUser();
-  const { selectedUserId, setSelectedUserId } = useVacationContext();
+  const { selectedUserId, setSelectedUserId, selectedYear, setSelectedYear } = useVacationContext();
 
   const { data: users, isLoading: usersLoading } = useUsersQuery();
   const { data: vacationTypes, isLoading: vacationTypesLoading } = useAvailableVacationsQuery(
     selectedUserId,
-    dayjs().format('YYYY-MM-DDTHH:mm:ss')
+    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
   );
   const { data: monthStats, isLoading: monthStatsLoading } = useUserMonthlyVacationStatsQuery(
     selectedUserId,
-    dayjs().format('YYYY')
+    selectedYear
   );
-  const { data: histories, isLoading: historiesLoading } = useUserVacationHistoryQuery(selectedUserId);
+  const { data: histories, isLoading: historiesLoading } = useUserVacationHistoryQuery(selectedUserId, parseInt(selectedYear));
   const { data: vacationStats, isLoading: vacationStatsLoading } = useUserVacationStatsQuery(
     selectedUserId,
-    dayjs().format('YYYY-MM-DDTHH:mm:ss')
+    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
   );
   const { data: vacationRequests = [], isLoading: isLoadingRequests } = useAllVacationsByApproverQuery(
     selectedUserId
@@ -58,7 +74,21 @@ const VacationContent = () => {
   if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading || isLoadingRequests) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
-        <h1 className='text-3xl font-bold mb-6'>{t('stats.title')}</h1>
+        <div className='flex items-center justify-between mb-6'>
+          <h1 className='text-3xl font-bold'>{t('stats.title')}</h1>
+          <Select value={selectedYear} onValueChange={setSelectedYear}>
+            <SelectTrigger className='w-[120px]'>
+              <SelectValue placeholder={t('stats.selectYear')} />
+            </SelectTrigger>
+            <SelectContent>
+              {getYearOptions().map((year) => (
+                <SelectItem key={year} value={year}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className='flex flex-col lg:flex-row gap-6'>
           <UserInfoCardSkeleton />
           <div className='flex flex-col gap-6 flex-1'>
@@ -84,7 +114,21 @@ const VacationContent = () => {
   if (!selectedUserId) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
-        <h1 className='text-3xl font-bold mb-6'>{t('stats.title')}</h1>
+        <div className='flex items-center justify-between mb-6'>
+          <h1 className='text-3xl font-bold'>{t('stats.title')}</h1>
+          <Select value={selectedYear} onValueChange={setSelectedYear}>
+            <SelectTrigger className='w-[120px]'>
+              <SelectValue placeholder={t('stats.selectYear')} />
+            </SelectTrigger>
+            <SelectContent>
+              {getYearOptions().map((year) => (
+                <SelectItem key={year} value={year}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div>{t('stats.noUser')}</div>
       </div>
     );
@@ -92,7 +136,21 @@ const VacationContent = () => {
 
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <h1 className='text-3xl font-bold mb-6'>{t('stats.title')}</h1>
+      <div className='flex items-center justify-between mb-6'>
+        <h1 className='text-3xl font-bold'>{t('stats.title')}</h1>
+        <Select value={selectedYear} onValueChange={setSelectedYear}>
+          <SelectTrigger className='w-[120px]'>
+            <SelectValue placeholder={t('stats.selectYear')} />
+          </SelectTrigger>
+          <SelectContent>
+            {getYearOptions().map((year) => (
+              <SelectItem key={year} value={year}>
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       <div className='flex flex-col lg:flex-row gap-6'>
         <UserInfoCard
           value={users || []}

@@ -20,6 +20,13 @@ import VacationStatsCardSkeleton from '@/features/vacation/history/components/Va
 import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard'
 import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton'
 import { useTranslation } from 'react-i18next'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/shadcn/select'
 
 interface HistoryContentProps {
   user: any
@@ -27,6 +34,17 @@ interface HistoryContentProps {
   monthStats: any
   vacationTypes: any
   histories: any
+  selectedYear: string
+  onYearChange: (year: string) => void
+}
+
+const getYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+  const years: string[] = []
+  for (let i = currentYear - 5; i <= currentYear + 1; i++) {
+    years.push(i.toString())
+  }
+  return years
 }
 
 const HistoryContentLayout = ({
@@ -34,13 +52,29 @@ const HistoryContentLayout = ({
   vacationStats,
   monthStats,
   vacationTypes,
-  histories
+  histories,
+  selectedYear,
+  onYearChange
 }: HistoryContentProps) => {
   const { t } = useTranslation('vacation')
 
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <h1 className='text-3xl font-bold mb-6'>{t('history.pageTitle')}</h1>
+      <div className='flex items-center justify-between mb-6'>
+        <h1 className='text-3xl font-bold'>{t('history.pageTitle')}</h1>
+        <Select value={selectedYear} onValueChange={onYearChange}>
+          <SelectTrigger className='w-[120px]'>
+            <SelectValue placeholder={t('history.selectYear')} />
+          </SelectTrigger>
+          <SelectContent>
+            {getYearOptions().map((year) => (
+              <SelectItem key={year} value={year}>
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       <div className='flex flex-col lg:flex-row gap-6'>
         {user && <UserInfoCard value={[user]} />}
         <div className='flex flex-col gap-6 flex-1'>
@@ -87,22 +121,22 @@ const HistoryContent = () => {
   const { t } = useTranslation('vacation')
   const { t: tc } = useTranslation('common')
   const { loginUser } = useUser()
-  const { selectedYear } = useHistoryContext()
+  const { selectedYear, setSelectedYear } = useHistoryContext()
   const user_id = loginUser?.user_id || ''
 
   const { data: user, isLoading: userLoading, error: userError } = useUserQuery(user_id)
   const { data: vacationTypes, isLoading: vacationTypesLoading, error: vacationTypesError } = useAvailableVacationsQuery(
     user_id,
-    dayjs().format('YYYY-MM-DDTHH:mm:ss')
+    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
   )
   const { data: monthStats, isLoading: monthStatsLoading, error: monthStatsError } = useUserMonthlyVacationStatsQuery(
     user_id,
     selectedYear
   )
-  const { data: histories, isLoading: historiesLoading, error: historiesError } = useUserVacationHistoryQuery(user_id)
+  const { data: histories, isLoading: historiesLoading, error: historiesError } = useUserVacationHistoryQuery(user_id, parseInt(selectedYear))
   const { data: vacationStats, isLoading: vacationStatsLoading, error: vacationStatsError } = useUserVacationStatsQuery(
     user_id,
-    dayjs().format('YYYY-MM-DDTHH:mm:ss')
+    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
   )
 
   const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading
@@ -126,6 +160,8 @@ const HistoryContent = () => {
         monthStats={monthStats}
         vacationTypes={vacationTypes}
         histories={histories}
+        selectedYear={selectedYear}
+        onYearChange={setSelectedYear}
       />
     </QueryAsyncBoundary>
   )
