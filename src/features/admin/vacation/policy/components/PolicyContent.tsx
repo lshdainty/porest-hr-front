@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { usePolicyContext } from '@/features/admin/vacation/policy/contexts/PolicyContext';
@@ -11,7 +10,6 @@ import {
 } from '@/hooks/queries/useTypes';
 import { useVacationPoliciesQuery } from '@/hooks/queries/useVacations';
 import {
-  Loader2,
   Plus,
   Search,
 } from 'lucide-react';
@@ -19,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 import { VacationPolicyFormDialog } from '@/features/admin/vacation/policy/components/VacationPolicyFormDialog';
 import { VacationPolicyLists } from '@/features/admin/vacation/policy/components/VacationPolicyLists';
+import PolicyContentSkeleton from '@/features/admin/vacation/policy/components/PolicyContentSkeleton';
 
 const PolicyContent = () => {
   const { t } = useTranslation('vacation');
@@ -40,11 +39,7 @@ const PolicyContent = () => {
 
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <PolicyContentSkeleton />;
   }
 
   return (

@@ -21,9 +21,9 @@ import {
 } from '@/components/shadcn/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Textarea } from '@/components/shadcn/textarea';
+import EmptyReport from '@/features/work/report/components/EmptyReport';
 import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
-import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import {
   CalendarIcon,
@@ -406,7 +406,7 @@ const ReportTable = ({
             </Table>
           </div>
         ) : (
-          <Empty description={t('report.noHistory')} />
+          <EmptyReport onAddClick={handleAddRow} />
         )}
       </CardContent>
     </Card>

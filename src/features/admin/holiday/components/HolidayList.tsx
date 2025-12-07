@@ -2,9 +2,10 @@ import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
+import EmptyHoliday from '@/features/admin/holiday/components/EmptyHoliday';
 import HolidayDeleteDialog from '@/features/admin/holiday/components/HolidayDeleteDialog';
 import { type GetHolidaysResp } from '@/lib/api/holiday';
-import { Calendar, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
+import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const holidayTypeColors = {
@@ -131,18 +132,8 @@ const HolidayList = ({
       ))}
       {(!holidays || holidays.length === 0) && (
         <Card>
-          <CardContent className='p-12 text-center'>
-            <Calendar className='h-12 w-12 mx-auto text-muted-foreground mb-4' />
-            <h3 className='text-lg font-medium text-card-foreground mb-2'>
-              {t('holiday.noHolidays')}
-            </h3>
-            <p className='text-muted-foreground mb-4'>
-              {t('holiday.noHolidaysDesc')}
-            </p>
-            <Button onClick={onAddClick}>
-              <Calendar className='h-4 w-4 mr-2' />
-              {t('holiday.addFirst')}
-            </Button>
+          <CardContent className="p-0">
+            <EmptyHoliday onAddClick={onAddClick} />
           </CardContent>
         </Card>
       )}

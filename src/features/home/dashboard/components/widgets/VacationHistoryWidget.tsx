@@ -1,4 +1,5 @@
 import VacationHistoryContent from '@/features/vacation/history/components/VacationHistoryContent'
+import VacationHistoryWidgetSkeleton from '@/features/home/dashboard/components/widgets/VacationHistoryWidgetSkeleton'
 import { GetUserVacationHistoryResp } from '@/lib/api/vacation'
 
 interface VacationHistoryWidgetProps {
@@ -9,11 +10,7 @@ const VacationHistoryWidget = ({
   vacationHistory,
 }: VacationHistoryWidgetProps) => {
   if (!vacationHistory) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-muted-foreground">데이터를 불러오는 중...</p>
-      </div>
-    )
+    return <VacationHistoryWidgetSkeleton />
   }
 
   return (

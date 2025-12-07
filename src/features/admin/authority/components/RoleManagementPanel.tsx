@@ -2,6 +2,7 @@ import { Dialog, DialogContent } from "@/components/shadcn/dialog";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import RoleDetail from "@/features/admin/authority/components/RoleDetail";
 import RoleList from "@/features/admin/authority/components/RoleList";
+import RoleListSkeleton from "@/features/admin/authority/components/RoleListSkeleton";
 import { Authority, Role } from "@/features/admin/authority/types";
 import { usePermissionsQuery } from "@/hooks/queries/usePermissions";
 import {
@@ -269,16 +270,18 @@ const RoleManagementPanel = () => {
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={75}>
-        {editingRole ? ( // Use editingRole for RoleDetail
-          <RoleDetail 
-            role={editingRole} 
+        {isLoading ? (
+          <RoleListSkeleton />
+        ) : editingRole ? (
+          <RoleDetail
+            role={editingRole}
             allAuthorities={authorities}
-            onUpdateRole={handleUpdateRole} // This updates the local editingRole state
+            onUpdateRole={handleUpdateRole}
             onSave={handleSave}
           />
         ) : (
           <div className="flex items-center justify-center h-full text-muted-foreground">
-            {isLoading ? "Loading..." : "Select a role to view details"}
+            Select a role to view details
           </div>
         )}
       </ResizablePanel>

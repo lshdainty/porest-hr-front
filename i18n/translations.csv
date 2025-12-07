@@ -118,6 +118,7 @@ admin,department.editBtn,수정,Edit
 admin,department.deleteBtn,삭제,Delete
 admin,department.hasChildrenError,하위 부서가 있어 삭제할 수 없습니다.,Cannot delete because it has sub-departments.
 admin,department.noDepartments,부서가 없습니다,No departments
+admin,department.noDepartmentsDesc,새로운 부서를 추가해보세요.,Try adding a new department.
 admin,department.chart,조직도,Organization Chart
 admin,department.totalCount,전체 부서: {{count}}개,Total departments: {{count}}
 admin,company.addCardTitle,회사 정보 추가하기,Add Company Info
@@ -498,7 +499,9 @@ vacation,policy.grantTimeLabel,부여 시간,Grant Time
 vacation,policy.noLimit,제한없음,No limit
 vacation,policy.validityPeriod,유효기간,Validity Period
 vacation,policy.noSearchResults,검색 결과가 없습니다.,No search results.
+vacation,policy.noSearchResultsDesc,검색 조건에 맞는 정책이 없습니다.,No policies match your search criteria.
 vacation,policy.noPolicies,등록된 휴가 정책이 없습니다.,No vacation policies registered.
+vacation,policy.noPoliciesDesc,새로운 휴가 정책을 등록해주세요.,Please register a new vacation policy.
 vacation,stats.title,휴가 관리,Vacation Management
 vacation,stats.noUser,사용자 정보가 없습니다.,No user information available.
 auth,signup.socialRequired,최소 하나의 소셜 로그인을 연동해주세요.,Please link at least one social login.
@@ -560,6 +563,7 @@ work,report.workDivision,업무 구분,Work Division
 work,report.workContent,업무 내용,Work Content
 work,report.workContentPlaceholder,업무 내용을 입력하세요,Enter work content
 work,report.noHistory,등록된 업무 이력이 없습니다,No work history registered
+work,report.noHistoryDesc,새로운 업무 이력을 등록해주세요.,Please register a new work history.
 work,report.selectDateFirst,날짜 선택,Select date
 work,report.assignee,담당자,Assignee
 work,report.selectWorkGroupFirst,업무 분류를 먼저 선택하세요,Select work group first
@@ -855,6 +859,7 @@ vacation,history.tableUsed,사용,Used
 vacation,history.tableScheduled,예정,Scheduled
 vacation,history.tableRemaining,잔여,Remaining
 vacation,history.noDataMessage,휴가 통계 데이터가 없습니다.,No vacation statistics data available.
+vacation,history.noDataMessageDesc,휴가 사용 내역이 없습니다.,No vacation usage history found.
 vacation,history.monthlyUsageTrend,월별 휴가 사용 추이,Monthly Vacation Usage Trend
 vacation,history.vacationType,휴가 유형,Vacation Type
 vacation,history.vacationTypeDesc,잔여 휴가별 휴가 유형,Vacation type by remaining leave
@@ -908,6 +913,7 @@ calendar,agenda.dateFormat,yyyy년 M월 dd일 EEEE,EEEE MMM dd yyyy
 dashboard,workHistory.title,업무이력 작성 현황,Work History Status
 dashboard,workHistory.loading,데이터를 불러오는 중...,Loading data...
 dashboard,workHistory.noData,데이터를 불러올 수 없습니다.,Cannot load data.
+dashboard,workHistory.noDataDesc,오늘 업무 데이터가 없습니다.,No work data available for today.
 dashboard,workHistory.hoursUnit,시간,hours
 dashboard,workHistory.achieved,달성 완료,Achieved
 dashboard,workHistory.inProgress,진행 중,In Progress

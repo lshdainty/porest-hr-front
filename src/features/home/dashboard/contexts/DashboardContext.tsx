@@ -99,7 +99,7 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
     localStorage.removeItem(WIDGETS_STORAGE_KEY);
   };
 
-  const onDrop = (layout: any, layoutItem: any, _event: any) => {
+  const onDrop = (layout: any, _layoutItem: any, _event: any) => {
     if (!draggedWidget) return;
 
     const newLayouts = {

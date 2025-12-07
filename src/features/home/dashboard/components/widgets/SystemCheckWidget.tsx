@@ -1,11 +1,11 @@
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
-import { useMemo } from 'react';
-
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { Card, CardContent } from '@/components/shadcn/card';
-
+import SystemCheckWidgetSkeleton from '@/features/home/dashboard/components/widgets/SystemCheckWidgetSkeleton';
 import { useSystemCheckStatusQuery, useSystemTypesQuery, useToggleSystemCheckMutation } from '@/hooks/queries/useWorks';
 import { SystemType } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useMemo } from 'react';
 
 interface SystemItem {
   id: SystemType;
@@ -15,18 +15,21 @@ interface SystemItem {
 }
 
 const SystemCheckWidget = () => {
-  const { data: systemTypes } = useSystemTypesQuery();
-  
+  const { data: systemTypes, isLoading: systemTypesLoading, error: systemTypesError } = useSystemTypesQuery();
+
   const systemCodes = useMemo(() => {
     if (!systemTypes) return [];
     return systemTypes.map(type => type.code as SystemType);
   }, [systemTypes]);
 
-  const { data: statusData, refetch } = useSystemCheckStatusQuery(systemCodes);
+  const { data: statusData, isLoading: statusLoading, error: statusError, refetch } = useSystemCheckStatusQuery(systemCodes);
+
+  const isLoading = systemTypesLoading || statusLoading;
+  const error = systemTypesError || statusError;
 
   const sortedSystems = useMemo(() => {
     if (!systemTypes) return [];
-    
+
     return [...systemTypes]
       .sort((a, b) => (a.order_seq || 0) - (b.order_seq || 0))
       .map(type => {
@@ -41,18 +44,22 @@ const SystemCheckWidget = () => {
   }, [systemTypes, statusData]);
 
   return (
-    <Card className="h-full flex flex-col border-none shadow-none py-0 min-h-[200px]">
-
-      <CardContent className="flex-1 p-0 min-h-0">
-        <div className="h-full overflow-y-auto">
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-2 p-2">
-            {sortedSystems.map((system) => (
-              <SystemRow key={system.id} system={system} onToggle={() => refetch()} />
-            ))}
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: systemTypes }}
+      loadingComponent={<SystemCheckWidgetSkeleton />}
+    >
+      <Card className="h-full flex flex-col border-none shadow-none py-0 min-h-[200px]">
+        <CardContent className="flex-1 p-0 min-h-0">
+          <div className="h-full overflow-y-auto">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-2 p-2">
+              {sortedSystems.map((system) => (
+                <SystemRow key={system.id} system={system} onToggle={() => refetch()} />
+              ))}
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </QueryAsyncBoundary>
   );
 };
 

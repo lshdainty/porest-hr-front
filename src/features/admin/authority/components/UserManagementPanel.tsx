@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "@/components/shadcn/dialog";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import UserList from "@/features/admin/authority/components/UserList";
+import UserListSkeleton from "@/features/admin/authority/components/UserListSkeleton";
 import UserRoleAssignment from "@/features/admin/authority/components/UserRoleAssignment";
 import { Authority, Role, User } from "@/features/admin/authority/types";
 import { usePermissionsQuery } from "@/hooks/queries/usePermissions";
@@ -69,7 +70,7 @@ const UserManagementPanel = () => {
         user_work_time: userDetails.user_work_time,
         lunar_yn: userDetails.lunar_yn,
         profile_url: userDetails.profile_url,
-        // profile_uuid is optional now
+        country_code: userDetails.country_code,
         dashboard: userDetails.dashboard
       });
       
@@ -124,15 +125,17 @@ const UserManagementPanel = () => {
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={75}>
-        {selectedUser ? (
-          <UserRoleAssignment 
-            user={selectedUser} 
+        {isLoading ? (
+          <UserListSkeleton />
+        ) : selectedUser ? (
+          <UserRoleAssignment
+            user={selectedUser}
             allRoles={domainRoles}
             onUpdateUserRole={handleUpdateUserRole}
           />
         ) : (
           <div className="flex items-center justify-center h-full text-muted-foreground">
-            {isLoading ? "Loading..." : "Select a user to manage roles"}
+            Select a user to manage roles
           </div>
         )}
       </ResizablePanel>

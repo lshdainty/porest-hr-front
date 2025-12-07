@@ -1,6 +1,7 @@
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
+import EmptyPolicy from '@/features/admin/vacation/policy/components/EmptyPolicy';
 import { VacationPolicyDeleteDialog } from '@/features/admin/vacation/policy/components/VacationPolicyDeleteDialog';
 import {
   useEffectiveTypesQuery,
@@ -96,12 +97,8 @@ const VacationPolicyLists = ({ policies, searchQuery }: VacationPolicyListsProps
 
       {policies.length === 0 && (
         <Card>
-          <CardContent className="py-12">
-            <div className="flex flex-col items-center gap-4 text-center">
-              <p className="text-muted-foreground">
-                {searchQuery ? t('policy.noSearchResults') : t('policy.noPolicies')}
-              </p>
-            </div>
+          <CardContent className="p-0">
+            <EmptyPolicy isSearchResult={!!searchQuery} />
           </CardContent>
         </Card>
       )}

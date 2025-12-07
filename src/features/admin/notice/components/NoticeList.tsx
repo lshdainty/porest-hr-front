@@ -2,9 +2,10 @@ import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
+import EmptyNotice from '@/features/admin/notice/components/EmptyNotice';
 import NoticeDeleteDialog from '@/features/admin/notice/components/NoticeDeleteDialog';
 import { type NoticeListResp } from '@/lib/api/notice';
-import { Bell, EllipsisVertical, Eye, Pencil, Pin, Trash2 } from 'lucide-react';
+import { EllipsisVertical, Eye, Pencil, Pin, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const noticeTypeColors: Record<string, string> = {
@@ -128,18 +129,8 @@ const NoticeList = ({
       ))}
       {(!notices || notices.length === 0) && (
         <Card>
-          <CardContent className='p-12 text-center'>
-            <Bell className='h-12 w-12 mx-auto text-muted-foreground mb-4' />
-            <h3 className='text-lg font-medium text-card-foreground mb-2'>
-              {t('notice.noNotices')}
-            </h3>
-            <p className='text-muted-foreground mb-4'>
-              {t('notice.noNoticesDesc')}
-            </p>
-            <Button onClick={onAddClick}>
-              <Bell className='h-4 w-4 mr-2' />
-              {t('notice.addFirst')}
-            </Button>
+          <CardContent className="p-0">
+            <EmptyNotice onAddClick={onAddClick} />
           </CardContent>
         </Card>
       )}

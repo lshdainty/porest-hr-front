@@ -19,7 +19,7 @@ const VacationRequestStatsWidget = ({ stats }: VacationRequestStatsWidgetProps) 
   return (
     <div className='w-full h-full overflow-x-auto'>
       <div className='flex flex-wrap h-full items-stretch bg-card'>
-        {statsConfig.map((item, index) => (
+        {statsConfig.map((item) => (
           <div
             key={item.id}
             className='p-6 border-r border-border min-w-[140px] flex-1'

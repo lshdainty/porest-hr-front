@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import WorkCodeDeleteDialog from './WorkCodeDeleteDialog';
 import WorkCodeEditDialog from './WorkCodeEditDialog';
+import WorkCodeListSkeleton from './WorkCodeListSkeleton';
 
 const WorkCodeList = () => {
   const { t } = useTranslation('work');
@@ -42,7 +43,7 @@ const WorkCodeList = () => {
   };
 
   if (isLoading) {
-    return <div>{t('loading')}</div>;
+    return <WorkCodeListSkeleton />;
   }
 
   return (

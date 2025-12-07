@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { Tree, TreeNode } from 'react-organizational-chart';
-import { Building2, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/shadcn/card'
+import EmptyDepartment from '@/features/admin/company/components/EmptyDepartment';
 import { GetCompanyWithDepartment } from '@/lib/api/company';
 
 interface DepartmentChartPanelProps {
@@ -139,10 +140,7 @@ const DepartmentChartPanel = ({
               {renderChart(departments[0])}
             </div>
           ) : (
-            <div className='text-center py-12'>
-              <Building2 size={48} className='mx-auto text-muted-foreground mb-4' />
-              <p className='text-muted-foreground'>{t('department.noDepartments')}</p>
-            </div>
+            <EmptyDepartment />
           )}
         </div>
       </div>

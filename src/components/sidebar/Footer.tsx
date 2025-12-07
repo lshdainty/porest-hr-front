@@ -64,7 +64,8 @@ export function Footer() {
       user_work_time: user.user_work_time,
       lunar_yn: user.lunar_yn,
       profile_url: user.profile_url,
-      profile_uuid: user.profile_uuid
+      profile_uuid: user.profile_uuid,
+      country_code: user.country_code
     })
   }
 

@@ -31,7 +31,6 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
   const { t } = useTranslation('vacation');
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerDimensions, setContainerDimensions] = useState({ width: 400, height: 400 });
-  const minChartSize = 300; // 최소 차트 크기
 
   const vacationTypes = useMemo(() => {
     if (data?.vacations) {

@@ -24,7 +24,7 @@ const MAX_VISIBLE_EVENTS = 3;
 
 const DayCell = ({ cell, events, eventPositions }: IProps) => {
   const { setSelectedDate, setView, findHolidayByDate } = useCalendar();
-  const { isSelecting, selectionStart, selectionEnd, startSelection, updateSelection, endSelection } = useDragSelect();
+  const { selectionStart, selectionEnd, startSelection, updateSelection, endSelection } = useDragSelect();
 
   const { day, currentMonth, date } = cell;
 

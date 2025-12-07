@@ -1,6 +1,7 @@
 import { toast } from '@/components/shadcn/sonner';
 import { Button } from '@/components/shadcn/button';
 import { TreeDataItem, TreeView } from '@/components/shadcn/treeView';
+import EmptyDepartment from '@/features/admin/company/components/EmptyDepartment';
 import { GetCompanyWithDepartment } from '@/lib/api/company';
 import { PutDepartmentReq } from '@/lib/api/department';
 import { Building2, Edit, Plus, Trash2 } from 'lucide-react';
@@ -229,10 +230,7 @@ const DepartmentTreePanel = ({
             disableCollapse={disableCollapse}
           />
         ) : (
-          <div className='flex flex-col items-center justify-center h-full text-muted-foreground'>
-            <Building2 size={48} className='mb-4 text-muted-foreground' />
-            <p>{t('department.noDepartments')}</p>
-          </div>
+          <EmptyDepartment className="h-full" />
         )}
       </div>
       

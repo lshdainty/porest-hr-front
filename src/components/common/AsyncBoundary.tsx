@@ -6,13 +6,11 @@ import useIsMounted from '@/hooks/useIsMounted'
 interface Props {
   children: ReactNode
   errorComponent?: ReactNode
-  errorText?: string
   loadingComponent?: ReactNode
 }
 
 const AsyncBoundary = ({
   errorComponent,
-  errorText,
   loadingComponent,
   children
 }: Props) => {
