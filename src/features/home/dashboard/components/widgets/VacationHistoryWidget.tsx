@@ -17,10 +17,12 @@ const VacationHistoryWidget = ({
   }
 
   return (
-    <VacationHistoryContent
-      data={vacationHistory}
-      className="h-full"
-    />
+    <div className="p-4 h-full">
+      <VacationHistoryContent
+        data={vacationHistory}
+        className="h-full"
+      />
+    </div>
   )
 }
 

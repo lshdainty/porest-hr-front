@@ -1,6 +1,7 @@
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
+import { Empty, EmptyDescription, EmptyIcon, EmptyTitle } from '@/components/shadcn/empty';
 import {
   Table,
   TableBody,
@@ -15,6 +16,7 @@ import { getStatusBadge } from '@/utils/vacationStatus';
 import dayjs from 'dayjs';
 import {
   Calendar,
+  CalendarX2,
   EllipsisVertical,
   Eye,
   XCircle
@@ -37,7 +39,7 @@ const ApplicationTableContent = ({
   const { t } = useTranslation('vacation');
 
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto min-h-[300px]'>
       <Table className='min-w-[1000px]'>
         <TableHeader>
           <TableRow>
@@ -53,9 +55,17 @@ const ApplicationTableContent = ({
         </TableHeader>
         <TableBody>
           {vacationRequests.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={8} className='text-center py-8 text-muted-foreground'>
-                {t('application.noRequests')}
+            <TableRow className='hover:bg-transparent'>
+              <TableCell colSpan={8} className='h-[250px]'>
+                <Empty>
+                  <EmptyIcon>
+                    <CalendarX2 />
+                  </EmptyIcon>
+                  <EmptyTitle>{t('application.noRequestsTitle')}</EmptyTitle>
+                  <EmptyDescription>
+                    {t('application.noRequestsDescription')}
+                  </EmptyDescription>
+                </Empty>
               </TableCell>
             </TableRow>
           ) : (

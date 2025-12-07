@@ -828,6 +828,8 @@ vacation,application.tableGrantDays,보상일수,Grant Days
 vacation,application.tableCurrentApprover,현결재자,Current Approver
 vacation,application.tableStatus,상태,Status
 vacation,application.noRequests,신청한 휴가가 없습니다.,No vacation requests.
+vacation,application.noRequestsTitle,신청 내역이 없습니다,No Requests Yet
+vacation,application.noRequestsDescription,아직 신청한 휴가가 없습니다. 새 신청서를 작성해 보세요.,You haven't submitted any vacation requests yet. Try creating a new request.
 vacation,application.viewDetail,상세보기,View Detail
 vacation,application.cancelRequest,신청취소,Cancel Request
 common,loadFailed,데이터를 불러오는데 실패했습니다.,Failed to load data.
