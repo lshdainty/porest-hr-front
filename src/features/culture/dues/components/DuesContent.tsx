@@ -1,4 +1,11 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/shadcn/select';
 import DuesTable from '@/features/culture/dues/components/DuesTable';
 import DuesTableSkeleton from '@/features/culture/dues/components/DuesTableSkeleton';
 import TotalDues from '@/features/culture/dues/components/TotalDues';
@@ -10,9 +17,19 @@ import { useMonthBirthDuesQuery, useUsersMonthBirthDuesQuery, useYearDuesQuery, 
 import { useUsersQuery } from '@/hooks/queries/useUsers';
 import { useTranslation } from 'react-i18next';
 
+const getYearOptions = () => {
+  const currentYear = new Date().getFullYear();
+  const years: string[] = [];
+  for (let i = currentYear - 5; i <= currentYear + 1; i++) {
+    years.push(i.toString());
+  }
+  return years;
+};
+
 const DuesContent = () => {
   const { t } = useTranslation('common');
-  const { year, month } = useDuesContext();
+  const { t: tc } = useTranslation('culture');
+  const { year, setYear, month } = useDuesContext();
 
   const { data: totalDues, isLoading: totalDuesLoading, error: totalDuesError } = useYearOperationDuesQuery(year);
   const { data: birthDues, isLoading: birthDuesLoading, error: birthDuesError } = useMonthBirthDuesQuery(year, month);
@@ -28,6 +45,21 @@ const DuesContent = () => {
       queryState={{ isLoading, error, data: true }}
       loadingComponent={
         <div className='p-4 sm:p-6 md:p-8'>
+          <div className='flex items-center justify-between mb-6'>
+            <h1 className='text-3xl font-bold'>{tc('dues.title')}</h1>
+            <Select value={year.toString()} onValueChange={(value) => setYear(parseInt(value))}>
+              <SelectTrigger className='w-[120px]'>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {getYearOptions().map((y) => (
+                  <SelectItem key={y} value={y}>
+                    {y}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className='mb-6'>
             <TotalDuesSkeleton />
           </div>
@@ -46,6 +78,21 @@ const DuesContent = () => {
       }
     >
       <div className='p-4 sm:p-6 md:p-8'>
+        <div className='flex items-center justify-between mb-6'>
+          <h1 className='text-3xl font-bold'>{tc('dues.title')}</h1>
+          <Select value={year.toString()} onValueChange={(value) => setYear(parseInt(value))}>
+            <SelectTrigger className='w-[120px]'>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {getYearOptions().map((y) => (
+                <SelectItem key={y} value={y}>
+                  {y}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className='mb-6'>
           <TotalDues
             totalDues={totalDues}
