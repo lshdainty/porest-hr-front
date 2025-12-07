@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import EmptyProfile from '@/features/user/components/EmptyProfile';
 import UserInfoContent from '@/features/user/components/UserInfoContent';
 import { GetUsersResp } from '@/lib/api/user';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +26,18 @@ const UserInfoCard = ({
     : users.find(user => user.user_id === selectedUserId);
 
   if (!selectedUser) {
-    return <div>{t('info.notFound')}</div>;
+    return (
+      <div className='flex flex-col gap-6 h-full'>
+        <Card className='h-full min-w-[350px]'>
+          <CardHeader>
+            <CardTitle>{displayTitle}</CardTitle>
+          </CardHeader>
+          <CardContent className='flex-1'>
+            <EmptyProfile className='h-full' />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (

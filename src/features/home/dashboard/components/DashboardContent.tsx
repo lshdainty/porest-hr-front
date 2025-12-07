@@ -119,7 +119,7 @@ const DashboardContent = ({
   const widgetConfig: Record<string, { title: string; component: React.ReactNode }> = {
     profile: {
       title: t('widget.myInfo'),
-      component: <ProfileWidget user={user} />
+      component: <ProfileWidget />
     },
     'vacation-stats': {
       title: t('widget.vacationStatus'),
