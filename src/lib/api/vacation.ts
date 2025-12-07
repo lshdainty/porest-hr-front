@@ -789,12 +789,13 @@ export async function fetchPostRejectVacation(approvalId: number, approverId: st
   return resp.data;
 }
 
-export async function fetchGetAllVacationsByApprover(approverId: string, status?: string): Promise<GetUserRequestedVacationsResp[]> {
+export async function fetchGetAllVacationsByApprover(approverId: string, year: number, status?: string): Promise<GetUserRequestedVacationsResp[]> {
   const params = new URLSearchParams();
+  params.append('year', year.toString());
   if (status) {
     params.append('status', status);
   }
-  const queryString = params.toString() ? `?${params.toString()}` : '';
+  const queryString = `?${params.toString()}`;
 
   const resp: ApiResponse<GetUserRequestedVacationsResp[]> = await api.request({
     method: 'get',
@@ -806,10 +807,10 @@ export async function fetchGetAllVacationsByApprover(approverId: string, status?
   return resp.data;
 }
 
-export async function fetchGetUserRequestedVacations(userId: string): Promise<GetUserRequestedVacationsResp[]> {
+export async function fetchGetUserRequestedVacations(userId: string, year: number): Promise<GetUserRequestedVacationsResp[]> {
   const resp: ApiResponse<GetUserRequestedVacationsResp[]> = await api.request({
     method: 'get',
-    url: `/users/${userId}/vacation-requests`
+    url: `/users/${userId}/vacation-requests?year=${year}`
   });
 
   if (!resp.success) throw new Error(resp.message);
@@ -817,10 +818,10 @@ export async function fetchGetUserRequestedVacations(userId: string): Promise<Ge
   return resp.data;
 }
 
-export async function fetchGetUserRequestedVacationStats(userId: string): Promise<GetUserRequestedVacationStatsResp> {
+export async function fetchGetUserRequestedVacationStats(userId: string, year: number): Promise<GetUserRequestedVacationStatsResp> {
   const resp: ApiResponse<GetUserRequestedVacationStatsResp> = await api.request({
     method: 'get',
-    url: `/users/${userId}/vacation-requests/stats`
+    url: `/users/${userId}/vacation-requests/stats?year=${year}`
   });
 
   if (!resp.success) throw new Error(resp.message);

@@ -61,7 +61,8 @@ const VacationContent = () => {
     dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
   );
   const { data: vacationRequests = [], isLoading: isLoadingRequests } = useAllVacationsByApproverQuery(
-    selectedUserId
+    selectedUserId,
+    parseInt(selectedYear)
   );
   const { data: grantStatusTypes = [] } = useGrantStatusTypesQuery();
 

@@ -192,28 +192,31 @@ export const useUserVacationPolicyAssignmentStatusQuery = (userId: string) => {
 }
 
 // 결재자별 휴가 승인 내역 조회 훅
-export const useAllVacationsByApproverQuery = (approverId: string, status?: string) => {
+export const useAllVacationsByApproverQuery = (approverId: string, year?: number, status?: string) => {
+  const queryYear = year ?? new Date().getFullYear()
   return useQuery<GetUserRequestedVacationsResp[]>({
-    queryKey: vacationKeys.list({ type: 'approvals', approverId, status }),
-    queryFn: () => fetchGetAllVacationsByApprover(approverId, status),
+    queryKey: vacationKeys.list({ type: 'approvals', approverId, year: queryYear, status }),
+    queryFn: () => fetchGetAllVacationsByApprover(approverId, queryYear, status),
     enabled: !!approverId
   })
 }
 
 // 사용자 휴가 요청 내역 조회 훅
-export const useUserRequestedVacationsQuery = (userId: string) => {
+export const useUserRequestedVacationsQuery = (userId: string, year?: number) => {
+  const queryYear = year ?? new Date().getFullYear()
   return useQuery<GetUserRequestedVacationsResp[]>({
-    queryKey: vacationKeys.list({ type: 'requests', userId }),
-    queryFn: () => fetchGetUserRequestedVacations(userId),
+    queryKey: vacationKeys.list({ type: 'requests', userId, year: queryYear }),
+    queryFn: () => fetchGetUserRequestedVacations(userId, queryYear),
     enabled: !!userId
   })
 }
 
 // 사용자 휴가 요청 통계 조회 훅
-export const useUserRequestedVacationStatsQuery = (userId: string) => {
+export const useUserRequestedVacationStatsQuery = (userId: string, year?: number) => {
+  const queryYear = year ?? new Date().getFullYear()
   return useQuery<GetUserRequestedVacationStatsResp>({
-    queryKey: vacationKeys.list({ type: 'requestStats', userId }),
-    queryFn: () => fetchGetUserRequestedVacationStats(userId),
+    queryKey: vacationKeys.list({ type: 'requestStats', userId, year: queryYear }),
+    queryFn: () => fetchGetUserRequestedVacationStats(userId, queryYear),
     enabled: !!userId
   })
 }
