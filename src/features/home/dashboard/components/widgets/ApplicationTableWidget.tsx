@@ -54,6 +54,8 @@ const ApplicationTableWidget = ({
         grantStatusTypes={grantStatusTypes}
         onDetailView={handleDetailView}
         onCancelRequest={handleCancelRequest}
+        stickyHeader={true}
+        className="h-full"
       />
 
       {/* 상세보기 다이얼로그 */}

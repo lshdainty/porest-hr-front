@@ -17,14 +17,15 @@ const DuesWidget = ({ yearDues }: DuesWidgetProps) => {
   }, [yearDues]);
 
   return (
-    <div className='h-full w-full p-4'>
-      <DuesTableContent
-        data={data}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-        rowsPerPage={5}
-      />
-    </div>
+    <DuesTableContent
+      data={data}
+      currentPage={currentPage}
+      onPageChange={setCurrentPage}
+      rowsPerPage={5}
+      showPagination={false}
+      stickyHeader={true}
+      className='h-full'
+    />
   );
 };
 

@@ -13,9 +13,9 @@ const VacationRequestStatsCards = ({ stats }: VacationRequestStatsCardsProps) =>
   const cardConfig = getVacationRequestStatsConfig(stats, t);
 
   return (
-    <div className='grid grid-cols-2 lg:grid-cols-7 gap-4 mb-8'>
+    <div className='flex flex-wrap gap-4 mb-8'>
       {cardConfig.map((card) => (
-        <Card key={card.id} className='relative overflow-hidden py-0'>
+        <Card key={card.id} className='relative overflow-hidden py-0 min-w-[140px] flex-1'>
           <CardContent className='p-6'>
             <VacationRequestStatsItem {...card} />
           </CardContent>

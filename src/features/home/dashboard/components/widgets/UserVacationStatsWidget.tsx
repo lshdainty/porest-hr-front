@@ -19,8 +19,8 @@ const UserVacationStatsWidget = () => {
   if (isLoading) {
     return (
       <Card className="h-full flex flex-col border-none shadow-none py-0">
-        <CardContent className="flex-1 overflow-auto p-0">
-          <Table>
+        <CardContent className="flex-1 overflow-hidden p-0">
+          <Table wrapperClassName="h-full overflow-auto">
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
                 <TableHead className="w-[80px] whitespace-nowrap">{t('history.tableName')}</TableHead>
@@ -61,8 +61,8 @@ const UserVacationStatsWidget = () => {
 
   return (
     <Card className="h-full flex flex-col border-none shadow-none py-0">
-      <CardContent className="flex-1 overflow-auto p-0">
-        <Table>
+      <CardContent className="flex-1 overflow-hidden p-0">
+        <Table wrapperClassName="h-full overflow-auto">
           <TableHeader className="sticky top-0 bg-background z-10">
             <TableRow>
               <TableHead className="w-[80px] whitespace-nowrap">{t('history.tableName')}</TableHead>

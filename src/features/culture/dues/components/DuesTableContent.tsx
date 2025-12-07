@@ -18,6 +18,7 @@ interface DuesTableContentProps {
   currentPage: number;
   onPageChange: (page: number) => void;
   rowsPerPage?: number;
+  showPagination?: boolean;
   editingRow?: string | null;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
@@ -27,6 +28,7 @@ interface DuesTableContentProps {
   onSelectChange?: (value: string, id: string, field: keyof GetYearDuesResp) => void;
   onDateChange?: (value: string | undefined, id: string) => void;
   className?: string;
+  stickyHeader?: boolean;
 }
 
 const DuesTableContent = ({
@@ -34,6 +36,7 @@ const DuesTableContent = ({
   currentPage,
   onPageChange,
   rowsPerPage = 5,
+  showPagination = true,
   editingRow,
   onEdit,
   onDelete,
@@ -42,21 +45,21 @@ const DuesTableContent = ({
   onInputChange,
   onSelectChange,
   onDateChange,
-  className
+  className,
+  stickyHeader = false
 }: DuesTableContentProps) => {
   const { t } = useTranslation('culture');
   const { t: tc } = useTranslation('common');
   const totalPages = data.length > 0 ? Math.ceil(data.length / rowsPerPage) : 1;
-  const paginatedData = data.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  const paginatedData = showPagination
+    ? data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+    : data;
 
   return (
     <div className={cn('w-full', className)}>
-      <div className='overflow-x-auto'>
-        <Table className='min-w-[1000px]'>
-          <TableHeader>
+      <div className={cn('overflow-x-auto', stickyHeader && 'h-full')}>
+        <Table className='min-w-[1000px]' wrapperClassName={stickyHeader ? 'h-full overflow-auto' : undefined}>
+          <TableHeader className={stickyHeader ? 'sticky top-0 bg-background z-10' : undefined}>
             <TableRow>
               <TableHead className='min-w-[140px] pl-4'>{t('dues.tableDate')}</TableHead>
               <TableHead className='min-w-[120px]'>{t('dues.tableName')}</TableHead>
@@ -235,56 +238,58 @@ const DuesTableContent = ({
           </TableBody>
         </Table>
       </div>
-      <div className='flex items-center justify-between p-4'>
-        <div className='text-sm text-muted-foreground'>
-          {data.length} row(s)
-        </div>
-        <div className='flex items-center space-x-6 lg:space-x-8'>
-          <div className='flex items-center space-x-2'>
-            <p className='text-sm font-medium'>
-              Page {currentPage} of {totalPages}
-            </p>
+      {showPagination && (
+        <div className='flex items-center justify-between p-4'>
+          <div className='text-sm text-muted-foreground'>
+            {data.length} row(s)
           </div>
-          <div className='flex items-center space-x-2'>
-            <Button
-              variant='outline'
-              className='h-8 w-8 p-0'
-              onClick={() => onPageChange(1)}
-              disabled={currentPage <= 1}
-            >
-              <span className='sr-only'>Go to first page</span>
-              <ChevronsLeft className='h-4 w-4' />
-            </Button>
-            <Button
-              variant='outline'
-              className='h-8 w-8 p-0'
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage <= 1}
-            >
-              <span className='sr-only'>Go to previous page</span>
-              <ChevronLeft className='h-4 w-4' />
-            </Button>
-            <Button
-              variant='outline'
-              className='h-8 w-8 p-0'
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages}
-            >
-              <span className='sr-only'>Go to next page</span>
-              <ChevronRight className='h-4 w-4' />
-            </Button>
-            <Button
-              variant='outline'
-              className='h-8 w-8 p-0'
-              onClick={() => onPageChange(totalPages)}
-              disabled={currentPage >= totalPages}
-            >
-              <span className='sr-only'>Go to last page</span>
-              <ChevronsRight className='h-4 w-4' />
-            </Button>
+          <div className='flex items-center space-x-6 lg:space-x-8'>
+            <div className='flex items-center space-x-2'>
+              <p className='text-sm font-medium'>
+                Page {currentPage} of {totalPages}
+              </p>
+            </div>
+            <div className='flex items-center space-x-2'>
+              <Button
+                variant='outline'
+                className='h-8 w-8 p-0'
+                onClick={() => onPageChange(1)}
+                disabled={currentPage <= 1}
+              >
+                <span className='sr-only'>Go to first page</span>
+                <ChevronsLeft className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                className='h-8 w-8 p-0'
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage <= 1}
+              >
+                <span className='sr-only'>Go to previous page</span>
+                <ChevronLeft className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                className='h-8 w-8 p-0'
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+              >
+                <span className='sr-only'>Go to next page</span>
+                <ChevronRight className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                className='h-8 w-8 p-0'
+                onClick={() => onPageChange(totalPages)}
+                disabled={currentPage >= totalPages}
+              >
+                <span className='sr-only'>Go to last page</span>
+                <ChevronsRight className='h-4 w-4' />
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

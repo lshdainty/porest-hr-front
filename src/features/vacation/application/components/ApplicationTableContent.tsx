@@ -12,6 +12,7 @@ import {
 } from '@/components/shadcn/table';
 import { TypeResp } from '@/lib/api/type';
 import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
+import { cn } from '@/lib/utils';
 import { getStatusBadge } from '@/utils/vacationStatus';
 import dayjs from 'dayjs';
 import {
@@ -28,6 +29,8 @@ interface ApplicationTableContentProps {
   grantStatusTypes: TypeResp[];
   onDetailView: (request: GetUserRequestedVacationsResp) => void;
   onCancelRequest: (requestId: number) => void;
+  className?: string;
+  stickyHeader?: boolean;
 }
 
 const ApplicationTableContent = ({
@@ -35,13 +38,15 @@ const ApplicationTableContent = ({
   grantStatusTypes,
   onDetailView,
   onCancelRequest,
+  className,
+  stickyHeader = false
 }: ApplicationTableContentProps) => {
   const { t } = useTranslation('vacation');
 
   return (
-    <div className='overflow-x-auto min-h-[300px]'>
-      <Table className='min-w-[1000px]'>
-        <TableHeader>
+    <div className={cn('overflow-x-auto min-h-[300px]', className, stickyHeader && 'h-full')}>
+      <Table className='min-w-[1000px]' wrapperClassName={stickyHeader ? 'h-full overflow-auto' : undefined}>
+        <TableHeader className={stickyHeader ? 'sticky top-0 bg-background z-10' : undefined}>
           <TableRow>
             <TableHead className='min-w-[200px] whitespace-nowrap'>{t('application.tableTitle')}</TableHead>
             <TableHead className='min-w-[100px] whitespace-nowrap'>{t('application.tableVacationType')}</TableHead>

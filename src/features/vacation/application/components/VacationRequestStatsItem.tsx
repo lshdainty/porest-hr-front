@@ -31,22 +31,22 @@ const VacationRequestStatsItem = ({
   footer
 }: VacationRequestStatsItemProps) => {
   return (
-    <>
+    <div className='w-full h-full flex flex-col'>
       <div className='flex items-center justify-between mb-4'>
         <div className={`w-12 h-12 rounded-lg ${iconBg} flex items-center justify-center`}>
           {icon}
         </div>
         {headerRight}
       </div>
-      <div>
+      <div className='flex-1 flex flex-col'>
         <p className='text-sm text-foreground mb-1'>{title}</p>
         <p className='text-2xl font-bold text-foreground'>{value}</p>
         {description && (
           <p className='text-xs text-foreground/70 mt-1'>{description}</p>
         )}
-        {footer}
+        {footer && <div className='mt-auto pt-2'>{footer}</div>}
       </div>
-    </>
+    </div>
   );
 };
 
@@ -128,11 +128,7 @@ export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationSta
       ),
       title: t('request.approvedLabel'),
       value: approvedRequests,
-      footer: (
-        <div className='mt-2'>
-          <Progress value={approvalRate} className='h-2' />
-        </div>
-      )
+      footer: <Progress value={approvalRate} className='h-2' />
     },
     {
       id: 'rejected',

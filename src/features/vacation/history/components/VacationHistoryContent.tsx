@@ -12,7 +12,10 @@ interface VacationHistoryContentProps {
   data: GetUserVacationHistoryResp;
   onEdit?: (item: any) => void;
   onDelete?: (id: number) => void;
+  showPagination?: boolean;
+  rowsPerPage?: number;
   className?: string;
+  stickyHeader?: boolean;
 }
 
 const formatDateTime = (dateTimeString: string) => {
@@ -41,11 +44,18 @@ const formatDate = (dateString: string) => {
   return `${year}.${month}.${day}`;
 };
 
-const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationHistoryContentProps) => {
+const VacationHistoryContent = ({
+  data,
+  onEdit,
+  onDelete,
+  showPagination = true,
+  rowsPerPage = 5,
+  className,
+  stickyHeader = false
+}: VacationHistoryContentProps) => {
   const { t } = useTranslation('vacation');
   const { t: tc } = useTranslation('common');
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
   const [activeTab, setActiveTab] = useState('usages');
 
   const grants = data?.grants || [];
@@ -58,23 +68,24 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
   }, [activeTab]);
 
   const totalPages = currentData.length > 0 ? Math.ceil(currentData.length / rowsPerPage) : 1;
-  const paginatedData = currentData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  const paginatedData = showPagination
+    ? currentData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+    : currentData;
 
   return (
-    <div className={cn('w-full', className)}>
-      <Tabs defaultValue="usages" className="w-full" onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="usages">{t('history.usageTab')}</TabsTrigger>
-          <TabsTrigger value="grants">{t('history.grantTab')}</TabsTrigger>
-        </TabsList>
+    <div className={cn('w-full', className, stickyHeader && 'flex flex-col h-full overflow-hidden')}>
+      <Tabs defaultValue="usages" className={cn('w-full', stickyHeader && 'flex flex-col h-full')} onValueChange={setActiveTab}>
+        <div className={cn(stickyHeader && 'shrink-0 p-4 pb-0')}>
+          <TabsList>
+            <TabsTrigger value="usages">{t('history.usageTab')}</TabsTrigger>
+            <TabsTrigger value="grants">{t('history.grantTab')}</TabsTrigger>
+          </TabsList>
+        </div>
 
-        <div className='mt-4 overflow-x-auto relative min-h-[300px]'>
-          <TabsContent value="usages">
-            <Table className='min-w-[800px]'>
-              <TableHeader>
+        <div className={cn('mt-4 overflow-x-auto relative min-h-[300px]', stickyHeader && 'flex-1 overflow-auto mt-0 pt-4')}>
+          <TabsContent value="usages" className={stickyHeader ? 'h-full' : undefined}>
+            <Table className='min-w-[800px]' wrapperClassName={stickyHeader ? 'h-full overflow-auto' : undefined}>
+              <TableHeader className={stickyHeader ? 'sticky top-0 bg-background z-10' : undefined}>
                 <TableRow>
                   <TableHead className='min-w-[200px] pl-4'>{t('history.usagePeriod')}</TableHead>
                   <TableHead className='min-w-[150px]'>{t('history.vacationType')}</TableHead>
@@ -156,9 +167,9 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
             </Table>
           </TabsContent>
 
-          <TabsContent value="grants">
-            <Table className='min-w-[800px]'>
-              <TableHeader>
+          <TabsContent value="grants" className={stickyHeader ? 'h-full' : undefined}>
+            <Table className='min-w-[800px]' wrapperClassName={stickyHeader ? 'h-full overflow-auto' : undefined}>
+              <TableHeader className={stickyHeader ? 'sticky top-0 bg-background z-10' : undefined}>
                 <TableRow>
                   <TableHead className='min-w-[150px] pl-4'>{t('history.vacationType')}</TableHead>
                   <TableHead className='min-w-[250px]'>{t('history.content')}</TableHead>
@@ -213,56 +224,58 @@ const VacationHistoryContent = ({ data, onEdit, onDelete, className }: VacationH
           </TabsContent>
         </div>
 
-        <div className='flex items-center justify-between p-4 border-t'>
-          <div className='text-sm text-muted-foreground'>
-            {currentData.length} row(s)
-          </div>
-          <div className='flex items-center space-x-6 lg:space-x-8'>
-            <div className='flex items-center space-x-2'>
-              <p className='text-sm font-medium'>
-                Page {currentPage} of {totalPages}
-              </p>
+        {showPagination && (
+          <div className='flex items-center justify-between p-4 border-t'>
+            <div className='text-sm text-muted-foreground'>
+              {currentData.length} row(s)
             </div>
-            <div className='flex items-center space-x-2'>
-              <Button
-                variant='outline'
-                className='h-8 w-8 p-0'
-                onClick={() => setCurrentPage(1)}
-                disabled={currentPage <= 1}
-              >
-                <span className='sr-only'>Go to first page</span>
-                <ChevronsLeft className='h-4 w-4' />
-              </Button>
-              <Button
-                variant='outline'
-                className='h-8 w-8 p-0'
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage <= 1}
-              >
-                <span className='sr-only'>Go to previous page</span>
-                <ChevronLeft className='h-4 w-4' />
-              </Button>
-              <Button
-                variant='outline'
-                className='h-8 w-8 p-0'
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage >= totalPages}
-              >
-                <span className='sr-only'>Go to next page</span>
-                <ChevronRight className='h-4 w-4' />
-              </Button>
-              <Button
-                variant='outline'
-                className='h-8 w-8 p-0'
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage >= totalPages}
-              >
-                <span className='sr-only'>Go to last page</span>
-                <ChevronsRight className='h-4 w-4' />
-              </Button>
+            <div className='flex items-center space-x-6 lg:space-x-8'>
+              <div className='flex items-center space-x-2'>
+                <p className='text-sm font-medium'>
+                  Page {currentPage} of {totalPages}
+                </p>
+              </div>
+              <div className='flex items-center space-x-2'>
+                <Button
+                  variant='outline'
+                  className='h-8 w-8 p-0'
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage <= 1}
+                >
+                  <span className='sr-only'>Go to first page</span>
+                  <ChevronsLeft className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='outline'
+                  className='h-8 w-8 p-0'
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage <= 1}
+                >
+                  <span className='sr-only'>Go to previous page</span>
+                  <ChevronLeft className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='outline'
+                  className='h-8 w-8 p-0'
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage >= totalPages}
+                >
+                  <span className='sr-only'>Go to next page</span>
+                  <ChevronRight className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='outline'
+                  className='h-8 w-8 p-0'
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage >= totalPages}
+                >
+                  <span className='sr-only'>Go to last page</span>
+                  <ChevronsRight className='h-4 w-4' />
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </Tabs>
     </div>
   );

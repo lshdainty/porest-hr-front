@@ -17,10 +17,13 @@ const VacationRequestStatsWidget = ({ stats }: VacationRequestStatsWidgetProps) 
   const statsConfig = getVacationRequestStatsConfig(stats, t);
 
   return (
-    <div className='w-full overflow-x-auto'>
-      <div className='grid grid-cols-1 lg:grid-cols-7 divide-y lg:divide-y-0 lg:divide-x divide-border h-full bg-card lg:min-w-[1000px]'>
-        {statsConfig.map((item) => (
-          <div key={item.id} className='p-6 h-full'>
+    <div className='w-full h-full overflow-x-auto'>
+      <div className='flex flex-wrap h-full items-stretch bg-card'>
+        {statsConfig.map((item, index) => (
+          <div
+            key={item.id}
+            className='p-6 border-r border-border min-w-[140px] flex-1'
+          >
              <VacationRequestStatsItem {...item} />
           </div>
         ))}
