@@ -4,6 +4,7 @@ import { User } from "@/features/admin/authority/types";
 import { cn } from "@/lib/utils";
 import { Search, User as UserIcon } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface UserListProps {
   users: User[];
@@ -12,9 +13,10 @@ interface UserListProps {
 }
 
 const UserList = ({ users, selectedUserId, onSelectUser }: UserListProps) => {
+  const { t } = useTranslation('admin');
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredUsers = users.filter(user => 
+  const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -24,13 +26,13 @@ const UserList = ({ users, selectedUserId, onSelectUser }: UserListProps) => {
       <div className="p-4 border-b space-y-3 bg-muted/30">
         <h3 className="font-semibold flex items-center gap-2">
           <UserIcon className="w-4 h-4" />
-          Users
+          {t('authority.users')}
         </h3>
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search users..." 
-            className="pl-8" 
+          <Input
+            placeholder={t('authority.searchUsers')}
+            className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -58,7 +60,7 @@ const UserList = ({ users, selectedUserId, onSelectUser }: UserListProps) => {
             ))
           ) : (
             <div className="p-4 text-center text-sm text-muted-foreground">
-              No users found.
+              {t('authority.noUsersFound')}
             </div>
           )}
         </div>

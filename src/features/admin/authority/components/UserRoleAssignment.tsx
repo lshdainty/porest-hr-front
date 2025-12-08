@@ -8,6 +8,7 @@ import { Role, User } from "@/features/admin/authority/types";
 import { useIsMobile } from "@/hooks/useMobile";
 import { ArrowLeft, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface UserRoleAssignmentProps {
   user: User;
@@ -17,6 +18,7 @@ interface UserRoleAssignmentProps {
 }
 
 const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole, onBack }: UserRoleAssignmentProps) => {
+  const { t } = useTranslation('admin');
   const [open, setOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -50,17 +52,17 @@ const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole, onBack }: UserRo
         
         <div className="flex gap-4 text-sm text-muted-foreground pl-0 md:pl-0">
           <div>
-            <span className="font-medium text-foreground">Department:</span> {user.department || '-'}
+            <span className="font-medium text-foreground">{t('authority.department')}:</span> {user.department || '-'}
           </div>
           <div>
-            <span className="font-medium text-foreground">Position:</span> {user.position || '-'}
+            <span className="font-medium text-foreground">{t('authority.position')}:</span> {user.position || '-'}
           </div>
         </div>
       </div>
 
       <div className="p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Assigned Roles</h3>
+          <h3 className="text-lg font-semibold">{t('authority.assignedRoles')}</h3>
         </div>
 
         <div className="space-y-6">
@@ -74,13 +76,13 @@ const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole, onBack }: UserRo
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-muted-foreground">No Roles Assigned</span>
+                  <span className="text-muted-foreground">{t('authority.noRolesAssigned')}</span>
                 )}
               </div>
               <p className="text-sm text-muted-foreground">
-                {currentRoles.length > 0 
-                  ? "Manage the roles assigned to this user." 
-                  : "Assign roles to this user to grant permissions."}
+                {currentRoles.length > 0
+                  ? t('authority.manageUserRoles')
+                  : t('authority.assignRolesToGrant')}
               </p>
             </div>
             
@@ -96,15 +98,15 @@ const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole, onBack }: UserRo
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between ml-4">
-                    {currentRoles.length > 0 ? `${currentRoles.length} Roles Selected` : "Assign Roles"}
+                    {currentRoles.length > 0 ? t('authority.rolesSelected', { count: currentRoles.length }) : t('authority.assignRoles')}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[250px] p-0">
                   <Command>
-                    <CommandInput placeholder="Search role..." />
+                    <CommandInput placeholder={t('authority.searchRoles')} />
                     <CommandList>
-                      <CommandEmpty>No role found.</CommandEmpty>
+                      <CommandEmpty>{t('authority.noRoleFound')}</CommandEmpty>
                       <CommandGroup>
                         {allRoles.map((role) => {
                           const isSelected = currentRoleCodes.includes(role.role_code);

@@ -2,6 +2,7 @@ import { Checkbox } from "@/components/shadcn/checkbox";
 import { Label } from "@/components/shadcn/label";
 import { Authority } from "@/features/admin/authority/types";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 interface PermissionMatrixProps {
   authorities: Authority[];
@@ -12,6 +13,7 @@ interface PermissionMatrixProps {
 }
 
 const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority, onToggleGroup, disabled = false }: PermissionMatrixProps) => {
+  const { t } = useTranslation('admin');
 
   const groupedAuthorities = useMemo(() => {
     const groups: { [key: string]: Authority[] } = {};
@@ -66,7 +68,7 @@ const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority
                     onCheckedChange={(checked) => handleToggleGroup(checked as boolean)}
                     disabled={disabled}
                   />
-                  <Label htmlFor={`group-${group}`} className="text-xs cursor-pointer">Select All</Label>
+                  <Label htmlFor={`group-${group}`} className="text-xs cursor-pointer">{t('authority.selectAll')}</Label>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -99,7 +101,7 @@ const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority
         })
       ) : (
         <div className="flex items-center justify-center p-8 border rounded-lg bg-muted/30">
-          <p className="text-muted-foreground">No permissions available</p>
+          <p className="text-muted-foreground">{t('authority.noPermissions')}</p>
         </div>
       )}
     </div>

@@ -7,10 +7,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/shadcn/sheet";
+import { Spinner } from "@/components/shadcn/spinner";
 import { PermissionMatrix } from "@/features/admin/authority/components/PermissionMatrix";
 import { Authority } from "@/features/admin/authority/types";
 import { Settings2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface MobilePermissionDrawerProps {
   authorities: Authority[];
@@ -25,6 +27,7 @@ const MobilePermissionDrawer = ({
   onSave,
   disabled = false,
 }: MobilePermissionDrawerProps) => {
+  const { t } = useTranslation('admin');
   const [open, setOpen] = useState(false);
   const [localSelectedAuthorityIds, setLocalSelectedAuthorityIds] = useState<string[]>(selectedAuthorityIds);
   const [isSaving, setIsSaving] = useState(false);
@@ -78,18 +81,18 @@ const MobilePermissionDrawer = ({
         <Button variant="outline" className="w-full justify-between" disabled={disabled}>
           <span className="flex items-center gap-2">
             <Settings2 className="h-4 w-4" />
-            Manage Permissions
+            {t('authority.managePermissions')}
           </span>
           <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-medium">
-            {selectedCount} Selected
+            {t('authority.selectedCount', { count: selectedCount })}
           </span>
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="h-[85vh] flex flex-col p-0 rounded-t-[10px]">
         <SheetHeader className="px-6 pt-6 pb-4 border-b">
-          <SheetTitle>Manage Permissions</SheetTitle>
+          <SheetTitle>{t('authority.managePermissions')}</SheetTitle>
           <SheetDescription>
-            Select permissions for this role. Tap Done to save changes.
+            {t('authority.managePermissionsDesc')}
           </SheetDescription>
         </SheetHeader>
         
@@ -105,7 +108,8 @@ const MobilePermissionDrawer = ({
 
         <div className="p-4 border-t bg-background">
           <Button className="w-full" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving..." : "Done"}
+            {isSaving && <Spinner />}
+            {isSaving ? t('authority.saving') : t('authority.done')}
           </Button>
         </div>
       </SheetContent>

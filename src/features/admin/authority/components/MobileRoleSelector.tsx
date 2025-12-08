@@ -14,6 +14,7 @@ import { Spinner } from "@/components/shadcn/spinner";
 import { Role } from "@/features/admin/authority/types";
 import { ChevronsUpDown, Search } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface MobileRoleSelectorProps {
   allRoles: Role[];
@@ -28,6 +29,7 @@ const MobileRoleSelector = ({
   onSave,
   disabled = false,
 }: MobileRoleSelectorProps) => {
+  const { t } = useTranslation('admin');
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [localSelectedRoleCodes, setLocalSelectedRoleCodes] = useState<string[]>(selectedRoleCodes);
@@ -74,24 +76,24 @@ const MobileRoleSelector = ({
       <SheetTrigger asChild>
         <Button variant="outline" className="w-full justify-between" disabled={disabled}>
           <span className="flex items-center gap-2">
-            {selectedCount > 0 ? `${selectedCount} Roles Selected` : "Assign Roles"}
+            {selectedCount > 0 ? t('authority.rolesSelected', { count: selectedCount }) : t('authority.assignRoles')}
           </span>
           <ChevronsUpDown className="h-4 w-4 opacity-50" />
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="h-[85vh] flex flex-col p-0 rounded-t-[10px]">
         <SheetHeader className="px-6 pt-6 pb-4 border-b">
-          <SheetTitle>Assign Roles</SheetTitle>
+          <SheetTitle>{t('authority.assignRoles')}</SheetTitle>
           <SheetDescription>
-            Select roles to assign to this user. Tap Done to save changes.
+            {t('authority.assignRolesDesc')}
           </SheetDescription>
         </SheetHeader>
-        
+
         <div className="p-4 border-b">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search roles..."
+              placeholder={t('authority.searchRoles')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8"
@@ -129,7 +131,7 @@ const MobileRoleSelector = ({
               })
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                No roles found matching "{searchQuery}"
+                {t('authority.noRolesFoundMatching', { query: searchQuery })}
               </div>
             )}
           </div>
@@ -138,7 +140,7 @@ const MobileRoleSelector = ({
         <div className="p-4 border-t bg-background">
           <Button className="w-full" onClick={handleSave} disabled={isSaving}>
             {isSaving && <Spinner />}
-            {isSaving ? "Saving..." : "Done"}
+            {isSaving ? t('authority.saving') : t('authority.done')}
           </Button>
         </div>
       </SheetContent>

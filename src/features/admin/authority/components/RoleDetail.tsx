@@ -9,6 +9,7 @@ import { PermissionMatrix } from "@/features/admin/authority/components/Permissi
 import { Authority, Role } from "@/features/admin/authority/types";
 import { useIsMobile } from "@/hooks/useMobile";
 import { ArrowLeft, Save } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface RoleDetailProps {
   role: Role;
@@ -19,8 +20,10 @@ interface RoleDetailProps {
 }
 
 const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: RoleDetailProps) => {
+  const { t } = useTranslation('admin');
   const { hasPermission } = usePermission();
   const canManageRoles = hasPermission("ROLE:MANAGE");
+  const isMobile = useIsMobile();
 
   // 새 역할인지 확인
   const isNewRole = (role as any).isNew;
@@ -97,55 +100,55 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
               </Button>
             )}
             <div>
-              <h2 className="text-2xl font-bold tracking-tight">Role Details</h2>
-              {!useIsMobile() && (
-                <p className="text-muted-foreground">Manage role information and permissions.</p>
+              <h2 className="text-2xl font-bold tracking-tight">{t('authority.roleDetail')}</h2>
+              {!isMobile && (
+                <p className="text-muted-foreground">{t('authority.roleDetailDesc')}</p>
               )}
             </div>
           </div>
           <RequirePermission permission="ROLE:MANAGE">
             <Button onClick={() => onSave()} className="gap-2">
               <Save className="w-4 h-4" />
-              Save Changes
+              {t('authority.saveChanges')}
             </Button>
           </RequirePermission>
         </div>
 
         <div className="grid gap-4 max-w-2xl">
           <div className="grid gap-2">
-            <Label htmlFor="role-code">Role Code</Label>
+            <Label htmlFor="role-code">{t('authority.roleCode')}</Label>
             <Input
               id="role-code"
               value={role.role_code}
               onChange={handleCodeChange}
-              placeholder="e.g. ROLE_HR_MANAGER"
+              placeholder={t('authority.roleCodePlaceholder')}
               disabled={!isNewRole}
               className={!isNewRole ? "bg-muted" : ""}
             />
             {!isNewRole && (
-              <p className="text-xs text-muted-foreground">Role code cannot be changed after creation.</p>
+              <p className="text-xs text-muted-foreground">{t('authority.roleCodeDisabledHint')}</p>
             )}
             {isNewRole && (
-              <p className="text-xs text-muted-foreground">Use uppercase letters, numbers, and underscores (e.g. ROLE_ADMIN).</p>
+              <p className="text-xs text-muted-foreground">{t('authority.roleCodeHint')}</p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="role-name">Role Name</Label>
+            <Label htmlFor="role-name">{t('authority.roleName')}</Label>
             <Input
               id="role-name"
               value={role.role_name}
               onChange={handleNameChange}
-              placeholder="e.g. HR Manager"
+              placeholder={t('authority.roleNamePlaceholder')}
               disabled={!canManageRoles}
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="role-desc">Description</Label>
+            <Label htmlFor="role-desc">{t('authority.roleDesc')}</Label>
             <Textarea
               id="role-desc"
               value={role.desc}
               onChange={handleDescChange}
-              placeholder="Describe the role's responsibilities..."
+              placeholder={t('authority.roleDescPlaceholder')}
               className="resize-none"
               disabled={!canManageRoles}
             />
@@ -154,8 +157,8 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-muted/10 pb-20">
-        <h3 className="text-lg font-semibold mb-4">Permissions</h3>
-        {useIsMobile() ? (
+        <h3 className="text-lg font-semibold mb-4">{t('authority.permissions')}</h3>
+        {isMobile ? (
           <MobilePermissionDrawer
             authorities={allAuthorities}
             selectedAuthorityIds={(role.permissions || []).filter(p => p && p.code).map(p => p.code)}

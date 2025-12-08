@@ -1,9 +1,10 @@
+import { RequirePermission } from "@/components/auth/RequirePermission";
 import { Button } from "@/components/shadcn/button";
 import { ScrollArea } from "@/components/shadcn/scrollArea";
-import { RequirePermission } from "@/components/auth/RequirePermission";
 import { Role } from "@/features/admin/authority/types";
 import { cn } from "@/lib/utils";
 import { Plus, Shield, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface RoleListProps {
   roles: Role[];
@@ -14,15 +15,17 @@ interface RoleListProps {
 }
 
 const RoleList = ({ roles, selectedRoleId, onSelectRole, onAddRole, onDeleteRole }: RoleListProps) => {
+  const { t } = useTranslation('admin');
+
   return (
     <div className="flex flex-col h-full border-r">
       <div className="p-4 border-b flex items-center justify-between bg-muted/30">
         <h3 className="font-semibold flex items-center gap-2">
           <Shield className="w-4 h-4" />
-          Roles
+          {t('authority.roles')}
         </h3>
         <RequirePermission permission="ROLE:MANAGE">
-          <Button variant="ghost" size="icon" onClick={onAddRole} title="Add Role">
+          <Button variant="ghost" size="icon" onClick={onAddRole} title={t('authority.addRole')}>
             <Plus className="w-4 h-4" />
           </Button>
         </RequirePermission>

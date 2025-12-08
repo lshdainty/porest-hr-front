@@ -3,6 +3,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { UserList } from "@/features/admin/authority/components/UserList";
 import { UserListSkeleton } from "@/features/admin/authority/components/UserListSkeleton";
 import { UserRoleAssignment } from "@/features/admin/authority/components/UserRoleAssignment";
+import { UserRoleAssignmentSkeleton } from "@/features/admin/authority/components/UserRoleAssignmentSkeleton";
 import { Authority, Role, User } from "@/features/admin/authority/types";
 import { usePermissionsQuery } from "@/hooks/queries/usePermissions";
 import { useRolesQuery } from "@/hooks/queries/useRoles";
@@ -10,9 +11,11 @@ import { usePutUserMutation, useUsersQuery } from "@/hooks/queries/useUsers";
 import { useIsMobile } from "@/hooks/useMobile";
 import { fetchGetUser } from "@/lib/api/user";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 const UserManagementPanel = () => {
+  const { t } = useTranslation('admin');
   const { data: usersData = [], isLoading: isUsersLoading, refetch: refetchUsers } = useUsersQuery();
   const { data: roles = [], isLoading: isRolesLoading } = useRolesQuery();
   const { data: authorities = [], isLoading: isPermissionsLoading } = usePermissionsQuery();
@@ -77,32 +80,36 @@ const UserManagementPanel = () => {
       // Refetch users to reflect changes
       await refetchUsers();
 
-      toast.success("User roles updated successfully");
+      toast.success(t('authority.userRolesUpdated'));
     } catch (error) {
       console.error("Failed to update user roles:", error);
-      toast.error("Failed to update user roles");
+      toast.error(t('authority.userRolesUpdateFailed'));
     }
   };
 
   if (isMobile) {
     return (
       <div className="h-full bg-background">
-        <UserList 
-          users={users} 
-          selectedUserId={selectedUserId} 
-          onSelectUser={setSelectedUserId}
-        />
+        {isLoading ? (
+          <UserListSkeleton />
+        ) : (
+          <UserList
+            users={users}
+            selectedUserId={selectedUserId}
+            onSelectUser={setSelectedUserId}
+          />
+        )}
 
-        <Dialog 
-          open={!!selectedUserId} 
+        <Dialog
+          open={!!selectedUserId}
           onOpenChange={(open) => {
             if (!open) setSelectedUserId(null);
           }}
         >
           <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden">
             {selectedUser && (
-              <UserRoleAssignment 
-                user={selectedUser} 
+              <UserRoleAssignment
+                user={selectedUser}
                 allRoles={domainRoles}
                 onUpdateUserRole={handleUpdateUserRole}
                 onBack={() => setSelectedUserId(null)}
@@ -117,16 +124,20 @@ const UserManagementPanel = () => {
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full rounded-lg border bg-background">
       <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
-        <UserList 
-          users={users} 
-          selectedUserId={selectedUserId} 
-          onSelectUser={setSelectedUserId}
-        />
+        {isLoading ? (
+          <UserListSkeleton />
+        ) : (
+          <UserList
+            users={users}
+            selectedUserId={selectedUserId}
+            onSelectUser={setSelectedUserId}
+          />
+        )}
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={75}>
         {isLoading ? (
-          <UserListSkeleton />
+          <UserRoleAssignmentSkeleton />
         ) : selectedUser ? (
           <UserRoleAssignment
             user={selectedUser}
@@ -135,7 +146,7 @@ const UserManagementPanel = () => {
           />
         ) : (
           <div className="flex items-center justify-center h-full text-muted-foreground">
-            Select a user to manage roles
+            {t('authority.selectUserToManage')}
           </div>
         )}
       </ResizablePanel>
