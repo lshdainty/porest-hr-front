@@ -1,4 +1,4 @@
-import LoginContent from '@/features/login/components/LoginContent';
+import { LoginContent } from '@/features/login/components/LoginContent';
 import { LoginProvider } from '@/features/login/contexts/LoginContext';
 
 const LoginPage = () => {
@@ -9,4 +9,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export { LoginPage };

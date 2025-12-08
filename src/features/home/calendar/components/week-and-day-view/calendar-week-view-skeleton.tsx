@@ -25,7 +25,7 @@ export const CalendarWeekViewSkeleton = () => {
           <div className='flex'>
             <div className='w-18'></div>
             <div className='grid flex-1 grid-cols-7 divide-x border-l'>
-              {weekDays.map((day, index) => (
+              {weekDays.map((_, index) => (
                 <div key={index} className='p-1'>
                   {index % 3 === 0 && <Skeleton className='h-5 w-full rounded' />}
                 </div>

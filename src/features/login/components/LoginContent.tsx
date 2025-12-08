@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import SocialLoginButton from '@/features/login/components/SocialLoginButton';
+import { SocialLoginButton } from '@/features/login/components/SocialLoginButton';
 
 interface LoginContentProps extends React.ComponentProps<'div'> {}
 
@@ -181,4 +181,4 @@ const LoginFormWithSocial = () => {
   )
 }
 
-export default LoginContent;
+export { LoginContent };

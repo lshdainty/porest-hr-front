@@ -9,4 +9,4 @@ const ReportPage = () => {
   );
 };
 
-export { ReportPage }
+export { ReportPage };

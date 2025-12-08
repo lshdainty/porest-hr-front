@@ -111,9 +111,9 @@ const NoticeContent = () => {
   const totalPages = noticesData?.totalPages || 0
 
   return (
-    <div className='flex w-full h-full p-4 md:p-6'>
-      <div className='w-full max-w-4xl mx-auto'>
-        <div className='flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4'>
+    <div className='flex w-full h-full p-4 sm:p-6 md:p-8'>
+      <div className='w-full flex flex-col h-full'>
+        <div className='flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 shrink-0'>
           <div>
             <h1 className='text-2xl md:text-3xl font-bold text-card-foreground'>{t('notice.title')}</h1>
             <p className='text-sm md:text-base text-muted-foreground mt-1'>{t('notice.description')}</p>
@@ -135,7 +135,7 @@ const NoticeContent = () => {
           </div>
         </div>
 
-        <div className='flex items-center gap-2 mb-4'>
+        <div className='flex items-center gap-2 mb-4 shrink-0'>
           <div className='relative flex-1 max-w-sm'>
             <Input
               placeholder={t('notice.searchPlaceholder')}
@@ -160,41 +160,43 @@ const NoticeContent = () => {
           )}
         </div>
 
-        <QueryAsyncBoundary
-          queryState={{ isLoading, error, data: noticesData }}
-          loadingComponent={<NoticeListSkeleton />}
-          emptyComponent={<EmptyNotice onAddClick={handleAddClick} />}
-          isEmpty={(data) => !data?.content || data.content.length === 0}
-        >
-          <NoticeList
-            notices={noticesData?.content}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-          {totalPages > 1 && (
-            <div className='flex justify-center items-center gap-2 mt-6'>
-              <Button
-                variant='outline'
-                size='sm'
-                onClick={() => setPage(p => Math.max(0, p - 1))}
-                disabled={page === 0}
-              >
-                {tc('previous')}
-              </Button>
-              <span className='text-sm text-muted-foreground'>
-                {page + 1} / {totalPages}
-              </span>
-              <Button
-                variant='outline'
-                size='sm'
-                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                disabled={page >= totalPages - 1}
-              >
-                {tc('next')}
-              </Button>
-            </div>
-          )}
-        </QueryAsyncBoundary>
+        <div className='flex-1 min-h-0'>
+          <QueryAsyncBoundary
+            queryState={{ isLoading, error, data: noticesData }}
+            loadingComponent={<NoticeListSkeleton />}
+            emptyComponent={<EmptyNotice onAddClick={handleAddClick} className="h-full flex items-center justify-center" />}
+            isEmpty={(data) => !data?.content || data.content.length === 0}
+          >
+            <NoticeList
+              notices={noticesData?.content}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+            {totalPages > 1 && (
+              <div className='flex justify-center items-center gap-2 mt-6'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setPage(p => Math.max(0, p - 1))}
+                  disabled={page === 0}
+                >
+                  {tc('previous')}
+                </Button>
+                <span className='text-sm text-muted-foreground'>
+                  {page + 1} / {totalPages}
+                </span>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                  disabled={page >= totalPages - 1}
+                >
+                  {tc('next')}
+                </Button>
+              </div>
+            )}
+          </QueryAsyncBoundary>
+        </div>
       </div>
     </div>
   )

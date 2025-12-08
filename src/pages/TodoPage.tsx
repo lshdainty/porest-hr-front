@@ -1,7 +1,7 @@
 import { TodoList } from '@/features/todo/components/TodoList';
 import { TodoProvider } from '@/features/todo/contexts/TodoContext';
 
-export default function TodoPage() {
+const TodoPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Feature-based Architecture Demo</h1>
@@ -26,4 +26,6 @@ export default function TodoPage() {
       </div>
     </div>
   );
-}
+};
+
+export { TodoPage };

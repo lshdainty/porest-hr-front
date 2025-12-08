@@ -39,4 +39,4 @@ const CalendarPage = () => {
   )
 }
 
-export { CalendarPage }
+export { CalendarPage };

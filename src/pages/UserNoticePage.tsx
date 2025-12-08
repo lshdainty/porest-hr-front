@@ -25,4 +25,4 @@ const UserNoticePage = () => {
   );
 };
 
-export default UserNoticePage;
+export { UserNoticePage };

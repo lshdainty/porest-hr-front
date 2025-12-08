@@ -19,4 +19,4 @@ const InvitationInfo = () => {
   );
 };
 
-export default InvitationInfo;
+export { InvitationInfo };

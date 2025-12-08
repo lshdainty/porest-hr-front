@@ -5,8 +5,8 @@ import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 
 import Layout from '@/components/layout/layout'
 import NotFound from '@/components/notFound/NotFound'
-import LoginPage from '@/pages/LoginPage'
-import SignUpPage from '@/pages/SignUpPage'
+import { LoginPage } from '@/pages/LoginPage'
+import { SignUpPage } from '@/pages/SignUpPage'
 
 // 설정 파일에서 import
 import { RouteConfig, flattenRoutes, routesConfig } from '@/config/routes.config'

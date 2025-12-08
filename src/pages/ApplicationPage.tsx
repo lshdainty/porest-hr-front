@@ -9,4 +9,4 @@ const ApplicationPage = () => {
   );
 };
 
-export default ApplicationPage;
+export { ApplicationPage };

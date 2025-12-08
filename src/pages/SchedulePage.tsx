@@ -9,4 +9,4 @@ const SchedulePage = () => {
   );
 };
 
-export { SchedulePage }
+export { SchedulePage };

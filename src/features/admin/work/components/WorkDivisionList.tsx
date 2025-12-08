@@ -1,3 +1,4 @@
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { Button } from '@/components/shadcn/button';
 import {
     Table,
@@ -7,6 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/shadcn/table';
+import { EmptyWorkDivision } from '@/features/admin/work/components/EmptyWorkDivision';
 import { useWorkDivisionQuery } from '@/hooks/queries/useWorks';
 import { WorkCodeResp } from '@/lib/api/work';
 import { Edit, Plus, Trash2 } from 'lucide-react';
@@ -16,9 +18,12 @@ import { WorkCodeDeleteDialog } from './WorkCodeDeleteDialog';
 import { WorkCodeEditDialog } from './WorkCodeEditDialog';
 import { WorkDivisionListSkeleton } from './WorkDivisionListSkeleton';
 
-const WorkDivisionList = () => {
+interface WorkDivisionListInnerProps {
+  workDivisions: WorkCodeResp[];
+}
+
+const WorkDivisionListInner = ({ workDivisions }: WorkDivisionListInnerProps) => {
   const { t } = useTranslation('work');
-  const { data: workDivisions, isLoading } = useWorkDivisionQuery();
   const [editingCode, setEditingCode] = useState<WorkCodeResp | null>(null);
   const [deletingCode, setDeletingCode] = useState<WorkCodeResp | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -38,10 +43,6 @@ const WorkDivisionList = () => {
     setDeletingCode(code);
     setIsDeleteOpen(true);
   };
-
-  if (isLoading) {
-    return <WorkDivisionListSkeleton />;
-  }
 
   return (
     <div className="space-y-4">
@@ -114,6 +115,21 @@ const WorkDivisionList = () => {
         }}
       />
     </div>
+  );
+};
+
+const WorkDivisionList = () => {
+  const { data: workDivisions, isLoading, error } = useWorkDivisionQuery();
+
+  return (
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: workDivisions }}
+      loadingComponent={<WorkDivisionListSkeleton />}
+      emptyComponent={<EmptyWorkDivision />}
+      isEmpty={(data) => !data || data.length === 0}
+    >
+      <WorkDivisionListInner workDivisions={workDivisions || []} />
+    </QueryAsyncBoundary>
   );
 };
 

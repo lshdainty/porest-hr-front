@@ -1,3 +1,4 @@
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { Button } from '@/components/shadcn/button';
 import {
     Table,
@@ -7,8 +8,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/shadcn/table';
+import { EmptyWorkCode } from '@/features/admin/work/components/EmptyWorkCode';
 import { useWorkGroupsWithPartsQuery } from '@/hooks/queries/useWorks';
-import { WorkCodeResp } from '@/lib/api/work';
+import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,9 +18,12 @@ import { WorkCodeDeleteDialog } from './WorkCodeDeleteDialog';
 import { WorkCodeEditDialog } from './WorkCodeEditDialog';
 import { WorkCodeListSkeleton } from './WorkCodeListSkeleton';
 
-const WorkCodeList = () => {
+interface WorkCodeListInnerProps {
+  workGroups: WorkGroupWithParts[];
+}
+
+const WorkCodeListInner = ({ workGroups }: WorkCodeListInnerProps) => {
   const { t } = useTranslation('work');
-  const { data: workGroups, isLoading } = useWorkGroupsWithPartsQuery();
   const [editingCode, setEditingCode] = useState<WorkCodeResp | null>(null);
   const [deletingCode, setDeletingCode] = useState<WorkCodeResp | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -42,14 +47,8 @@ const WorkCodeList = () => {
     setIsDeleteOpen(true);
   };
 
-  if (isLoading) {
-    return <WorkCodeListSkeleton />;
-  }
-
   return (
     <div className="space-y-4">
-
-
       <div className="rounded-md border overflow-x-auto">
         <Table className="min-w-[800px]">
           <TableHeader>
@@ -101,7 +100,7 @@ const WorkCodeList = () => {
                 </TableRow>
 
                 {/* Parts Rows */}
-                {group.parts?.map((part) => (
+                {group.parts?.map((part: WorkCodeResp) => (
                   <TableRow key={part.work_code_id}>
                     <TableCell className="pl-12">
                       └ {part.work_code_name}
@@ -154,6 +153,21 @@ const WorkCodeList = () => {
         }}
       />
     </div>
+  );
+};
+
+const WorkCodeList = () => {
+  const { data: workGroups, isLoading, error } = useWorkGroupsWithPartsQuery();
+
+  return (
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: workGroups }}
+      loadingComponent={<WorkCodeListSkeleton />}
+      emptyComponent={<EmptyWorkCode />}
+      isEmpty={(data) => !data || data.length === 0}
+    >
+      <WorkCodeListInner workGroups={workGroups || []} />
+    </QueryAsyncBoundary>
   );
 };
 

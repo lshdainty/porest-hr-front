@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { Progress } from '@/components/shadcn/progress'
-import { GetTodayWorkStatusResp } from '@/lib/api/work'
+import { TodayWorkStatusResp } from '@/lib/api/work'
 import { cn } from '@/lib/utils'
 import { AlertCircle, CheckCircle2, Clock } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 interface TodayWorkStatusContentProps {
-  data: GetTodayWorkStatusResp
+  data: TodayWorkStatusResp
 }
 
 export const TodayWorkStatusContent = ({ data }: TodayWorkStatusContentProps) => {

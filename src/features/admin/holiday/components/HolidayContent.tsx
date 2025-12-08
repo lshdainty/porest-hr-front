@@ -159,7 +159,7 @@ const HolidayContent = () => {
         </div>
         <div className='flex-1 min-h-0'>
           <QueryAsyncBoundary
-            queryState={{ isLoading: false, error, data: [] }}
+            queryState={{ isLoading, error, data: holidays }}
             loadingComponent={<HolidayListSkeleton />}
             emptyComponent={<EmptyHoliday onAddClick={handleAddClick} className="h-full flex items-center justify-center" />}
             isEmpty={(data) => !data || data.length === 0}

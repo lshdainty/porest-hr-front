@@ -16,4 +16,4 @@ const DashboardPage = () => {
   );
 };
 
-export { DashboardPage }
+export { DashboardPage };

@@ -55,4 +55,4 @@ const SocialConnectButton = () => {
   );
 };
 
-export default SocialConnectButton;
+export { SocialConnectButton };
