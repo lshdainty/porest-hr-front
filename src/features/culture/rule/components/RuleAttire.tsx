@@ -58,4 +58,4 @@ const RuleAttire = () => {
   );
 };
 
-export default RuleAttire;
+export { RuleAttire };

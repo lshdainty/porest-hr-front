@@ -73,4 +73,4 @@ const RuleCulture = () => {
   );
 };
 
-export default RuleCulture;
+export { RuleCulture };

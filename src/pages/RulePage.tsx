@@ -1,4 +1,4 @@
-import RuleContent from '@/features/culture/rule/components/RuleContent';
+import { RuleContent } from '@/features/culture/rule/components/RuleContent';
 import { RuleProvider } from '@/features/culture/rule/contexts/RuleContext';
 
 const RulePage = () => {
@@ -9,4 +9,4 @@ const RulePage = () => {
   );
 };
 
-export default RulePage;
+export { RulePage };

@@ -71,4 +71,4 @@ const RuleEducation = () => {
   );
 };
 
-export default RuleEducation;
+export { RuleEducation };

@@ -1,8 +1,8 @@
-import RuleAttire from '@/features/culture/rule/components/RuleAttire';
-import RuleCulture from '@/features/culture/rule/components/RuleCulture';
-import RuleEducation from '@/features/culture/rule/components/RuleEducation';
-import RuleHeader from '@/features/culture/rule/components/RuleHeader';
-import RuleVacation from '@/features/culture/rule/components/RuleVacation';
+import { RuleAttire } from '@/features/culture/rule/components/RuleAttire';
+import { RuleCulture } from '@/features/culture/rule/components/RuleCulture';
+import { RuleEducation } from '@/features/culture/rule/components/RuleEducation';
+import { RuleHeader } from '@/features/culture/rule/components/RuleHeader';
+import { RuleVacation } from '@/features/culture/rule/components/RuleVacation';
 
 const RuleContent = () => {
   return (
@@ -16,4 +16,4 @@ const RuleContent = () => {
   );
 };
 
-export default RuleContent;
+export { RuleContent };

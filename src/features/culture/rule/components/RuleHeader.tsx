@@ -15,4 +15,4 @@ const RuleHeader = () => {
   );
 };
 
-export default RuleHeader;
+export { RuleHeader };

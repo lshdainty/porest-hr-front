@@ -87,4 +87,4 @@ const RuleVacation = () => {
   );
 };
 
-export default RuleVacation;
+export { RuleVacation };
