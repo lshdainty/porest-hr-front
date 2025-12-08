@@ -58,7 +58,6 @@ login,forgotPassword,비밀번호를 잊으셨나요?,Forgot password?
 login,rememberMe,로그인 상태 유지,Remember me
 sidebar,group.skc,SKC,SKC
 sidebar,group.admin,관리자,Admin
-sidebar,group.demo,데모,Demo
 sidebar,menu.home,홈,Home
 sidebar,menu.dashboard,대시보드,Dashboard
 sidebar,menu.calendar,캘린더,Calendar
@@ -82,7 +81,8 @@ sidebar,menu.adminVacationPolicy,휴가 정책,Policy
 sidebar,menu.adminAuthority,역할 및 권한,Role & Authority
 sidebar,menu.adminHoliday,공휴일 관리,Holiday
 sidebar,menu.adminWork,업무 코드,Work Code
-sidebar,menu.todo,Todo (Feature Arch),Todo (Feature Arch)
+sidebar,menu.adminNotice,공지사항 관리,Notice
+sidebar,menu.notice,공지사항,Notice
 sidebar,footer.account,계정,Account
 sidebar,footer.logout,로그아웃,Log out
 sidebar,footer.loggingOut,로그아웃 중...,Logging out...

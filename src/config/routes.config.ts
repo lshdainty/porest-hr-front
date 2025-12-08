@@ -11,7 +11,6 @@ import {
   HeartHandshake,
   Home,
   LayoutDashboard,
-  ListTodo,
   MessageSquarePlus,
   Network,
   NotebookPen,
@@ -41,7 +40,6 @@ import { UserNoticePage } from '@/pages/UserNoticePage'
 import { ReportPage } from '@/pages/ReportPage'
 import { RulePage } from '@/pages/RulePage'
 import { SchedulePage } from '@/pages/SchedulePage'
-import { TodoPage } from '@/pages/TodoPage'
 import { UsersDepartmentPage } from '@/pages/UsersDepartmentPage'
 import { UsersManagementPage } from '@/pages/UsersManagementPage'
 import { VacationPage } from '@/pages/VacationPage'
@@ -282,18 +280,6 @@ export const routesConfig: RouteGroup[] = [
             requiredPermissions: ['NOTICE:READ'],
           },
         ],
-      }
-    ]
-  },
-  {
-    labelKey: 'group.demo',
-    routes: [
-      {
-        id: 'todo',
-        nameKey: 'menu.todo',
-        path: '/todo',
-        icon: ListTodo,
-        component: TodoPage,
       }
     ]
   }
