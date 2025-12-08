@@ -26,4 +26,4 @@ const ReportHeaderSkeleton = () => {
   );
 };
 
-export default ReportHeaderSkeleton;
+export { ReportHeaderSkeleton }

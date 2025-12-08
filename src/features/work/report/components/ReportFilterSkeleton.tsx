@@ -51,4 +51,4 @@ const ReportFilterSkeleton = () => {
   );
 };
 
-export default ReportFilterSkeleton;
+export { ReportFilterSkeleton }

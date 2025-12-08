@@ -1,12 +1,12 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { toast } from '@/components/shadcn/sonner';
 import { useUser } from '@/contexts/UserContext';
-import ExcelImportDialog from '@/features/work/report/components/ExcelImportDialog';
-import ReportFilter from '@/features/work/report/components/ReportFilter';
-import ReportHeader from '@/features/work/report/components/ReportHeader';
-import ReportSkeleton from '@/features/work/report/components/ReportSkeleton';
-import ReportTable from '@/features/work/report/components/ReportTable';
-import UnregisteredDownloadDialog from '@/features/work/report/components/UnregisteredDownloadDialog';
+import { ExcelImportDialog } from '@/features/work/report/components/ExcelImportDialog';
+import { ReportFilter } from '@/features/work/report/components/ReportFilter';
+import { ReportHeader } from '@/features/work/report/components/ReportHeader';
+import { ReportSkeleton } from '@/features/work/report/components/ReportSkeleton';
+import { ReportTable } from '@/features/work/report/components/ReportTable';
+import { UnregisteredDownloadDialog } from '@/features/work/report/components/UnregisteredDownloadDialog';
 import { useReportContext } from '@/features/work/report/contexts/ReportContext';
 import { WorkHistory } from '@/features/work/report/types';
 import { useUsersQuery } from '@/hooks/queries/useUsers';
@@ -351,4 +351,4 @@ const ReportContent = () => {
   );
 }
 
-export default ReportContent;
+export { ReportContent }

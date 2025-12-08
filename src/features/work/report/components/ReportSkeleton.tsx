@@ -1,6 +1,6 @@
-import ReportFilterSkeleton from '@/features/work/report/components/ReportFilterSkeleton';
-import ReportHeaderSkeleton from '@/features/work/report/components/ReportHeaderSkeleton';
-import ReportTableSkeleton from '@/features/work/report/components/ReportTableSkeleton';
+import { ReportFilterSkeleton } from '@/features/work/report/components/ReportFilterSkeleton';
+import { ReportHeaderSkeleton } from '@/features/work/report/components/ReportHeaderSkeleton';
+import { ReportTableSkeleton } from '@/features/work/report/components/ReportTableSkeleton';
 
 const ReportSkeleton = () => {
   return (
@@ -14,4 +14,4 @@ const ReportSkeleton = () => {
   );
 };
 
-export default ReportSkeleton;
+export { ReportSkeleton }

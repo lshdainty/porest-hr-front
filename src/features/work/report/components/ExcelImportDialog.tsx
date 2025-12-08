@@ -493,4 +493,4 @@ const ExcelImportDialog = ({
   )
 }
 
-export default ExcelImportDialog
+export { ExcelImportDialog }

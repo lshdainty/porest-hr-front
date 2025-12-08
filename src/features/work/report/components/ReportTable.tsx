@@ -21,7 +21,7 @@ import {
 } from '@/components/shadcn/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Textarea } from '@/components/shadcn/textarea';
-import EmptyReport from '@/features/work/report/components/EmptyReport';
+import { EmptyReport } from '@/features/work/report/components/EmptyReport';
 import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
@@ -413,4 +413,4 @@ const ReportTable = ({
   );
 }
 
-export default ReportTable;
+export { ReportTable }

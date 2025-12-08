@@ -34,4 +34,4 @@ const EmptyReport = ({ onAddClick, className }: EmptyReportProps) => {
   );
 };
 
-export default EmptyReport;
+export { EmptyReport }

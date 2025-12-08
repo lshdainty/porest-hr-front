@@ -60,4 +60,4 @@ const ReportTableSkeleton = () => {
   );
 };
 
-export default ReportTableSkeleton;
+export { ReportTableSkeleton }

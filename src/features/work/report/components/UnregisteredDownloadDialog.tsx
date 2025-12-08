@@ -108,4 +108,4 @@ const UnregisteredDownloadDialog = ({ open, onOpenChange }: UnregisteredDownload
   );
 };
 
-export default UnregisteredDownloadDialog;
+export { UnregisteredDownloadDialog }

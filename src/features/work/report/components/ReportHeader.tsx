@@ -92,4 +92,4 @@ const ReportHeader = ({
   );
 }
 
-export default ReportHeader;
+export { ReportHeader }

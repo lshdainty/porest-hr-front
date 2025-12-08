@@ -269,4 +269,4 @@ const ReportFilter = ({
   );
 }
 
-export default ReportFilter;
+export { ReportFilter }

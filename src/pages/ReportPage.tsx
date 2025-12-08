@@ -1,4 +1,4 @@
-import ReportContent from '@/features/work/report/components/ReportContent';
+import { ReportContent } from '@/features/work/report/components/ReportContent';
 import { ReportProvider } from '@/features/work/report/contexts/ReportContext';
 
 const ReportPage = () => {
@@ -9,4 +9,4 @@ const ReportPage = () => {
   );
 };
 
-export default ReportPage;
+export { ReportPage }
