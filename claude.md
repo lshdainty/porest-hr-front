@@ -17,6 +17,8 @@ React 19 + TypeScript + Vite를 사용하는 프론트엔드 프로젝트:
 - camelCase 변수명, PascalCase 컴포넌트명
 - 컴포넌트별 파일 분리
 - Props 타입 정의 필수
+- **export default 사용 금지**: named export 사용 (예: `export const MyComponent = ...`)
+  - 이유: 다른 파일에서 import 시 이름 충돌 방지 및 명시적 이름 사용
 
 ## 프로젝트 구조
 src/

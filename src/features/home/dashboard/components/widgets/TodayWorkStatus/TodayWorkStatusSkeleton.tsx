@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader } from '@/components/shadcn/card';
-import { Skeleton } from '@/components/shadcn/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/shadcn/card'
+import { Skeleton } from '@/components/shadcn/skeleton'
 
-const TodayWorkStatusWidgetSkeleton = () => {
+export const TodayWorkStatusSkeleton = () => {
   return (
     <Card className="h-full flex flex-col border-none shadow-none">
       <CardHeader className="pb-2">
@@ -25,7 +25,5 @@ const TodayWorkStatusWidgetSkeleton = () => {
         <Skeleton className="h-3 w-32" />
       </CardContent>
     </Card>
-  );
-};
-
-export default TodayWorkStatusWidgetSkeleton;
+  )
+}

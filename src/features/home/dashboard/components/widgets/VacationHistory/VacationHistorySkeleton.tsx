@@ -1,9 +1,9 @@
-import { Skeleton } from '@/components/shadcn/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
-import { useTranslation } from 'react-i18next';
+import { Skeleton } from '@/components/shadcn/skeleton'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table'
+import { useTranslation } from 'react-i18next'
 
-const VacationHistoryWidgetSkeleton = () => {
-  const { t } = useTranslation('vacation');
+export const VacationHistorySkeleton = () => {
+  const { t } = useTranslation('vacation')
 
   return (
     <div className="h-full overflow-auto">
@@ -38,7 +38,5 @@ const VacationHistoryWidgetSkeleton = () => {
         </TableBody>
       </Table>
     </div>
-  );
-};
-
-export default VacationHistoryWidgetSkeleton;
+  )
+}

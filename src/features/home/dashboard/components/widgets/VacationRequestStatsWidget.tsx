@@ -1,35 +1,39 @@
-import VacationRequestStatsCardsSkeleton from '@/features/vacation/application/components/VacationRequestStatsCardsSkeleton';
-import VacationRequestStatsItem, { getVacationRequestStatsConfig } from '@/features/vacation/application/components/VacationRequestStatsItem';
-import { GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
-import { useTranslation } from 'react-i18next';
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
+import { useUser } from '@/contexts/UserContext'
+import { VacationRequestStatsEmpty } from '@/features/vacation/application/components/VacationRequestStatsEmpty'
+import VacationRequestStatsItem, { getVacationRequestStatsConfig } from '@/features/vacation/application/components/VacationRequestStatsItem'
+import { VacationRequestStatsSkeleton } from '@/features/vacation/application/components/VacationRequestStatsSkeleton'
+import { useUserRequestedVacationStatsQuery } from '@/hooks/queries/useVacations'
+import { useTranslation } from 'react-i18next'
 
-interface VacationRequestStatsWidgetProps {
-  stats?: GetUserRequestedVacationStatsResp;
-}
+export const VacationRequestStatsWidget = () => {
+  const { t } = useTranslation('vacation')
+  const { loginUser } = useUser()
+  const userId = loginUser?.user_id || ''
 
-const VacationRequestStatsWidget = ({ stats }: VacationRequestStatsWidgetProps) => {
-  const { t } = useTranslation('vacation');
+  const { data: stats, isLoading, error } = useUserRequestedVacationStatsQuery(userId)
 
-  if (!stats) {
-    return <VacationRequestStatsCardsSkeleton />;
-  }
-
-  const statsConfig = getVacationRequestStatsConfig(stats, t);
+  const statsConfig = getVacationRequestStatsConfig(stats, t)
 
   return (
-    <div className='w-full h-full overflow-x-auto'>
-      <div className='flex flex-wrap h-full items-stretch bg-card'>
-        {statsConfig.map((item) => (
-          <div
-            key={item.id}
-            className='p-6 border-r border-border min-w-[140px] flex-1'
-          >
-             <VacationRequestStatsItem {...item} />
-          </div>
-        ))}
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: stats }}
+      loadingComponent={<VacationRequestStatsSkeleton />}
+      emptyComponent={<VacationRequestStatsEmpty className="h-full" />}
+      isEmpty={(data) => !data}
+    >
+      <div className="w-full h-full overflow-x-auto">
+        <div className="flex flex-wrap h-full items-stretch bg-card">
+          {statsConfig.map((item) => (
+            <div
+              key={item.id}
+              className="p-6 border-r border-border min-w-[140px] flex-1"
+            >
+              <VacationRequestStatsItem {...item} />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
-};
-
-export default VacationRequestStatsWidget;
+    </QueryAsyncBoundary>
+  )
+}

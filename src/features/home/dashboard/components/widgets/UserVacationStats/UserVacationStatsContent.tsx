@@ -1,5 +1,4 @@
-import QueryAsyncBoundary from "@/components/common/QueryAsyncBoundary"
-import { Card, CardContent } from "@/components/shadcn/card"
+import { Card, CardContent } from '@/components/shadcn/card'
 import {
   Table,
   TableBody,
@@ -7,30 +6,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/shadcn/table"
-import EmptyVacationStats from "@/features/home/dashboard/components/widgets/EmptyVacationStats"
-import UserVacationStatsWidgetSkeleton from "@/features/home/dashboard/components/widgets/UserVacationStatsWidgetSkeleton"
-import { useAllUsersVacationSummaryQuery } from "@/hooks/queries/useVacations"
-import { useTranslation } from "react-i18next"
+} from '@/components/shadcn/table'
+import { GetAllUsersVacationSummaryResp } from '@/lib/api/vacation'
+import { useTranslation } from 'react-i18next'
 
-const UserVacationStatsWidget = () => {
+interface UserVacationStatsContentProps {
+  data: GetAllUsersVacationSummaryResp[]
+}
+
+export const UserVacationStatsContent = ({ data }: UserVacationStatsContentProps) => {
   const { t } = useTranslation('vacation')
-  const currentYear = new Date().getFullYear()
-  const { data: vacationSummaries, isLoading, error } = useAllUsersVacationSummaryQuery(currentYear)
 
   return (
-    <QueryAsyncBoundary
-      queryState={{ isLoading, error, data: vacationSummaries }}
-      loadingComponent={<UserVacationStatsWidgetSkeleton />}
-      emptyComponent={
-        <Card className="h-full flex flex-col border-none shadow-none py-0">
-          <CardContent className="flex-1 flex items-center justify-center p-0">
-            <EmptyVacationStats />
-          </CardContent>
-        </Card>
-      }
-      isEmpty={(data) => !data || data.length === 0}
-    >
     <Card className="h-full flex flex-col border-none shadow-none py-0">
       <CardContent className="flex-1 overflow-hidden p-0">
         <Table wrapperClassName="h-full overflow-auto">
@@ -45,7 +32,7 @@ const UserVacationStatsWidget = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {vacationSummaries?.map((user) => (
+            {data.map((user) => (
               <TableRow key={user.user_id}>
                 <TableCell className="font-medium whitespace-nowrap">{user.user_name}</TableCell>
                 <TableCell className="whitespace-nowrap">{user.department_name}</TableCell>
@@ -59,8 +46,5 @@ const UserVacationStatsWidget = () => {
         </Table>
       </CardContent>
     </Card>
-    </QueryAsyncBoundary>
   )
 }
-
-export default UserVacationStatsWidget

@@ -2,6 +2,7 @@ import { Button } from '@/components/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { VacationHistoryEmpty } from '@/features/vacation/history/components/VacationHistoryEmpty';
 import { GetUserVacationHistoryResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
@@ -84,6 +85,11 @@ const VacationHistoryContent = ({
 
         <div className={cn('mt-4 overflow-x-auto relative min-h-[300px]', stickyHeader && 'flex-1 overflow-auto mt-0 pt-4')}>
           <TabsContent value="usages" className={stickyHeader ? 'h-full' : undefined}>
+            {usages.length === 0 ? (
+              <div className="h-full flex items-center justify-center min-h-[200px]">
+                <VacationHistoryEmpty type="usage" />
+              </div>
+            ) : (
             <Table className='min-w-[800px]' wrapperClassName={stickyHeader ? 'h-full overflow-auto' : undefined}>
               <TableHeader className={stickyHeader ? 'sticky top-0 bg-background z-10' : undefined}>
                 <TableRow>
@@ -95,14 +101,7 @@ const VacationHistoryContent = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      {t('history.noUsage')}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  paginatedData.map((item: any) => (
+                {paginatedData.map((item: any) => (
                     <TableRow
                       key={item.vacation_usage_id}
                       className={cn(
@@ -161,13 +160,18 @@ const VacationHistoryContent = ({
                         )}
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
+                  ))}
               </TableBody>
             </Table>
+            )}
           </TabsContent>
 
           <TabsContent value="grants" className={stickyHeader ? 'h-full' : undefined}>
+            {grants.length === 0 ? (
+              <div className="h-full flex items-center justify-center min-h-[200px]">
+                <VacationHistoryEmpty type="grant" />
+              </div>
+            ) : (
             <Table className='min-w-[800px]' wrapperClassName={stickyHeader ? 'h-full overflow-auto' : undefined}>
               <TableHeader className={stickyHeader ? 'sticky top-0 bg-background z-10' : undefined}>
                 <TableRow>
@@ -180,14 +184,7 @@ const VacationHistoryContent = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
-                      {t('history.noGrant')}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  paginatedData.map((item: any) => (
+                {paginatedData.map((item: any) => (
                     <TableRow
                       key={item.vacation_grant_id}
                       className={cn(
@@ -217,10 +214,10 @@ const VacationHistoryContent = ({
                         {formatDate(item.expiry_date)}
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
+                  ))}
               </TableBody>
             </Table>
+            )}
           </TabsContent>
         </div>
 

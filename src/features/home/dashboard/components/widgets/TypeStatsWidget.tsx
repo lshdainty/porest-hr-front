@@ -1,21 +1,28 @@
-import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton';
-import VacationTypeStatsContent from '@/features/vacation/history/components/VacationTypeStatsContent';
-import { GetAvailableVacationsResp } from '@/lib/api/vacation';
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
+import { useUser } from '@/contexts/UserContext'
+import { VacationTypeStatsEmpty } from '@/features/vacation/history/components/VacationTypeStatsEmpty'
+import { VacationTypeStatsSkeleton } from '@/features/vacation/history/components/VacationTypeStatsSkeleton'
+import VacationTypeStatsContent from '@/features/vacation/history/components/VacationTypeStatsContent'
+import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations'
+import dayjs from 'dayjs'
 
-interface TypeStatsWidgetProps {
-  vacationTypes?: GetAvailableVacationsResp;
-}
+export const TypeStatsWidget = () => {
+  const { loginUser } = useUser()
+  const userId = loginUser?.user_id || ''
+  const todayWithTime = dayjs().format('YYYY-MM-DDT23:59:59')
 
-const TypeStatsWidget = ({ vacationTypes }: TypeStatsWidgetProps) => {
-  if (!vacationTypes) {
-    return <VacationTypeStatsCardSkeleton />;
-  }
+  const { data: vacationTypes, isLoading, error } = useAvailableVacationsQuery(userId, todayWithTime)
 
   return (
-    <div className='h-full w-full p-4'>
-      <VacationTypeStatsContent data={vacationTypes} />
-    </div>
-  );
-};
-
-export default TypeStatsWidget;
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: vacationTypes }}
+      loadingComponent={<VacationTypeStatsSkeleton />}
+      emptyComponent={<VacationTypeStatsEmpty className="h-full" />}
+      isEmpty={(data) => !data || !data.vacations || data.vacations.length === 0}
+    >
+      <div className='h-full w-full p-4'>
+        <VacationTypeStatsContent data={vacationTypes} />
+      </div>
+    </QueryAsyncBoundary>
+  )
+}

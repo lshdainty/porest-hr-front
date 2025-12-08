@@ -27,8 +27,8 @@ import { useTranslation } from 'react-i18next';
 interface ApplicationTableContentProps {
   vacationRequests: GetUserRequestedVacationsResp[];
   grantStatusTypes: TypeResp[];
-  onDetailView: (request: GetUserRequestedVacationsResp) => void;
-  onCancelRequest: (requestId: number) => void;
+  onDetailView?: (request: GetUserRequestedVacationsResp) => void;
+  onCancelRequest?: (requestId: number) => void;
   className?: string;
   stickyHeader?: boolean;
 }
@@ -136,35 +136,41 @@ const ApplicationTableContent = ({
                   )}
                 </TableCell>
                 <TableCell>
-                  <div className='flex justify-end'>
-                    <DropdownMenu modal={false}>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted'
-                        >
-                          <EllipsisVertical className='w-4 h-4' />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align='end' className='w-32'>
-                        <DropdownMenuItem
-                          onSelect={() => onDetailView(request)}
-                        >
-                          <Eye className='h-4 w-4' />
-                          <span>{t('application.viewDetail')}</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onSelect={() => onCancelRequest(request.vacation_grant_id)}
-                          className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                        >
-                          <XCircle className='h-4 w-4' />
-                          <span>{t('application.cancelRequest')}</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                  {(onDetailView || onCancelRequest) && (
+                    <div className='flex justify-end'>
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted'
+                          >
+                            <EllipsisVertical className='w-4 h-4' />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end' className='w-32'>
+                          {onDetailView && (
+                            <DropdownMenuItem
+                              onSelect={() => onDetailView(request)}
+                            >
+                              <Eye className='h-4 w-4' />
+                              <span>{t('application.viewDetail')}</span>
+                            </DropdownMenuItem>
+                          )}
+                          {onDetailView && onCancelRequest && <DropdownMenuSeparator />}
+                          {onCancelRequest && (
+                            <DropdownMenuItem
+                              onSelect={() => onCancelRequest(request.vacation_grant_id)}
+                              className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                            >
+                              <XCircle className='h-4 w-4' />
+                              <span>{t('application.cancelRequest')}</span>
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  )}
                 </TableCell>
               </TableRow>
             ))

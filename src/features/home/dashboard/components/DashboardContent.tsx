@@ -1,67 +1,35 @@
 import { SpeedDial, SpeedDialAction } from '@/components/common/SpeedDial';
 import { Button } from '@/components/shadcn/button';
-import ApplicationTableWidget from '@/features/home/dashboard/components/widgets/ApplicationTableWidget';
-import DuesWidget from '@/features/home/dashboard/components/widgets/DuesWidget';
-import MissingWorkHistoryWidget from '@/features/home/dashboard/components/widgets/MissingWorkHistoryWidget';
-import MonthStatsWidget from '@/features/home/dashboard/components/widgets/MonthStatsWidget';
-import ProfileWidget from '@/features/home/dashboard/components/widgets/ProfileWidget';
-import ScheduleWidget from '@/features/home/dashboard/components/widgets/ScheduleWidget';
-import SystemCheckWidget from '@/features/home/dashboard/components/widgets/SystemCheckWidget';
-import TodayWorkStatusWidget from '@/features/home/dashboard/components/widgets/TodayWorkStatusWidget';
-import TotalDuesWidget from '@/features/home/dashboard/components/widgets/TotalDuesWidget';
-import TypeStatsWidget from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
-import UserBirthDuesWidget from '@/features/home/dashboard/components/widgets/UserBirthDuesWidget';
-import UserCompanyStatsWidget from '@/features/home/dashboard/components/widgets/UserCompanyStatsWidget';
-import UserVacationStatsWidget from '@/features/home/dashboard/components/widgets/UserVacationStatsWidget';
-import VacationHistoryWidget from '@/features/home/dashboard/components/widgets/VacationHistoryWidget';
-import VacationRequestStatsWidget from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
-import VacationStatsWidget from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
+import { ApplicationTableWidget } from '@/features/home/dashboard/components/widgets/ApplicationTableWidget';
+import { DuesWidget } from '@/features/home/dashboard/components/widgets/DuesWidget';
+import { MissingWorkHistoryWidget } from '@/features/home/dashboard/components/widgets/MissingWorkHistory/MissingWorkHistoryWidget';
+import { MonthStatsWidget } from '@/features/home/dashboard/components/widgets/MonthStatsWidget';
+import { ProfileWidget } from '@/features/home/dashboard/components/widgets/ProfileWidget';
+import { ScheduleWidget } from '@/features/home/dashboard/components/widgets/ScheduleWidget';
+import { SystemCheckWidget } from '@/features/home/dashboard/components/widgets/SystemCheck/SystemCheckWidget';
+import { TodayWorkStatusWidget } from '@/features/home/dashboard/components/widgets/TodayWorkStatus/TodayWorkStatusWidget';
+import { TotalDuesWidget } from '@/features/home/dashboard/components/widgets/TotalDuesWidget';
+import { TypeStatsWidget } from '@/features/home/dashboard/components/widgets/TypeStatsWidget';
+import { UserBirthDuesWidget } from '@/features/home/dashboard/components/widgets/UserBirthDuesWidget';
+import { UserCompanyStatsWidget } from '@/features/home/dashboard/components/widgets/UserCompanyStatsWidget';
+import { UserVacationStatsWidget } from '@/features/home/dashboard/components/widgets/UserVacationStats/UserVacationStatsWidget';
+import { VacationHistoryWidget } from '@/features/home/dashboard/components/widgets/VacationHistory/VacationHistoryWidget';
+import { VacationRequestStatsWidget } from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
+import { VacationStatsWidget } from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
 import WidgetWrapper from '@/features/home/dashboard/components/WidgetWrapper';
 import { WIDGETS } from '@/features/home/dashboard/constants';
 import { useDashboardContext } from '@/features/home/dashboard/contexts/DashboardContext';
-import { TypeResp } from '@/lib/api/type';
-import { GetUserRequestedVacationsResp, GetUserRequestedVacationStatsResp, GetUserVacationHistoryResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { GripVertical, Pencil, Plus, Save, Settings, X } from 'lucide-react';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
+import { useTranslation } from 'react-i18next';
 import 'react-resizable/css/styles.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-interface DashboardContentProps {
-  user: any;
-  vacationStats: any;
-  monthStats: any;
-  vacationTypes: any;
-  users: any;
-  vacationRequests?: GetUserRequestedVacationsResp[];
-  requestStats?: GetUserRequestedVacationStatsResp;
-  grantStatusTypes?: TypeResp[];
-  vacationHistory?: GetUserVacationHistoryResp;
-  yearDues?: any[];
-  totalDues?: any;
-  birthDues?: any;
-  usersBirthDues?: any[];
-}
-
-const DashboardContent = ({
-  user,
-  vacationStats,
-  monthStats,
-  vacationTypes,
-  users,
-  vacationRequests,
-  requestStats,
-  grantStatusTypes = [],
-  vacationHistory,
-  yearDues,
-  totalDues,
-  birthDues,
-  usersBirthDues
-}: DashboardContentProps) => {
+const DashboardContent = () => {
   const { t } = useTranslation('dashboard')
   const {
     layouts,
@@ -123,54 +91,47 @@ const DashboardContent = ({
     },
     'vacation-stats': {
       title: t('widget.vacationStatus'),
-      component: <VacationStatsWidget vacationStats={vacationStats} />
+      component: <VacationStatsWidget />
     },
     'month-stats': {
       title: t('widget.monthlyVacationStats'),
-      component: <MonthStatsWidget monthStats={monthStats} />
+      component: <MonthStatsWidget />
     },
     'type-stats': {
       title: t('widget.vacationTypeStats'),
-      component: <TypeStatsWidget vacationTypes={vacationTypes} />
+      component: <TypeStatsWidget />
     },
     schedule: {
       title: t('widget.workSchedule'),
-      component: <ScheduleWidget users={users} />
+      component: <ScheduleWidget />
     },
     'vacation-application': {
       title: t('widget.vacationApplicationHistory'),
-      component: (
-        <ApplicationTableWidget
-          vacationRequests={vacationRequests}
-          grantStatusTypes={grantStatusTypes || []}
-          userId={user?.user_id || ''}
-          userName={user?.user_name}
-        />
-      )
+      component: <ApplicationTableWidget />
     },
     'vacation-request-stats': {
       title: t('widget.vacationApplicationStats'),
-      component: <VacationRequestStatsWidget stats={requestStats} />
+      component: <VacationRequestStatsWidget />
     },
     'vacation-history': {
       title: t('widget.vacationHistory'),
-      component: <VacationHistoryWidget vacationHistory={vacationHistory} />
+      component: <VacationHistoryWidget />
     },
     'dues': {
       title: t('widget.duesHistory'),
-      component: <DuesWidget yearDues={yearDues} />
+      component: <DuesWidget />
     },
     'total-dues': {
       title: t('widget.duesStatus'),
-      component: <TotalDuesWidget totalDues={totalDues} birthDues={birthDues} />
+      component: <TotalDuesWidget />
     },
     'user-birth-dues': {
       title: t('widget.monthlyBirthdayDeposit'),
-      component: <UserBirthDuesWidget usersBirthDues={usersBirthDues} users={users} />
+      component: <UserBirthDuesWidget />
     },
     'user-company-stats': {
       title: t('widget.companyUserStats'),
-      component: <UserCompanyStatsWidget users={users} />
+      component: <UserCompanyStatsWidget />
     },
     'system-check': {
       title: t('widget.systemDailyCheck'),

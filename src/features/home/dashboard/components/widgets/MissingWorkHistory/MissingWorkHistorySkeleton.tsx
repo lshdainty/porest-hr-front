@@ -1,7 +1,7 @@
-import { Card, CardContent } from '@/components/shadcn/card';
-import { Skeleton } from '@/components/shadcn/skeleton';
+import { Card, CardContent } from '@/components/shadcn/card'
+import { Skeleton } from '@/components/shadcn/skeleton'
 
-const MissingWorkHistoryWidgetSkeleton = () => {
+export const MissingWorkHistorySkeleton = () => {
   return (
     <Card className="h-full flex flex-col border-none shadow-none py-0">
       <CardContent className="flex-1 flex items-center justify-center p-0">
@@ -23,7 +23,5 @@ const MissingWorkHistoryWidgetSkeleton = () => {
         </div>
       </CardContent>
     </Card>
-  );
-};
-
-export default MissingWorkHistoryWidgetSkeleton;
+  )
+}

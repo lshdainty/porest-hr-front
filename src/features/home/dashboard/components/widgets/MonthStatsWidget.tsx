@@ -1,21 +1,22 @@
-import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton';
-import MonthVacationStatsContent from '@/features/vacation/history/components/MonthVacationStatsContent';
-import { GetUserMonthlyVacationStatsResp } from '@/lib/api/vacation';
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
+import { useUser } from '@/contexts/UserContext'
+import { MonthVacationStatsContent } from '@/features/vacation/history/components/MonthVacationStatsContent'
+import { MonthVacationStatsSkeleton } from '@/features/vacation/history/components/MonthVacationStatsSkeleton'
+import { useUserMonthlyVacationStatsQuery } from '@/hooks/queries/useVacations'
 
-interface MonthStatsWidgetProps {
-  monthStats?: GetUserMonthlyVacationStatsResp[];
-}
+export const MonthStatsWidget = () => {
+  const { loginUser } = useUser()
+  const userId = loginUser?.user_id || ''
+  const currentYear = new Date().getFullYear().toString()
 
-const MonthStatsWidget = ({ monthStats }: MonthStatsWidgetProps) => {
-  if (!monthStats) {
-    return <MonthVacationStatsCardSkeleton />;
-  }
+  const { data: monthStats, isLoading, error } = useUserMonthlyVacationStatsQuery(userId, currentYear)
 
   return (
-    <div className='h-full w-full p-4'>
-      <MonthVacationStatsContent data={monthStats} />
-    </div>
-  );
-};
-
-export default MonthStatsWidget;
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: monthStats }}
+      loadingComponent={<MonthVacationStatsSkeleton />}
+    >
+      <MonthVacationStatsContent data={monthStats!} className="p-4" />
+    </QueryAsyncBoundary>
+  )
+}

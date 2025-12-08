@@ -1,13 +1,18 @@
-import type { GetUserMonthlyVacationStatsResp } from '@/lib/api/vacation';
-import { cn } from '@/lib/utils';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { MonthVacationStatsEmpty } from '@/features/vacation/history/components/MonthVacationStatsEmpty'
+import type { GetUserMonthlyVacationStatsResp } from '@/lib/api/vacation'
+import { cn } from '@/lib/utils'
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface MonthVacationStatsContentProps {
-  data: GetUserMonthlyVacationStatsResp[] | undefined;
-  className?: string;
+  data: GetUserMonthlyVacationStatsResp[] | undefined
+  className?: string
 }
 
-const MonthVacationStatsContent = ({ data, className }: MonthVacationStatsContentProps) => {
+export const MonthVacationStatsContent = ({ data, className }: MonthVacationStatsContentProps) => {
+  if (!data || data.length === 0) {
+    return <MonthVacationStatsEmpty />
+  }
+
   return (
     <div className={cn('w-full h-full', className)}>
       <ResponsiveContainer width='100%' height='100%'>
@@ -48,7 +53,5 @@ const MonthVacationStatsContent = ({ data, className }: MonthVacationStatsConten
         </BarChart>
       </ResponsiveContainer>
     </div>
-  );
-};
-
-export default MonthVacationStatsContent;
+  )
+}

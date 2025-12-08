@@ -1,72 +1,31 @@
-import ApplicationTableContent from '@/features/vacation/application/components/ApplicationTableContent';
-import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
-import VacationApprovalForm from '@/features/vacation/application/components/VacationApprovalForm';
-import { usePostCancelVacationRequestMutation } from '@/hooks/queries/useVacations';
-import { TypeResp } from '@/lib/api/type';
-import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
-import { useState } from 'react';
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
+import { useUser } from '@/contexts/UserContext'
+import ApplicationTableContent from '@/features/vacation/application/components/ApplicationTableContent'
+import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton'
+import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes'
+import { useUserRequestedVacationsQuery } from '@/hooks/queries/useVacations'
 
-interface ApplicationTableWidgetProps {
-  vacationRequests?: GetUserRequestedVacationsResp[];
-  grantStatusTypes: TypeResp[];
-  userId: string;
-  userName?: string;
-}
+export const ApplicationTableWidget = () => {
+  const { loginUser } = useUser()
+  const userId = loginUser?.user_id || ''
 
-const ApplicationTableWidget = ({
-  vacationRequests,
-  grantStatusTypes,
-  userId,
-  userName,
-}: ApplicationTableWidgetProps) => {
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null);
+  const { data: vacationRequests, isLoading: requestsLoading, error: requestsError } = useUserRequestedVacationsQuery(userId)
+  const { data: grantStatusTypes, isLoading: typesLoading, error: typesError } = useGrantStatusTypesQuery()
 
-  const { mutate: cancelVacationRequest } = usePostCancelVacationRequestMutation();
-
-  if (!vacationRequests) {
-    return <ApplicationTableSkeleton />;
-  }
-
-  const handleDetailView = (request: GetUserRequestedVacationsResp) => {
-    setSelectedRequest(request);
-    setDetailOpen(true);
-  };
-
-  const handleDetailClose = () => {
-    setDetailOpen(false);
-    setSelectedRequest(null);
-  };
-
-  const handleCancelRequest = (requestId: number) => {
-    if (!userId) return;
-
-    cancelVacationRequest({
-      vacationGrantId: requestId,
-      userId: userId
-    });
-  };
+  const isLoading = requestsLoading || typesLoading
+  const error = requestsError || typesError
 
   return (
-    <>
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: vacationRequests }}
+      loadingComponent={<ApplicationTableSkeleton />}
+    >
       <ApplicationTableContent
-        vacationRequests={vacationRequests}
-        grantStatusTypes={grantStatusTypes}
-        onDetailView={handleDetailView}
-        onCancelRequest={handleCancelRequest}
+        vacationRequests={vacationRequests || []}
+        grantStatusTypes={grantStatusTypes || []}
         stickyHeader={true}
         className="h-full"
       />
-
-      {/* 상세보기 다이얼로그 */}
-      <VacationApprovalForm
-        open={detailOpen}
-        onClose={handleDetailClose}
-        requestData={selectedRequest || undefined}
-        applicantName={userName}
-      />
-    </>
-  );
-};
-
-export default ApplicationTableWidget;
+    </QueryAsyncBoundary>
+  )
+}

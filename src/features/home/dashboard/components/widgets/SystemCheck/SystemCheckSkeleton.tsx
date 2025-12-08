@@ -1,7 +1,7 @@
-import { Card, CardContent } from '@/components/shadcn/card';
-import { Skeleton } from '@/components/shadcn/skeleton';
+import { Card, CardContent } from '@/components/shadcn/card'
+import { Skeleton } from '@/components/shadcn/skeleton'
 
-const SystemCheckWidgetSkeleton = () => {
+export const SystemCheckSkeleton = () => {
   return (
     <Card className="h-full flex flex-col border-none shadow-none py-0 min-h-[200px]">
       <CardContent className="flex-1 p-0 min-h-0">
@@ -23,7 +23,5 @@ const SystemCheckWidgetSkeleton = () => {
         </div>
       </CardContent>
     </Card>
-  );
-};
-
-export default SystemCheckWidgetSkeleton;
+  )
+}

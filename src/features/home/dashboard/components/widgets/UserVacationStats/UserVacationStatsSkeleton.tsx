@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@/components/shadcn/card';
-import { Skeleton } from '@/components/shadcn/skeleton';
+import { Card, CardContent } from '@/components/shadcn/card'
+import { Skeleton } from '@/components/shadcn/skeleton'
 import {
   Table,
   TableBody,
@@ -7,11 +7,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/shadcn/table';
-import { useTranslation } from 'react-i18next';
+} from '@/components/shadcn/table'
+import { useTranslation } from 'react-i18next'
 
-const UserVacationStatsWidgetSkeleton = () => {
-  const { t } = useTranslation('vacation');
+export const UserVacationStatsSkeleton = () => {
+  const { t } = useTranslation('vacation')
 
   return (
     <Card className="h-full flex flex-col border-none shadow-none py-0">
@@ -42,7 +42,5 @@ const UserVacationStatsWidgetSkeleton = () => {
         </Table>
       </CardContent>
     </Card>
-  );
-};
-
-export default UserVacationStatsWidgetSkeleton;
+  )
+}

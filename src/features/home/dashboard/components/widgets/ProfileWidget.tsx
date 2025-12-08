@@ -5,7 +5,7 @@ import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleto
 import UserInfoContent from '@/features/user/components/UserInfoContent';
 import { useUserQuery } from '@/hooks/queries/useUsers';
 
-const ProfileWidget = () => {
+export const ProfileWidget = () => {
   const { loginUser } = useUser();
   const userId = loginUser?.user_id || '';
 
@@ -23,6 +23,4 @@ const ProfileWidget = () => {
       </div>
     </QueryAsyncBoundary>
   );
-};
-
-export default ProfileWidget;
+}

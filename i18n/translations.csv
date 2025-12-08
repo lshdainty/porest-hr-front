@@ -275,6 +275,8 @@ dashboard,widget.systemDailyCheck,시스템 데일리 체크,System Daily Check
 dashboard,widget.workHistoryStatus,업무이력 작성 현황,Work History Status
 dashboard,widget.monthlyWorkAlert,월별 업무 미작성 알림,Monthly Work Alert
 dashboard,widget.allUserVacationStatus,전체 유저 휴가 현황,All User Vacation Status
+dashboard,widget.empty.monthStats.title,월별 휴가 통계가 없습니다,No Monthly Vacation Statistics
+dashboard,widget.empty.monthStats.description,아직 휴가 사용 내역이 없습니다,No vacation usage history yet
 dashboard,save,저장,Save
 dashboard,hideWidget,위젯 숨기기,Hide Widget
 work,report.title,업무 보고,Work Report
@@ -400,6 +402,8 @@ admin,user.tableCompany,소속 회사,Company
 admin,user.tableDepartment,부서,Department
 admin,user.tableInviteStatus,초대 상태,Invitation Status
 admin,user.totalCount,총 인원,Total Members
+admin,user.companyStats.empty.title,회사별 통계 정보가 없습니다,No Company Statistics
+admin,user.companyStats.empty.description,등록된 사용자 정보가 없습니다,No user information registered
 admin,user.allUsers,전체 사용자,All Users
 admin,user.usersInDepartment,부서 소속 사용자,Users in Department
 admin,user.searchUser,사용자 검색...,Search user...
@@ -504,6 +508,8 @@ vacation,policy.noPolicies,등록된 휴가 정책이 없습니다.,No vacation 
 vacation,policy.noPoliciesDesc,새로운 휴가 정책을 등록해주세요.,Please register a new vacation policy.
 vacation,stats.title,휴가 관리,Vacation Management
 vacation,stats.noUser,사용자 정보가 없습니다.,No user information available.
+vacation,stats.empty.title,휴가 현황 정보가 없습니다,No Vacation Statistics
+vacation,stats.empty.description,휴가 현황 정보를 불러올 수 없습니다,Unable to load vacation statistics
 auth,signup.socialRequired,최소 하나의 소셜 로그인을 연동해주세요.,Please link at least one social login.
 auth,signup.complete,회원가입이 완료되었습니다!,Sign up completed!
 auth,signup.oauthLinked,{{oauth}} 계정 연동이 완료되었습니다!,{{oauth}} account has been linked!
@@ -525,8 +531,12 @@ vacation,request.rejectedLabel,반려,Rejected
 vacation,request.rejectedDesc,재신청 필요,Resubmission required
 vacation,request.acquiredVacation,획득 휴가,Acquired Vacation
 vacation,request.acquiredDesc,승인된 휴가,Approved vacation
+vacation,request.empty.title,신청 통계 정보가 없습니다,No Request Statistics
+vacation,request.empty.description,휴가 신청 정보가 없습니다,No vacation request information
 work,schedule.hoursMinutes,{{hours}}시간 {{minutes}}분,{{hours}}h {{minutes}}m
 work,schedule.hoursOnly,{{hours}}시간,{{hours}}h
+work,schedule.empty.title,근무 일정이 없습니다,No Work Schedule
+work,schedule.empty.description,등록된 팀원의 근무 일정이 없습니다,No team member work schedules registered
 culture,dues.currencyUnit,원,KRW
 culture,dues.totalOperationFee,전체 운영비,Total Operation Fee
 culture,dues.totalOperationFeeDesc,현재 보유한 총 운영비,Total operation fee currently held
@@ -536,6 +546,10 @@ culture,dues.operationWithdrawal,운영비 출금,Operation Withdrawal
 culture,dues.operationWithdrawalDesc,올해 총 출금액,Total withdrawals this year
 culture,dues.monthBirthFee,{{month}}월 생일비,Birthday Fee for {{month}}
 culture,dues.monthBirthFeeDesc,이번 달 생일비,Birthday fee this month
+culture,dues.empty.title,회비 정보가 없습니다,No Dues Information
+culture,dues.empty.description,등록된 회비 정보가 없습니다,No dues information registered
+culture,birthDues.empty.title,생일비 정보가 없습니다,No Birthday Dues Information
+culture,birthDues.empty.description,등록된 생일비 정보가 없습니다,No birthday dues information registered
 login,idPlaceholder,아이디를 입력하세요,Enter your ID
 login,orContinueWith,Or continue with,Or continue with
 common,noInfo,정보 없음,No info
@@ -871,6 +885,8 @@ culture,dues.tableContent,내용,Content
 culture,dues.tableAmount,금액,Amount
 culture,dues.tableType,유형,Type
 culture,dues.tableTotal,총액,Total
+culture,dues.noDataTitle,회비 내역이 없습니다,No dues history
+culture,dues.noDataDescription,아직 등록된 회비 내역이 없습니다.,No dues records have been registered yet.
 culture,dues.monthBirthDuesTitle,월별 생일비 입금 현황,Monthly Birthday Dues Status
 culture,dues.monthFormat,{{month}}월,{{month}} Mon
 common,copy,복사,Copy
@@ -921,6 +937,8 @@ dashboard,workHistory.achieved,달성 완료,Achieved
 dashboard,workHistory.inProgress,진행 중,In Progress
 dashboard,workHistory.achievedMessage,오늘 필요한 업무 시간을 모두 채웠습니다!,You've completed all required work hours for today!
 dashboard,workHistory.remainingMessage,목표 달성까지 {{hours}}시간 남았습니다.,{{hours}} hours remaining to reach your goal.
+dashboard,systemCheck.noSystem,등록된 시스템이 없습니다,No registered systems
+dashboard,systemCheck.noSystemDesc,시스템을 등록하면 여기에 표시됩니다.,Systems will be displayed here once registered.
 vacation,approval.title,휴가 신청 상세보기,Vacation Request Details
 vacation,approval.basicInfo,기본 정보,Basic Information
 vacation,approval.applicantInfo,신청자 정보,Applicant Information
@@ -1081,3 +1099,9 @@ calendar,dayView.happeningNow,진행 중,Happening now
 calendar,dayView.noAppointments,현재 진행 중인 일정이 없습니다,No appointments or consultations at the moment
 calendar,weekView.notAvailable,주간 뷰는 작은 화면에서 사용할 수 없습니다.,Weekly view is not available on smaller devices.
 calendar,weekView.switchView,일간 또는 월간 뷰로 전환해주세요.,Please switch to daily or monthly view.
+vacation,history.noUsageTitle,사용 내역이 없습니다,No usage history
+vacation,history.noUsageDesc,아직 휴가를 사용한 기록이 없습니다.,You have no vacation usage records yet.
+vacation,history.noGrantTitle,부여 내역이 없습니다,No grant history
+vacation,history.noGrantDesc,아직 휴가를 부여받은 기록이 없습니다.,You have no vacation grant records yet.
+vacation,history.empty.typeStats.title,휴가 유형 통계가 없습니다,No Vacation Type Statistics
+vacation,history.empty.typeStats.description,사용 가능한 휴가 유형이 없습니다,No available vacation types
