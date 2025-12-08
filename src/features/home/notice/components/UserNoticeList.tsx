@@ -1,9 +1,8 @@
-import { Badge } from '@/components/shadcn/badge';
-import { NoticeListResp, NoticeType } from '@/lib/api/notice';
-import { cn } from '@/lib/utils';
-import dayjs from 'dayjs';
-import { Calendar, Eye, Pin, User } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { Badge } from '@/components/shadcn/badge'
+import { NoticeListResp, NoticeType } from '@/lib/api/notice'
+import { cn } from '@/lib/utils'
+import dayjs from 'dayjs'
+import { Calendar, Eye, Pin, User } from 'lucide-react'
 
 interface UserNoticeListProps {
   notices: NoticeListResp[];
@@ -18,16 +17,6 @@ const noticeTypeBadgeVariant: Record<NoticeType, 'default' | 'destructive' | 'se
 };
 
 export const UserNoticeList = ({ notices, onSelectNotice }: UserNoticeListProps) => {
-  const { t } = useTranslation('notice');
-
-  if (notices.length === 0) {
-    return (
-      <div className="text-center py-12 text-muted-foreground">
-        {t('noNotices')}
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-3">
       {notices.map((notice) => (

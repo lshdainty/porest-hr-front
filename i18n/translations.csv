@@ -1089,6 +1089,7 @@ sidebar,menu.adminNotice,공지사항,Notice
 notice,title,공지사항,Notice
 notice,description,중요 공지사항을 확인하세요,Check important notices
 notice,noNotices,등록된 공지사항이 없습니다,No notices available
+notice,noNoticesDesc,새로운 공지사항이 등록되면 여기에 표시됩니다,New notices will be displayed here when posted
 notice,pinned,고정,Pinned
 common,clear,초기화,Clear
 common,previous,이전,Previous
