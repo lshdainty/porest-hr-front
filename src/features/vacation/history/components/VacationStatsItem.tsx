@@ -89,4 +89,4 @@ export const getVacationStatsConfig = (data: GetUserVacationStatsResp | undefine
   ];
 };
 
-export default VacationStatsItem;
+export { VacationStatsItem }

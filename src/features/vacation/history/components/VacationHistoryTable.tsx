@@ -8,7 +8,7 @@ import { useDeleteVacationUsageMutation } from '@/hooks/queries/useVacations';
 import { GetUserVacationHistoryResp } from '@/lib/api/vacation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import VacationHistoryContent from './VacationHistoryContent';
+import { VacationHistoryContent } from './VacationHistoryContent'
 
 interface VacationHistoryTableProps {
   value: GetUserVacationHistoryResp;
@@ -84,4 +84,4 @@ const VacationHistoryTable = ({ value: data, canAdd = false }: VacationHistoryTa
   )
 }
 
-export default VacationHistoryTable
+export { VacationHistoryTable }

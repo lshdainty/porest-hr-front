@@ -16,4 +16,4 @@ const MonthVacationStatsCardSkeleton = () => {
   )
 }
 
-export default MonthVacationStatsCardSkeleton
+export { MonthVacationStatsCardSkeleton }

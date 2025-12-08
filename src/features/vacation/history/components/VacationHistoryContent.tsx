@@ -278,4 +278,4 @@ const VacationHistoryContent = ({
   );
 };
 
-export default VacationHistoryContent;
+export { VacationHistoryContent }

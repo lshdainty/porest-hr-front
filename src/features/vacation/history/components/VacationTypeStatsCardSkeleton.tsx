@@ -58,4 +58,4 @@ const VacationTypeStatsCardSkeleton = () => {
   )
 }
 
-export default VacationTypeStatsCardSkeleton
+export { VacationTypeStatsCardSkeleton }

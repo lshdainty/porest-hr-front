@@ -1,7 +1,23 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/shadcn/select'
+import { useUser } from '@/contexts/UserContext'
 import UserInfoCard from '@/features/user/components/UserInfoCard'
 import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleton'
-import { useUser } from '@/contexts/UserContext'
+import { MonthVacationStatsCard } from '@/features/vacation/history/components/MonthVacationStatsCard'
+import { MonthVacationStatsCardSkeleton } from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton'
+import { VacationHistoryTable } from '@/features/vacation/history/components/VacationHistoryTable'
+import { VacationHistoryTableSkeleton } from '@/features/vacation/history/components/VacationHistoryTableSkeleton'
+import { VacationStatsCard } from '@/features/vacation/history/components/VacationStatsCard'
+import { VacationStatsCardSkeleton } from '@/features/vacation/history/components/VacationStatsCardSkeleton'
+import { VacationTypeStatsCard } from '@/features/vacation/history/components/VacationTypeStatsCard'
+import { VacationTypeStatsCardSkeleton } from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton'
+import { useHistoryContext } from '@/features/vacation/history/contexts/HistoryContext'
 import { useUserQuery } from '@/hooks/queries/useUsers'
 import {
   useAvailableVacationsQuery,
@@ -10,23 +26,7 @@ import {
   useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations'
 import dayjs from 'dayjs'
-import { useHistoryContext } from '@/features/vacation/history/contexts/HistoryContext'
-import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard'
-import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton'
-import VacationHistoryTable from '@/features/vacation/history/components/VacationHistoryTable'
-import VacationHistoryTableSkeleton from '@/features/vacation/history/components/VacationHistoryTableSkeleton'
-import VacationStatsCard from '@/features/vacation/history/components/VacationStatsCard'
-import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton'
-import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard'
-import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton'
 import { useTranslation } from 'react-i18next'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/shadcn/select'
 
 interface HistoryContentProps {
   user: any
@@ -127,7 +127,7 @@ const HistoryContent = () => {
   const { data: user, isLoading: userLoading, error: userError } = useUserQuery(user_id)
   const { data: vacationTypes, isLoading: vacationTypesLoading, error: vacationTypesError } = useAvailableVacationsQuery(
     user_id,
-    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
+    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDT23:59:59')
   )
   const { data: monthStats, isLoading: monthStatsLoading, error: monthStatsError } = useUserMonthlyVacationStatsQuery(
     user_id,
@@ -136,7 +136,7 @@ const HistoryContent = () => {
   const { data: histories, isLoading: historiesLoading, error: historiesError } = useUserVacationHistoryQuery(user_id, parseInt(selectedYear))
   const { data: vacationStats, isLoading: vacationStatsLoading, error: vacationStatsError } = useUserVacationStatsQuery(
     user_id,
-    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
+    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDT23:59:59')
   )
 
   const isLoading = userLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading
@@ -167,4 +167,4 @@ const HistoryContent = () => {
   )
 }
 
-export default HistoryContent
+export { HistoryContent }

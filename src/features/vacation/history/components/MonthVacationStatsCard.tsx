@@ -23,4 +23,4 @@ const MonthVacationStatsCard = ({ value: data, className }: MonthVacationStatsCa
   )
 }
 
-export default MonthVacationStatsCard
+export { MonthVacationStatsCard }

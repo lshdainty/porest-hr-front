@@ -9,8 +9,10 @@ interface MonthVacationStatsContentProps {
 }
 
 export const MonthVacationStatsContent = ({ data, className }: MonthVacationStatsContentProps) => {
-  if (!data || data.length === 0) {
-    return <MonthVacationStatsEmpty />
+  const hasData = data && data.length > 0 && data.some((item) => item.used_time > 0)
+
+  if (!hasData) {
+    return <MonthVacationStatsEmpty className={className} />
   }
 
   return (

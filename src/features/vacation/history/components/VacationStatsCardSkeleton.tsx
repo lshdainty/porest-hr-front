@@ -22,4 +22,4 @@ const VacationStatsCardSkeleton = () => {
   )
 }
 
-export default VacationStatsCardSkeleton
+export { VacationStatsCardSkeleton }

@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { GetAvailableVacationsResp } from '@/lib/api/vacation';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
-import VacationTypeStatsContent from './VacationTypeStatsContent';
+import { VacationTypeStatsContent } from './VacationTypeStatsContent'
 
 interface VacationTypeStatsCardProps {
   value: GetAvailableVacationsResp | undefined
@@ -24,4 +24,4 @@ const VacationTypeStatsCard = ({ value, className }: VacationTypeStatsCardProps)
   )
 }
 
-export default VacationTypeStatsCard
+export { VacationTypeStatsCard }

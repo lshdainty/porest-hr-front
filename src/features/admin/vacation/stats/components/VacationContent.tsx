@@ -4,14 +4,14 @@ import { useUser } from '@/contexts/UserContext';
 import { useVacationContext } from '@/features/admin/vacation/stats/contexts/VacationContext';
 import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
 import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
-import MonthVacationStatsCard from '@/features/vacation/history/components/MonthVacationStatsCard';
-import MonthVacationStatsCardSkeleton from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton';
-import VacationHistoryTable from '@/features/vacation/history/components/VacationHistoryTable';
-import VacationHistoryTableSkeleton from '@/features/vacation/history/components/VacationHistoryTableSkeleton';
-import VacationStatsCard from '@/features/vacation/history/components/VacationStatsCard';
-import VacationStatsCardSkeleton from '@/features/vacation/history/components/VacationStatsCardSkeleton';
-import VacationTypeStatsCard from '@/features/vacation/history/components/VacationTypeStatsCard';
-import VacationTypeStatsCardSkeleton from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton';
+import { MonthVacationStatsCard } from '@/features/vacation/history/components/MonthVacationStatsCard'
+import { MonthVacationStatsCardSkeleton } from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton'
+import { VacationHistoryTable } from '@/features/vacation/history/components/VacationHistoryTable'
+import { VacationHistoryTableSkeleton } from '@/features/vacation/history/components/VacationHistoryTableSkeleton'
+import { VacationStatsCard } from '@/features/vacation/history/components/VacationStatsCard'
+import { VacationStatsCardSkeleton } from '@/features/vacation/history/components/VacationStatsCardSkeleton'
+import { VacationTypeStatsCard } from '@/features/vacation/history/components/VacationTypeStatsCard'
+import { VacationTypeStatsCardSkeleton } from '@/features/vacation/history/components/VacationTypeStatsCardSkeleton'
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUsersQuery } from '@/hooks/queries/useUsers';
 import {

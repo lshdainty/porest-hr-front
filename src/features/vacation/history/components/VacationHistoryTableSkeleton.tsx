@@ -81,4 +81,4 @@ const VacationHistoryTableSkeleton = () => {
   )
 }
 
-export default VacationHistoryTableSkeleton
+export { VacationHistoryTableSkeleton }

@@ -1,8 +1,9 @@
-import { AvailableVacationByType, GetAvailableVacationsResp } from '@/lib/api/vacation';
-import { cn } from '@/lib/utils';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Cell, Label, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { VacationTypeStatsEmpty } from '@/features/vacation/history/components/VacationTypeStatsEmpty'
+import { AvailableVacationByType, GetAvailableVacationsResp } from '@/lib/api/vacation'
+import { cn } from '@/lib/utils'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Cell, Label, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 const renderChartColor = (type: string) => {
   switch (type) {
@@ -28,9 +29,9 @@ interface VacationTypeStatsContentProps {
 }
 
 const VacationTypeStatsContent = ({ data, className, showLegend = true }: VacationTypeStatsContentProps) => {
-  const { t } = useTranslation('vacation');
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerDimensions, setContainerDimensions] = useState({ width: 400, height: 400 });
+  const { t } = useTranslation('vacation')
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerDimensions, setContainerDimensions] = useState({ width: 400, height: 400 })
 
   const vacationTypes = useMemo(() => {
     if (data?.vacations) {
@@ -95,11 +96,15 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
     window.addEventListener('resize', updateDimensions);
 
     return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', updateDimensions);
-      resizeObserver.disconnect();
-    };
-  }, []);
+      clearTimeout(timer)
+      window.removeEventListener('resize', updateDimensions)
+      resizeObserver.disconnect()
+    }
+  }, [])
+
+  if (!data || !data.vacations || data.vacations.length === 0) {
+    return <VacationTypeStatsEmpty className={className} />
+  }
 
   return (
     <div className={cn('flex flex-col h-full w-full', className)}>
@@ -204,4 +209,4 @@ const VacationTypeStatsContent = ({ data, className, showLegend = true }: Vacati
   );
 };
 
-export default VacationTypeStatsContent;
+export { VacationTypeStatsContent }

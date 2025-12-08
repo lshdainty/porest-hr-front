@@ -2,7 +2,7 @@ import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
 import { useUser } from '@/contexts/UserContext'
 import { VacationTypeStatsEmpty } from '@/features/vacation/history/components/VacationTypeStatsEmpty'
 import { VacationTypeStatsSkeleton } from '@/features/vacation/history/components/VacationTypeStatsSkeleton'
-import VacationTypeStatsContent from '@/features/vacation/history/components/VacationTypeStatsContent'
+import { VacationTypeStatsContent } from '@/features/vacation/history/components/VacationTypeStatsContent'
 import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations'
 import dayjs from 'dayjs'
 

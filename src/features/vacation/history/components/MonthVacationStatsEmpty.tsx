@@ -11,7 +11,7 @@ export const MonthVacationStatsEmpty = ({ className }: MonthVacationStatsEmptyPr
   const { t } = useTranslation('dashboard')
 
   return (
-    <div className={cn('h-full w-full flex', className)}>
+    <div className={cn('h-full w-full flex items-center justify-center', className)}>
       <Empty>
         <EmptyHeader>
           <EmptyIcon>
