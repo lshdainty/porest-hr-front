@@ -487,4 +487,4 @@ const VacationGrantDialog = ({
   )
 }
 
-export default VacationGrantDialog
+export { VacationGrantDialog }

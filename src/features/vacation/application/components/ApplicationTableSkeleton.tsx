@@ -76,4 +76,4 @@ const ApplicationTableSkeleton = () => {
   )
 }
 
-export default ApplicationTableSkeleton
+export { ApplicationTableSkeleton }

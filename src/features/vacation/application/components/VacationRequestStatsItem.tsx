@@ -154,4 +154,4 @@ export const getVacationRequestStatsConfig = (stats: GetUserRequestedVacationSta
   ];
 };
 
-export default VacationRequestStatsItem;
+export { VacationRequestStatsItem }

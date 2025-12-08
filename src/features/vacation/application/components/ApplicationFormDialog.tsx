@@ -777,4 +777,4 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
   )
 }
 
-export default ApplicationFormDialog
+export { ApplicationFormDialog }

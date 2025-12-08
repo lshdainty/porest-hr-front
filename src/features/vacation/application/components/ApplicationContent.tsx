@@ -8,11 +8,11 @@ import {
   SelectValue
 } from '@/components/shadcn/select';
 import { useUser } from '@/contexts/UserContext';
-import ApplicationFormDialog from '@/features/vacation/application/components/ApplicationFormDialog';
-import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
-import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
-import VacationRequestStatsCards from '@/features/vacation/application/components/VacationRequestStatsCards';
-import VacationRequestStatsCardsSkeleton from '@/features/vacation/application/components/VacationRequestStatsCardsSkeleton';
+import { ApplicationFormDialog } from '@/features/vacation/application/components/ApplicationFormDialog';
+import { ApplicationTable } from '@/features/vacation/application/components/ApplicationTable';
+import { ApplicationTableSkeleton } from '@/features/vacation/application/components/ApplicationTableSkeleton';
+import { VacationRequestStatsCards } from '@/features/vacation/application/components/VacationRequestStatsCards';
+import { VacationRequestStatsContentSkeleton } from '@/features/vacation/application/components/VacationRequestStatsCardsSkeleton';
 import { useApplicationContext } from '@/features/vacation/application/contexts/ApplicationContext';
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes';
 import { useUserApproversQuery } from '@/hooks/queries/useUsers';
@@ -87,7 +87,7 @@ const ApplicationContent = () => {
           </Select>
         </div>
       </div>
-      <VacationRequestStatsCardsSkeleton />
+      <VacationRequestStatsContentSkeleton />
       <ApplicationTableSkeleton />
     </div>
   );
@@ -130,7 +130,7 @@ const ApplicationContent = () => {
           </div>
         </div>
         {isLoadingStats ? (
-          <VacationRequestStatsCardsSkeleton />
+          <VacationRequestStatsContentSkeleton />
         ) : (
           <VacationRequestStatsCards stats={stats} />
         )}
@@ -152,4 +152,4 @@ const ApplicationContent = () => {
   );
 };
 
-export default ApplicationContent;
+export { ApplicationContent }

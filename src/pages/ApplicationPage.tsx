@@ -1,4 +1,4 @@
-import ApplicationContent from '@/features/vacation/application/components/ApplicationContent';
+import { ApplicationContent } from '@/features/vacation/application/components/ApplicationContent';
 import { ApplicationProvider } from '@/features/vacation/application/contexts/ApplicationContext';
 
 const ApplicationPage = () => {

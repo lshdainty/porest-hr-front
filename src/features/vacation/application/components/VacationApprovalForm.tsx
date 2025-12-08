@@ -467,4 +467,4 @@ const VacationApprovalForm = ({
   )
 }
 
-export default VacationApprovalForm
+export { VacationApprovalForm }

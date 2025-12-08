@@ -181,4 +181,4 @@ const ApplicationTableContent = ({
   );
 };
 
-export default ApplicationTableContent;
+export { ApplicationTableContent }

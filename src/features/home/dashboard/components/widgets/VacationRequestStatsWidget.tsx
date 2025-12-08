@@ -1,7 +1,7 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
 import { useUser } from '@/contexts/UserContext'
 import { VacationRequestStatsEmpty } from '@/features/vacation/application/components/VacationRequestStatsEmpty'
-import VacationRequestStatsItem, { getVacationRequestStatsConfig } from '@/features/vacation/application/components/VacationRequestStatsItem'
+import { VacationRequestStatsItem, getVacationRequestStatsConfig } from '@/features/vacation/application/components/VacationRequestStatsItem'
 import { VacationRequestStatsSkeleton } from '@/features/vacation/application/components/VacationRequestStatsSkeleton'
 import { useUserRequestedVacationStatsQuery } from '@/hooks/queries/useVacations'
 import { useTranslation } from 'react-i18next'

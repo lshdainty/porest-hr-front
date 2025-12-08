@@ -1,9 +1,9 @@
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { usePermission } from '@/contexts/PermissionContext';
-import ApplicationTableContent from '@/features/vacation/application/components/ApplicationTableContent';
-import VacationApprovalForm from '@/features/vacation/application/components/VacationApprovalForm';
-import VacationGrantDialog from '@/features/vacation/application/components/VacationGrantDialog';
+import { ApplicationTableContent } from '@/features/vacation/application/components/ApplicationTableContent';
+import { VacationApprovalForm } from '@/features/vacation/application/components/VacationApprovalForm';
+import { VacationGrantDialog } from '@/features/vacation/application/components/VacationGrantDialog';
 import { usePostCancelVacationRequestMutation } from '@/hooks/queries/useVacations';
 import { TypeResp } from '@/lib/api/type';
 import { GetUserRequestedVacationsResp } from '@/lib/api/vacation';
@@ -95,4 +95,4 @@ const ApplicationTable = ({
   );
 }
 
-export default ApplicationTable;
+export { ApplicationTable }

@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/shadcn/card';
 import { GetUserRequestedVacationStatsResp } from '@/lib/api/vacation';
 import { useTranslation } from 'react-i18next';
 
-import VacationRequestStatsItem, { getVacationRequestStatsConfig } from './VacationRequestStatsItem';
+import { VacationRequestStatsItem, getVacationRequestStatsConfig } from './VacationRequestStatsItem';
 
 interface VacationRequestStatsCardsProps {
   stats: GetUserRequestedVacationStatsResp | undefined;
@@ -25,4 +25,4 @@ const VacationRequestStatsCards = ({ stats }: VacationRequestStatsCardsProps) =>
   );
 }
 
-export default VacationRequestStatsCards;
+export { VacationRequestStatsCards }

@@ -2,8 +2,8 @@ import UserInfoCard from '@/features/user/components/UserInfoCard';
 import UserInfoCardSkeleton from '@/features/user/components/UserInfoCardSkeleton';
 import { useUser } from '@/contexts/UserContext';
 import { useVacationContext } from '@/features/admin/vacation/stats/contexts/VacationContext';
-import ApplicationTable from '@/features/vacation/application/components/ApplicationTable';
-import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton';
+import { ApplicationTable } from '@/features/vacation/application/components/ApplicationTable';
+import { ApplicationTableSkeleton } from '@/features/vacation/application/components/ApplicationTableSkeleton';
 import { MonthVacationStatsCard } from '@/features/vacation/history/components/MonthVacationStatsCard'
 import { MonthVacationStatsCardSkeleton } from '@/features/vacation/history/components/MonthVacationStatsCardSkeleton'
 import { VacationHistoryTable } from '@/features/vacation/history/components/VacationHistoryTable'

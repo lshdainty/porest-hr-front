@@ -1,7 +1,7 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
 import { useUser } from '@/contexts/UserContext'
-import ApplicationTableContent from '@/features/vacation/application/components/ApplicationTableContent'
-import ApplicationTableSkeleton from '@/features/vacation/application/components/ApplicationTableSkeleton'
+import { ApplicationTableContent } from '@/features/vacation/application/components/ApplicationTableContent'
+import { ApplicationTableSkeleton } from '@/features/vacation/application/components/ApplicationTableSkeleton'
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes'
 import { useUserRequestedVacationsQuery } from '@/hooks/queries/useVacations'
 

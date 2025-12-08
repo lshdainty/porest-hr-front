@@ -23,4 +23,4 @@ const VacationRequestStatsContentSkeleton = () => {
   )
 }
 
-export default VacationRequestStatsContentSkeleton
+export { VacationRequestStatsContentSkeleton }
