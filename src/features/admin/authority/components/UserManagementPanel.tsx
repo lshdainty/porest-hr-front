@@ -1,8 +1,8 @@
 import { Dialog, DialogContent } from "@/components/shadcn/dialog";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
-import UserList from "@/features/admin/authority/components/UserList";
-import UserListSkeleton from "@/features/admin/authority/components/UserListSkeleton";
-import UserRoleAssignment from "@/features/admin/authority/components/UserRoleAssignment";
+import { UserList } from "@/features/admin/authority/components/UserList";
+import { UserListSkeleton } from "@/features/admin/authority/components/UserListSkeleton";
+import { UserRoleAssignment } from "@/features/admin/authority/components/UserRoleAssignment";
 import { Authority, Role, User } from "@/features/admin/authority/types";
 import { usePermissionsQuery } from "@/hooks/queries/usePermissions";
 import { useRolesQuery } from "@/hooks/queries/useRoles";
@@ -143,4 +143,4 @@ const UserManagementPanel = () => {
   );
 };
 
-export default UserManagementPanel;
+export { UserManagementPanel };

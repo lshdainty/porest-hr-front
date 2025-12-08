@@ -6,10 +6,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import config from '@/config/config';
 import { usePermission } from '@/contexts/PermissionContext';
-import ResendEmailDialog from '@/features/admin/users/management/components/ResendEmailDialog';
-import UserDeleteDialog from '@/features/admin/users/management/components/UserDeleteDialog';
-import UserInviteDialog from '@/features/admin/users/management/components/UserInviteDialog';
-import UserVacationPolicyDialog from '@/features/admin/users/management/components/UserVacationPolicyDialog';
+import { ResendEmailDialog } from '@/features/admin/users/management/components/ResendEmailDialog';
+import { UserDeleteDialog } from '@/features/admin/users/management/components/UserDeleteDialog';
+import { UserInviteDialog } from '@/features/admin/users/management/components/UserInviteDialog';
+import { UserVacationPolicyDialog } from '@/features/admin/users/management/components/UserVacationPolicyDialog';
 import { useManagementContext } from '@/features/admin/users/management/contexts/ManagementContext';
 import UserEditDialog from '@/features/user/components/UserEditDialog';
 import { useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
@@ -310,4 +310,4 @@ const UserTable = ({ value: users }: UserTableProps) => {
   )
 }
 
-export default UserTable
+export { UserTable }

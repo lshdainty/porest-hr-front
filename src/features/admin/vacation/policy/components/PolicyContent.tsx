@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 import { VacationPolicyFormDialog } from '@/features/admin/vacation/policy/components/VacationPolicyFormDialog';
 import { VacationPolicyLists } from '@/features/admin/vacation/policy/components/VacationPolicyLists';
-import PolicyContentSkeleton from '@/features/admin/vacation/policy/components/PolicyContentSkeleton';
+import { PolicyContentSkeleton } from '@/features/admin/vacation/policy/components/PolicyContentSkeleton';
 
 const PolicyContent = () => {
   const { t } = useTranslation('vacation');
@@ -92,4 +92,4 @@ const PolicyContent = () => {
   );
 };
 
-export default PolicyContent;
+export { PolicyContent };

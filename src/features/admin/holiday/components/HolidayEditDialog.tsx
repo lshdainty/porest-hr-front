@@ -289,4 +289,4 @@ const HolidayEditDialog = ({
   )
 }
 
-export default HolidayEditDialog
+export { HolidayEditDialog }

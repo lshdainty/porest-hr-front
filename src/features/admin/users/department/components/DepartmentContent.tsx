@@ -2,9 +2,9 @@ import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent } from '@/components/shadcn/dialog';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
 import { Skeleton } from '@/components/shadcn/skeleton';
-import DepartmentTreePanel from '@/features/admin/company/components/DepartmentTreePanel';
-import DepartmentTreePanelSkeleton from '@/features/admin/company/components/DepartmentTreePanelSkeleton';
-import UserDepartmentTransfer from '@/features/admin/users/department/components/UserDepartmentTransfer';
+import { DepartmentTreePanel } from '@/features/admin/company/components/DepartmentTreePanel';
+import { DepartmentTreePanelSkeleton } from '@/features/admin/company/components/DepartmentTreePanelSkeleton';
+import { UserDepartmentTransfer } from '@/features/admin/users/department/components/UserDepartmentTransfer';
 import { useDepartmentContext } from '@/features/admin/users/department/contexts/DepartmentContext';
 import { useCompanyQuery, useCompanyWithDepartmentsQuery } from '@/hooks/queries/useCompanies';
 import { useDeleteDepartmentUsersMutation, useDepartmentUsersQuery, usePostDepartmentUsersMutation } from '@/hooks/queries/useDepartments';
@@ -199,4 +199,4 @@ const DepartmentContent = () => {
   );
 };
 
-export default DepartmentContent;
+export { DepartmentContent };

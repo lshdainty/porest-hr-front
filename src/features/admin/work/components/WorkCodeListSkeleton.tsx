@@ -80,4 +80,4 @@ const WorkCodeListSkeleton = () => {
   );
 };
 
-export default WorkCodeListSkeleton;
+export { WorkCodeListSkeleton };

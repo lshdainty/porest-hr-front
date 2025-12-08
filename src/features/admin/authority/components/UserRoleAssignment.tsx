@@ -3,7 +3,7 @@ import { Button } from "@/components/shadcn/button";
 import { Checkbox } from "@/components/shadcn/checkbox";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/shadcn/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
-import MobileRoleSelector from "@/features/admin/authority/components/MobileRoleSelector";
+import { MobileRoleSelector } from "@/features/admin/authority/components/MobileRoleSelector";
 import { Role, User } from "@/features/admin/authority/types";
 import { useIsMobile } from "@/hooks/useMobile";
 import { ArrowLeft, ChevronsUpDown } from "lucide-react";
@@ -136,4 +136,4 @@ const UserRoleAssignment = ({ user, allRoles, onUpdateUserRole, onBack }: UserRo
   );
 };
 
-export default UserRoleAssignment;
+export { UserRoleAssignment };

@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/shadcn/card';
 import { GetUsersResp } from '@/lib/api/user';
-import UserCompanyStatsItem, { getUserCompanyStatsConfig } from './UserCompanyStatsItem';
+import { UserCompanyStatsItem, getUserCompanyStatsConfig } from './UserCompanyStatsItem';
 
 interface UserCompanyCardProps {
   value: GetUsersResp[];
@@ -22,4 +22,4 @@ const UserCompanyCard = ({ value: users }: UserCompanyCardProps) => {
   )
 }
 
-export default UserCompanyCard
+export { UserCompanyCard }

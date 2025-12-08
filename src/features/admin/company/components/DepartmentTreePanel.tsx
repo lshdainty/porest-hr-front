@@ -1,13 +1,13 @@
 import { toast } from '@/components/shadcn/sonner';
 import { Button } from '@/components/shadcn/button';
 import { TreeDataItem, TreeView } from '@/components/shadcn/treeView';
-import EmptyDepartment from '@/features/admin/company/components/EmptyDepartment';
+import { EmptyDepartment } from '@/features/admin/company/components/EmptyDepartment';
 import { GetCompanyWithDepartment } from '@/lib/api/company';
 import { PutDepartmentReq } from '@/lib/api/department';
 import { Building2, Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import DepartmentFormDialog from '@/features/admin/company/components/DepartmentFormDialog';
+import { DepartmentFormDialog } from '@/features/admin/company/components/DepartmentFormDialog';
 
 interface DepartmentTreePanelProps {
   departments: GetCompanyWithDepartment[];
@@ -248,4 +248,4 @@ const DepartmentTreePanel = ({
   )
 }
 
-export default DepartmentTreePanel
+export { DepartmentTreePanel }

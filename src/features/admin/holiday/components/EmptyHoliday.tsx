@@ -34,4 +34,4 @@ const EmptyHoliday = ({ onAddClick, className }: EmptyHolidayProps) => {
   );
 };
 
-export default EmptyHoliday;
+export { EmptyHoliday };

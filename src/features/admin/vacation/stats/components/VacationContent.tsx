@@ -195,4 +195,4 @@ const VacationContent = () => {
   );
 };
 
-export default VacationContent;
+export { VacationContent };

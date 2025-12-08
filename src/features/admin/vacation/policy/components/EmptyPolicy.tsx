@@ -29,4 +29,4 @@ const EmptyPolicy = ({ isSearchResult = false, className }: EmptyPolicyProps) =>
   );
 };
 
-export default EmptyPolicy;
+export { EmptyPolicy };

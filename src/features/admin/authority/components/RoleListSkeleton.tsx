@@ -31,4 +31,4 @@ const RoleListSkeleton = () => {
   );
 };
 
-export default RoleListSkeleton;
+export { RoleListSkeleton };

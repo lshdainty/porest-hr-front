@@ -4,8 +4,8 @@ import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
 import { Textarea } from "@/components/shadcn/textarea";
 import { usePermission } from "@/contexts/PermissionContext";
-import MobilePermissionDrawer from "@/features/admin/authority/components/MobilePermissionDrawer";
-import PermissionMatrix from "@/features/admin/authority/components/PermissionMatrix";
+import { MobilePermissionDrawer } from "@/features/admin/authority/components/MobilePermissionDrawer";
+import { PermissionMatrix } from "@/features/admin/authority/components/PermissionMatrix";
 import { Authority, Role } from "@/features/admin/authority/types";
 import { useIsMobile } from "@/hooks/useMobile";
 import { ArrowLeft, Save } from "lucide-react";
@@ -176,4 +176,4 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
   );
 };
 
-export default RoleDetail;
+export { RoleDetail };

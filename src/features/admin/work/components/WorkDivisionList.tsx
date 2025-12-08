@@ -12,9 +12,9 @@ import { WorkCodeResp } from '@/lib/api/work';
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import WorkCodeDeleteDialog from './WorkCodeDeleteDialog';
-import WorkCodeEditDialog from './WorkCodeEditDialog';
-import WorkDivisionListSkeleton from './WorkDivisionListSkeleton';
+import { WorkCodeDeleteDialog } from './WorkCodeDeleteDialog';
+import { WorkCodeEditDialog } from './WorkCodeEditDialog';
+import { WorkDivisionListSkeleton } from './WorkDivisionListSkeleton';
 
 const WorkDivisionList = () => {
   const { t } = useTranslation('work');
@@ -117,4 +117,4 @@ const WorkDivisionList = () => {
   );
 };
 
-export default WorkDivisionList;
+export { WorkDivisionList };

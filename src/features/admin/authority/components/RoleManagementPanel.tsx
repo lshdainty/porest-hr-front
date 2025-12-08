@@ -1,8 +1,8 @@
 import { Dialog, DialogContent } from "@/components/shadcn/dialog";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
-import RoleDetail from "@/features/admin/authority/components/RoleDetail";
-import RoleList from "@/features/admin/authority/components/RoleList";
-import RoleListSkeleton from "@/features/admin/authority/components/RoleListSkeleton";
+import { RoleDetail } from "@/features/admin/authority/components/RoleDetail";
+import { RoleList } from "@/features/admin/authority/components/RoleList";
+import { RoleListSkeleton } from "@/features/admin/authority/components/RoleListSkeleton";
 import { Authority, Role } from "@/features/admin/authority/types";
 import { usePermissionsQuery } from "@/hooks/queries/usePermissions";
 import {
@@ -289,4 +289,4 @@ const RoleManagementPanel = () => {
   );
 };
 
-export default RoleManagementPanel;
+export { RoleManagementPanel };

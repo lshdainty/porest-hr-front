@@ -30,4 +30,4 @@ const PolicyContentSkeleton = () => {
   );
 };
 
-export default PolicyContentSkeleton;
+export { PolicyContentSkeleton };

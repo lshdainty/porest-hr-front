@@ -26,4 +26,4 @@ const HolidayListSkeleton = () => {
   )
 }
 
-export default HolidayListSkeleton
+export { HolidayListSkeleton }

@@ -7,7 +7,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/shadcn/sheet";
-import PermissionMatrix from "@/features/admin/authority/components/PermissionMatrix";
+import { PermissionMatrix } from "@/features/admin/authority/components/PermissionMatrix";
 import { Authority } from "@/features/admin/authority/types";
 import { Settings2 } from "lucide-react";
 import { useState } from "react";
@@ -113,4 +113,4 @@ const MobilePermissionDrawer = ({
   );
 };
 
-export default MobilePermissionDrawer;
+export { MobilePermissionDrawer };

@@ -1,4 +1,4 @@
-import HolidayContent from '@/features/admin/holiday/components/HolidayContent';
+import { HolidayContent } from '@/features/admin/holiday/components/HolidayContent';
 import { HolidayProvider } from '@/features/admin/holiday/contexts/HolidayContext';
 
 const HolidayPage = () => {
@@ -9,4 +9,4 @@ const HolidayPage = () => {
   );
 };
 
-export default HolidayPage;
+export { HolidayPage };

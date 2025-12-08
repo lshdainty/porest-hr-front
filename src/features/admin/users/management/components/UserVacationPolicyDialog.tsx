@@ -241,4 +241,4 @@ const UserVacationPolicyDialog = ({
   )
 }
 
-export default UserVacationPolicyDialog
+export { UserVacationPolicyDialog }

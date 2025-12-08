@@ -6,9 +6,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select'
-import HolidayEditDialog from '@/features/admin/holiday/components/HolidayEditDialog'
-import HolidayList from '@/features/admin/holiday/components/HolidayList'
-import HolidayListSkeleton from '@/features/admin/holiday/components/HolidayListSkeleton'
+import { HolidayEditDialog } from '@/features/admin/holiday/components/HolidayEditDialog'
+import { HolidayList } from '@/features/admin/holiday/components/HolidayList'
+import { HolidayListSkeleton } from '@/features/admin/holiday/components/HolidayListSkeleton'
 import { useHolidayContext } from '@/features/admin/holiday/contexts/HolidayContext'
 import {
   useDeleteHolidayMutation,
@@ -170,4 +170,4 @@ const HolidayContent = () => {
   )
 }
 
-export default HolidayContent
+export { HolidayContent }

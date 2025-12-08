@@ -22,4 +22,4 @@ const UserCompanyCardSkeleton = () => {
   )
 }
 
-export default UserCompanyCardSkeleton
+export { UserCompanyCardSkeleton }

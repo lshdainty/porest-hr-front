@@ -1,8 +1,8 @@
 import { useUsersQuery } from '@/hooks/queries/useUsers';
-import UserCompanyCard from '@/features/admin/users/management/components/UserCompanyCard';
-import UserCompanyCardSkeleton from '@/features/admin/users/management/components/UserCompanyCardSkeleton';
-import UserTable from '@/features/admin/users/management/components/UserTable';
-import UserTableSkeleton from '@/features/admin/users/management/components/UserTableSkeleton';
+import { UserCompanyCard } from '@/features/admin/users/management/components/UserCompanyCard';
+import { UserCompanyCardSkeleton } from '@/features/admin/users/management/components/UserCompanyCardSkeleton';
+import { UserTable } from '@/features/admin/users/management/components/UserTable';
+import { UserTableSkeleton } from '@/features/admin/users/management/components/UserTableSkeleton';
 import { useTranslation } from 'react-i18next';
 
 const ManagementContent = () => {
@@ -28,4 +28,4 @@ const ManagementContent = () => {
   );
 };
 
-export default ManagementContent;
+export { ManagementContent };

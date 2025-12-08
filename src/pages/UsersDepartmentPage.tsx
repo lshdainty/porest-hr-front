@@ -1,4 +1,4 @@
-import DepartmentContent from '@/features/admin/users/department/components/DepartmentContent';
+import { DepartmentContent } from '@/features/admin/users/department/components/DepartmentContent';
 import { DepartmentProvider } from '@/features/admin/users/department/contexts/DepartmentContext';
 
 const UsersDepartmentPage = () => {
@@ -9,4 +9,4 @@ const UsersDepartmentPage = () => {
   );
 };
 
-export default UsersDepartmentPage;
+export { UsersDepartmentPage };

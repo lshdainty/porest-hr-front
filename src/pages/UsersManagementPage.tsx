@@ -1,4 +1,4 @@
-import ManagementContent from '@/features/admin/users/management/components/ManagementContent';
+import { ManagementContent } from '@/features/admin/users/management/components/ManagementContent';
 
 import { ManagementProvider } from '@/features/admin/users/management/contexts/ManagementContext';
 
@@ -10,4 +10,4 @@ const UsersManagementPage = () => {
   );
 };
 
-export default UsersManagementPage;
+export { UsersManagementPage };

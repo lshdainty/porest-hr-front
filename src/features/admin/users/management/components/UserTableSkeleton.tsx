@@ -95,4 +95,4 @@ const UserTableSkeleton = () => {
   )
 }
 
-export default UserTableSkeleton
+export { UserTableSkeleton }

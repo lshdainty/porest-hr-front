@@ -61,4 +61,4 @@ const ResendEmailDialog = ({ open, onOpenChange, userId, userEmail }: ResendEmai
   )
 }
 
-export default ResendEmailDialog
+export { ResendEmailDialog }

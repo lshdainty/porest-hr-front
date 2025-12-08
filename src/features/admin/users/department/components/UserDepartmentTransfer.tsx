@@ -211,4 +211,4 @@ const UserDepartmentTransfer = ({
   )
 }
 
-export default UserDepartmentTransfer
+export { UserDepartmentTransfer }

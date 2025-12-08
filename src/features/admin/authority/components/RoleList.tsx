@@ -62,4 +62,4 @@ const RoleList = ({ roles, selectedRoleId, onSelectRole, onAddRole, onDeleteRole
   );
 };
 
-export default RoleList;
+export { RoleList };

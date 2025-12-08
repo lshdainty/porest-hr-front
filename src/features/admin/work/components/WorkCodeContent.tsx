@@ -2,8 +2,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/ta
 import { Briefcase } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { WorkCodeProvider } from '../contexts/WorkCodeContext';
-import WorkCodeList from './WorkCodeList';
-import WorkDivisionList from './WorkDivisionList';
+import { WorkCodeList } from './WorkCodeList';
+import { WorkDivisionList } from './WorkDivisionList';
 
 const WorkCodeContent = () => {
   const { t } = useTranslation('work');
@@ -41,4 +41,4 @@ const WorkCodeContent = () => {
   );
 };
 
-export default WorkCodeContent;
+export { WorkCodeContent };

@@ -146,4 +146,4 @@ const MobileRoleSelector = ({
   );
 };
 
-export default MobileRoleSelector;
+export { MobileRoleSelector };

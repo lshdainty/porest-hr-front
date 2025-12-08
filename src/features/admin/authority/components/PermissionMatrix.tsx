@@ -106,4 +106,4 @@ const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority
   );
 };
 
-export default PermissionMatrix;
+export { PermissionMatrix };

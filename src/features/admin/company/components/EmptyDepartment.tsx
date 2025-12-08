@@ -24,4 +24,4 @@ const EmptyDepartment = ({ className }: EmptyDepartmentProps) => {
   );
 };
 
-export default EmptyDepartment;
+export { EmptyDepartment };

@@ -207,4 +207,4 @@ const WorkCodeEditDialog = ({
   );
 };
 
-export default WorkCodeEditDialog;
+export { WorkCodeEditDialog };

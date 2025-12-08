@@ -59,4 +59,4 @@ export const getUserCompanyStatsConfig = (users: GetUsersResp[] = []): UserCompa
   }));
 };
 
-export default UserCompanyStatsItem;
+export { UserCompanyStatsItem };

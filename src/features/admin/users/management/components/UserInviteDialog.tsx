@@ -297,4 +297,4 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
   )
 }
 
-export default UserInviteDialog
+export { UserInviteDialog }

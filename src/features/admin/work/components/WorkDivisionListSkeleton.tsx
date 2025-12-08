@@ -59,4 +59,4 @@ const WorkDivisionListSkeleton = () => {
   );
 };
 
-export default WorkDivisionListSkeleton;
+export { WorkDivisionListSkeleton };

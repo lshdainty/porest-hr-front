@@ -64,4 +64,4 @@ const DepartmentChartPanelSkeleton = () => {
   )
 }
 
-export default DepartmentChartPanelSkeleton
+export { DepartmentChartPanelSkeleton }

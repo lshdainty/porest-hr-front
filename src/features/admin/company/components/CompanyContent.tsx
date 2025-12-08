@@ -1,12 +1,12 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
-import CompanyCreateCard from '@/features/admin/company/components/CompanyCreateCard';
-import CompanyFormDialog from '@/features/admin/company/components/CompanyFormDialog';
-import DepartmentChartPanel from '@/features/admin/company/components/DepartmentChartPanel';
-import DepartmentChartPanelSkeleton from '@/features/admin/company/components/DepartmentChartPanelSkeleton';
-import DepartmentTreePanel from '@/features/admin/company/components/DepartmentTreePanel';
-import DepartmentTreePanelSkeleton from '@/features/admin/company/components/DepartmentTreePanelSkeleton';
+import { CompanyCreateCard } from '@/features/admin/company/components/CompanyCreateCard';
+import { CompanyFormDialog } from '@/features/admin/company/components/CompanyFormDialog';
+import { DepartmentChartPanel } from '@/features/admin/company/components/DepartmentChartPanel';
+import { DepartmentChartPanelSkeleton } from '@/features/admin/company/components/DepartmentChartPanelSkeleton';
+import { DepartmentTreePanel } from '@/features/admin/company/components/DepartmentTreePanel';
+import { DepartmentTreePanelSkeleton } from '@/features/admin/company/components/DepartmentTreePanelSkeleton';
 import { useCompanyContext } from '@/features/admin/company/contexts/CompanyContext';
 import { useCompanyQuery, useCompanyWithDepartmentsQuery, usePostCompanyMutation, usePutCompanyMutation } from '@/hooks/queries/useCompanies';
 import { useDeleteDepartmentMutation, usePostDepartmentMutation, usePutDepartmentMutation } from '@/hooks/queries/useDepartments';
@@ -178,4 +178,4 @@ const CompanyContent = () => {
   );
 };
 
-export default CompanyContent;
+export { CompanyContent };

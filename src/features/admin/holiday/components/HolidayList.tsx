@@ -2,8 +2,8 @@ import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
-import EmptyHoliday from '@/features/admin/holiday/components/EmptyHoliday';
-import HolidayDeleteDialog from '@/features/admin/holiday/components/HolidayDeleteDialog';
+import { EmptyHoliday } from '@/features/admin/holiday/components/EmptyHoliday';
+import { HolidayDeleteDialog } from '@/features/admin/holiday/components/HolidayDeleteDialog';
 import { type GetHolidaysResp } from '@/lib/api/holiday';
 import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -141,4 +141,4 @@ const HolidayList = ({
   )
 }
 
-export default HolidayList
+export { HolidayList }

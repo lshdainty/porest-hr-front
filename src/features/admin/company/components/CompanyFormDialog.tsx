@@ -159,4 +159,4 @@ const CompanyFormDialog = ({
   )
 }
 
-export default CompanyFormDialog
+export { CompanyFormDialog }

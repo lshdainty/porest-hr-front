@@ -308,4 +308,4 @@ const DepartmentFormDialog = ({
   )
 }
 
-export default DepartmentFormDialog
+export { DepartmentFormDialog }

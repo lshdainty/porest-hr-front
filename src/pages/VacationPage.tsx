@@ -1,4 +1,4 @@
-import VacationContent from '@/features/admin/vacation/stats/components/VacationContent';
+import { VacationContent } from '@/features/admin/vacation/stats/components/VacationContent';
 import { VacationProvider } from '@/features/admin/vacation/stats/contexts/VacationContext';
 
 const VacationPage = () => {
@@ -9,4 +9,4 @@ const VacationPage = () => {
   );
 };
 
-export default VacationPage;
+export { VacationPage };

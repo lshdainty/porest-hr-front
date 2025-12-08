@@ -67,4 +67,4 @@ const UserList = ({ users, selectedUserId, onSelectUser }: UserListProps) => {
   );
 };
 
-export default UserList;
+export { UserList };

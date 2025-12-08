@@ -55,4 +55,4 @@ const HolidayDeleteDialog = ({ holiday, trigger, onDelete }: HolidayDeleteDialog
   )
 }
 
-export default HolidayDeleteDialog
+export { HolidayDeleteDialog }

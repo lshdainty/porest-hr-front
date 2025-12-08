@@ -69,4 +69,4 @@ const WorkCodeDeleteDialog = ({
   );
 };
 
-export default WorkCodeDeleteDialog;
+export { WorkCodeDeleteDialog };

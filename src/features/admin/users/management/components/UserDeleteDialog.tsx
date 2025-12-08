@@ -55,4 +55,4 @@ const UserDeleteDialog = ({ open, onOpenChange, user, onDelete }: UserDeleteDial
   )
 }
 
-export default UserDeleteDialog
+export { UserDeleteDialog }

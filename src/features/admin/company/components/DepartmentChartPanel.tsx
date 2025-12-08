@@ -3,7 +3,7 @@ import { Tree, TreeNode } from 'react-organizational-chart';
 import { Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/shadcn/card'
-import EmptyDepartment from '@/features/admin/company/components/EmptyDepartment';
+import { EmptyDepartment } from '@/features/admin/company/components/EmptyDepartment';
 import { GetCompanyWithDepartment } from '@/lib/api/company';
 
 interface DepartmentChartPanelProps {
@@ -148,4 +148,4 @@ const DepartmentChartPanel = ({
   )
 }
 
-export default DepartmentChartPanel
+export { DepartmentChartPanel }

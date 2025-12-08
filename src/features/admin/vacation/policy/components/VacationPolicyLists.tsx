@@ -1,7 +1,7 @@
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
-import EmptyPolicy from '@/features/admin/vacation/policy/components/EmptyPolicy';
+import { EmptyPolicy } from '@/features/admin/vacation/policy/components/EmptyPolicy';
 import { VacationPolicyDeleteDialog } from '@/features/admin/vacation/policy/components/VacationPolicyDeleteDialog';
 import {
   useEffectiveTypesQuery,

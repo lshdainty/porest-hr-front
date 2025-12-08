@@ -1,4 +1,4 @@
-import PolicyContent from '@/features/admin/vacation/policy/components/PolicyContent';
+import { PolicyContent } from '@/features/admin/vacation/policy/components/PolicyContent';
 import { PolicyProvider } from '@/features/admin/vacation/policy/contexts/PolicyContext';
 
 const PolicyPage = () => {
@@ -9,4 +9,4 @@ const PolicyPage = () => {
   );
 };
 
-export default PolicyPage;
+export { PolicyPage };

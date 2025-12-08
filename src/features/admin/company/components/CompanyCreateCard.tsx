@@ -1,6 +1,6 @@
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/card';
-import CompanyFormDialog from '@/features/admin/company/components/CompanyFormDialog';
+import { CompanyFormDialog } from '@/features/admin/company/components/CompanyFormDialog';
 import { PostCompanyReq } from '@/lib/api/company';
 import { Building2, Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -53,4 +53,4 @@ const CompanyCreateCard = ({ onCompanyCreate }: CompanyCreateCardProps) => {
   )
 }
 
-export default CompanyCreateCard
+export { CompanyCreateCard }

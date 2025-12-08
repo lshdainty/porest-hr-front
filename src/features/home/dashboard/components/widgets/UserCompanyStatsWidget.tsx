@@ -1,5 +1,5 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
-import UserCompanyStatsItem, { getUserCompanyStatsConfig } from '@/features/admin/users/management/components/UserCompanyStatsItem'
+import { UserCompanyStatsItem, getUserCompanyStatsConfig } from '@/features/admin/users/management/components/UserCompanyStatsItem'
 import { UserCompanyStatsEmpty } from '@/features/admin/users/management/components/UserCompanyStatsEmpty'
 import { UserCompanyStatsSkeleton } from '@/features/admin/users/management/components/UserCompanyStatsSkeleton'
 import { useUsersQuery } from '@/hooks/queries/useUsers'

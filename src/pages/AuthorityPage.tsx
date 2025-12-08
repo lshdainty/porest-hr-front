@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { ProtectedPage } from "@/components/auth/ProtectedPage";
-import RoleManagementPanel from "@/features/admin/authority/components/RoleManagementPanel";
-import UserManagementPanel from "@/features/admin/authority/components/UserManagementPanel";
+import { RoleManagementPanel } from "@/features/admin/authority/components/RoleManagementPanel";
+import { UserManagementPanel } from "@/features/admin/authority/components/UserManagementPanel";
 import { Shield, Users } from "lucide-react";
 
 const Authority = () => {
@@ -40,4 +40,4 @@ const Authority = () => {
   );
 };
 
-export default Authority;
+export { Authority };

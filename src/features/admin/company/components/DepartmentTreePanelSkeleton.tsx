@@ -85,4 +85,4 @@ const DepartmentTreePanelSkeleton = () => {
   )
 }
 
-export default DepartmentTreePanelSkeleton
+export { DepartmentTreePanelSkeleton }
