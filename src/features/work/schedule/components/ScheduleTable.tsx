@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
 import { Badge } from "@/components/shadcn/badge";
+import { ScheduleEmpty } from "@/features/work/schedule/components/ScheduleEmpty";
 import { GetUsersResp } from "@/lib/api/user";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -158,6 +159,10 @@ const ScheduleBar = ({ item, t }: { item: ScheduleItem; t: TFunction<'work', und
 const ScheduleTable = ({ users }: ScheduleTableProps) => {
   const { t } = useTranslation('work');
 
+  if (!users || users.length === 0) {
+    return <ScheduleEmpty />
+  }
+
   return (
     <div className="bg-background overflow-hidden">
       <div className="overflow-x-auto">
@@ -224,4 +229,4 @@ const ScheduleTable = ({ users }: ScheduleTableProps) => {
   )
 }
 
-export default ScheduleTable;
+export { ScheduleTable }

@@ -1,4 +1,4 @@
-import ScheduleContent from '@/features/work/schedule/components/ScheduleContent';
+import { ScheduleContent } from '@/features/work/schedule/components/ScheduleContent';
 import { ScheduleProvider } from '@/features/work/schedule/contexts/ScheduleContext';
 
 const SchedulePage = () => {
@@ -9,4 +9,4 @@ const SchedulePage = () => {
   );
 };
 
-export default SchedulePage;
+export { SchedulePage }

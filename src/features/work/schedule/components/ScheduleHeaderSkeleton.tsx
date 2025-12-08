@@ -8,4 +8,4 @@ const ScheduleHeaderSkeleton = () => {
   );
 };
 
-export default ScheduleHeaderSkeleton;
+export { ScheduleHeaderSkeleton }

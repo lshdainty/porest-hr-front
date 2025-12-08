@@ -1,4 +1,4 @@
-import ScheduleTableSkeleton from '@/features/work/schedule/components/ScheduleTableSkeleton';
+import { ScheduleTableSkeleton } from '@/features/work/schedule/components/ScheduleTableSkeleton';
 
 const ScheduleSkeleton = () => {
   return (
@@ -6,4 +6,4 @@ const ScheduleSkeleton = () => {
   );
 };
 
-export default ScheduleSkeleton;
+export { ScheduleSkeleton }

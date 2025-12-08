@@ -48,4 +48,4 @@ const ScheduleTableSkeleton = () => {
   );
 };
 
-export default ScheduleTableSkeleton;
+export { ScheduleTableSkeleton }

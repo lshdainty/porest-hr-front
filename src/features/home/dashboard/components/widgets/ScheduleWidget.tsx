@@ -1,7 +1,7 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
 import { ScheduleEmpty } from '@/features/work/schedule/components/ScheduleEmpty'
-import ScheduleSkeleton from '@/features/work/schedule/components/ScheduleSkeleton'
-import ScheduleTable from '@/features/work/schedule/components/ScheduleTable'
+import { ScheduleSkeleton } from '@/features/work/schedule/components/ScheduleSkeleton'
+import { ScheduleTable } from '@/features/work/schedule/components/ScheduleTable'
 import { useUsersQuery } from '@/hooks/queries/useUsers'
 
 export const ScheduleWidget = () => {

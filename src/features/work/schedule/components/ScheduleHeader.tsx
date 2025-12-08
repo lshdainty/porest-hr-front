@@ -9,4 +9,4 @@ const ScheduleHeader = () => {
   );
 };
 
-export default ScheduleHeader;
+export { ScheduleHeader }
