@@ -8,13 +8,22 @@ import { useCalendar } from '@/features/home/calendar/contexts/calendar-context'
 import { DndProviderWrapper } from '@/features/home/calendar/components/dnd/dnd-provider';
 
 import { CalendarAgendaView } from '@/features/home/calendar/components/agenda-view/calendar-agenda-view';
+import { CalendarAgendaViewSkeleton } from '@/features/home/calendar/components/agenda-view/calendar-agenda-view-skeleton';
 import { CalendarHeader } from '@/features/home/calendar/components/header/calendar-header';
 import { CalendarMonthView } from '@/features/home/calendar/components/month-view/calendar-month-view';
+import { CalendarMonthViewSkeleton } from '@/features/home/calendar/components/month-view/calendar-month-view-skeleton';
 import { CalendarDayView } from '@/features/home/calendar/components/week-and-day-view/calendar-day-view';
+import { CalendarDayViewSkeleton } from '@/features/home/calendar/components/week-and-day-view/calendar-day-view-skeleton';
 import { CalendarWeekView } from '@/features/home/calendar/components/week-and-day-view/calendar-week-view';
+import { CalendarWeekViewSkeleton } from '@/features/home/calendar/components/week-and-day-view/calendar-week-view-skeleton';
 import { CalendarYearView } from '@/features/home/calendar/components/year-view/calendar-year-view';
+import { CalendarYearViewSkeleton } from '@/features/home/calendar/components/year-view/calendar-year-view-skeleton';
 
-const ClientContainer = () => {
+interface IProps {
+  isLoading?: boolean
+}
+
+const ClientContainer = ({ isLoading = false }: IProps) => {
   const { selectedDate, selectedUserIds, selectedTypeIds, events, view } = useCalendar();
 
   const filteredEvents = useMemo(() => {
@@ -88,11 +97,31 @@ const ClientContainer = () => {
 
       <div className='flex-1 overflow-hidden'>
         <DndProviderWrapper>
-          {view === 'day' && <CalendarDayView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
-          {view === 'month' && <CalendarMonthView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
-          {view === 'week' && <CalendarWeekView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
-          {view === 'year' && <CalendarYearView allEvents={eventStartDates} />}
-          {view === 'agenda' && <CalendarAgendaView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}
+          {view === 'day' && (
+            isLoading
+              ? <CalendarDayViewSkeleton />
+              : <CalendarDayView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />
+          )}
+          {view === 'month' && (
+            isLoading
+              ? <CalendarMonthViewSkeleton />
+              : <CalendarMonthView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />
+          )}
+          {view === 'week' && (
+            isLoading
+              ? <CalendarWeekViewSkeleton />
+              : <CalendarWeekView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />
+          )}
+          {view === 'year' && (
+            isLoading
+              ? <CalendarYearViewSkeleton />
+              : <CalendarYearView allEvents={eventStartDates} />
+          )}
+          {view === 'agenda' && (
+            isLoading
+              ? <CalendarAgendaViewSkeleton />
+              : <CalendarAgendaView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />
+          )}
         </DndProviderWrapper>
       </div>
     </div>

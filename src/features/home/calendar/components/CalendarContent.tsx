@@ -85,7 +85,9 @@ const CalendarContent = () => {
     }
   }, [apiHolidays, holidaysLoading, setHolidays]);
 
-  return <ClientContainer />
+  const isLoading = eventsLoading || holidaysLoading
+
+  return <ClientContainer isLoading={isLoading} />
 }
 
-export default CalendarContent
+export { CalendarContent }

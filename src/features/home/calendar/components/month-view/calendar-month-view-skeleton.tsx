@@ -1,6 +1,8 @@
 import { Skeleton } from '@/components/shadcn/skeleton'
+import { useTranslation } from 'react-i18next'
 
-const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const WEEK_DAYS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const WEEK_DAYS_KO = ['일', '월', '화', '수', '목', '금', '토']
 
 const DayCellSkeleton = ({ isSunday }: { isSunday: boolean }) => {
   return (
@@ -30,6 +32,9 @@ const DayCellSkeleton = ({ isSunday }: { isSunday: boolean }) => {
 }
 
 export const CalendarMonthViewSkeleton = () => {
+  const { i18n } = useTranslation()
+  const weekDays = i18n.language === 'ko' ? WEEK_DAYS_KO : WEEK_DAYS_EN
+
   // 6주 x 7일 = 42개 셀
   const cells = Array.from({ length: 42 }, (_, i) => i)
 
@@ -37,7 +42,7 @@ export const CalendarMonthViewSkeleton = () => {
     <div className='flex flex-col h-full'>
       {/* 요일 헤더 */}
       <div className='grid grid-cols-7 divide-x border-b flex-shrink-0'>
-        {WEEK_DAYS.map((day, index) => {
+        {weekDays.map((day, index) => {
           const isSunday = index === 0
           const isSaturday = index === 6
 
@@ -65,5 +70,3 @@ export const CalendarMonthViewSkeleton = () => {
     </div>
   )
 }
-
-export default CalendarMonthViewSkeleton
