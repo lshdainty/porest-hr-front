@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/shadcn/card';
 import { GetMonthBirthDuesResp, GetYearOperationDuesResp } from '@/lib/api/dues';
 import { useTranslation } from 'react-i18next';
-import TotalDuesItem, { getTotalDuesConfig } from './TotalDuesItem';
+import { TotalDuesItem, getTotalDuesConfig } from './TotalDuesItem';
 
 interface TotalDuesProps {
   totalDues?: GetYearOperationDuesResp;
@@ -25,4 +25,4 @@ const TotalDues = ({ totalDues, birthDues }: TotalDuesProps) => {
   );
 };
 
-export default TotalDues;
+export { TotalDues };

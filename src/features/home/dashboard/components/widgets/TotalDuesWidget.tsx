@@ -1,5 +1,5 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
-import TotalDuesItem, { getTotalDuesConfig } from '@/features/culture/dues/components/TotalDuesItem'
+import { TotalDuesItem, getTotalDuesConfig } from '@/features/culture/dues/components/TotalDuesItem'
 import { TotalDuesEmpty } from '@/features/culture/dues/components/TotalDuesEmpty'
 import { TotalDuesWidgetSkeleton } from '@/features/culture/dues/components/TotalDuesWidgetSkeleton'
 import { useMonthBirthDuesQuery, useYearOperationDuesQuery } from '@/hooks/queries/useDues'

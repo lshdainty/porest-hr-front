@@ -1,5 +1,5 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
-import UserBirthDuesContent from '@/features/culture/dues/components/UserBirthDuesContent'
+import { UserBirthDuesContent } from '@/features/culture/dues/components/UserBirthDuesContent'
 import { UserBirthDuesEmpty } from '@/features/culture/dues/components/UserBirthDuesEmpty'
 import { UserBirthDuesSkeleton } from '@/features/culture/dues/components/UserBirthDuesSkeleton'
 import { useUsersMonthBirthDuesQuery } from '@/hooks/queries/useDues'

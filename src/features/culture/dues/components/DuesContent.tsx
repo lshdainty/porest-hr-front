@@ -6,11 +6,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/shadcn/select';
-import DuesTable from '@/features/culture/dues/components/DuesTable';
-import DuesTableSkeleton from '@/features/culture/dues/components/DuesTableSkeleton';
-import TotalDues from '@/features/culture/dues/components/TotalDues';
-import TotalDuesSkeleton from '@/features/culture/dues/components/TotalDuesSkeleton';
-import UserBirthDues from '@/features/culture/dues/components/UserBirthDues';
+import { DuesTable } from '@/features/culture/dues/components/DuesTable';
+import { DuesTableSkeleton } from '@/features/culture/dues/components/DuesTableSkeleton';
+import { TotalDues } from '@/features/culture/dues/components/TotalDues';
+import { TotalDuesSkeleton } from '@/features/culture/dues/components/TotalDuesSkeleton';
+import { UserBirthDues } from '@/features/culture/dues/components/UserBirthDues';
 import { UserBirthDuesPageSkeleton } from '@/features/culture/dues/components/UserBirthDuesSkeleton';
 import { useDuesContext } from '@/features/culture/dues/contexts/DuesContext';
 import { useMonthBirthDuesQuery, useUsersMonthBirthDuesQuery, useYearDuesQuery, useYearOperationDuesQuery } from '@/hooks/queries/useDues';
@@ -111,4 +111,4 @@ const DuesContent = () => {
   );
 };
 
-export default DuesContent;
+export { DuesContent };

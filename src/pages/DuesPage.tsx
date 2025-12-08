@@ -1,4 +1,4 @@
-import DuesContent from '@/features/culture/dues/components/DuesContent';
+import { DuesContent } from '@/features/culture/dues/components/DuesContent';
 import { DuesProvider } from '@/features/culture/dues/contexts/DuesContext';
 
 const DuesPage = () => {
@@ -9,4 +9,4 @@ const DuesPage = () => {
   );
 };
 
-export default DuesPage;
+export { DuesPage };

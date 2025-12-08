@@ -93,4 +93,4 @@ export const getTotalDuesConfig = (
   ];
 };
 
-export default TotalDuesItem;
+export { TotalDuesItem };

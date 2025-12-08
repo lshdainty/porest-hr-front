@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { GetUsersMonthBirthDuesResp } from '@/lib/api/dues';
 import { GetUsersResp } from '@/lib/api/user';
 import { useTranslation } from 'react-i18next';
-import UserBirthDuesContent from './UserBirthDuesContent';
+import { UserBirthDuesContent } from './UserBirthDuesContent';
 
 interface UserBirthDuesProps {
   usersBirthDues?: GetUsersMonthBirthDuesResp[];
@@ -26,4 +26,4 @@ const UserBirthDues = ({ usersBirthDues, users }: UserBirthDuesProps) => {
   );
 };
 
-export default UserBirthDues;
+export { UserBirthDues };

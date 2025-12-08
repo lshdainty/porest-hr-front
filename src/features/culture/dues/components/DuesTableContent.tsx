@@ -303,4 +303,4 @@ const DuesTableContent = ({
   );
 };
 
-export default DuesTableContent;
+export { DuesTableContent };

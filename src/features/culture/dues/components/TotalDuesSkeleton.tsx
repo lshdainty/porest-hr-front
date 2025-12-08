@@ -89,4 +89,4 @@ const TotalDuesSkeleton = () => {
   );
 };
 
-export default TotalDuesSkeleton;
+export { TotalDuesSkeleton };

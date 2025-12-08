@@ -1,6 +1,6 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
-import DuesTableContent from '@/features/culture/dues/components/DuesTableContent'
-import DuesTableSkeleton from '@/features/culture/dues/components/DuesTableSkeleton'
+import { DuesTableContent } from '@/features/culture/dues/components/DuesTableContent'
+import { DuesTableSkeleton } from '@/features/culture/dues/components/DuesTableSkeleton'
 import { useYearDuesQuery } from '@/hooks/queries/useDues'
 import { useMemo, useState } from 'react'
 

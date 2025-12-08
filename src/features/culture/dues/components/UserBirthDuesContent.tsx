@@ -56,4 +56,4 @@ const UserBirthDuesContent = ({ usersBirthDues, users, className }: UserBirthDue
   );
 };
 
-export default UserBirthDuesContent;
+export { UserBirthDuesContent };

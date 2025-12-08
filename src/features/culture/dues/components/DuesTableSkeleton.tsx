@@ -92,4 +92,4 @@ const DuesTableSkeleton = () => {
   )
 }
 
-export default DuesTableSkeleton;
+export { DuesTableSkeleton };

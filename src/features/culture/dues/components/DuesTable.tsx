@@ -7,7 +7,7 @@ import { GetYearDuesResp } from '@/lib/api/dues';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import DuesTableContent, { EditableDuesData } from './DuesTableContent';
+import { DuesTableContent, EditableDuesData } from './DuesTableContent';
 
 interface DuesTableProps {
   yearDues?: GetYearDuesResp[];
@@ -193,4 +193,4 @@ const DuesTable = ({ yearDues = [] }: DuesTableProps) => {
   );
 };
 
-export default DuesTable;
+export { DuesTable };
