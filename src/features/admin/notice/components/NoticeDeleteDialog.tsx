@@ -55,4 +55,4 @@ const NoticeDeleteDialog = ({ notice, trigger, onDelete }: NoticeDeleteDialogPro
   )
 }
 
-export default NoticeDeleteDialog
+export { NoticeDeleteDialog }

@@ -1,9 +1,8 @@
-import { Badge } from '@/components/shadcn/badge';
-import { Button } from '@/components/shadcn/button';
-import { Card, CardContent } from '@/components/shadcn/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
-import EmptyNotice from '@/features/admin/notice/components/EmptyNotice';
-import NoticeDeleteDialog from '@/features/admin/notice/components/NoticeDeleteDialog';
+import { Badge } from '@/components/shadcn/badge'
+import { Button } from '@/components/shadcn/button'
+import { Card, CardContent } from '@/components/shadcn/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu'
+import { NoticeDeleteDialog } from '@/features/admin/notice/components/NoticeDeleteDialog'
 import { type NoticeListResp } from '@/lib/api/notice';
 import { EllipsisVertical, Eye, Pencil, Pin, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -16,17 +15,15 @@ const noticeTypeColors: Record<string, string> = {
 };
 
 interface NoticeListProps {
-  notices?: NoticeListResp[];
-  onEdit: (notice: NoticeListResp) => void;
-  onDelete: (noticeId: number) => void;
-  onAddClick: () => void;
+  notices?: NoticeListResp[]
+  onEdit: (notice: NoticeListResp) => void
+  onDelete: (noticeId: number) => void
 }
 
 const NoticeList = ({
   notices,
   onEdit,
   onDelete,
-  onAddClick
 }: NoticeListProps) => {
   const { t } = useTranslation('admin');
   const { t: tc } = useTranslation('common');
@@ -127,15 +124,8 @@ const NoticeList = ({
           </CardContent>
         </Card>
       ))}
-      {(!notices || notices.length === 0) && (
-        <Card>
-          <CardContent className="p-0">
-            <EmptyNotice onAddClick={onAddClick} />
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }
 
-export default NoticeList
+export { NoticeList }

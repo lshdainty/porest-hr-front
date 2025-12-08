@@ -1,8 +1,11 @@
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
 import { Button } from '@/components/shadcn/button'
 import { Input } from '@/components/shadcn/input'
-import NoticeEditDialog from '@/features/admin/notice/components/NoticeEditDialog'
-import NoticeList from '@/features/admin/notice/components/NoticeList'
-import NoticeListSkeleton from '@/features/admin/notice/components/NoticeListSkeleton'
+import { useUser } from '@/contexts/UserContext'
+import { EmptyNotice } from '@/features/admin/notice/components/EmptyNotice'
+import { NoticeEditDialog } from '@/features/admin/notice/components/NoticeEditDialog'
+import { NoticeList } from '@/features/admin/notice/components/NoticeList'
+import { NoticeListSkeleton } from '@/features/admin/notice/components/NoticeListSkeleton'
 import { useNoticeContext } from '@/features/admin/notice/contexts/NoticeContext'
 import {
   useCreateNoticeMutation,
@@ -11,15 +14,14 @@ import {
   useSearchNoticesQuery,
   useUpdateNoticeMutation,
 } from '@/hooks/queries/useNotices'
-import { useUser } from '@/contexts/UserContext'
 import {
   type CreateNoticeReq,
   type NoticeListResp,
   type UpdateNoticeReq,
 } from '@/lib/api/notice'
+import { Search } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search } from 'lucide-react'
 
 const NoticeContent = () => {
   const { t } = useTranslation('admin')
@@ -32,7 +34,7 @@ const NoticeContent = () => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const [searchInput, setSearchInput] = useState('')
 
-  const { data: noticesData, isLoading: noticesLoading, refetch } = searchKeyword
+  const { data: noticesData, isLoading, error, refetch } = searchKeyword
     ? useSearchNoticesQuery(searchKeyword, page, size)
     : useNoticesQuery(page, size)
 
@@ -123,6 +125,7 @@ const NoticeContent = () => {
               onOpenChange={setIsDialogOpen}
               editingNotice={editingNotice}
               onSave={handleSave}
+              isPending={createMutation.isPending || updateMutation.isPending}
               trigger={
                 <Button className='flex items-center gap-2 shrink-0' onClick={handleAddClick}>
                   {tc('add')}
@@ -157,45 +160,44 @@ const NoticeContent = () => {
           )}
         </div>
 
-        {noticesLoading ? (
-          <NoticeListSkeleton />
-        ) : (
-          <>
-            <NoticeList
-              notices={noticesData?.content}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onAddClick={handleAddClick}
-            />
-
-            {totalPages > 1 && (
-              <div className='flex justify-center items-center gap-2 mt-6'>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => setPage(p => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                >
-                  {tc('previous')}
-                </Button>
-                <span className='text-sm text-muted-foreground'>
-                  {page + 1} / {totalPages}
-                </span>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                  disabled={page >= totalPages - 1}
-                >
-                  {tc('next')}
-                </Button>
-              </div>
-            )}
-          </>
-        )}
+        <QueryAsyncBoundary
+          queryState={{ isLoading, error, data: noticesData }}
+          loadingComponent={<NoticeListSkeleton />}
+          emptyComponent={<EmptyNotice onAddClick={handleAddClick} />}
+          isEmpty={(data) => !data?.content || data.content.length === 0}
+        >
+          <NoticeList
+            notices={noticesData?.content}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+          {totalPages > 1 && (
+            <div className='flex justify-center items-center gap-2 mt-6'>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => setPage(p => Math.max(0, p - 1))}
+                disabled={page === 0}
+              >
+                {tc('previous')}
+              </Button>
+              <span className='text-sm text-muted-foreground'>
+                {page + 1} / {totalPages}
+              </span>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                disabled={page >= totalPages - 1}
+              >
+                {tc('next')}
+              </Button>
+            </div>
+          )}
+        </QueryAsyncBoundary>
       </div>
     </div>
   )
 }
 
-export default NoticeContent
+export { NoticeContent }

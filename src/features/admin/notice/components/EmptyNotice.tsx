@@ -34,4 +34,4 @@ const EmptyNotice = ({ onAddClick, className }: EmptyNoticeProps) => {
   );
 };
 
-export default EmptyNotice;
+export { EmptyNotice }

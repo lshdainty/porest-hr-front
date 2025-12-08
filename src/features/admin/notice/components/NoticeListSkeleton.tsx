@@ -26,4 +26,4 @@ const NoticeListSkeleton = () => {
   )
 }
 
-export default NoticeListSkeleton
+export { NoticeListSkeleton }

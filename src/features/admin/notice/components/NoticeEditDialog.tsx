@@ -4,6 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Spinner } from '@/components/shadcn/spinner';
 import { Textarea } from '@/components/shadcn/textarea';
 import { type CreateNoticeReq, type NoticeListResp } from '@/lib/api/notice';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,6 +31,7 @@ interface NoticeEditDialogProps {
   editingNotice: NoticeListResp | null;
   onSave: (data: CreateNoticeReq) => void;
   trigger?: React.ReactNode;
+  isPending?: boolean;
 }
 
 const NoticeEditDialog = ({
@@ -38,6 +40,7 @@ const NoticeEditDialog = ({
   editingNotice,
   onSave,
   trigger,
+  isPending = false,
 }: NoticeEditDialogProps) => {
   const { t } = useTranslation('admin');
   const { t: tc } = useTranslation('common');
@@ -231,10 +234,12 @@ const NoticeEditDialog = ({
                 type='button'
                 variant='outline'
                 onClick={handleCancel}
+                disabled={isPending}
               >
                 {tc('cancel')}
               </Button>
-              <Button type='submit'>
+              <Button type='submit' disabled={isPending}>
+                {isPending && <Spinner />}
                 {editingNotice ? tc('edit') : tc('add')}
               </Button>
             </div>
@@ -245,4 +250,4 @@ const NoticeEditDialog = ({
   )
 }
 
-export default NoticeEditDialog
+export { NoticeEditDialog }
