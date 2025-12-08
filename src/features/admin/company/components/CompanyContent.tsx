@@ -1,29 +1,31 @@
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
-import { Skeleton } from '@/components/shadcn/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
-import { CompanyCreateCard } from '@/features/admin/company/components/CompanyCreateCard';
+import { CompanyContentSkeleton } from '@/features/admin/company/components/CompanyContentSkeleton';
+import { CompanyEmpty } from '@/features/admin/company/components/CompanyEmpty';
 import { CompanyFormDialog } from '@/features/admin/company/components/CompanyFormDialog';
 import { DepartmentChartPanel } from '@/features/admin/company/components/DepartmentChartPanel';
-import { DepartmentChartPanelSkeleton } from '@/features/admin/company/components/DepartmentChartPanelSkeleton';
 import { DepartmentTreePanel } from '@/features/admin/company/components/DepartmentTreePanel';
-import { DepartmentTreePanelSkeleton } from '@/features/admin/company/components/DepartmentTreePanelSkeleton';
 import { useCompanyContext } from '@/features/admin/company/contexts/CompanyContext';
 import { useCompanyQuery, useCompanyWithDepartmentsQuery, usePostCompanyMutation, usePutCompanyMutation } from '@/hooks/queries/useCompanies';
 import { useDeleteDepartmentMutation, usePostDepartmentMutation, usePutDepartmentMutation } from '@/hooks/queries/useDepartments';
 import { useIsMobile } from '@/hooks/useMobile';
-import { type PostCompanyReq, type PutCompanyReq } from '@/lib/api/company';
+import { type GetCompanyResp, type PostCompanyReq, type PutCompanyReq } from '@/lib/api/company';
 import { type PostDepartmentReq, type PutDepartmentReq } from '@/lib/api/department';
 import { Building2, Pencil } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const CompanyContent = () => {
+interface CompanyContentInnerProps {
+  company: GetCompanyResp;
+}
+
+const CompanyContentInner = ({ company }: CompanyContentInnerProps) => {
   const { t } = useTranslation('admin');
   const isMobile = useIsMobile();
   const { selectedDept, setSelectedDept, isCompanyEditDialogOpen, setIsCompanyEditDialogOpen } = useCompanyContext();
 
-  const { data: company, isLoading } = useCompanyQuery();
-  const { data: companyWithDepartments } = useCompanyWithDepartmentsQuery(company?.company_id ?? '');
+  const { data: companyWithDepartments } = useCompanyWithDepartmentsQuery(company.company_id);
   const { mutate: createCompany } = usePostCompanyMutation();
   const { mutate: updateCompany } = usePutCompanyMutation();
   const { mutate: createDepartment } = usePostDepartmentMutation();
@@ -34,33 +36,25 @@ const CompanyContent = () => {
     return companyWithDepartments?.departments || [];
   }, [companyWithDepartments]);
 
-  const handleCompanyCreate = (companyFormData: PostCompanyReq) => {
-    createCompany(companyFormData);
-  };
-
   const handleCompanySave = (formData: PostCompanyReq | { companyId: string; data: PutCompanyReq }) => {
     if ('companyId' in formData) {
-      // 수정 모드
       updateCompany(formData, {
         onSuccess: () => {
           setIsCompanyEditDialogOpen(false);
         }
       });
     } else {
-      // 생성 모드 (필요시)
       createCompany(formData);
     }
   };
 
   const handleDeptUpdate = (formData: PostDepartmentReq | { departmentId: number; data: PutDepartmentReq }) => {
     if ('departmentId' in formData) {
-      // 수정 모드
       updateDepartment(formData);
     } else {
-      // 생성 모드
       const createData: PostDepartmentReq = {
         ...formData,
-        company_id: company?.company_id || ''
+        company_id: company.company_id
       };
       createDepartment(createData);
     }
@@ -70,38 +64,10 @@ const CompanyContent = () => {
     deleteDepartment(deptId);
   };
 
-  if (isLoading) {
-    return (
-      <div className='p-4 sm:p-6 md:p-8 flex flex-col gap-6 h-full'>
-        <div className='flex items-center gap-2'>
-          <Skeleton className='h-8 w-8' />
-          <Skeleton className='h-8 w-48' />
-        </div>
-        <ResizablePanelGroup direction='horizontal' className='flex-grow rounded-lg border'>
-          <ResizablePanel defaultSize={25} minSize={25}>
-            <DepartmentTreePanelSkeleton />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={75}>
-            <DepartmentChartPanelSkeleton />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
-    );
-  }
-
-  if (!company) {
-    return (
-      <div className='h-full flex items-center justify-center overflow-hidden'>
-        <CompanyCreateCard onCompanyCreate={handleCompanyCreate} />
-      </div>
-    );
-  }
-
   return (
     <div className='h-full w-full'>
       <div className='h-full flex flex-col p-4 sm:p-6 md:p-8 gap-6 overflow-hidden'>
-        <div className='flex items-center gap-2 flex-shrink-0'>
+        <div className='flex items-center gap-2 shrink-0'>
           <Building2 />
           <h1 className='text-3xl font-bold'>{company.company_name}</h1>
           <div
@@ -123,7 +89,7 @@ const CompanyContent = () => {
           }}
           mode='edit'
         />
-        
+
         {isMobile ? (
           <Tabs defaultValue="dept-list" className="flex-1 min-h-0 flex flex-col">
             <TabsList className="grid w-full grid-cols-2">
@@ -137,7 +103,7 @@ const CompanyContent = () => {
                 onDeptSelect={setSelectedDept}
                 onDeptUpdate={handleDeptUpdate}
                 onDeptDelete={handleDeptDelete}
-                companyId={company?.company_id || ''}
+                companyId={company.company_id}
               />
             </TabsContent>
             <TabsContent value="org-chart" className="flex-1 min-h-0 mt-2 border rounded-lg overflow-hidden">
@@ -159,7 +125,7 @@ const CompanyContent = () => {
                 onDeptSelect={setSelectedDept}
                 onDeptUpdate={handleDeptUpdate}
                 onDeptDelete={handleDeptDelete}
-                companyId={company?.company_id || ''}
+                companyId={company.company_id}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -175,6 +141,26 @@ const CompanyContent = () => {
         )}
       </div>
     </div>
+  );
+};
+
+const CompanyContent = () => {
+  const { data: company, isLoading, error } = useCompanyQuery();
+  const { mutate: createCompany } = usePostCompanyMutation();
+
+  const handleCompanyCreate = (companyFormData: PostCompanyReq) => {
+    createCompany(companyFormData);
+  };
+
+  return (
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: company }}
+      loadingComponent={<CompanyContentSkeleton />}
+      emptyComponent={<CompanyEmpty onCompanyCreate={handleCompanyCreate} />}
+      isEmpty={(data) => !data}
+    >
+      <CompanyContentInner company={company!} />
+    </QueryAsyncBoundary>
   );
 };
 
