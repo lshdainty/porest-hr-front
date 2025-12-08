@@ -1,3 +1,4 @@
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
 import { Button } from '@/components/shadcn/button'
 import {
   Select,
@@ -6,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select'
+import { EmptyHoliday } from '@/features/admin/holiday/components/EmptyHoliday'
 import { HolidayEditDialog } from '@/features/admin/holiday/components/HolidayEditDialog'
 import { HolidayList } from '@/features/admin/holiday/components/HolidayList'
 import { HolidayListSkeleton } from '@/features/admin/holiday/components/HolidayListSkeleton'
@@ -54,7 +56,7 @@ const HolidayContent = () => {
   const endDate = `${selectedYear}-12-31`
 
   const { data: countryTypes } = useCountryCodeTypesQuery()
-  const { data: holidays, isLoading: holidaysLoding, refetch } = useHolidaysByPeriodQuery(startDate, endDate, selectedCountry)
+  const { data: holidays, isLoading, error, refetch } = useHolidaysByPeriodQuery(startDate, endDate, selectedCountry)
 
   const yearOptions = generateYearOptions()
   const postMutation = usePostHolidayMutation()
@@ -108,14 +110,14 @@ const HolidayContent = () => {
   }
 
   return (
-    <div className='flex w-full h-full p-4 md:p-6'>
-      <div className='w-full max-w-4xl mx-auto'>
-        <div className='flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4'>
+    <div className='flex w-full h-full p-4 sm:p-6 md:p-8'>
+      <div className='w-full flex flex-col h-full'>
+        <div className='flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 shrink-0'>
           <div>
             <h1 className='text-2xl md:text-3xl font-bold text-card-foreground'>{t('holiday.title')}</h1>
             <p className='text-sm md:text-base text-muted-foreground mt-1'>{t('holiday.description')}</p>
           </div>
-          
+
           <div className='flex items-center gap-2'>
             <Select value={selectedCountry} onValueChange={setSelectedCountry}>
               <SelectTrigger className='flex-1 md:w-[140px]'>
@@ -141,7 +143,7 @@ const HolidayContent = () => {
                 ))}
               </SelectContent>
             </Select>
-            
+
             <HolidayEditDialog
               isOpen={isDialogOpen}
               onOpenChange={setIsDialogOpen}
@@ -155,16 +157,21 @@ const HolidayContent = () => {
             />
           </div>
         </div>
-        {holidaysLoding ? (
-          <HolidayListSkeleton />
-        ) : (
-          <HolidayList
-            holidays={holidays}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onAddClick={handleAddClick}
-          />
-        )}
+        <div className='flex-1 min-h-0'>
+          <QueryAsyncBoundary
+            queryState={{ isLoading: false, error, data: [] }}
+            loadingComponent={<HolidayListSkeleton />}
+            emptyComponent={<EmptyHoliday onAddClick={handleAddClick} className="h-full flex items-center justify-center" />}
+            isEmpty={(data) => !data || data.length === 0}
+          >
+            <HolidayList
+              holidays={holidays}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onAddClick={handleAddClick}
+            />
+          </QueryAsyncBoundary>
+        </div>
       </div>
     </div>
   )

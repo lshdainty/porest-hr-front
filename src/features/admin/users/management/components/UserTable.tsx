@@ -33,7 +33,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
   const { data: companyTypes } = useOriginCompanyTypesQuery();
 
   const {
-    showInviteDialog, setShowInviteDialog,
+    setShowInviteDialog,
     showEditDialog, setShowEditDialog,
     showResendDialog, setShowResendDialog,
     showPolicyDialog, setPolicyDialog,
@@ -237,14 +237,6 @@ const UserTable = ({ value: users }: UserTableProps) => {
           <Empty />
         )}
       </CardContent>
-
-      {/* 사용자 초대 Dialog */}
-      <UserInviteDialog
-        open={showInviteDialog}
-        onOpenChange={setShowInviteDialog}
-        title={t('user.inviteTitle')}
-        companyOptions={companyTypes || []}
-      />
 
       {/* 메일 재전송 Dialog */}
       {showResendDialog && (

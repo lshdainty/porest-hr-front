@@ -1,44 +1,49 @@
-import { Button } from '@/components/shadcn/button';
-import { Dialog, DialogContent } from '@/components/shadcn/dialog';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable';
-import { Skeleton } from '@/components/shadcn/skeleton';
-import { DepartmentTreePanel } from '@/features/admin/company/components/DepartmentTreePanel';
-import { DepartmentTreePanelSkeleton } from '@/features/admin/company/components/DepartmentTreePanelSkeleton';
-import { UserDepartmentTransfer } from '@/features/admin/users/department/components/UserDepartmentTransfer';
-import { useDepartmentContext } from '@/features/admin/users/department/contexts/DepartmentContext';
-import { useCompanyQuery, useCompanyWithDepartmentsQuery } from '@/hooks/queries/useCompanies';
-import { useDeleteDepartmentUsersMutation, useDepartmentUsersQuery, usePostDepartmentUsersMutation } from '@/hooks/queries/useDepartments';
-import { useIsMobile } from '@/hooks/useMobile';
-import { type UserInfo } from '@/lib/api/department';
-import { ArrowLeft, Building2 } from 'lucide-react';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
+import { Button } from '@/components/shadcn/button'
+import { Dialog, DialogContent } from '@/components/shadcn/dialog'
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable'
+import { DepartmentTreePanel } from '@/features/admin/company/components/DepartmentTreePanel'
+import { DepartmentContentSkeleton } from '@/features/admin/users/department/components/DepartmentContentSkeleton'
+import { DepartmentEmpty } from '@/features/admin/users/department/components/DepartmentEmpty'
+import { UserDepartmentTransfer } from '@/features/admin/users/department/components/UserDepartmentTransfer'
+import { useDepartmentContext } from '@/features/admin/users/department/contexts/DepartmentContext'
+import { useCompanyQuery, useCompanyWithDepartmentsQuery } from '@/hooks/queries/useCompanies'
+import { useDeleteDepartmentUsersMutation, useDepartmentUsersQuery, usePostDepartmentUsersMutation } from '@/hooks/queries/useDepartments'
+import { useIsMobile } from '@/hooks/useMobile'
+import { type GetCompanyResp } from '@/lib/api/company'
+import { type UserInfo } from '@/lib/api/department'
+import { ArrowLeft, Building2 } from 'lucide-react'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
-const DepartmentContent = () => {
-  const { t } = useTranslation('admin');
-  const { selectedDept, setSelectedDept } = useDepartmentContext();
+interface DepartmentContentInnerProps {
+  company: GetCompanyResp
+}
 
-  const { data: company, isLoading } = useCompanyQuery();
-  const { data: companyWithDepartments } = useCompanyWithDepartmentsQuery(company?.company_id ?? '');
+const DepartmentContentInner = ({ company }: DepartmentContentInnerProps) => {
+  const { t } = useTranslation('admin')
+  const { selectedDept, setSelectedDept } = useDepartmentContext()
+  const isMobile = useIsMobile()
+
+  const { data: companyWithDepartments } = useCompanyWithDepartmentsQuery(company.company_id)
 
   const { data: departmentUsers, isLoading: isDepartmentUsersLoading } = useDepartmentUsersQuery(
     selectedDept?.department_id
-  );
+  )
 
-  const postDepartmentUsers = usePostDepartmentUsersMutation();
-  const deleteDepartmentUsers = useDeleteDepartmentUsersMutation();
+  const postDepartmentUsers = usePostDepartmentUsersMutation()
+  const deleteDepartmentUsers = useDeleteDepartmentUsersMutation()
 
   const departments = useMemo(() => {
-    return companyWithDepartments?.departments || [];
-  }, [companyWithDepartments]);
+    return companyWithDepartments?.departments || []
+  }, [companyWithDepartments])
 
   const handleTransfer = async (addedUsers: UserInfo[], removedUsers: UserInfo[]) => {
-    if (!selectedDept?.department_id) return;
+    if (!selectedDept?.department_id) return
 
-    const departmentId = selectedDept.department_id;
+    const departmentId = selectedDept.department_id
 
     try {
-      // 추가할 사용자가 있는 경우
       if (addedUsers.length > 0) {
         await postDepartmentUsers.mutateAsync({
           departmentId,
@@ -48,55 +53,30 @@ const DepartmentContent = () => {
               main_yn: user.main_yn
             }))
           }
-        });
+        })
       }
 
-      // 삭제할 사용자가 있는 경우
       if (removedUsers.length > 0) {
         await deleteDepartmentUsers.mutateAsync({
           departmentId,
           data: {
             user_ids: removedUsers.map(user => user.user_id)
           }
-        });
+        })
       }
     } catch (error) {
-      console.error('Failed to update department users:', error);
+      console.error('Failed to update department users:', error)
     }
-  };
-
-  const isMobile = useIsMobile();
-
-  if (isLoading) {
-    return (
-      <div className='p-4 sm:p-6 md:p-8 flex flex-col gap-6 h-full'>
-        <div className='flex items-center gap-2'>
-          <Skeleton className='h-8 w-8' />
-          <Skeleton className='h-8 w-48' />
-        </div>
-        <ResizablePanelGroup direction='horizontal' className='flex-grow rounded-lg border'>
-          <ResizablePanel defaultSize={25} minSize={25}>
-            <DepartmentTreePanelSkeleton />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={75}>
-            <div className='p-4'>
-              <Skeleton className='h-full w-full' />
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
-    );
   }
 
   if (isMobile) {
     return (
       <div className='h-full w-full flex flex-col p-4 gap-4 overflow-hidden'>
-        <div className='flex items-center gap-2 flex-shrink-0'>
+        <div className='flex items-center gap-2 shrink-0'>
           <Building2 />
-          <h1 className='text-2xl font-bold'>{company?.company_name}</h1>
+          <h1 className='text-2xl font-bold'>{company.company_name}</h1>
         </div>
-        
+
         <div className='flex-1 border rounded-lg overflow-hidden'>
           <DepartmentTreePanel
             departments={departments}
@@ -104,7 +84,7 @@ const DepartmentContent = () => {
             onDeptSelect={setSelectedDept}
             onDeptUpdate={() => {}}
             onDeptDelete={() => {}}
-            companyId={company?.company_id || ''}
+            companyId={company.company_id}
             title={t('department.list')}
             showAddButton={false}
             showNodeActions={false}
@@ -112,10 +92,10 @@ const DepartmentContent = () => {
           />
         </div>
 
-        <Dialog 
-          open={!!selectedDept} 
+        <Dialog
+          open={!!selectedDept}
           onOpenChange={(open) => {
-            if (!open) setSelectedDept(null);
+            if (!open) setSelectedDept(null)
           }}
         >
           <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden flex flex-col">
@@ -142,15 +122,15 @@ const DepartmentContent = () => {
           </DialogContent>
         </Dialog>
       </div>
-    );
+    )
   }
 
   return (
     <div className='h-full w-full'>
       <div className='h-full flex flex-col p-4 sm:p-6 md:p-8 gap-6 overflow-hidden'>
-        <div className='flex items-center gap-2 flex-shrink-0'>
+        <div className='flex items-center gap-2 shrink-0'>
           <Building2 />
-          <h1 className='text-3xl font-bold'>{company?.company_name}</h1>
+          <h1 className='text-3xl font-bold'>{company.company_name}</h1>
         </div>
         <ResizablePanelGroup direction='horizontal' className='flex-1 min-h-0 rounded-lg border'>
           <ResizablePanel
@@ -164,7 +144,7 @@ const DepartmentContent = () => {
               onDeptSelect={setSelectedDept}
               onDeptUpdate={() => {}}
               onDeptDelete={() => {}}
-              companyId={company?.company_id || ''}
+              companyId={company.company_id}
               title={t('department.list')}
               showAddButton={false}
               showNodeActions={false}
@@ -196,7 +176,22 @@ const DepartmentContent = () => {
         </ResizablePanelGroup>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export { DepartmentContent };
+const DepartmentContent = () => {
+  const { data: company, isLoading, error } = useCompanyQuery()
+
+  return (
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: company }}
+      loadingComponent={<DepartmentContentSkeleton />}
+      emptyComponent={<DepartmentEmpty className="h-full flex items-center justify-center" />}
+      isEmpty={(data) => !data}
+    >
+      <DepartmentContentInner company={company!} />
+    </QueryAsyncBoundary>
+  )
+}
+
+export { DepartmentContent }

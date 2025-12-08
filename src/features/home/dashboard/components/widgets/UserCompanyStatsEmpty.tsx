@@ -7,7 +7,7 @@ interface UserCompanyStatsEmptyProps {
   className?: string
 }
 
-export const UserCompanyStatsEmpty = ({ className }: UserCompanyStatsEmptyProps) => {
+const UserCompanyStatsEmpty = ({ className }: UserCompanyStatsEmptyProps) => {
   const { t } = useTranslation('admin')
 
   return (
@@ -24,3 +24,5 @@ export const UserCompanyStatsEmpty = ({ className }: UserCompanyStatsEmptyProps)
     </div>
   )
 }
+
+export { UserCompanyStatsEmpty }

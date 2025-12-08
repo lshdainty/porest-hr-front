@@ -4,6 +4,7 @@ import { Label } from '@/components/shadcn/label'
 import { toast } from '@/components/shadcn/sonner'
 import { Spinner } from '@/components/shadcn/spinner'
 import TransferList, { type TransferItem } from '@/components/shadcn/transfer'
+import { UserDepartmentTransferSkeleton } from '@/features/admin/users/department/components/UserDepartmentTransferSkeleton'
 import { useCheckUserMainDepartmentQuery } from '@/hooks/queries/useDepartments'
 import { type UserInfo } from '@/lib/api/department'
 import { useEffect, useState } from 'react'
@@ -181,7 +182,7 @@ const UserDepartmentTransfer = ({
   }
 
   if (isLoading) {
-    return <div className='flex items-center justify-center h-full'>{tc('loading')}</div>
+    return <UserDepartmentTransferSkeleton />
   }
 
   return (

@@ -121,6 +121,8 @@ admin,department.noDepartments,부서가 없습니다,No departments
 admin,department.noDepartmentsDesc,새로운 부서를 추가해보세요.,Try adding a new department.
 admin,department.chart,조직도,Organization Chart
 admin,department.totalCount,전체 부서: {{count}}개,Total departments: {{count}}
+admin,department.empty.title,회사가 없습니다,No Company
+admin,department.empty.description,회사 정보를 먼저 등록해주세요.,Please register company information first.
 admin,company.addCardTitle,회사 정보 추가하기,Add Company Info
 admin,company.addCardDesc,회사 정보를 입력하여 시작하세요,Enter company info to get started
 admin,company.addBtn,회사 추가하기,Add Company
@@ -193,6 +195,8 @@ admin,user.workTimeRequired,유연근무시간을 선택해주세요.,Please sel
 admin,user.countryCode,국가,Country
 admin,user.countryCodePlaceholder,국가를 선택하세요,Select country
 admin,user.countryCodeRequired,국가를 선택해주세요.,Please select a country.
+admin,user.empty.title,사용자가 없습니다,No Users
+admin,user.empty.description,등록된 사용자가 없습니다. 사용자를 초대해 주세요.,No registered users. Please invite users.
 admin,user.lunarYn,음력 여부,Lunar Calendar
 admin,user.role,역할,Role
 admin,user.rolePlaceholder,역할을 선택하세요,Select role
