@@ -17,7 +17,7 @@ import {
 import { useIsMobile } from "@/hooks/useMobile";
 import { PermissionResp } from "@/lib/api/permission";
 import { RoleResp } from "@/lib/api/role";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -38,6 +38,7 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
 
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const prevIsMobileRef = useRef<boolean | undefined>(undefined);
 
   // Temporary role constant
   const TEMP_ROLE_CODE = "NEW_ROLE_TEMP";
@@ -61,10 +62,22 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
     return list;
   }, [domainRoles, editingRole]);
 
+  // 데스크톱에서만 첫 번째 역할 자동 선택
+  // isMobile이 undefined일 때(초기 로딩)는 선택하지 않음
   useEffect(() => {
-    if (!isMobile && domainRoles.length > 0 && selectedRoleId === null) {
+    const prevIsMobile = prevIsMobileRef.current;
+
+    // 데스크톱에서 첫 번째 역할 자동 선택 (초기 로딩 시에만)
+    if (isMobile === false && domainRoles.length > 0 && selectedRoleId === null && prevIsMobile === undefined) {
       setSelectedRoleId(domainRoles[0].role_code);
     }
+
+    // 데스크톱 -> 모바일 전환 시 선택 해제 (리스트 먼저 보여주기)
+    if (prevIsMobile === false && isMobile === true && selectedRoleId !== null) {
+      setSelectedRoleId(null);
+    }
+
+    prevIsMobileRef.current = isMobile;
   }, [domainRoles, selectedRoleId, isMobile]);
 
   const selectedRole = useMemo(() =>
@@ -213,7 +226,7 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
             if (!open) handleBackToList();
           }}
         >
-          <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden">
+          <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden" aria-describedby={undefined}>
             {editingRole && (
               <RoleDetail
                 role={editingRole}

@@ -98,8 +98,8 @@ const DepartmentContentInner = ({ company }: DepartmentContentInnerProps) => {
             if (!open) setSelectedDept(null)
           }}
         >
-          <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden flex flex-col">
-            <div className="p-4 border-b flex items-center gap-2">
+          <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden flex flex-col" aria-describedby={undefined}>
+            <div className="p-4 border-b flex items-center gap-2 shrink-0">
               <Button variant="ghost" size="icon" onClick={() => setSelectedDept(null)}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -107,17 +107,19 @@ const DepartmentContentInner = ({ company }: DepartmentContentInnerProps) => {
                 {selectedDept?.department_name}
               </h2>
             </div>
-            <div className="flex-1 p-4 overflow-hidden">
-              {selectedDept && (
-                <UserDepartmentTransfer
-                  key={selectedDept.department_id}
-                  usersInDepartment={departmentUsers?.users_in_department || []}
-                  usersNotInDepartment={departmentUsers?.users_not_in_department || []}
-                  isLoading={isDepartmentUsersLoading}
-                  isSaving={postDepartmentUsers.isPending || deleteDepartmentUsers.isPending}
-                  onTransfer={handleTransfer}
-                />
-              )}
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-4 min-h-full">
+                {selectedDept && (
+                  <UserDepartmentTransfer
+                    key={selectedDept.department_id}
+                    usersInDepartment={departmentUsers?.users_in_department || []}
+                    usersNotInDepartment={departmentUsers?.users_not_in_department || []}
+                    isLoading={isDepartmentUsersLoading}
+                    isSaving={postDepartmentUsers.isPending || deleteDepartmentUsers.isPending}
+                    onTransfer={handleTransfer}
+                  />
+                )}
+              </div>
             </div>
           </DialogContent>
         </Dialog>

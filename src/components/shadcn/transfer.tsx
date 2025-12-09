@@ -95,7 +95,7 @@ export default function TransferList({
 
   return (
     <div className='flex flex-col md:flex-row md:space-x-4 gap-4 md:gap-0 flex-1 h-full'>
-      <div className='w-full md:w-1/2 bg-background rounded-sm flex flex-col h-[300px] md:h-auto'>
+      <div className='w-full md:w-1/2 bg-background rounded-sm flex flex-col h-[200px] md:h-auto'>
         <div className='flex items-center justify-between flex-shrink-0'>
           <Input
             placeholder={leftPlaceholder}
@@ -146,7 +146,7 @@ export default function TransferList({
         </Button>
       </div>
 
-      <div className='w-full md:w-1/2 bg-background rounded-sm flex flex-col h-[300px] md:h-auto'>
+      <div className='w-full md:w-1/2 bg-background rounded-sm flex flex-col h-[200px] md:h-auto'>
         <div className='flex items-center justify-between flex-shrink-0'>
           <Input
             placeholder={rightPlaceholder}

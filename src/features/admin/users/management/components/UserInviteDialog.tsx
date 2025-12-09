@@ -16,14 +16,14 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 
-const createFormSchema = (t: (key: string) => string) => z.object({
+const createFormSchema = (t: (key: string) => string, tc: (key: string) => string) => z.object({
   user_id: z.string().min(1, t('user.userIdRequired')),
   user_name: z.string().min(1, t('user.userNameRequired')),
   user_email: z.string().email(t('user.userEmailRequired')),
   join_date: z.string().min(1, t('user.joinDateRequired')),
   user_origin_company_type: z.string().min(1, t('user.companyRequired')),
   user_work_time: z.string().min(1, t('user.workTimeRequired')),
-  country_code: z.string().min(1, t('user.countryCodeRequired'))
+  country_code: z.string().min(1, tc('countryRequired'))
 })
 
 type UserInviteFormValues = z.infer<ReturnType<typeof createFormSchema>>
@@ -58,7 +58,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
   const { data: duplicateCheckResult, isLoading: isCheckingDuplicate } = useUserIdDuplicateQuery(userIdToCheck)
 
   const form = useForm<UserInviteFormValues>({
-    resolver: zodResolver(createFormSchema(t)),
+    resolver: zodResolver(createFormSchema(t, tc)),
     defaultValues: {
       user_id: initialData?.user_id || '',
       user_name: initialData?.user_name || '',
@@ -141,12 +141,12 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="py-6 space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto py-6 space-y-4">
             <Controller
               control={form.control}
               name="user_name"
@@ -264,12 +264,12 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>
-                    <Globe className='h-4 w-4 text-muted-foreground inline-block' /> {t('user.countryCode')}
+                    <Globe className='h-4 w-4 text-muted-foreground inline-block' /> {tc('country')}
                     <span className='text-destructive ml-0.5'>*</span>
                   </FieldLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('user.countryCodePlaceholder')} />
+                      <SelectValue placeholder={tc('countryPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {countryCodeOptions?.map(option => <SelectItem key={option.code} value={option.code}>{option.name}</SelectItem>)}
@@ -280,7 +280,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
               )}
             />
           </div>
-          <DialogFooter>
+          <DialogFooter className="shrink-0">
             <DialogClose asChild>
               <Button type="button" variant="secondary">
                 {tc('cancel')}

@@ -195,40 +195,42 @@ const UserVacationPolicyDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='max-w-5xl max-h-[90vh]'>
-        <DialogHeader>
+      <DialogContent className='max-w-5xl max-h-[90vh] flex flex-col'>
+        <DialogHeader className='shrink-0'>
           <DialogTitle>
             {t('user.vacationPolicyTitle')} {userName && `- ${userName}`}
           </DialogTitle>
         </DialogHeader>
 
-        <div className='py-4 h-[500px] flex flex-col'>
-          {isLoading ? (
-            <div className='flex items-center justify-center h-full'>
-              <div className='text-foreground/70'>{tc('loading')}</div>
-            </div>
-          ) : isError ? (
-            <div className='flex items-center justify-center h-full'>
-              <div className='text-red-500'>{t('user.policyError')}</div>
-            </div>
-          ) : (
-            <TransferList
-              leftItems={leftItems}
-              rightItems={rightItems}
-              onLeftChange={setLeftItems}
-              onRightChange={setRightItems}
-              leftTitle={t('user.unassignedPolicies')}
-              rightTitle={t('user.assignedPolicies')}
-              leftPlaceholder={t('user.searchPolicy')}
-              rightPlaceholder={t('user.searchPolicy')}
-              renderItem={renderPolicyItem}
-              renderRightItem={renderPolicyItem}
-              filterItem={filterPolicyItem}
-            />
-          )}
+        <div className='flex-1 min-h-0 overflow-y-auto py-4'>
+          <div className='h-[500px] md:h-full min-h-[400px] flex flex-col'>
+            {isLoading ? (
+              <div className='flex items-center justify-center h-full'>
+                <div className='text-foreground/70'>{tc('loading')}</div>
+              </div>
+            ) : isError ? (
+              <div className='flex items-center justify-center h-full'>
+                <div className='text-red-500'>{t('user.policyError')}</div>
+              </div>
+            ) : (
+              <TransferList
+                leftItems={leftItems}
+                rightItems={rightItems}
+                onLeftChange={setLeftItems}
+                onRightChange={setRightItems}
+                leftTitle={t('user.unassignedPolicies')}
+                rightTitle={t('user.assignedPolicies')}
+                leftPlaceholder={t('user.searchPolicy')}
+                rightPlaceholder={t('user.searchPolicy')}
+                renderItem={renderPolicyItem}
+                renderRightItem={renderPolicyItem}
+                filterItem={filterPolicyItem}
+              />
+            )}
+          </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className='shrink-0'>
           <Button variant='outline' onClick={() => onOpenChange(false)}>
             {tc('cancel')}
           </Button>

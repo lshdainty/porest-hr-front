@@ -48,6 +48,10 @@ common,colorGreen,녹색,Green
 common,colorYellow,노란색,Yellow
 common,colorPurple,보라색,Purple
 common,colorRed,빨간색,Red
+common,country,국가,Country
+common,countryCode,국가 코드,Country Code
+common,countryPlaceholder,국가를 선택하세요,Select country
+common,countryRequired,국가를 선택해주세요.,Please select a country.
 login,title,로그인,Sign In
 login,email,이메일,Email
 login,password,비밀번호,Password
@@ -238,8 +242,8 @@ admin,authority.department,부서,Department
 admin,authority.position,직위,Position
 admin,authority.assignedRoles,할당된 역할,Assigned Roles
 admin,authority.noRolesAssigned,할당된 역할 없음,No Roles Assigned
-admin,authority.manageUserRolesDesc,이 사용자에게 할당된 역할을 관리하세요.,Manage the roles assigned to this user.
-admin,authority.assignRolesToGrantDesc,권한을 부여하려면 이 사용자에게 역할을 할당하세요.,Assign roles to this user to grant permissions.
+admin,authority.manageUserRoles,사용자의 역할을 관리합니다,Manage user roles
+admin,authority.assignRolesToGrant,역할을 할당하여 권한을 부여하세요,Assign roles to grant permissions
 admin,authority.searchRole,역할 검색...,Search role...
 admin,authority.noRoleFound,역할을 찾을 수 없습니다.,No role found.
 admin,authority.newRole,새 역할,New Role

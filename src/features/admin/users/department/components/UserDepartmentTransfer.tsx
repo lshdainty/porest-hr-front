@@ -187,7 +187,7 @@ const UserDepartmentTransfer = ({
 
   return (
     <div className='w-full h-full flex flex-col gap-4'>
-      <div className='flex justify-end gap-2'>
+      <div className='hidden md:flex justify-end gap-2'>
         <Button onClick={handleSave} disabled={!hasChanges() || isSaving}>
           {isSaving && <Spinner />}
           {isSaving ? tc('processing') : tc('save')}
@@ -208,6 +208,13 @@ const UserDepartmentTransfer = ({
         filterItem={filterUserItem}
         itemClassName='border-b-0'
       />
+
+      <div className='md:hidden sticky bottom-0 bg-background pt-2 pb-4 border-t -mx-4 px-4'>
+        <Button onClick={handleSave} disabled={!hasChanges() || isSaving} className='w-full'>
+          {isSaving && <Spinner />}
+          {isSaving ? tc('processing') : tc('save')}
+        </Button>
+      </div>
     </div>
   )
 }

@@ -36,7 +36,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
-const createFormSchema = (t: (key: string) => string) => z.object({
+const createFormSchema = (t: (key: string) => string, tc: (key: string) => string) => z.object({
   user_name: z.string().min(1, { message: t('edit.nameRequired') }),
   user_id: z.string().min(1, { message: t('edit.idRequired') }),
   user_email: z.string().email({ message: t('edit.emailRequired') }),
@@ -44,7 +44,7 @@ const createFormSchema = (t: (key: string) => string) => z.object({
   user_origin_company_type: z.string().min(1, { message: t('edit.companyRequired') }),
   lunar_yn: z.string().min(1, { message: t('edit.lunarRequired') }),
   user_work_time: z.string().min(1, { message: t('edit.workTimeRequired') }),
-  country_code: z.string().min(1, { message: t('edit.countryCodeRequired') }),
+  country_code: z.string().min(1, { message: tc('countryRequired') }),
 });
 
 type UserFormValues = z.infer<ReturnType<typeof createFormSchema>>;
@@ -100,7 +100,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
   const { t } = useTranslation('user');
   const { t: ta } = useTranslation('admin');
   const { t: tc } = useTranslation('common');
-  const formSchema = createFormSchema(t);
+  const formSchema = createFormSchema(t, tc);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfileMutation();
   const { data: countryCodeOptions } = useCountryCodeTypesQuery();
   
@@ -225,12 +225,13 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-4xl">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle>{ta('user.editTitle')}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col sm:flex-row gap-6 p-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto">
+            <div className="flex flex-col sm:flex-row gap-6 p-6">
               <div className="w-full sm:w-1/3 flex flex-col items-center justify-center gap-4">
                 <div className="relative group">
                   {isUploading ? (
@@ -457,10 +458,10 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                   name="country_code"
                   render={({ field, fieldState }) => (
                     <Field data-invalid={!!fieldState.error}>
-                      <FieldLabel><Globe className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.countryCode')}</FieldLabel>
+                      <FieldLabel><Globe className='h-4 w-4 text-muted-foreground inline-block' /> {tc('country')}</FieldLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder={t('edit.countryCodePlaceholder')} />
+                          <SelectValue placeholder={tc('countryPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
                           {countryCodeOptions?.map(option => <SelectItem key={option.code} value={option.code}>{option.name}</SelectItem>)}
@@ -472,7 +473,8 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                 />
               </div>
             </div>
-          <DialogFooter>
+          </div>
+          <DialogFooter className="shrink-0">
             <DialogClose asChild>
               <Button type="button" variant="secondary">
                 {tc('cancel')}

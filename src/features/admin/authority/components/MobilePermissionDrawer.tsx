@@ -84,7 +84,7 @@ const MobilePermissionDrawer = ({
             {t('authority.managePermissions')}
           </span>
           <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-medium">
-            {t('authority.selectedCount', { count: selectedCount })}
+            {t('authority.selected', { count: selectedCount })}
           </span>
         </Button>
       </SheetTrigger>
