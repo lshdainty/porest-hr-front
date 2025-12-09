@@ -18,7 +18,12 @@ export const MonthVacationStatsContent = ({ data, className }: MonthVacationStat
   return (
     <div className={cn('w-full h-full', className)}>
       <ResponsiveContainer width='100%' height='100%'>
-        <BarChart data={data}>
+        <BarChart
+          data={data}
+          margin={{
+            left: 0,
+          }}
+        >
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey='month'

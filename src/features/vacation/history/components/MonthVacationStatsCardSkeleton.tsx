@@ -1,5 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
-import { Skeleton } from '@/components/shadcn/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
+import { Skeleton } from '@/components/shadcn/skeleton'
+import { MonthVacationStatsSkeleton } from '@/features/vacation/history/components/MonthVacationStatsSkeleton'
 
 const MonthVacationStatsCardSkeleton = () => {
   return (
@@ -10,7 +11,9 @@ const MonthVacationStatsCardSkeleton = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Skeleton className='w-full h-[350px]' />
+        <div className='h-[350px]'>
+          <MonthVacationStatsSkeleton />
+        </div>
       </CardContent>
     </Card>
   )

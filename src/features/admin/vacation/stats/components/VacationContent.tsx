@@ -17,7 +17,6 @@ import { VacationStatsCard } from '@/features/vacation/history/components/Vacati
 import { VacationTypeStatsCard } from '@/features/vacation/history/components/VacationTypeStatsCard'
 import { useGrantStatusTypesQuery } from '@/hooks/queries/useTypes'
 import { useUsersQuery } from '@/hooks/queries/useUsers'
-import { type GetUsersResp } from '@/lib/api/user'
 import {
   useAllVacationsByApproverQuery,
   useAvailableVacationsQuery,
@@ -25,6 +24,7 @@ import {
   useUserVacationHistoryQuery,
   useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations'
+import { type GetUsersResp } from '@/lib/api/user'
 import dayjs from 'dayjs'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -48,7 +48,7 @@ const VacationContentInner = ({ users }: VacationContentInnerProps) => {
 
   const { data: vacationTypes } = useAvailableVacationsQuery(
     selectedUserId,
-    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
+    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDT23:59:59')
   )
   const { data: monthStats } = useUserMonthlyVacationStatsQuery(
     selectedUserId,
@@ -57,7 +57,7 @@ const VacationContentInner = ({ users }: VacationContentInnerProps) => {
   const { data: histories } = useUserVacationHistoryQuery(selectedUserId, parseInt(selectedYear))
   const { data: vacationStats } = useUserVacationStatsQuery(
     selectedUserId,
-    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDTHH:mm:ss')
+    dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDT23:59:59')
   )
   const { data: vacationRequests = [] } = useAllVacationsByApproverQuery(
     selectedUserId,
