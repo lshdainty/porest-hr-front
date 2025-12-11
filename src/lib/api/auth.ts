@@ -122,3 +122,7 @@ export async function fetchPostCompleteSignup(reqData: PostCompleteSignupReq): P
 
   return resp.data;
 }
+
+export async function fetchGetCsrfToken(): Promise<void> {
+  await api.get('/csrf-token');
+}

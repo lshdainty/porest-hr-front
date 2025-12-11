@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
 import {
+  fetchGetCsrfToken,
   fetchGetLoginCheck,
   fetchGetValidateInvitationToken,
   fetchPostCompleteSignup,
@@ -19,11 +20,12 @@ import {
 export const authKeys = createQueryKeys('auth')
 
 // 로그인 상태 체크 훅
-export const useLoginCheckQuery = () => {
+export const useLoginCheckQuery = (enabled: boolean = true) => {
   return useQuery<GetLoginCheck>({
     queryKey: authKeys.detail('login-check'),
     queryFn: () => fetchGetLoginCheck(),
     retry: false,
+    enabled, // 로그인/회원가입 페이지에서는 호출하지 않음
   })
 }
 
@@ -54,5 +56,14 @@ export const usePostLogoutMutation = () => {
 export const usePostCompleteSignupMutation = () => {
   return useMutation<PostCompleteSignupResp, Error, PostCompleteSignupReq>({
     mutationFn: (data: PostCompleteSignupReq) => fetchPostCompleteSignup(data)
+  })
+}
+
+// CSRF 토큰 조회 훅
+export const useCsrfTokenQuery = (enabled: boolean = true) => {
+  return useQuery<void>({
+    queryKey: authKeys.detail('csrf-token'),
+    queryFn: () => fetchGetCsrfToken(),
+    enabled,
   })
 }

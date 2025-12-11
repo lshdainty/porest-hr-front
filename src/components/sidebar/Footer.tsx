@@ -45,10 +45,13 @@ export function Footer() {
       onSuccess: () => {
         // 전역 store 초기화
         clearLoginUser()
+
         // React Query 캐시 제거 (재요청 없이 캐시만 삭제)
-        queryClient.removeQueries({
-          queryKey: authKeys.detail('login-check')
-        })
+        queryClient.setQueryData(
+          authKeys.detail('login-check'),
+          null // 혹은 초기값
+        )
+
         navigate('/login')
       }
     })

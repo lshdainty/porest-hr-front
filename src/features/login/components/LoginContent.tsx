@@ -1,19 +1,22 @@
 import loginBG from '@/assets/img/login_bg.jpg';
-import { toast } from '@/components/shadcn/sonner';
 import { Card, CardContent } from '@/components/shadcn/card';
-import { authKeys } from '@/hooks/queries/useAuths';
+import { toast } from '@/components/shadcn/sonner';
+import { SocialLoginButton } from '@/features/login/components/SocialLoginButton';
+import { authKeys, useCsrfTokenQuery } from '@/hooks/queries/useAuths';
 import { cn } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SocialLoginButton } from '@/features/login/components/SocialLoginButton';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginContentProps extends React.ComponentProps<'div'> {}
 
 const LoginContent = ({ className, ...props }: LoginContentProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // CSRF 토큰 발급
+  useCsrfTokenQuery();
 
   // OAuth2 로그인 성공/실패 처리
   useEffect(() => {
@@ -116,23 +119,27 @@ import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { useTheme } from '@/components/shadcn/themeProvider';
+import { useUser } from '@/contexts/UserContext'; // 추가
 import { usePostLoginMutation } from '@/hooks/queries/useAuths';
 
 const LoginFormWithSocial = () => {
   const { t } = useTranslation('login');
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const queryClient = useQueryClient();
+  const { refreshUser } = useUser(); // Context의 강제 갱신 함수 가져오기
   const loginMutation = usePostLoginMutation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
+
     loginMutation.mutate(formData, {
       onSuccess: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: authKeys.detail('login-check')
-        });
+        // [수정됨] invalidateQueries 대신 refreshUser() 사용
+        // 이 함수는 내부적으로 refetch()를 호출하여 데이터를 확실히 가져올 때까지 기다립니다.
+        await refreshUser(); 
+        
+        // 데이터 갱신이 끝난 후 이동하므로 안전함
         navigate('/dashboard');
       }
     });

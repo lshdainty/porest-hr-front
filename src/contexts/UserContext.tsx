@@ -1,6 +1,10 @@
 import { useLoginCheckQuery } from '@/hooks/queries/useAuths'
 import type { GetLoginCheck } from '@/lib/api/auth'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+
+// 로그인 체크를 건너뛸 경로
+const AUTH_PATHS = ['/login', '/logout', '/signup']
 
 // Context 타입 정의
 interface UserContextType {
@@ -23,9 +27,13 @@ interface UserProviderProps {
 // UserProvider 컴포넌트
 export function UserProvider({ children }: UserProviderProps) {
   const [loginUser, setLoginUserState] = useState<GetLoginCheck | null>(null)
+  const location = useLocation()
 
-  // 세션 확인 쿼리 - 항상 enabled로 설정하여 refetch 가능하도록
-  const { data, isLoading, refetch } = useLoginCheckQuery()
+  // 현재 경로가 인증 페이지인지 확인
+  const isAuthPage = AUTH_PATHS.includes(location.pathname)
+
+  // 세션 확인 쿼리 - 로그인/회원가입 페이지에서는 호출하지 않음
+  const { data, isLoading, refetch } = useLoginCheckQuery(!isAuthPage)
 
   // 세션 데이터가 변경되면 상태 업데이트
   useEffect(() => {
