@@ -1,16 +1,16 @@
 import PorestLogo from '@/assets/img/porest.svg';
-import { toast } from '@/components/shadcn/sonner';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { toast } from '@/components/shadcn/sonner';
+import { InvitationInfo } from '@/features/auth/components/InvitationInfo';
+import { SignUpForm } from '@/features/auth/components/SignUpForm';
+import { SocialConnectButton } from '@/features/auth/components/SocialConnectButton';
 import { SignUpProvider } from '@/features/auth/contexts/SignUpContext';
 import { usePostCompleteSignupMutation, useValidateInvitationTokenQuery } from '@/hooks/queries/useAuths';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { InvitationInfo } from '@/features/auth/components/InvitationInfo';
-import { SignUpForm } from '@/features/auth/components/SignUpForm';
-import { SocialConnectButton } from '@/features/auth/components/SocialConnectButton';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface FormData {
   birth: string;
@@ -59,7 +59,7 @@ const SignUpContent = () => {
 
   const handleOAuthConnect = (provider: string) => {
     // OAuth2 로그인 시작 (세션에 이미 토큰이 저장되어 있음)
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/oauth2/authorization/${provider}?token=${token}`;
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'https://porest.cloud'}/oauth2/authorization/${provider}?token=${token}`;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
