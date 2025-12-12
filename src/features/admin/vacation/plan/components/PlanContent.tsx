@@ -1,30 +1,30 @@
+import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
+import { EmptyPlan } from '@/features/admin/vacation/plan/components/EmptyPlan';
+import { PlanContentSkeleton } from '@/features/admin/vacation/plan/components/PlanContentSkeleton';
+import { VacationPlanFormDialog } from '@/features/admin/vacation/plan/components/VacationPlanFormDialog';
+import { VacationPlanLists } from '@/features/admin/vacation/plan/components/VacationPlanLists';
 import { usePlanContext } from '@/features/admin/vacation/plan/contexts/PlanContext';
 import { useVacationPlansQuery } from '@/hooks/queries/useVacationPlans';
+import { type VacationPlanResp } from '@/lib/api/vacationPlan';
 import { Plus, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { VacationPlanFormDialog } from '@/features/admin/vacation/plan/components/VacationPlanFormDialog';
-import { VacationPlanLists } from '@/features/admin/vacation/plan/components/VacationPlanLists';
-import { PlanContentSkeleton } from '@/features/admin/vacation/plan/components/PlanContentSkeleton';
+interface PlanContentInnerProps {
+  vacationPlans: VacationPlanResp[];
+}
 
-const PlanContent = () => {
+const PlanContentInner = ({ vacationPlans }: PlanContentInnerProps) => {
   const { t } = useTranslation('vacation');
   const { searchQuery, setSearchQuery } = usePlanContext();
 
-  const { data: vacationPlans, isLoading } = useVacationPlansQuery();
-
-  const filteredPlans = (vacationPlans || []).filter(
+  const filteredPlans = vacationPlans.filter(
     plan =>
       plan.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       plan.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (plan.desc && plan.desc.toLowerCase().includes(searchQuery.toLowerCase()))
   );
-
-  if (isLoading) {
-    return <PlanContentSkeleton />;
-  }
 
   return (
     <div className='p-4 sm:p-6 md:p-8'>
@@ -70,6 +70,21 @@ const PlanContent = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const PlanContent = () => {
+  const { data: vacationPlans, isLoading, error } = useVacationPlansQuery();
+
+  return (
+    <QueryAsyncBoundary
+      queryState={{ isLoading, error, data: vacationPlans }}
+      loadingComponent={<PlanContentSkeleton />}
+      emptyComponent={<EmptyPlan className="h-full flex items-center justify-center" />}
+      isEmpty={(data) => !data || data.length === 0}
+    >
+      <PlanContentInner vacationPlans={vacationPlans!} />
+    </QueryAsyncBoundary>
   );
 };
 

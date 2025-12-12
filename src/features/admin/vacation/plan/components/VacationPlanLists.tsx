@@ -20,7 +20,7 @@ const VacationPlanLists = ({ plans, searchQuery }: VacationPlanListsProps) => {
   return (
     <div className="flex flex-col gap-4">
       {plans.map(plan => (
-        <Card key={plan.id} className="transition-all hover:shadow-md">
+        <Card key={plan.id} className="transition-all hover:shadow-md py-0">
           <CardContent className="p-4 sm:px-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex flex-col gap-3 flex-1">
