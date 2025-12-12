@@ -9,7 +9,7 @@ import { usePermission } from '@/contexts/PermissionContext';
 import { ResendEmailDialog } from '@/features/admin/users/management/components/ResendEmailDialog';
 import { UserDeleteDialog } from '@/features/admin/users/management/components/UserDeleteDialog';
 import { UserInviteDialog } from '@/features/admin/users/management/components/UserInviteDialog';
-import { UserVacationPolicyDialog } from '@/features/admin/users/management/components/UserVacationPolicyDialog';
+import { UserVacationPlanDialog } from '@/features/admin/users/management/components/UserVacationPlanDialog';
 import { useManagementContext } from '@/features/admin/users/management/contexts/ManagementContext';
 import UserEditDialog from '@/features/user/components/UserEditDialog';
 import { useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
@@ -36,7 +36,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
     setShowInviteDialog,
     showEditDialog, setShowEditDialog,
     showResendDialog, setShowResendDialog,
-    showPolicyDialog, setPolicyDialog,
+    showPlanDialog, setPlanDialog,
     showDeleteDialog, setShowDeleteDialog,
     showInviteEditDialog, setShowInviteEditDialog
   } = useManagementContext();
@@ -209,10 +209,10 @@ const UserTable = ({ value: users }: UserTableProps) => {
                             )}
                             {row.invitation_status === 'ACTIVE' && hasAllPermissions(['USER:MANAGE', 'VACATION:MANAGE']) && (
                               <DropdownMenuItem
-                                onSelect={() => setPolicyDialog(row.user_id)}
+                                onSelect={() => setPlanDialog(row.user_id)}
                               >
                                 <ShieldEllipsis className='h-4 w-4' />
-                                <span>{t('user.vacationPolicy')}</span>
+                                <span>{t('user.vacationPlan')}</span>
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -259,12 +259,12 @@ const UserTable = ({ value: users }: UserTableProps) => {
         />
       )}
 
-      {showPolicyDialog && (
-        <UserVacationPolicyDialog
+      {showPlanDialog && (
+        <UserVacationPlanDialog
           open={true}
-          onOpenChange={(open) => !open && setPolicyDialog(null)}
-          userId={showPolicyDialog}
-          userName={users.find(u => u.user_id === showPolicyDialog)?.user_name}
+          onOpenChange={(open) => !open && setPlanDialog(null)}
+          userId={showPlanDialog}
+          userName={users.find(u => u.user_id === showPlanDialog)?.user_name}
         />
       )}
 

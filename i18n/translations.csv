@@ -457,6 +457,14 @@ admin,user.grantNoLimit,제한없음,No Limit
 admin,user.effectiveRange,유효,Effective
 admin,user.policyError,데이터를 불러오는 중 오류가 발생했습니다.,An error occurred while loading data.
 admin,user.policySaveError,휴가 정책 저장 중 오류,Error saving vacation policy
+admin,user.vacationPlan,휴가 플랜,Vacation Plan
+admin,user.vacationPlanTitle,휴가 플랜 부여,Assign Vacation Plan
+admin,user.unassignedPlans,미부여 플랜,Unassigned Plans
+admin,user.assignedPlans,부여된 플랜,Assigned Plans
+admin,user.searchPlan,플랜 검색...,Search plan...
+admin,user.planPolicyCount,정책 {{count}}개,{{count}} policies
+admin,user.planSaveError,플랜 저장 중 오류,Error saving plan
+admin,user.planError,플랜 정보를 불러오는 중 오류가 발생했습니다.,An error occurred while loading plan data.
 admin,user.statusPending,가입 대기,Pending
 admin,user.statusActive,가입 완료,Active
 admin,user.statusInactive,비활성,Inactive

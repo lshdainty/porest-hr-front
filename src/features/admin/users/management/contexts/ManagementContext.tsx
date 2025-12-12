@@ -7,8 +7,8 @@ interface ManagementContextType {
   setShowEditDialog: (id: string | null) => void;
   showResendDialog: string | null;
   setShowResendDialog: (id: string | null) => void;
-  showPolicyDialog: string | null;
-  setPolicyDialog: (id: string | null) => void;
+  showPlanDialog: string | null;
+  setPlanDialog: (id: string | null) => void;
   showDeleteDialog: string | null;
   setShowDeleteDialog: (id: string | null) => void;
   showInviteEditDialog: string | null;
@@ -21,7 +21,7 @@ export const ManagementProvider = ({ children }: { children: ReactNode }) => {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState<string | null>(null);
   const [showResendDialog, setShowResendDialog] = useState<string | null>(null);
-  const [showPolicyDialog, setPolicyDialog] = useState<string | null>(null);
+  const [showPlanDialog, setPlanDialog] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
   const [showInviteEditDialog, setShowInviteEditDialog] = useState<string | null>(null);
 
@@ -34,8 +34,8 @@ export const ManagementProvider = ({ children }: { children: ReactNode }) => {
         setShowEditDialog,
         showResendDialog,
         setShowResendDialog,
-        showPolicyDialog,
-        setPolicyDialog,
+        showPlanDialog,
+        setPlanDialog,
         showDeleteDialog,
         setShowDeleteDialog,
         showInviteEditDialog,
