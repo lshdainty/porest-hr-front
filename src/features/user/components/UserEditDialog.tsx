@@ -120,7 +120,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       user_birth: dayjs().format('YYYY-MM-DD'),
       user_origin_company_type: companyOptions[0].company_type,
       lunar_yn: 'N',
-      user_work_time: '9 ~ 6',
+      user_work_time: '9 ~ 18',
       country_code: 'KR',
     },
   });
@@ -216,9 +216,10 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
   };
 
   const workTimeOptions = [
-    { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
-    { value: '9 ~ 6', className: 'text-sky-500 dark:text-sky-400' },
-    { value: '10 ~ 7', className: 'text-emerald-500 dark:text-emerald-400' }
+    { value: '8 ~ 17', className: 'text-rose-500 dark:text-rose-400' },
+    { value: '9 ~ 18', className: 'text-sky-500 dark:text-sky-400' },
+    { value: '10 ~ 19', className: 'text-emerald-500 dark:text-emerald-400' },
+    { value: '13 ~ 21', className: 'text-amber-500 dark:text-amber-400' }
   ];
 
   const selectedWorkTime = workTimeOptions.find(option => option.value === form.watch('user_work_time'));

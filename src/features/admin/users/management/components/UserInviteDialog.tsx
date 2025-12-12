@@ -64,7 +64,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
       user_name: initialData?.user_name || '',
       user_email: initialData?.user_email || '',
       user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
-      user_work_time: initialData?.user_work_time || '9 ~ 6',
+      user_work_time: initialData?.user_work_time || '9 ~ 18',
       join_date: initialData?.join_date || '',
       country_code: initialData?.country_code || 'KR'
     }
@@ -98,9 +98,10 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
   }
 
   const workTimeOptions = [
-    { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
-    { value: '9 ~ 6', className: 'text-sky-500 dark:text-sky-400' },
-    { value: '10 ~ 7', className: 'text-emerald-500 dark:text-emerald-400' }
+    { value: '8 ~ 17', className: 'text-rose-500 dark:text-rose-400' },
+    { value: '9 ~ 18', className: 'text-sky-500 dark:text-sky-400' },
+    { value: '10 ~ 19', className: 'text-emerald-500 dark:text-emerald-400' },
+    { value: '13 ~ 21', className: 'text-amber-500 dark:text-amber-400' }
   ]
 
   const selectedWorkTime = workTimeOptions.find(option => option.value === form.watch('user_work_time'))
@@ -112,7 +113,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
         user_name: initialData?.user_name || '',
         user_email: initialData?.user_email || '',
         user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
-        user_work_time: initialData?.user_work_time || '9 ~ 6',
+        user_work_time: initialData?.user_work_time || '9 ~ 18',
         join_date: initialData?.join_date || '',
         country_code: initialData?.country_code || 'KR'
       })

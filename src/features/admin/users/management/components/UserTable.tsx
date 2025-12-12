@@ -128,9 +128,10 @@ const UserTable = ({ value: users }: UserTableProps) => {
                       <Badge className={cn(
                         'text-xs whitespace-nowrap',
                         {
-                          'bg-rose-500 text-white': row.user_work_time === '8 ~ 5',
-                          'bg-sky-500 text-white': row.user_work_time === '9 ~ 6',
-                          'bg-emerald-500 text-white': row.user_work_time === '10 ~ 7'
+                          'bg-rose-500 text-white': row.user_work_time === '8 ~ 17',
+                          'bg-sky-500 text-white': row.user_work_time === '9 ~ 18',
+                          'bg-emerald-500 text-white': row.user_work_time === '10 ~ 19',
+                          'bg-amber-500 text-white': row.user_work_time === '13 ~ 21'
                         }
                       )}>
                         {row.user_work_time}

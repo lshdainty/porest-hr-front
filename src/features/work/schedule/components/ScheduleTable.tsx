@@ -37,19 +37,53 @@ const getPositionPercentage = (timeStr: string) => {
 /**
  * Parses work_time string like "9~6" to start and end time in "HH:MM" format
  */
+/**
+ * Work time color mapping based on start hour
+ */
+const workTimeColors: Record<string, { bg: string; text: string; border: string; badge: string }> = {
+  '8 ~ 17': {
+    bg: 'bg-rose-500/10',
+    text: 'text-rose-500 dark:text-rose-400',
+    border: 'border-rose-500/20',
+    badge: 'bg-rose-500/10 text-rose-500 dark:text-rose-400 hover:bg-rose-500/20 border-rose-500/20'
+  },
+  '9 ~ 18': {
+    bg: 'bg-sky-500/10',
+    text: 'text-sky-500 dark:text-sky-400',
+    border: 'border-sky-500/20',
+    badge: 'bg-sky-500/10 text-sky-500 dark:text-sky-400 hover:bg-sky-500/20 border-sky-500/20'
+  },
+  '10 ~ 19': {
+    bg: 'bg-emerald-500/10',
+    text: 'text-emerald-500 dark:text-emerald-400',
+    border: 'border-emerald-500/20',
+    badge: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20'
+  },
+  '13 ~ 21': {
+    bg: 'bg-amber-500/10',
+    text: 'text-amber-500 dark:text-amber-400',
+    border: 'border-amber-500/20',
+    badge: 'bg-amber-500/10 text-amber-500 dark:text-amber-400 hover:bg-amber-500/20 border-amber-500/20'
+  }
+};
+
+const getWorkTimeColor = (workTime: string) => {
+  return workTimeColors[workTime] || {
+    bg: 'bg-primary/10',
+    text: 'text-primary',
+    border: 'border-primary/20',
+    badge: 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'
+  };
+};
+
 const parseWorkTime = (workTime: string): { startTime: string; endTime: string } | null => {
   if (!workTime || workTime === '-') return null;
 
   const match = workTime.match(/(\d+) ~ (\d+)/);
   if (!match) return null;
 
-  let startHour = parseInt(match[1], 10);
-  let endHour = parseInt(match[2], 10);
-
-  // 끝 시간이 시작 시간보다 작으면 오후로 간주 (예: 6 -> 18)
-  if (endHour < startHour) {
-    endHour += 12;
-  }
+  const startHour = parseInt(match[1], 10);
+  const endHour = parseInt(match[2], 10);
 
   return {
     startTime: `${startHour.toString().padStart(2, '0')}:00`,
@@ -68,12 +102,39 @@ const formatTimeRange = (start: string, end: string, t: TFunction<'work', undefi
 };
 
 /**
+ * Break times configuration (in hours)
+ * 점심: 12~13시, 저녁: 18~19시
+ */
+const BREAK_TIMES = [
+  { start: 12, end: 13 }, // 점심
+  { start: 18, end: 19 }, // 저녁
+];
+
+/**
  * Calculate total work hours from start and end time
+ * 근무시간과 겹치는 첫 번째 휴식시간만 제외
  */
 const calculateWorkHours = (startTime: string, endTime: string, t: TFunction<'work', undefined>): string => {
   const [startH, startM] = startTime.split(':').map(Number);
   const [endH, endM] = endTime.split(':').map(Number);
-  const totalMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+  let totalMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+
+  const workStart = startH * 60 + startM;
+  const workEnd = endH * 60 + endM;
+
+  // 근무시간과 겹치는 첫 번째 휴식시간만 제외
+  for (const breakTime of BREAK_TIMES) {
+    const breakStart = breakTime.start * 60;
+    const breakEnd = breakTime.end * 60;
+
+    if (workStart < breakEnd && workEnd > breakStart) {
+      const overlapStart = Math.max(workStart, breakStart);
+      const overlapEnd = Math.min(workEnd, breakEnd);
+      totalMinutes -= (overlapEnd - overlapStart);
+      break; // 첫 번째 겹치는 휴식시간만 제외
+    }
+  }
+
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   return minutes > 0 ? t('schedule.hoursMinutes', { hours, minutes }) : t('schedule.hoursOnly', { hours });
@@ -137,13 +198,19 @@ const BackgroundGrid = () => {
   )
 }
 
-const ScheduleBar = ({ item, t }: { item: ScheduleItem; t: TFunction<'work', undefined> }) => {
+const ScheduleBar = ({ item, workTimeStr, t }: { item: ScheduleItem; workTimeStr: string; t: TFunction<'work', undefined> }) => {
   const left = getPositionPercentage(item.startTime);
   const width = getPositionPercentage(item.endTime) - left;
+  const colors = getWorkTimeColor(workTimeStr);
 
   return (
     <div
-      className="absolute top-1/2 -translate-y-1/2 h-12 rounded-lg border flex overflow-hidden text-xs shadow-sm group transition-all hover:z-10 hover:shadow-md cursor-pointer bg-primary/10 text-primary border-primary/20"
+      className={cn(
+        "absolute top-1/2 -translate-y-1/2 h-12 rounded-lg border flex overflow-hidden text-xs shadow-sm group transition-all hover:z-10 hover:shadow-md cursor-pointer",
+        colors.bg,
+        colors.text,
+        colors.border
+      )}
       style={{ left: `${left}%`, width: `${width}%` }}
     >
       {/* Content Area */}
@@ -182,6 +249,7 @@ const ScheduleTable = ({ users }: ScheduleTableProps) => {
               const totalWorkTime = workTime
                 ? calculateWorkHours(workTime.startTime, workTime.endTime, t)
                 : '-';
+              const colors = getWorkTimeColor(user.user_work_time);
 
               return (
                 <div key={user.user_id} className="flex group hover:bg-muted/50 transition-colors h-24">
@@ -194,7 +262,7 @@ const ScheduleTable = ({ users }: ScheduleTableProps) => {
                     <div className="flex flex-col items-center sm:items-start text-center sm:text-left overflow-hidden w-full">
                       <span className="font-bold text-foreground text-xs sm:text-sm truncate w-full">{user.user_name}</span>
                       <span className="text-[10px] sm:text-xs text-muted-foreground truncate w-full hidden sm:block">{user.main_department_name_kr || user.user_role_name}</span>
-                      <Badge variant="secondary" className="mt-1 w-fit text-[10px] px-1.5 py-0 h-5 bg-primary/10 text-primary hover:bg-primary/20 font-normal border-primary/20">
+                      <Badge variant="secondary" className={cn("mt-1 w-fit text-[10px] px-1.5 py-0 h-5 font-normal", colors.badge)}>
                         {totalWorkTime}
                       </Badge>
                     </div>
@@ -214,6 +282,7 @@ const ScheduleTable = ({ users }: ScheduleTableProps) => {
                             startTime: workTime.startTime,
                             endTime: workTime.endTime
                           }}
+                          workTimeStr={user.user_work_time}
                           t={t}
                         />
                       )}
