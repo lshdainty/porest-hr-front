@@ -22,6 +22,9 @@ export * from './schedule';
 // Vacation
 export * from './vacation';
 
+// Vacation Plan
+export * from './vacationPlan';
+
 // Holiday
 export * from './holiday';
 

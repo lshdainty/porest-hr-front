@@ -8,6 +8,7 @@ import {
   ChartLine,
   ChartNoAxesCombined,
   CircleDollarSign,
+  FolderKanban,
   HeartHandshake,
   Home,
   LayoutDashboard,
@@ -35,6 +36,7 @@ import { DuesPage } from '@/pages/DuesPage'
 import { HistoryPage } from '@/pages/HistoryPage'
 import { HolidayPage } from '@/pages/HolidayPage'
 import { NoticePage } from '@/pages/NoticePage'
+import { PlanPage } from '@/pages/PlanPage'
 import { PolicyPage } from '@/pages/PolicyPage'
 import { UserNoticePage } from '@/pages/UserNoticePage'
 import { ReportPage } from '@/pages/ReportPage'
@@ -242,6 +244,14 @@ export const routesConfig: RouteGroup[] = [
                 icon: ShieldEllipsis,
                 requiredPermissions: ['VACATION:MANAGE'],
                 component: PolicyPage,
+              },
+              {
+                id: 'admin-vacation-plan',
+                nameKey: 'menu.adminVacationPlan',
+                path: '/admin/vacation/plan',
+                icon: FolderKanban,
+                requiredPermissions: ['VACATION:MANAGE'],
+                component: PlanPage,
               },
             ],
           },
