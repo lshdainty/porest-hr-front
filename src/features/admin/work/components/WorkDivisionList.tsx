@@ -1,15 +1,15 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { Button } from '@/components/shadcn/button';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/shadcn/table';
 import { EmptyWorkDivision } from '@/features/admin/work/components/EmptyWorkDivision';
-import { useWorkDivisionQuery } from '@/hooks/queries/useWorks';
+import { useWorkDivisionLabelsQuery, useWorkDivisionQuery } from '@/hooks/queries/useWorks';
 import { WorkCodeResp } from '@/lib/api/work';
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
@@ -20,9 +20,10 @@ import { WorkDivisionListSkeleton } from './WorkDivisionListSkeleton';
 
 interface WorkDivisionListInnerProps {
   workDivisions: WorkCodeResp[];
+  parentWorkCodeId?: number;
 }
 
-const WorkDivisionListInner = ({ workDivisions }: WorkDivisionListInnerProps) => {
+const WorkDivisionListInner = ({ workDivisions, parentWorkCodeId }: WorkDivisionListInnerProps) => {
   const { t } = useTranslation('work');
   const [editingCode, setEditingCode] = useState<WorkCodeResp | null>(null);
   const [deletingCode, setDeletingCode] = useState<WorkCodeResp | null>(null);
@@ -47,7 +48,7 @@ const WorkDivisionListInner = ({ workDivisions }: WorkDivisionListInnerProps) =>
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={() => handleCreate()}>
+        <Button onClick={handleCreate}>
           <Plus className="mr-2 h-4 w-4" />
           {t('addWorkDivision')}
         </Button>
@@ -101,6 +102,7 @@ const WorkDivisionListInner = ({ workDivisions }: WorkDivisionListInnerProps) =>
         open={isEditOpen}
         onOpenChange={setIsEditOpen}
         workCode={editingCode}
+        parentWorkCodeId={parentWorkCodeId}
         onSuccess={() => {
           // Refetch is handled by React Query invalidation
         }}
@@ -120,6 +122,7 @@ const WorkDivisionListInner = ({ workDivisions }: WorkDivisionListInnerProps) =>
 
 const WorkDivisionList = () => {
   const { data: workDivisions, isLoading, error } = useWorkDivisionQuery();
+  const { data: divisionLabel } = useWorkDivisionLabelsQuery();
 
   return (
     <QueryAsyncBoundary
@@ -128,7 +131,10 @@ const WorkDivisionList = () => {
       emptyComponent={<EmptyWorkDivision />}
       isEmpty={(data) => !data || data.length === 0}
     >
-      <WorkDivisionListInner workDivisions={workDivisions || []} />
+      <WorkDivisionListInner
+        workDivisions={workDivisions || []}
+        parentWorkCodeId={divisionLabel?.work_code_id}
+      />
     </QueryAsyncBoundary>
   );
 };

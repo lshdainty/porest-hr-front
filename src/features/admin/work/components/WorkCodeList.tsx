@@ -1,16 +1,16 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { Button } from '@/components/shadcn/button';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/shadcn/table';
 import { EmptyWorkCode } from '@/features/admin/work/components/EmptyWorkCode';
 import { useWorkGroupsWithPartsQuery } from '@/hooks/queries/useWorks';
-import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
+import { WorkCodeResp, WorkGroupWithParts, WorkLabelWithParts } from '@/lib/api/work';
 import { Edit, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -63,7 +63,7 @@ const WorkCodeListInner = ({ workGroups }: WorkCodeListInnerProps) => {
           <TableBody>
             {workGroups?.map((group) => (
               <>
-                {/* Group Row */}
+                {/* Group Row (Option) - 최상위 그룹은 + 버튼 없음 */}
                 <TableRow key={group.work_code_id} className="bg-muted/50">
                   <TableCell className="font-medium pl-4">
                     {group.work_code_name}
@@ -73,14 +73,6 @@ const WorkCodeListInner = ({ workGroups }: WorkCodeListInnerProps) => {
                   <TableCell>{group.order_seq}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleCreate(group.work_code_id)}
-                        title={t('addSubCode')}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -99,34 +91,74 @@ const WorkCodeListInner = ({ workGroups }: WorkCodeListInnerProps) => {
                   </TableCell>
                 </TableRow>
 
-                {/* Parts Rows */}
-                {group.parts?.map((part: WorkCodeResp) => (
-                  <TableRow key={part.work_code_id}>
-                    <TableCell className="pl-12">
-                      └ {part.work_code_name}
-                    </TableCell>
-                    <TableCell>{part.work_code}</TableCell>
-                    <TableCell>{part.code_type}</TableCell>
-                    <TableCell>{part.order_seq}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(part)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(part)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                {/* Label Rows */}
+                {group.labels?.map((label: WorkLabelWithParts) => (
+                  <>
+                    <TableRow key={label.work_code_id} className="bg-muted/30">
+                      <TableCell className="pl-8">
+                        └ {label.work_code_name}
+                      </TableCell>
+                      <TableCell>{label.work_code}</TableCell>
+                      <TableCell>{label.code_type}</TableCell>
+                      <TableCell>{label.order_seq}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleCreate(label.work_code_id)}
+                            title={t('addSubCode')}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEdit(label)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(label)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+
+                    {/* Parts Rows (Option) */}
+                    {label.parts?.map((part: WorkCodeResp) => (
+                      <TableRow key={part.work_code_id}>
+                        <TableCell className="pl-16">
+                          └ {part.work_code_name}
+                        </TableCell>
+                        <TableCell>{part.work_code}</TableCell>
+                        <TableCell>{part.code_type}</TableCell>
+                        <TableCell>{part.order_seq}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(part)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(part)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </>
                 ))}
               </>
             ))}

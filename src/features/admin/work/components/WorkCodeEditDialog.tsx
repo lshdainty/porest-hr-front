@@ -1,29 +1,22 @@
 import { Button } from '@/components/shadcn/button';
 import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/shadcn/dialog';
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '@/components/shadcn/form';
 import { Input } from '@/components/shadcn/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/shadcn/select';
 import { usePostCreateWorkCodeMutation, usePutUpdateWorkCodeMutation } from '@/hooks/queries/useWorks';
-import { CodeType, WorkCodeResp } from '@/lib/api/work';
+import { WorkCodeResp } from '@/lib/api/work';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -33,7 +26,6 @@ import * as z from 'zod';
 const createFormSchema = (t: (key: string) => string) => z.object({
   work_code: z.string().min(1, t('codeRequired')),
   work_code_name: z.string().min(1, t('codeNameRequired')),
-  code_type: z.enum(['LABEL', 'OPTION']),
   parent_work_code_id: z.number().optional(),
   order_seq: z.coerce.number().optional(),
 });
@@ -69,7 +61,6 @@ const WorkCodeEditDialog = ({
     defaultValues: {
       work_code: '',
       work_code_name: '',
-      code_type: 'LABEL',
       parent_work_code_id: undefined,
       order_seq: 0,
     },
@@ -81,7 +72,6 @@ const WorkCodeEditDialog = ({
         form.reset({
           work_code: workCode.work_code,
           work_code_name: workCode.work_code_name,
-          code_type: workCode.code_type as CodeType,
           parent_work_code_id: workCode.parent_work_code_id,
           order_seq: workCode.order_seq,
         });
@@ -89,7 +79,6 @@ const WorkCodeEditDialog = ({
         form.reset({
           work_code: '',
           work_code_name: '',
-          code_type: 'LABEL',
           parent_work_code_id: parentWorkCodeId,
           order_seq: 0,
         });
@@ -115,7 +104,7 @@ const WorkCodeEditDialog = ({
       createWorkCode({
         work_code: values.work_code,
         work_code_name: values.work_code_name,
-        code_type: values.code_type as CodeType,
+        code_type: 'OPTION',
         parent_work_code_id: values.parent_work_code_id,
         order_seq: values.order_seq,
       }, {
@@ -157,27 +146,6 @@ const WorkCodeEditDialog = ({
                   <FormControl>
                     <Input placeholder={t('codeNamePlaceholder')} {...field} />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="code_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('type')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('typeSelect')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="LABEL">LABEL</SelectItem>
-                      <SelectItem value="OPTION">OPTION</SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

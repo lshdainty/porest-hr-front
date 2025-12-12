@@ -7,6 +7,7 @@ import { fetchGetSystemTypes, type TypeResp } from '@/lib/api/type'
 import {
   fetchDeleteWorkCode,
   fetchDeleteWorkHistory,
+  fetchGetRootLabel,
   fetchGetSystemCheckStatus,
   fetchGetTodayWorkStatus,
   fetchGetUnregisteredWorkDates,
@@ -81,7 +82,7 @@ export const useWorkGroupsQuery = () => {
   })
 }
 
-// 업무 그룹 + Parts 포함 조회 훅 (모든 Label과 Part를 한번에 조회하여 병합)
+// 업무 그룹 + Labels + Parts 포함 조회 훅 (모든 Label과 Part를 한번에 조회하여 병합)
 export const useWorkGroupsWithPartsQuery = () => {
   return useQuery<WorkGroupWithParts[]>({
     queryKey: workKeys.list({ type: 'groupsWithParts' }),
@@ -105,16 +106,16 @@ export const useWorkGroupsWithPartsQuery = () => {
       const mergedData: WorkGroupWithParts[] = workGroups.map(group => {
         // 해당 그룹의 라벨들 찾기
         const groupLabels = allLabels.filter(label => label.parent_work_code_id === group.work_code_id)
-        const groupLabelIds = groupLabels.map(label => label.work_code_id)
 
-        // 해당 라벨들의 파트들 찾기
-        const groupParts = allParts.filter(part =>
-          part.parent_work_code_id && groupLabelIds.includes(part.parent_work_code_id)
-        )
+        // 각 라벨에 해당하는 파트들 매핑
+        const labelsWithParts = groupLabels.map(label => ({
+          ...label,
+          parts: allParts.filter(part => part.parent_work_code_id === label.work_code_id)
+        }))
 
         return {
           ...group,
-          parts: groupParts
+          labels: labelsWithParts
         }
       })
 
@@ -146,6 +147,18 @@ export const useWorkDivisionQuery = () => {
   return useQuery<WorkCodeResp[]>({
     queryKey: workKeys.list({ type: 'division' }),
     queryFn: () => fetchGetWorkDivision()
+  })
+}
+
+// 업무 구분 라벨 조회 훅 (work_division 코드 정보만 반환)
+export const useWorkDivisionLabelsQuery = () => {
+  return useQuery<WorkCodeResp | null>({
+    queryKey: workKeys.list({ type: 'divisionLabel' }),
+    queryFn: async () => {
+      const rootLabels = await fetchGetRootLabel()
+      const workDivision = rootLabels.find(label => label.work_code === 'work_division')
+      return workDivision || null
+    }
   })
 }
 

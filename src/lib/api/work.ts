@@ -10,8 +10,12 @@ export interface WorkCodeResp {
   parent_work_code_id?: number
 }
 
-export interface WorkGroupWithParts extends WorkCodeResp {
+export interface WorkLabelWithParts extends WorkCodeResp {
   parts: WorkCodeResp[];
+}
+
+export interface WorkGroupWithParts extends WorkCodeResp {
+  labels: WorkLabelWithParts[];
 }
 
 export interface GetWorkPartLabelReq {
@@ -75,6 +79,21 @@ export interface WorkHistorySearchCondition {
 }
 
 // API Functions
+export async function fetchGetRootLabel(): Promise<WorkCodeResp[]> {
+  const resp: ApiResponse<WorkCodeResp[]> = await api.request({
+    method: 'get',
+    url: `/work-codes`,
+    params: {
+      parent_is_null: true,
+      type: 'LABEL'
+    }
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
+}
+
 export async function fetchGetWorkGroups(): Promise<WorkCodeResp[]> {
   const resp: ApiResponse<WorkCodeResp[]> = await api.request({
     method: 'get',
