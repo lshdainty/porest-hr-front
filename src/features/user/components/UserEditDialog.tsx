@@ -11,9 +11,8 @@ import { Skeleton } from '@/components/shadcn/skeleton';
 import { Spinner } from '@/components/shadcn/spinner';
 import config from '@/config/config';
 import { usePostUploadProfileMutation } from '@/hooks/queries/useUsers';
-import { useCountryCodeTypesQuery } from '@/hooks/queries/useTypes';
+import { useCountryCodeTypesQuery, useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
 import { GetUsersResp, type PutUserReq } from '@/lib/api/user';
-import { companyOptions } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
@@ -103,6 +102,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
   const formSchema = createFormSchema(t, tc);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfileMutation();
   const { data: countryCodeOptions } = useCountryCodeTypesQuery();
+  const { data: companyOptions } = useOriginCompanyTypesQuery();
   
   // 이미지 업로드 관련 상태 관리 - 초기값부터 완전한 URL로 설정
   const [profileImage, setProfileImage] = useState<string>(getFullImageUrl(user.profile_url || ''));
@@ -118,7 +118,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       user_id: '',
       user_email: '',
       user_birth: dayjs().format('YYYY-MM-DD'),
-      user_origin_company_type: companyOptions[0].company_type,
+      user_origin_company_type: companyOptions?.[0]?.code || '',
       lunar_yn: 'N',
       user_work_time: '9 ~ 18',
       country_code: 'KR',
@@ -129,7 +129,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
     if (open) {
       form.reset({
         ...user,
-        user_origin_company_type: user.user_origin_company_type || companyOptions[0].company_type,
+        user_origin_company_type: user.user_origin_company_type || companyOptions?.[0]?.code || '',
         lunar_yn: user.lunar_yn || 'N',
         country_code: user.country_code || 'KR',
       });
@@ -428,7 +428,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                             <SelectValue placeholder={t('edit.companyPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent>
-                            {companyOptions.map(option => <SelectItem key={option.company_type} value={option.company_type}>{option.company_name}</SelectItem>)}
+                            {companyOptions?.map(option => <SelectItem key={option.code} value={option.code}>{option.name}</SelectItem>)}
                           </SelectContent>
                         </Select>
                         <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
