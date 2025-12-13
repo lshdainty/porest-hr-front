@@ -19,15 +19,17 @@ const ManagementContent = () => {
     <div className='flex w-full h-full p-4 sm:p-6 md:p-8'>
       <div className='w-full flex flex-col h-full'>
         <h1 className='text-3xl font-bold mb-6 shrink-0'>{t('user.title')}</h1>
-        <div className='flex-1 min-h-0'>
+        <div className='flex-0'>
           <QueryAsyncBoundary
             queryState={{ isLoading, error, data: users }}
             loadingComponent={<ManagementContentSkeleton />}
             emptyComponent={<ManagementEmpty className="h-full flex items-center justify-center" />}
             isEmpty={(data) => !data || data.length === 0}
           >
-            <UserCompanyCard value={users || []} />
-            <UserTable value={users || []} />
+            <div className='flex flex-col gap-6 h-full mb-6'>
+              <UserCompanyCard value={users || []} />
+              <UserTable value={users || []} />
+            </div>
           </QueryAsyncBoundary>
         </div>
       </div>

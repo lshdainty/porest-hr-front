@@ -18,12 +18,15 @@ import { type GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
-import { EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface UserTableProps {
   value: GetUsersResp[];
 }
+
+const ROWS_PER_PAGE = 10;
 
 const UserTable = ({ value: users }: UserTableProps) => {
   const { t } = useTranslation('admin');
@@ -31,6 +34,10 @@ const UserTable = ({ value: users }: UserTableProps) => {
   const { mutate: putUser } = usePutUserMutation();
   const { mutate: deleteUser } = useDeleteUserMutation();
   const { data: companyTypes } = useOriginCompanyTypesQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = users.length > 0 ? Math.ceil(users.length / ROWS_PER_PAGE) : 1;
+  const paginatedUsers = users.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
 
   const {
     setShowInviteDialog,
@@ -63,7 +70,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
   };
 
   return (
-    <Card className='flex-1'>
+    <Card>
       <CardHeader>
         <div className='flex items-center justify-between'>
           <CardTitle>{t('user.list')}</CardTitle>
@@ -100,7 +107,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((row: GetUsersResp) => (
+                {paginatedUsers.map((row: GetUsersResp) => (
                   <TableRow
                     key={row.user_id}
                     className={cn(
@@ -236,6 +243,58 @@ const UserTable = ({ value: users }: UserTableProps) => {
           </div>
         ) : (
           <Empty />
+        )}
+        {users && users.length > 0 && (
+          <div className='flex items-center justify-between pt-4 border-t mt-4'>
+            <div className='text-sm text-muted-foreground'>
+              {users.length} row(s)
+            </div>
+            <div className='flex items-center space-x-6 lg:space-x-8'>
+              <div className='flex items-center space-x-2'>
+                <p className='text-sm font-medium'>
+                  Page {currentPage} of {totalPages}
+                </p>
+              </div>
+              <div className='flex items-center space-x-2'>
+                <Button
+                  variant='outline'
+                  className='h-8 w-8 p-0'
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage <= 1}
+                >
+                  <span className='sr-only'>Go to first page</span>
+                  <ChevronsLeft className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='outline'
+                  className='h-8 w-8 p-0'
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage <= 1}
+                >
+                  <span className='sr-only'>Go to previous page</span>
+                  <ChevronLeft className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='outline'
+                  className='h-8 w-8 p-0'
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage >= totalPages}
+                >
+                  <span className='sr-only'>Go to next page</span>
+                  <ChevronRight className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='outline'
+                  className='h-8 w-8 p-0'
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage >= totalPages}
+                >
+                  <span className='sr-only'>Go to last page</span>
+                  <ChevronsRight className='h-4 w-4' />
+                </Button>
+              </div>
+            </div>
+          </div>
         )}
       </CardContent>
 
