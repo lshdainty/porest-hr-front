@@ -16,12 +16,17 @@ export const UserCompanyStatsWidget = () => {
       emptyComponent={<UserCompanyStatsEmpty className="h-full" />}
       isEmpty={(data) => !data || data.length === 0}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-5 divide-y lg:divide-y-0 lg:divide-x divide-border h-full bg-card">
-        {companyStats.map((stat) => (
-          <div key={stat.id} className="p-6 h-full">
-            <UserCompanyStatsItem {...stat} />
-          </div>
-        ))}
+      <div className="overflow-hidden h-full bg-card">
+        <div className="flex flex-wrap -mt-px -ml-px min-h-full overflow-auto h-full">
+          {companyStats.map((stat) => (
+            <div
+              key={stat.id}
+              className="p-6 min-w-[180px] flex-1 border-l border-t border-border"
+            >
+              <UserCompanyStatsItem {...stat} />
+            </div>
+          ))}
+        </div>
       </div>
     </QueryAsyncBoundary>
   )

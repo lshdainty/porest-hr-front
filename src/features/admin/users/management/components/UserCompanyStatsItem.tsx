@@ -1,4 +1,5 @@
 import BigxdataLogo from '@/assets/img/bigxdata.svg';
+import BusinessinsightLogo from '@/assets/img/businessinsight.svg';
 import CnthothLogo from '@/assets/img/cnthoth.svg';
 import DtolLogo from '@/assets/img/dtol.svg';
 import InsightonLogo from '@/assets/img/insighton.svg';
@@ -49,6 +50,7 @@ export const getUserCompanyStatsConfig = (users: GetUsersResp[] = []): UserCompa
     'INSIGHTON': InsightonLogo,
     'CNTHOTH': CnthothLogo,
     'BIGXDATA': BigxdataLogo,
+    'BUSINESSINSIGHT': BusinessinsightLogo,
   };
 
   return Object.keys(counts).map(companyType => ({

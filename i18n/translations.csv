@@ -82,6 +82,7 @@ sidebar,menu.adminUsersDepartment,부서 관리,Department
 sidebar,menu.adminVacation,휴가 관리,Vacation
 sidebar,menu.adminVacationApproval,승인 및 부여,Approval & Grant
 sidebar,menu.adminVacationPolicy,휴가 정책,Policy
+sidebar,menu.adminVacationPlan,휴가 플랜,Plan
 sidebar,menu.adminAuthority,역할 및 권한,Role & Authority
 sidebar,menu.adminHoliday,공휴일 관리,Holiday
 sidebar,menu.adminWork,업무 코드,Work Code
@@ -456,6 +457,14 @@ admin,user.grantNoLimit,제한없음,No Limit
 admin,user.effectiveRange,유효,Effective
 admin,user.policyError,데이터를 불러오는 중 오류가 발생했습니다.,An error occurred while loading data.
 admin,user.policySaveError,휴가 정책 저장 중 오류,Error saving vacation policy
+admin,user.vacationPlan,휴가 플랜,Vacation Plan
+admin,user.vacationPlanTitle,휴가 플랜 부여,Assign Vacation Plan
+admin,user.unassignedPlans,미부여 플랜,Unassigned Plans
+admin,user.assignedPlans,부여된 플랜,Assigned Plans
+admin,user.searchPlan,플랜 검색...,Search plan...
+admin,user.planPolicyCount,정책 {{count}}개,{{count}} policies
+admin,user.planSaveError,플랜 저장 중 오류,Error saving plan
+admin,user.planError,플랜 정보를 불러오는 중 오류가 발생했습니다.,An error occurred while loading plan data.
 admin,user.statusPending,가입 대기,Pending
 admin,user.statusActive,가입 완료,Active
 admin,user.statusInactive,비활성,Inactive
@@ -571,6 +580,54 @@ vacation,policy.noSearchResults,검색 결과가 없습니다.,No search results
 vacation,policy.noSearchResultsDesc,검색 조건에 맞는 정책이 없습니다.,No policies match your search criteria.
 vacation,policy.noPolicies,등록된 휴가 정책이 없습니다.,No vacation policies registered.
 vacation,policy.noPoliciesDesc,새로운 휴가 정책을 등록해주세요.,Please register a new vacation policy.
+vacation,plan.title,휴가 플랜,Vacation Plan
+vacation,plan.management,휴가 플랜 관리,Vacation Plan Management
+vacation,plan.managementDesc,휴가 정책을 그룹화하여 플랜을 만들고 사용자에게 할당합니다.,Group vacation policies into plans and assign them to users.
+vacation,plan.addTitle,새 플랜 추가,Add New Plan
+vacation,plan.editTitle,플랜 수정,Edit Plan
+vacation,plan.deleteTitle,플랜 삭제,Delete Plan
+vacation,plan.code,플랜 코드,Plan Code
+vacation,plan.codePlaceholder,예: FULL_TIME,"e.g., FULL_TIME"
+vacation,plan.codeRequired,플랜 코드는 필수입니다.,Plan code is required.
+vacation,plan.codePattern,"영문, 숫자, 언더스코어만 사용 가능합니다.","Only letters, numbers, and underscores are allowed."
+vacation,plan.name,플랜 이름,Plan Name
+vacation,plan.namePlaceholder,예: 정규직 플랜,"e.g., Full-time Employee Plan"
+vacation,plan.nameRequired,플랜 이름은 필수입니다.,Plan name is required.
+vacation,plan.desc,플랜 설명,Plan Description
+vacation,plan.descPlaceholder,플랜에 대한 설명을 입력하세요.,Enter a description for the plan.
+vacation,plan.policies,포함된 정책,Included Policies
+vacation,plan.policyCount,{{count}}개 정책,{{count}} policies
+vacation,plan.noPolicies,포함된 정책 없음,No policies included
+vacation,plan.managePolicies,정책 관리,Manage Policies
+vacation,plan.selectPolicies,정책 선택,Select Policies
+vacation,plan.deleteConfirm,정말 '{{name}}' 휴가 플랜을 삭제하시겠습니까?,Are you sure you want to delete '{{name}}' vacation plan?
+vacation,plan.deleteWarning,플랜을 삭제하면 이 플랜이 할당된 모든 사용자에게서 회수됩니다.,Deleting this plan will revoke it from all assigned users.
+vacation,plan.totalCount,총 {{count}}개 플랜,Total {{count}} plans
+vacation,plan.searchPlaceholder,휴가 플랜 검색,Search vacation plans
+vacation,plan.noPlans,등록된 휴가 플랜이 없습니다.,No vacation plans registered.
+vacation,plan.noPlansDesc,새로운 휴가 플랜을 등록해주세요.,Please register a new vacation plan.
+vacation,plan.noSearchResults,검색 결과가 없습니다.,No search results.
+vacation,plan.noSearchResultsDesc,검색 조건에 맞는 플랜이 없습니다.,No plans match your search criteria.
+vacation,plan.assignToUser,사용자에게 플랜 할당,Assign Plan to User
+vacation,plan.revokeFromUser,플랜 회수,Revoke Plan
+vacation,plan.assignedUsers,할당된 사용자,Assigned Users
+vacation,plan.policyManagement,정책 관리,Policy Management
+vacation,plan.policyManagementDesc,이 플랜에 포함된 정책을 관리합니다.,Manage policies included in this plan.
+vacation,plan.availablePolicies,사용 가능한 정책,Available Policies
+vacation,plan.includedPolicies,포함된 정책,Included Policies
+vacation,plan.addPolicy,정책 추가,Add Policy
+vacation,plan.removePolicy,정책 제거,Remove Policy
+vacation,plan.saveChanges,변경 저장,Save Changes
+vacation,plan.userPlanManagement,사용자 플랜 관리,User Plan Management
+vacation,plan.userPlanManagementDesc,사용자에게 할당된 플랜을 관리합니다.,Manage plans assigned to users.
+vacation,plan.assignPlan,플랜 할당,Assign Plan
+vacation,plan.revokePlan,플랜 회수,Revoke Plan
+vacation,plan.noAssignedPlans,할당된 플랜이 없습니다.,No plans assigned.
+vacation,plan.assignSuccess,플랜이 성공적으로 할당되었습니다.,Plan assigned successfully.
+vacation,plan.revokeSuccess,플랜이 성공적으로 회수되었습니다.,Plan revoked successfully.
+vacation,plan.createSuccess,플랜이 성공적으로 생성되었습니다.,Plan created successfully.
+vacation,plan.updateSuccess,플랜이 성공적으로 수정되었습니다.,Plan updated successfully.
+vacation,plan.deleteSuccess,플랜이 성공적으로 삭제되었습니다.,Plan deleted successfully.
 vacation,stats.title,휴가 관리,Vacation Management
 vacation,stats.noUser,사용자 정보가 없습니다.,No user information available.
 vacation,stats.empty.title,휴가 현황 정보가 없습니다,No Vacation Statistics
