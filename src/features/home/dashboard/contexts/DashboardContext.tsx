@@ -70,7 +70,6 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
   const handleLayoutChange = useCallback((layout: any, allLayouts: any) => {
     setLayouts(allLayouts);
     if (isEditing) {
-      console.log('Current Layout Dimensions:', layout.map((l: any) => ({ id: l.i, w: l.w, h: l.h })));
       localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(allLayouts));
     }
   }, [isEditing]);
@@ -94,7 +93,8 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
-    setActiveWidgets(WIDGETS.map(w => w.id));
+    const defaultWidgetIds = defaultLayouts.lg.map((item: any) => item.i);
+    setActiveWidgets(defaultWidgetIds);
     localStorage.removeItem(LAYOUT_STORAGE_KEY);
     localStorage.removeItem(WIDGETS_STORAGE_KEY);
   };
