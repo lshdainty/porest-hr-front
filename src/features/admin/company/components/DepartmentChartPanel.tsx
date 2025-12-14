@@ -8,6 +8,7 @@ import { GetCompanyWithDepartment } from '@/lib/api/company';
 
 interface DepartmentChartPanelProps {
   departments: GetCompanyWithDepartment[];
+  showHeader?: boolean;
 }
 
 interface StyledNodeProps {
@@ -17,7 +18,8 @@ interface StyledNodeProps {
 }
 
 const DepartmentChartPanel = ({
-  departments
+  departments,
+  showHeader = true
 }: DepartmentChartPanelProps) => {
   const { t } = useTranslation('admin');
   const lineColor = useMemo(() => {
@@ -123,15 +125,17 @@ const DepartmentChartPanel = ({
 
   return (
     <div className='h-full flex flex-col'>
-      <div className='flex items-center justify-between p-4 border-b'>
-        <h2 className='text-lg font-semibold'>{t('department.chart')}</h2>
-        <div className='flex items-center space-x-2 h-8'>
-          <Users size={16} className='text-muted-foreground' />
-          <span className='text-sm text-muted-foreground'>
-            {t('department.totalCount', { count: getTotalDeptCount(departments) })}
-          </span>
+      {showHeader && (
+        <div className='flex items-center justify-between p-4 border-b'>
+          <h2 className='text-lg font-semibold'>{t('department.chart')}</h2>
+          <div className='flex items-center space-x-2 h-8'>
+            <Users size={16} className='text-muted-foreground' />
+            <span className='text-sm text-muted-foreground'>
+              {t('department.totalCount', { count: getTotalDeptCount(departments) })}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className='flex-1 overflow-auto'>
         <div className='min-w-max min-h-full p-8'>

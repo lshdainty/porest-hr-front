@@ -19,6 +19,7 @@ export const WIDGETS = [
   { id: 'today-work-status', labelKey: 'widget.workHistoryStatus', defaultH: 6, defaultW: 3, minW: 3, maxW: 12, minH: 6, maxH: 8 },
   { id: 'missing-work-history', labelKey: 'widget.monthlyWorkAlert', defaultH: 8, defaultW: 2, minW: 2, maxW: 2, minH: 8, maxH: 8 },
   { id: 'user-vacation-stats', labelKey: 'widget.allUserVacationStatus', defaultH: 8, defaultW: 6, minW: 4, maxW: 12, minH: 6, maxH: 12 },
+  { id: 'department-chart', labelKey: 'widget.departmentChart', defaultH: 12, defaultW: 8, minW: 6, maxW: 12, minH: 10, maxH: 20 },
 ]
 
 export const defaultLayouts = {

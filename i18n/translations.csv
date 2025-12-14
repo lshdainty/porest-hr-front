@@ -336,6 +336,7 @@ dashboard,widget.systemDailyCheck,시스템 데일리 체크,System Daily Check
 dashboard,widget.workHistoryStatus,업무이력 작성 현황,Work History Status
 dashboard,widget.monthlyWorkAlert,월별 업무 미작성 알림,Monthly Work Alert
 dashboard,widget.allUserVacationStatus,전체 유저 휴가 현황,All User Vacation Status
+dashboard,widget.departmentChart,조직도,Organization Chart
 dashboard,widget.empty.monthStats.title,월별 휴가 통계가 없습니다,No Monthly Vacation Statistics
 dashboard,widget.empty.monthStats.description,아직 휴가 사용 내역이 없습니다,No vacation usage history yet
 dashboard,save,저장,Save

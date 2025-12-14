@@ -16,6 +16,7 @@ import { UserVacationStatsWidget } from '@/features/home/dashboard/components/wi
 import { VacationHistoryWidget } from '@/features/home/dashboard/components/widgets/VacationHistory/VacationHistoryWidget';
 import { VacationRequestStatsWidget } from '@/features/home/dashboard/components/widgets/VacationRequestStatsWidget';
 import { VacationStatsWidget } from '@/features/home/dashboard/components/widgets/VacationStatsWidget';
+import { DepartmentChartWidget } from '@/features/home/dashboard/components/widgets/DepartmentChartWidget';
 import WidgetWrapper from '@/features/home/dashboard/components/WidgetWrapper';
 import { WIDGETS } from '@/features/home/dashboard/constants';
 import { useDashboardContext } from '@/features/home/dashboard/contexts/DashboardContext';
@@ -148,6 +149,10 @@ const DashboardContent = () => {
     'user-vacation-stats': {
       title: t('widget.allUserVacationStatus'),
       component: <UserVacationStatsWidget />
+    },
+    'department-chart': {
+      title: t('widget.departmentChart'),
+      component: <DepartmentChartWidget />
     }
   };
 
