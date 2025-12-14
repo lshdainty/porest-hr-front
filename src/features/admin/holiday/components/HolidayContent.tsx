@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select'
+import { BulkGenerateHolidayDialog } from '@/features/admin/holiday/components/BulkGenerateHolidayDialog'
 import { EmptyHoliday } from '@/features/admin/holiday/components/EmptyHoliday'
 import { HolidayEditDialog } from '@/features/admin/holiday/components/HolidayEditDialog'
 import { HolidayList } from '@/features/admin/holiday/components/HolidayList'
@@ -143,6 +144,8 @@ const HolidayContent = () => {
                 ))}
               </SelectContent>
             </Select>
+
+            <BulkGenerateHolidayDialog onSuccess={() => refetch()} />
 
             <HolidayEditDialog
               isOpen={isDialogOpen}
