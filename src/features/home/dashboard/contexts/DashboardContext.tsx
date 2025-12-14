@@ -1,7 +1,7 @@
 import { toast } from '@/components/shadcn/sonner';
 import { useUpdateDashboardMutation } from '@/hooks/queries/useUsers';
 import i18n from '@/config/i18n';
-import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useRef, useState } from 'react';
 import { defaultLayouts, LAYOUT_STORAGE_KEY, WIDGETS, WIDGETS_STORAGE_KEY } from '../constants';
 
 interface DashboardContextType {
@@ -61,11 +61,25 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
     return saved ? JSON.parse(saved) : WIDGETS.map(w => w.id);
   });
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditingState] = useState(false);
   const [isToolboxOpen, setIsToolboxOpen] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<any>(null);
   const [currentBreakpoint, setCurrentBreakpoint] = useState('lg');
   const { mutate: updateDashboard } = useUpdateDashboardMutation();
+
+  // 편집 모드 진입 시 상태 백업 (취소 시 복원용)
+  const backupRef = useRef<{ layouts: any; activeWidgets: string[] } | null>(null);
+
+  const setIsEditing = useCallback((editing: boolean) => {
+    if (editing && !isEditing) {
+      // 편집 모드 진입 시 현재 상태 백업
+      backupRef.current = {
+        layouts: JSON.parse(JSON.stringify(layouts)),
+        activeWidgets: [...activeWidgets]
+      };
+    }
+    setIsEditingState(editing);
+  }, [isEditing, layouts, activeWidgets]);
 
   const handleLayoutChange = useCallback((layout: any, allLayouts: any) => {
     setLayouts(allLayouts);
@@ -135,9 +149,10 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
       },
       {
         onSuccess: () => {
+          backupRef.current = null;
           setIsToolboxOpen(false);
           // Delay state change to allow SpeedDial to close smoothly
-          setTimeout(() => setIsEditing(false), 300);
+          setTimeout(() => setIsEditingState(false), 300);
         },
         onError: () => {
           toast.error(i18n.t('dashboard:saveError'));
@@ -147,18 +162,16 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
   };
 
   const handleCancel = () => {
-    const savedLayouts = localStorage.getItem(LAYOUT_STORAGE_KEY);
-    const savedWidgets = localStorage.getItem(WIDGETS_STORAGE_KEY);
-    
-    if (savedLayouts) setLayouts(JSON.parse(savedLayouts));
-    else setLayouts(defaultLayouts);
-    
-    if (savedWidgets) setActiveWidgets(JSON.parse(savedWidgets));
-    else setActiveWidgets(WIDGETS.map(w => w.id));
+    // 백업된 상태로 복원
+    if (backupRef.current) {
+      setLayouts(backupRef.current.layouts);
+      setActiveWidgets(backupRef.current.activeWidgets);
+      backupRef.current = null;
+    }
 
     setIsToolboxOpen(false);
     // Delay state change to allow SpeedDial to close smoothly
-    setTimeout(() => setIsEditing(false), 300);
+    setTimeout(() => setIsEditingState(false), 300);
   };
 
   return (
