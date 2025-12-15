@@ -25,7 +25,6 @@ import {
 import { toast } from '@/components/shadcn/sonner';
 import { Spinner } from '@/components/shadcn/spinner';
 import { usePermission } from '@/contexts/PermissionContext';
-import { useUser } from '@/contexts/UserContext';
 import { useUpdateEvent } from '@/features/home/calendar/hooks/use-update-event';
 import type { TEventColor } from '@/features/home/calendar/types';
 import { calendarTypes } from '@/features/home/calendar/types';
@@ -80,7 +79,6 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   const { t } = useTranslation('calendar');
   const { t: tc } = useTranslation('common');
   const [internalOpen, setInternalOpen] = React.useState(false)
-  const { loginUser } = useUser()
   const { hasAnyPermission } = usePermission()
   const formSchema = createFormSchema(t);
 
@@ -130,8 +128,9 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
     }
   }, [watchedStartDate, form]);
 
+  // 이벤트 소유자의 휴가 목록 조회 (VACATION:MANAGE 권한이 있으면 다른 유저 이벤트 수정 가능)
   const {data: vacations} = useAvailableVacationsQuery(
-    loginUser?.user_id || '',
+    event.user.id,
     dayjs(eventStartDate).format('YYYY-MM-DDTHH:mm:ss')
   );
 
@@ -158,9 +157,10 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   const { updateEvent, isPending } = useUpdateEvent();
 
   const onSubmit = (values: EditEventFormValues) => {
+    // 이벤트 소유자의 ID 사용 (VACATION:MANAGE 권한이 있으면 다른 유저 이벤트 수정 가능)
     updateEvent({
       eventId: event.id,
-      userId: loginUser?.user_id || '',
+      userId: event.user.id,
       calendarType: values.calendarType,
       vacationType: values.vacationType,
       desc: values.desc,

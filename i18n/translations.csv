@@ -420,6 +420,8 @@ vacation,request.approved,승인,Approved
 vacation,request.rejected,반려,Rejected
 calendar,addEvent.title,일정 등록,Add Event
 calendar,addEvent.description,일정 정보를 입력해주세요.,Please enter event information.
+calendar,addEvent.targetUser,대상 사용자,Target User
+calendar,addEvent.selectUserPlaceholder,사용자를 선택해주세요,Select a user
 calendar,addEvent.calendarType,일정 타입,Event Type
 calendar,addEvent.calendarTypeRequired,일정 타입을 선택해주세요.,Please select an event type.
 calendar,addEvent.vacation,휴가,Vacation

@@ -9,6 +9,7 @@ import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { Spinner } from '@/components/shadcn/spinner';
 import { usePermission } from '@/contexts/PermissionContext';
+import { useUser } from '@/contexts/UserContext';
 import { EditEventDialog } from '@/features/home/calendar/components/dialogs/edit-event-dialog';
 import { useDeleteEvent } from '@/features/home/calendar/hooks/use-delete-event';
 
@@ -27,11 +28,18 @@ export function EventDetailsDialog({ event, children }: IProps) {
 
   const { deleteEvent, isPending } = useDeleteEvent();
   const { hasAnyPermission } = usePermission();
+  const { loginUser } = useUser();
+
+  // 본인 이벤트 여부 확인
+  const isOwnEvent = loginUser?.user_id === event.user.id;
 
   // 권한 체크: 이벤트 타입에 따라 권한 확인
   const eventType = event.type.type; // 'vacation' | 'schedule'
-  const canModifyVacation = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE']);
-  const canModifySchedule = hasAnyPermission(['SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
+
+  // 휴가: (본인 이벤트 && VACATION:USE) || VACATION:MANAGE
+  // 스케줄: (본인 이벤트 && SCHEDULE:WRITE) || SCHEDULE:MANAGE
+  const canModifyVacation = (isOwnEvent && hasAnyPermission(['VACATION:USE'])) || hasAnyPermission(['VACATION:MANAGE']);
+  const canModifySchedule = (isOwnEvent && hasAnyPermission(['SCHEDULE:WRITE'])) || hasAnyPermission(['SCHEDULE:MANAGE']);
 
   // 해당 이벤트 타입에 대한 수정/삭제 권한
   const canModify = eventType === 'vacation' ? canModifyVacation : canModifySchedule;
