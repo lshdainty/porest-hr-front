@@ -28,12 +28,14 @@ import {
   useBulkSaveHolidaysMutation,
   useRecurringHolidaysPreviewQuery,
 } from '@/hooks/queries/useHolidays'
-import { type BulkSaveHolidayItem, type GetRecurringHolidaysPreviewResp } from '@/lib/api/holiday'
-import { CalendarPlus, Loader2 } from 'lucide-react'
+import { type BulkSaveHolidayItem, type GetHolidaysResp, type GetRecurringHolidaysPreviewResp, type PostHolidayReq } from '@/lib/api/holiday'
+import { CalendarPlus, Loader2, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
+import { HolidayEditDialog } from './HolidayEditDialog'
+import { HolidayDeleteDialog } from './HolidayDeleteDialog'
 
 interface BulkGenerateHolidayDialogProps {
   trigger?: React.ReactNode
@@ -62,6 +64,15 @@ const BulkGenerateHolidayDialog = ({
   const [selectedHolidays, setSelectedHolidays] = useState<Set<number>>(new Set())
   const [isPreviewLoaded, setIsPreviewLoaded] = useState(false)
 
+  // 로컬 프리뷰 데이터 (수정/삭제 가능)
+  const [localPreviewHolidays, setLocalPreviewHolidays] = useState<GetRecurringHolidaysPreviewResp[]>([])
+
+  // 수정/추가 dialog 상태
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [editingHoliday, setEditingHoliday] = useState<GetHolidaysResp | null>(null)
+  const [isAddMode, setIsAddMode] = useState(false)
+
   const { data: countryTypes } = useCountryCodeTypesQuery()
   const {
     data: previewHolidays,
@@ -77,11 +88,15 @@ const BulkGenerateHolidayDialog = ({
     if (!isOpen) {
       setIsPreviewLoaded(false)
       setSelectedHolidays(new Set())
+      setLocalPreviewHolidays([])
+      setEditingIndex(null)
+      setEditingHoliday(null)
     }
   }, [isOpen])
 
   useEffect(() => {
     if (previewHolidays) {
+      setLocalPreviewHolidays([...previewHolidays])
       setSelectedHolidays(new Set(previewHolidays.map((_, index) => index)))
     }
   }, [previewHolidays])
@@ -92,8 +107,8 @@ const BulkGenerateHolidayDialog = ({
   }
 
   const handleSelectAll = (checked: boolean) => {
-    if (checked && previewHolidays) {
-      setSelectedHolidays(new Set(previewHolidays.map((_, index) => index)))
+    if (checked && localPreviewHolidays.length > 0) {
+      setSelectedHolidays(new Set(localPreviewHolidays.map((_, index) => index)))
     } else {
       setSelectedHolidays(new Set())
     }
@@ -109,10 +124,89 @@ const BulkGenerateHolidayDialog = ({
     setSelectedHolidays(newSelected)
   }
 
-  const handleSave = () => {
-    if (!previewHolidays || selectedHolidays.size === 0) return
+  // 추가 버튼 클릭
+  const handleAddClick = () => {
+    setEditingHoliday(null)
+    setEditingIndex(null)
+    setIsAddMode(true)
+    setIsEditDialogOpen(true)
+  }
 
-    const holidaysToSave: BulkSaveHolidayItem[] = previewHolidays
+  // 수정 버튼 클릭
+  const handleEditClick = (index: number) => {
+    const holiday = localPreviewHolidays[index]
+    // GetHolidaysResp 형태로 변환 (holiday_id는 임시값)
+    setEditingHoliday({
+      holiday_id: index, // 임시 ID로 index 사용
+      holiday_name: holiday.holiday_name,
+      holiday_date: holiday.holiday_date,
+      holiday_type: holiday.holiday_type,
+      holiday_icon: holiday.holiday_icon,
+      country_code: holiday.country_code,
+      lunar_yn: holiday.lunar_yn,
+      lunar_date: holiday.lunar_date,
+      is_recurring: holiday.is_recurring,
+    })
+    setEditingIndex(index)
+    setIsAddMode(false)
+    setIsEditDialogOpen(true)
+  }
+
+  // 수정/추가 dialog에서 저장
+  const handleEditSave = (data: PostHolidayReq) => {
+    const newHoliday: GetRecurringHolidaysPreviewResp = {
+      holiday_name: data.holiday_name,
+      holiday_date: data.holiday_date,
+      holiday_type: data.holiday_type,
+      holiday_icon: data.holiday_icon,
+      country_code: data.country_code,
+      lunar_yn: data.lunar_yn,
+      lunar_date: data.lunar_date,
+      is_recurring: data.is_recurring,
+    }
+
+    if (isAddMode) {
+      // 추가 모드: 새 항목을 목록에 추가하고 선택 상태로 설정
+      setLocalPreviewHolidays([...localPreviewHolidays, newHoliday])
+      setSelectedHolidays(new Set([...selectedHolidays, localPreviewHolidays.length]))
+      setIsPreviewLoaded(true)
+    } else if (editingIndex !== null) {
+      // 수정 모드: 기존 항목 업데이트
+      const updatedHolidays = [...localPreviewHolidays]
+      updatedHolidays[editingIndex] = newHoliday
+      setLocalPreviewHolidays(updatedHolidays)
+    }
+
+    setIsEditDialogOpen(false)
+    setEditingIndex(null)
+    setEditingHoliday(null)
+    setIsAddMode(false)
+  }
+
+  // 삭제 버튼 클릭 (로컬 state에서 제거)
+  const handleDeleteConfirm = (holiday_id: number) => {
+    // holiday_id는 실제로 index임
+    const index = holiday_id
+    const newHolidays = localPreviewHolidays.filter((_, i) => i !== index)
+    setLocalPreviewHolidays(newHolidays)
+
+    // 선택된 항목도 업데이트 (index가 밀리므로 재설정)
+    const newSelected = new Set<number>()
+    selectedHolidays.forEach((selectedIndex) => {
+      if (selectedIndex < index) {
+        newSelected.add(selectedIndex)
+      } else if (selectedIndex > index) {
+        newSelected.add(selectedIndex - 1)
+      }
+      // selectedIndex === index인 경우는 삭제된 항목이므로 추가하지 않음
+    })
+    setSelectedHolidays(newSelected)
+  }
+
+  const handleSave = () => {
+    if (localPreviewHolidays.length === 0 || selectedHolidays.size === 0) return
+
+    const holidaysToSave: BulkSaveHolidayItem[] = localPreviewHolidays
       .filter((_, index) => selectedHolidays.has(index))
       .map((holiday) => ({
         holiday_name: holiday.holiday_name,
@@ -154,7 +248,7 @@ const BulkGenerateHolidayDialog = ({
   }
 
   const isAllSelected =
-    previewHolidays && previewHolidays.length > 0 && selectedHolidays.size === previewHolidays.length
+    localPreviewHolidays.length > 0 && selectedHolidays.size === localPreviewHolidays.length
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -211,6 +305,12 @@ const BulkGenerateHolidayDialog = ({
               t('holiday.loadPreview')
             )}
           </Button>
+
+          <div className="flex-1" />
+
+          <Button variant="outline" onClick={handleAddClick}>
+            {tc('add')}
+          </Button>
         </div>
 
         {isPreviewLoaded && (
@@ -219,7 +319,7 @@ const BulkGenerateHolidayDialog = ({
               <div className="flex items-center justify-center h-40">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
-            ) : previewHolidays && previewHolidays.length > 0 ? (
+            ) : localPreviewHolidays.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -229,15 +329,19 @@ const BulkGenerateHolidayDialog = ({
                         onCheckedChange={handleSelectAll}
                       />
                     </TableHead>
-                    <TableHead className="w-12">{t('holiday.icon')}</TableHead>
-                    <TableHead>{t('holiday.name')}</TableHead>
-                    <TableHead>{t('holiday.date')}</TableHead>
-                    <TableHead>{t('holiday.type')}</TableHead>
-                    <TableHead>{t('holiday.lunarYn')}</TableHead>
+                    <TableHead className="text-center">
+                      <div>아이콘</div>
+                      <div className="text-xs text-muted-foreground">(이모지)</div>
+                    </TableHead>
+                    <TableHead className="min-w-[120px]">{t('holiday.name')}</TableHead>
+                    <TableHead className="min-w-[110px]">{t('holiday.date')}</TableHead>
+                    <TableHead className="min-w-[100px]">{t('holiday.type')}</TableHead>
+                    <TableHead className="min-w-[80px]">{t('holiday.lunarYn')}</TableHead>
+                    <TableHead className="w-20 text-center">{tc('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {previewHolidays.map((holiday, index) => (
+                  {localPreviewHolidays.map((holiday, index) => (
                     <TableRow key={index}>
                       <TableCell>
                         <Checkbox
@@ -256,6 +360,41 @@ const BulkGenerateHolidayDialog = ({
                       <TableCell>
                         {holiday.lunar_yn === 'Y' ? t('holiday.lunarYes') : t('holiday.lunarNo')}
                       </TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => handleEditClick(index)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <HolidayDeleteDialog
+                            holiday={{
+                              holiday_id: index,
+                              holiday_name: holiday.holiday_name,
+                              holiday_date: holiday.holiday_date,
+                              holiday_type: holiday.holiday_type,
+                              holiday_icon: holiday.holiday_icon,
+                              country_code: holiday.country_code,
+                              lunar_yn: holiday.lunar_yn,
+                              lunar_date: holiday.lunar_date,
+                              is_recurring: holiday.is_recurring,
+                            }}
+                            trigger={
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            }
+                            onDelete={handleDeleteConfirm}
+                          />
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -270,9 +409,9 @@ const BulkGenerateHolidayDialog = ({
 
         <div className="flex items-center justify-between pt-4 border-t">
           <div className="text-sm text-muted-foreground">
-            {previewHolidays && isPreviewLoaded && (
+            {isPreviewLoaded && localPreviewHolidays.length > 0 && (
               <>
-                {t('holiday.selectedCount', { count: selectedHolidays.size })} / {previewHolidays.length}
+                {t('holiday.selectedCount', { count: selectedHolidays.size })} / {localPreviewHolidays.length}
               </>
             )}
           </div>
@@ -299,6 +438,20 @@ const BulkGenerateHolidayDialog = ({
             </Button>
           </div>
         </div>
+
+        {/* 수정 Dialog */}
+        <HolidayEditDialog
+          isOpen={isEditDialogOpen}
+          onOpenChange={(open) => {
+            setIsEditDialogOpen(open)
+            if (!open) {
+              setEditingIndex(null)
+              setEditingHoliday(null)
+            }
+          }}
+          editingHoliday={editingHoliday}
+          onSave={handleEditSave}
+        />
       </DialogContent>
     </Dialog>
   )

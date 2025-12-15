@@ -46,7 +46,13 @@ interface InputDatePickerProps {
   disabled?: boolean
   id?: string
   'data-invalid'?: boolean
+  startMonth?: Date // 선택 가능한 시작 월
+  endMonth?: Date // 선택 가능한 끝 월
 }
+
+// 기본 연도 범위 설정 (컴포넌트 외부에서 한 번만 생성)
+const DEFAULT_START_MONTH = new Date(1900, 0, 1)
+const DEFAULT_END_MONTH = new Date(new Date().getFullYear() + 100, 11, 31)
 
 export function InputDatePicker({
   value,
@@ -55,7 +61,9 @@ export function InputDatePicker({
   placeholder = "yyyy-mm-dd",
   disabled = false,
   id,
-  'data-invalid': dataInvalid
+  'data-invalid': dataInvalid,
+  startMonth = DEFAULT_START_MONTH,
+  endMonth = DEFAULT_END_MONTH,
 }: InputDatePickerProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -139,6 +147,8 @@ export function InputDatePicker({
             month={month}
             onMonthChange={setMonth}
             onSelect={handleDateSelect}
+            startMonth={startMonth}
+            endMonth={endMonth}
           />
         </PopoverContent>
       </Popover>

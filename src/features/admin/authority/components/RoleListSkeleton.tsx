@@ -1,4 +1,3 @@
-import { ScrollArea } from '@/components/shadcn/scrollArea';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
 const RoleListSkeleton = () => {
@@ -8,7 +7,7 @@ const RoleListSkeleton = () => {
         <Skeleton className="h-6 w-24" />
         <Skeleton className="h-8 w-8" />
       </div>
-      <ScrollArea className="flex-1">
+      <div className="flex-1 overflow-hidden">
         <div className="p-2">
           {Array.from({ length: 6 }).map((_, index) => (
             <div
@@ -26,7 +25,7 @@ const RoleListSkeleton = () => {
             </div>
           ))}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };

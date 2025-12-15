@@ -26,6 +26,7 @@ common,time,시간,Time
 common,status,상태,Status
 common,type,유형,Type
 common,action,작업,Action
+common,actions,작업,Actions
 common,detail,상세,Detail
 common,total,합계,Total
 common,all,전체,All
