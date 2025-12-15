@@ -26,6 +26,7 @@ common,time,시간,Time
 common,status,상태,Status
 common,type,유형,Type
 common,action,작업,Action
+common,actions,작업,Actions
 common,detail,상세,Detail
 common,total,합계,Total
 common,all,전체,All
@@ -168,7 +169,18 @@ admin,holiday.noHolidays,등록된 공휴일이 없습니다,No holidays registe
 admin,holiday.noHolidaysDesc,새로운 공휴일을 추가해보세요,Try adding a new holiday
 admin,holiday.addFirst,첫 번째 공휴일 추가,Add First Holiday
 admin,holiday.addBtn,추가,Add
+admin,holiday.addHoliday,공휴일 추가,Add Holiday
 admin,holiday.formDescription,공휴일 정보를 입력해주세요.,Please enter holiday information.
+admin,holiday.bulkGenerateBtn,일괄 생성,Bulk Generate
+admin,holiday.bulkGenerateTitle,반복 공휴일 일괄 생성,Bulk Generate Recurring Holidays
+admin,holiday.bulkGenerateDescription,매년 반복되는 공휴일을 선택한 연도로 일괄 생성합니다. 음력 공휴일은 자동으로 양력 날짜로 변환됩니다.,Bulk generate recurring holidays for the selected year. Lunar holidays will be automatically converted to solar dates.
+admin,holiday.loadPreview,불러오기,Load
+admin,holiday.noRecurringHolidays,반복 공휴일이 없습니다,No recurring holidays found
+admin,holiday.selectedCount,{{count}}개 선택됨,{{count}} selected
+admin,holiday.bulkSaveSuccess,{{count}}개의 공휴일이 저장되었습니다,{{count}} holidays saved successfully
+admin,holiday.bulkSaveError,공휴일 저장에 실패했습니다,Failed to save holidays
+admin,holiday.yearPlaceholder,연도 선택,Select year
+admin,holiday.countryPlaceholder,국가 선택,Select country
 admin,user.title,사용자 관리,User Management
 admin,user.inviteTitle,사용자 초대,Invite User
 admin,user.editTitle,사용자 수정,Edit User
@@ -336,6 +348,7 @@ dashboard,widget.systemDailyCheck,시스템 데일리 체크,System Daily Check
 dashboard,widget.workHistoryStatus,업무이력 작성 현황,Work History Status
 dashboard,widget.monthlyWorkAlert,월별 업무 미작성 알림,Monthly Work Alert
 dashboard,widget.allUserVacationStatus,전체 유저 휴가 현황,All User Vacation Status
+dashboard,widget.departmentChart,조직도,Organization Chart
 dashboard,widget.empty.monthStats.title,월별 휴가 통계가 없습니다,No Monthly Vacation Statistics
 dashboard,widget.empty.monthStats.description,아직 휴가 사용 내역이 없습니다,No vacation usage history yet
 dashboard,save,저장,Save

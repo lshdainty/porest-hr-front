@@ -1,5 +1,4 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
-import { ScrollArea } from "@/components/shadcn/scrollArea";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { useIsMobile } from "@/hooks/useMobile";
 
@@ -12,7 +11,7 @@ const RoleListSkeletonContent = () => (
       </div>
       <Skeleton className="h-8 w-8" />
     </div>
-    <ScrollArea className="flex-1">
+    <div className="flex-1 overflow-hidden">
       <div className="p-2 space-y-1">
         {Array.from({ length: 8 }).map((_, index) => (
           <div
@@ -23,7 +22,7 @@ const RoleListSkeletonContent = () => (
           </div>
         ))}
       </div>
-    </ScrollArea>
+    </div>
   </div>
 );
 

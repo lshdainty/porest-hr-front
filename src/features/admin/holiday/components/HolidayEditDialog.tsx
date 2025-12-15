@@ -90,14 +90,8 @@ const HolidayEditDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      {trigger ? (
+      {trigger && (
         <DialogTrigger asChild>{trigger}</DialogTrigger>
-      ) : (
-        <DialogTrigger asChild>
-          <Button className='flex items-center gap-2'>
-            {t('holiday.addBtn')}
-          </Button>
-        </DialogTrigger>
       )}
       <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>

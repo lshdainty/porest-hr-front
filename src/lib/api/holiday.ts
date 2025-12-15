@@ -98,3 +98,64 @@ export async function fetchDeleteHoliday(holidayId: string): Promise<any> {
 
   return resp.data;
 }
+
+// 반복 공휴일 프리뷰 Request/Response Types
+export interface GetRecurringHolidaysPreviewResp {
+  holiday_name: string
+  holiday_date: string
+  holiday_type: string
+  holiday_icon: string
+  country_code: string
+  lunar_yn: string
+  lunar_date: string
+  is_recurring: string
+}
+
+export interface BulkSaveHolidayItem {
+  holiday_name: string
+  holiday_date: string
+  holiday_type: string
+  holiday_icon: string
+  country_code: string
+  lunar_yn: string
+  lunar_date: string
+  is_recurring: string
+}
+
+export interface PostBulkHolidaysReq {
+  holidays: BulkSaveHolidayItem[]
+}
+
+export interface PostBulkHolidaysResp {
+  saved_count: number
+}
+
+// 반복 공휴일 프리뷰 조회
+export async function fetchGetRecurringHolidaysPreview(targetYear: number, countryCode: string): Promise<GetRecurringHolidaysPreviewResp[]> {
+  const params = new URLSearchParams({
+    target_year: String(targetYear),
+    country_code: countryCode
+  });
+
+  const resp: ApiResponse<GetRecurringHolidaysPreviewResp[]> = await api.request({
+    method: 'get',
+    url: `/holidays/recurring/preview?${params.toString()}`
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
+}
+
+// 공휴일 일괄 저장
+export async function fetchPostBulkHolidays(data: PostBulkHolidaysReq): Promise<PostBulkHolidaysResp> {
+  const resp: ApiResponse<PostBulkHolidaysResp> = await api.request({
+    method: 'post',
+    url: `/holidays/bulk`,
+    data
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
+}

@@ -6,9 +6,14 @@ import { createQueryKeys } from '@/constants/query-keys'
 import {
   fetchDeleteHoliday,
   fetchGetHolidaysByStartEndDate,
+  fetchGetRecurringHolidaysPreview,
+  fetchPostBulkHolidays,
   fetchPostHoliday,
   fetchPutHoliday,
   type GetHolidaysResp,
+  type GetRecurringHolidaysPreviewResp,
+  type PostBulkHolidaysReq,
+  type PostBulkHolidaysResp,
   type PostHolidayReq,
   type PutHolidayReq
 } from '@/lib/api/holiday'
@@ -54,6 +59,27 @@ export const useDeleteHolidayMutation = () => {
 
   return useMutation<any, Error, string>({
     mutationFn: (holidayId: string) => fetchDeleteHoliday(holidayId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: holidayKeys.lists() })
+    }
+  })
+}
+
+// 반복 공휴일 프리뷰 조회 훅
+export const useRecurringHolidaysPreviewQuery = (targetYear: number, countryCode: string, enabled: boolean = false) => {
+  return useQuery<GetRecurringHolidaysPreviewResp[]>({
+    queryKey: holidayKeys.detail({ targetYear, countryCode, type: 'recurringPreview' }),
+    queryFn: () => fetchGetRecurringHolidaysPreview(targetYear, countryCode),
+    enabled: enabled && !!targetYear && !!countryCode
+  })
+}
+
+// 공휴일 일괄 저장 Mutation 훅
+export const useBulkSaveHolidaysMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<PostBulkHolidaysResp, Error, PostBulkHolidaysReq>({
+    mutationFn: (data: PostBulkHolidaysReq) => fetchPostBulkHolidays(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: holidayKeys.lists() })
     }

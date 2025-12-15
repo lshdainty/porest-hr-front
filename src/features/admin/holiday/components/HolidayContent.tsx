@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select'
+import { BulkGenerateHolidayDialog } from '@/features/admin/holiday/components/BulkGenerateHolidayDialog'
 import { EmptyHoliday } from '@/features/admin/holiday/components/EmptyHoliday'
 import { HolidayEditDialog } from '@/features/admin/holiday/components/HolidayEditDialog'
 import { HolidayList } from '@/features/admin/holiday/components/HolidayList'
@@ -118,43 +119,49 @@ const HolidayContent = () => {
             <p className='text-sm md:text-base text-muted-foreground mt-1'>{t('holiday.description')}</p>
           </div>
 
-          <div className='flex items-center gap-2'>
-            <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-              <SelectTrigger className='flex-1 md:w-[140px]'>
-                <SelectValue placeholder={t('holiday.countryPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                {countryTypes?.map((country) => (
-                  <SelectItem key={country.code} value={country.code}>
-                    {country.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={String(selectedYear)} onValueChange={(value) => setSelectedYear(Number(value))}>
-              <SelectTrigger className='w-[100px]'>
-                <SelectValue placeholder={t('holiday.yearPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                {yearOptions.map((year) => (
-                  <SelectItem key={year} value={String(year)}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className='flex flex-col sm:flex-row gap-2'>
+            <div className='flex items-center gap-2'>
+              <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                <SelectTrigger className='flex-1 sm:w-[140px]'>
+                  <SelectValue placeholder={t('holiday.countryPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {countryTypes?.map((country) => (
+                    <SelectItem key={country.code} value={country.code}>
+                      {country.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={String(selectedYear)} onValueChange={(value) => setSelectedYear(Number(value))}>
+                <SelectTrigger className='w-[100px]'>
+                  <SelectValue placeholder={t('holiday.yearPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {yearOptions.map((year) => (
+                    <SelectItem key={year} value={String(year)}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            <HolidayEditDialog
-              isOpen={isDialogOpen}
-              onOpenChange={setIsDialogOpen}
-              editingHoliday={editingHoliday}
-              onSave={handleSave}
-              trigger={
-                <Button className='flex items-center gap-2 shrink-0' onClick={handleAddClick}>
-                  {tc('add')}
-                </Button>
-              }
-            />
+            <div className='flex items-center gap-2'>
+              <BulkGenerateHolidayDialog onSuccess={() => refetch()} />
+
+              <HolidayEditDialog
+                isOpen={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                editingHoliday={editingHoliday}
+                onSave={handleSave}
+                trigger={
+                  <Button className='flex-1 sm:flex-none flex items-center gap-2' onClick={handleAddClick}>
+                    {tc('add')}
+                  </Button>
+                }
+              />
+            </div>
           </div>
         </div>
         <div className='flex-1 min-h-0'>
@@ -172,6 +179,7 @@ const HolidayContent = () => {
             />
           </QueryAsyncBoundary>
         </div>
+
       </div>
     </div>
   )
