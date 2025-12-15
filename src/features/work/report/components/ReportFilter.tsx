@@ -1,13 +1,12 @@
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
-import { Calendar } from '@/components/shadcn/calendar';
 import { Card, CardContent } from '@/components/shadcn/card';
 import {
   Collapsible,
   CollapsibleContent
 } from '@/components/shadcn/collapsible';
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Label } from '@/components/shadcn/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 import {
   Select,
   SelectContent,
@@ -15,12 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/select';
-import { GetUsersResp } from '@/lib/api/user'; // Added import
+import { GetUsersResp } from '@/lib/api/user';
 import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
-import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 import {
-  CalendarIcon,
   Search,
   X
 } from 'lucide-react';
@@ -91,29 +88,12 @@ const ReportFilter = ({
                   <Label htmlFor='start-date' className='text-xs text-muted-foreground'>
                     {t('report.startDate')}
                   </Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id='start-date'
-                        variant='outline'
-                        className={cn(
-                          'w-full justify-start text-left font-normal h-9 px-3',
-                          !filters.startDate && 'text-muted-foreground'
-                        )}
-                      >
-                        <CalendarIcon className='mr-2 h-3.5 w-3.5' />
-                        {filters.startDate ? dayjs(filters.startDate).format('YYYY-MM-DD') : <span className='text-xs'>{t('report.selectDate')}</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-auto p-0' align='start'>
-                      <Calendar
-                        mode='single'
-                        selected={filters.startDate}
-                        onSelect={(date) => onFilterChange('startDate', date)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <InputDatePicker
+                    id='start-date'
+                    value={filters.startDate ? dayjs(filters.startDate).format('YYYY-MM-DD') : ''}
+                    onSelect={(date) => onFilterChange('startDate', date)}
+                    placeholder={t('report.selectDate')}
+                  />
                 </div>
 
                 {/* 종료 날짜 */}
@@ -121,29 +101,12 @@ const ReportFilter = ({
                   <Label htmlFor='end-date' className='text-xs text-muted-foreground'>
                     {t('report.endDate')}
                   </Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id='end-date'
-                        variant='outline'
-                        className={cn(
-                          'w-full justify-start text-left font-normal h-9 px-3',
-                          !filters.endDate && 'text-muted-foreground'
-                        )}
-                      >
-                        <CalendarIcon className='mr-2 h-3.5 w-3.5' />
-                        {filters.endDate ? dayjs(filters.endDate).format('YYYY-MM-DD') : <span className='text-xs'>{t('report.selectDate')}</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-auto p-0' align='start'>
-                      <Calendar
-                        mode='single'
-                        selected={filters.endDate}
-                        onSelect={(date) => onFilterChange('endDate', date)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <InputDatePicker
+                    id='end-date'
+                    value={filters.endDate ? dayjs(filters.endDate).format('YYYY-MM-DD') : ''}
+                    onSelect={(date) => onFilterChange('endDate', date)}
+                    placeholder={t('report.selectDate')}
+                  />
                 </div>
 
                 {/* 담당자 */}

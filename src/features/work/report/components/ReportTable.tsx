@@ -1,6 +1,5 @@
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
-import { Calendar } from '@/components/shadcn/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import {
@@ -11,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdownMenu';
 import { Input } from '@/components/shadcn/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import {
   Select,
   SelectContent,
@@ -26,7 +25,6 @@ import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 import {
-  CalendarIcon,
   Copy,
   EllipsisVertical,
   Pencil,
@@ -176,31 +174,11 @@ const ReportTable = ({
                     {/* 일자 */}
                     <TableCell>
                       {editingRow === row.no ? (
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant='outline'
-                              className={cn(
-                                'w-full justify-start text-left font-normal',
-                                !editData?.date && 'text-muted-foreground'
-                              )}
-                            >
-                              <CalendarIcon className='mr-2 h-4 w-4' />
-                              {editData?.date
-                                ? dayjs(editData.date).format('YYYY-MM-DD')
-                                : t('report.selectDate')}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className='w-auto p-0' align='start'>
-                            <Calendar
-                              mode='single'
-                              selected={editData?.date ? new Date(editData.date) : undefined}
-                              onSelect={(date) =>
-                                updateEditData('date', date ? dayjs(date).format('YYYY-MM-DD') : '')
-                              }
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <InputDatePicker
+                          value={editData?.date || ''}
+                          onValueChange={(value) => updateEditData('date', value)}
+                          placeholder={t('report.selectDate')}
+                        />
                       ) : (
                         <span className='text-sm'>{dayjs(row.date).format('YYYY-MM-DD')}</span>
                       )}
