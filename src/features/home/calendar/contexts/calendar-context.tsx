@@ -34,15 +34,15 @@ const CalendarContext = createContext({} as ICalendarContext);
 
 const WORKING_HOURS = {
   0: { from: 0, to: 0 },
-  1: { from: 8, to: 17 },
-  2: { from: 8, to: 17 },
-  3: { from: 8, to: 17 },
-  4: { from: 8, to: 17 },
-  5: { from: 8, to: 17 },
-  6: { from: 8, to: 12 },
+  1: { from: 7, to: 22 },
+  2: { from: 7, to: 22 },
+  3: { from: 7, to: 22 },
+  4: { from: 7, to: 22 },
+  5: { from: 7, to: 22 },
+  6: { from: 0, to: 0 },
 };
 
-const VISIBLE_HOURS = { from: 7, to: 18 };
+const VISIBLE_HOURS = { from: 7, to: 22 };
 
 export function CalendarProvider({ children, users, events, initialView = 'month' }: { children: React.ReactNode; users: IUser[]; events: IEvent[]; initialView?: TCalendarView }) {
   const [badgeVariant, setBadgeVariant] = useState<TBadgeVariant>('colored');
