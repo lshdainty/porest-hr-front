@@ -2,7 +2,7 @@ import { toast } from '@/components/shadcn/sonner';
 import { useUpdateDashboardMutation } from '@/hooks/queries/useUsers';
 import i18n from '@/config/i18n';
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from 'react';
-import { defaultLayouts, LAYOUT_STORAGE_KEY, WIDGETS, WIDGETS_STORAGE_KEY } from '../constants';
+import { defaultLayouts, LAYOUT_STORAGE_KEY, WIDGETS_STORAGE_KEY } from '../constants';
 
 interface DashboardContextType {
   layouts: any;
@@ -58,7 +58,8 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
       }
     }
     const saved = localStorage.getItem(WIDGETS_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : WIDGETS.map(w => w.id);
+    // default layout에 있는 위젯만 기본으로 표시
+    return saved ? JSON.parse(saved) : defaultLayouts.lg.map((item: any) => item.i);
   });
 
   const [isEditing, setIsEditingState] = useState(false);
