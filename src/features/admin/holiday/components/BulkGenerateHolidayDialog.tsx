@@ -308,7 +308,7 @@ const BulkGenerateHolidayDialog = ({
 
           <div className="flex-1" />
 
-          <Button variant="outline" onClick={handleAddClick}>
+          <Button variant="outline" onClick={handleAddClick} className="hidden sm:inline-flex">
             {tc('add')}
           </Button>
         </div>
@@ -320,24 +320,23 @@ const BulkGenerateHolidayDialog = ({
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : localPreviewHolidays.length > 0 ? (
-              <Table>
-                <TableHeader>
+              <Table className="min-w-[700px]" wrapperClassName="overflow-visible">
+                <TableHeader className="sticky top-0 bg-background z-10">
                   <TableRow>
-                    <TableHead className="w-12">
+                    <TableHead className="w-12 min-w-[48px]">
                       <Checkbox
                         checked={isAllSelected}
                         onCheckedChange={handleSelectAll}
                       />
                     </TableHead>
-                    <TableHead className="text-center">
-                      <div>아이콘</div>
-                      <div className="text-xs text-muted-foreground">(이모지)</div>
+                    <TableHead className="min-w-[60px] text-center">
+                      {t('holiday.icon')}
                     </TableHead>
-                    <TableHead className="min-w-[120px]">{t('holiday.name')}</TableHead>
+                    <TableHead className="min-w-[140px]">{t('holiday.name')}</TableHead>
                     <TableHead className="min-w-[110px]">{t('holiday.date')}</TableHead>
-                    <TableHead className="min-w-[100px]">{t('holiday.type')}</TableHead>
-                    <TableHead className="min-w-[80px]">{t('holiday.lunarYn')}</TableHead>
-                    <TableHead className="w-20 text-center">{tc('actions')}</TableHead>
+                    <TableHead className="min-w-[80px]">{t('holiday.type')}</TableHead>
+                    <TableHead className="min-w-[70px]">{t('holiday.lunarYn')}</TableHead>
+                    <TableHead className="min-w-[80px] text-center">{tc('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -406,6 +405,15 @@ const BulkGenerateHolidayDialog = ({
             )}
           </div>
         )}
+
+        {/* 모바일용 추가 버튼 */}
+        <Button
+          onClick={handleAddClick}
+          className="sm:hidden w-full"
+        >
+          <CalendarPlus className="mr-2 h-4 w-4" />
+          {t('holiday.addHoliday')}
+        </Button>
 
         <div className="flex items-center justify-between pt-4 border-t">
           <div className="text-sm text-muted-foreground">

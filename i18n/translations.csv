@@ -169,6 +169,7 @@ admin,holiday.noHolidays,등록된 공휴일이 없습니다,No holidays registe
 admin,holiday.noHolidaysDesc,새로운 공휴일을 추가해보세요,Try adding a new holiday
 admin,holiday.addFirst,첫 번째 공휴일 추가,Add First Holiday
 admin,holiday.addBtn,추가,Add
+admin,holiday.addHoliday,공휴일 추가,Add Holiday
 admin,holiday.formDescription,공휴일 정보를 입력해주세요.,Please enter holiday information.
 admin,holiday.bulkGenerateBtn,일괄 생성,Bulk Generate
 admin,holiday.bulkGenerateTitle,반복 공휴일 일괄 생성,Bulk Generate Recurring Holidays
