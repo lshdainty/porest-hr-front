@@ -1,5 +1,6 @@
 import { SpeedDial, SpeedDialAction } from '@/components/common/SpeedDial';
 import { Button } from '@/components/shadcn/button';
+import { usePermission } from '@/contexts/PermissionContext';
 import { ApplicationTableWidget } from '@/features/home/dashboard/components/widgets/ApplicationTableWidget';
 import { DuesWidget } from '@/features/home/dashboard/components/widgets/DuesWidget';
 import { MissingWorkHistoryWidget } from '@/features/home/dashboard/components/widgets/MissingWorkHistory/MissingWorkHistoryWidget';
@@ -32,6 +33,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const DashboardContent = () => {
   const { t } = useTranslation('dashboard')
+  const { hasAnyPermission } = usePermission();
   const {
     layouts,
     activeWidgets,
@@ -49,6 +51,23 @@ const DashboardContent = () => {
     setIsToolboxOpen,
     setDraggedWidget
   } = useDashboardContext();
+
+  // 권한에 따라 사용 가능한 위젯 필터링
+  const availableWidgets = useMemo(() => {
+    return WIDGETS.filter(widget => {
+      // 권한이 없으면 모든 사용자에게 표시
+      if (!widget.permissions || widget.permissions.length === 0) {
+        return true;
+      }
+      // 권한 중 하나라도 있으면 표시
+      return hasAnyPermission(widget.permissions);
+    });
+  }, [hasAnyPermission]);
+
+  // 사용 가능한 위젯 ID 목록
+  const availableWidgetIds = useMemo(() => {
+    return availableWidgets.map(w => w.id);
+  }, [availableWidgets]);
 
   // Speed Dial Actions Configuration
   const speedDialActions: SpeedDialAction[] = useMemo(() => {
@@ -161,23 +180,25 @@ const DashboardContent = () => {
   const constrainedLayouts = useMemo(() => {
     const newLayouts: any = {};
     Object.keys(layouts).forEach(breakpoint => {
-      newLayouts[breakpoint] = layouts[breakpoint].map((item: any) => {
-        const widgetDef = WIDGETS.find(w => w.id === item.i);
-        if (widgetDef) {
-          const breakpointCols = cols[breakpoint as keyof typeof cols] || 12;
-          return {
-            ...item,
-            minW: Math.min(widgetDef.minW, breakpointCols),
-            maxW: widgetDef.maxW,
-            minH: widgetDef.minH,
-            maxH: widgetDef.maxH
-          };
-        }
-        return item;
-      });
+      newLayouts[breakpoint] = layouts[breakpoint]
+        .filter((item: any) => availableWidgetIds.includes(item.i))
+        .map((item: any) => {
+          const widgetDef = availableWidgets.find(w => w.id === item.i);
+          if (widgetDef) {
+            const breakpointCols = cols[breakpoint as keyof typeof cols] || 12;
+            return {
+              ...item,
+              minW: Math.min(widgetDef.minW, breakpointCols),
+              maxW: widgetDef.maxW,
+              minH: widgetDef.minH,
+              maxH: widgetDef.maxH
+            };
+          }
+          return item;
+        });
     });
     return newLayouts;
-  }, [layouts]);
+  }, [layouts, availableWidgets, availableWidgetIds]);
 
   return (
     <div className='min-h-screen bg-background relative overflow-hidden flex flex-col'>
@@ -198,22 +219,24 @@ const DashboardContent = () => {
           onDrop={onDrop}
           droppingItem={draggedWidget ? { i: draggedWidget.id, w: draggedWidget.defaultW, h: draggedWidget.defaultH } : undefined}
         >
-          {activeWidgets.map((widgetId) => {
-            const config = widgetConfig[widgetId];
-            if (!config) return null;
+          {activeWidgets
+            .filter(widgetId => availableWidgetIds.includes(widgetId))
+            .map((widgetId) => {
+              const config = widgetConfig[widgetId];
+              if (!config) return null;
 
-            return (
-              <div key={widgetId}>
-                <WidgetWrapper 
-                  title={config.title} 
-                  onClose={() => toggleWidget(widgetId)} 
-                  isEditing={isEditing}
-                >
-                  {config.component}
-                </WidgetWrapper>
-              </div>
-            );
-          })}
+              return (
+                <div key={widgetId}>
+                  <WidgetWrapper
+                    title={config.title}
+                    onClose={() => toggleWidget(widgetId)}
+                    isEditing={isEditing}
+                  >
+                    {config.component}
+                  </WidgetWrapper>
+                </div>
+              );
+            })}
         </ResponsiveGridLayout>
       </div>
 
@@ -241,10 +264,10 @@ const DashboardContent = () => {
                 {t('widgetDragHint')}
               </p>
               
-              {WIDGETS.map(widget => {
+              {availableWidgets.map(widget => {
                 const isActive = activeWidgets.includes(widget.id);
                 return (
-                  <div 
+                  <div
                     key={widget.id}
                     className={cn(
                       'flex items-center justify-between p-3 rounded-lg border bg-card transition-colors select-none',

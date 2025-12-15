@@ -2,7 +2,7 @@ import { toast } from '@/components/shadcn/sonner';
 import { useUpdateDashboardMutation } from '@/hooks/queries/useUsers';
 import i18n from '@/config/i18n';
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from 'react';
-import { defaultLayouts, LAYOUT_STORAGE_KEY, WIDGETS_STORAGE_KEY } from '../constants';
+import { defaultLayouts } from '@/features/home/dashboard/constants';
 
 interface DashboardContextType {
   layouts: any;
@@ -44,8 +44,7 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
         console.error('Failed to parse initial dashboard layouts', e);
       }
     }
-    const saved = localStorage.getItem(LAYOUT_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : defaultLayouts;
+    return defaultLayouts;
   });
 
   const [activeWidgets, setActiveWidgets] = useState<string[]>(() => {
@@ -57,9 +56,8 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
         console.error('Failed to parse initial dashboard widgets', e);
       }
     }
-    const saved = localStorage.getItem(WIDGETS_STORAGE_KEY);
     // default layout에 있는 위젯만 기본으로 표시
-    return saved ? JSON.parse(saved) : defaultLayouts.lg.map((item: any) => item.i);
+    return defaultLayouts.lg.map((item: any) => item.i);
   });
 
   const [isEditing, setIsEditingState] = useState(false);
@@ -82,36 +80,26 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
     setIsEditingState(editing);
   }, [isEditing, layouts, activeWidgets]);
 
-  const handleLayoutChange = useCallback((layout: any, allLayouts: any) => {
+  const handleLayoutChange = useCallback((_layout: any, allLayouts: any) => {
     setLayouts(allLayouts);
-    if (isEditing) {
-      localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(allLayouts));
-    }
-  }, [isEditing]);
+  }, []);
 
   const handleBreakpointChange = useCallback((newBreakpoint: string) => {
     setCurrentBreakpoint(newBreakpoint);
   }, []);
 
   const toggleWidget = (widgetId: string) => {
-    setActiveWidgets(prev => {
-      const newWidgets = prev.includes(widgetId)
+    setActiveWidgets(prev =>
+      prev.includes(widgetId)
         ? prev.filter(id => id !== widgetId)
-        : [...prev, widgetId];
-      
-      if (isEditing) {
-        localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(newWidgets));
-      }
-      return newWidgets;
-    });
+        : [...prev, widgetId]
+    );
   };
 
   const resetLayout = () => {
     setLayouts(defaultLayouts);
     const defaultWidgetIds = defaultLayouts.lg.map((item: any) => item.i);
     setActiveWidgets(defaultWidgetIds);
-    localStorage.removeItem(LAYOUT_STORAGE_KEY);
-    localStorage.removeItem(WIDGETS_STORAGE_KEY);
   };
 
   const onDrop = (layout: any, _layoutItem: any, _event: any) => {
@@ -122,18 +110,11 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
       [currentBreakpoint]: layout
     };
     setLayouts(newLayouts);
-    if (isEditing) {
-      localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(newLayouts));
-    }
 
     if (!activeWidgets.includes(draggedWidget.id)) {
-      const newActiveWidgets = [...activeWidgets, draggedWidget.id];
-      setActiveWidgets(newActiveWidgets);
-      if (isEditing) {
-        localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(newActiveWidgets));
-      }
+      setActiveWidgets(prev => [...prev, draggedWidget.id]);
     }
-    
+
     setDraggedWidget(null);
   };
 
@@ -142,17 +123,16 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
       layouts,
       activeWidgets
     };
-    
+
     updateDashboard(
-      { 
-        userId, 
-        data: { dashboard: JSON.stringify(dashboardConfig) } 
+      {
+        userId,
+        data: { dashboard: JSON.stringify(dashboardConfig) }
       },
       {
         onSuccess: () => {
           backupRef.current = null;
           setIsToolboxOpen(false);
-          // Delay state change to allow SpeedDial to close smoothly
           setTimeout(() => setIsEditingState(false), 300);
         },
         onError: () => {
@@ -171,7 +151,6 @@ export const DashboardProvider = ({ children, userId, initialDashboard }: { chil
     }
 
     setIsToolboxOpen(false);
-    // Delay state change to allow SpeedDial to close smoothly
     setTimeout(() => setIsEditingState(false), 300);
   };
 
