@@ -287,7 +287,7 @@ export const routesConfig: RouteGroup[] = [
             path: '/admin/notice',
             icon: Bell,
             component: NoticePage,
-            requiredPermissions: ['NOTICE:READ'],
+            requiredPermissions: ['NOTICE:MANAGE'],
           },
         ],
       }

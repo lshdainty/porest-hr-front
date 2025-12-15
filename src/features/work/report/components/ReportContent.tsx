@@ -2,6 +2,7 @@ import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary';
 import { toast } from '@/components/shadcn/sonner';
 import { useUser } from '@/contexts/UserContext';
 import { ExcelImportDialog } from '@/features/work/report/components/ExcelImportDialog';
+import { ReportDeleteDialog } from '@/features/work/report/components/ReportDeleteDialog';
 import { ReportFilter } from '@/features/work/report/components/ReportFilter';
 import { ReportHeader } from '@/features/work/report/components/ReportHeader';
 import { ReportSkeleton } from '@/features/work/report/components/ReportSkeleton';
@@ -74,6 +75,10 @@ const ReportContent = () => {
 
   // Unregistered Hours Download Dialog State
   const [isUnregisteredDialogOpen, setIsUnregisteredDialogOpen] = useState(false);
+
+  // Delete Dialog State
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<WorkHistory | null>(null);
 
   useEffect(() => {
     if (workHistoriesData) {
@@ -233,16 +238,25 @@ const ReportContent = () => {
     }
   };
 
-  const handleDelete = async (row: WorkHistory) => {
+  const handleDeleteClick = (row: WorkHistory) => {
     if (!row.work_history_id) {
+      // 저장되지 않은 새 row는 바로 삭제
       setWorkHistories(workHistories.filter((item) => item.no !== row.no));
       setSelectedRows(selectedRows.filter((rowNo) => rowNo !== row.no));
       return;
     }
+    setDeleteTarget(row);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget?.work_history_id) return;
 
     try {
-      await deleteWorkHistory.mutateAsync(row.work_history_id);
+      await deleteWorkHistory.mutateAsync(deleteTarget.work_history_id);
       await refetchWorkHistories();
+      setIsDeleteDialogOpen(false);
+      setDeleteTarget(null);
     } catch (error) {
       console.error('Delete failed:', error);
       toast.error(t('report.deleteFailed'));
@@ -323,7 +337,7 @@ const ReportContent = () => {
             handleSave={handleSave}
             handleCancel={handleCancel}
             handleEdit={handleEdit}
-            handleDelete={handleDelete}
+            handleDelete={handleDeleteClick}
             handleDuplicate={handleDuplicate}
             workGroups={workGroupsWithParts || []}
             isWorkGroupsLoading={false}
@@ -345,6 +359,14 @@ const ReportContent = () => {
         <UnregisteredDownloadDialog
           open={isUnregisteredDialogOpen}
           onOpenChange={setIsUnregisteredDialogOpen}
+        />
+
+        <ReportDeleteDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          workHistory={deleteTarget}
+          onConfirm={handleDeleteConfirm}
+          isPending={deleteWorkHistory.isPending}
         />
       </div>
     </QueryAsyncBoundary>

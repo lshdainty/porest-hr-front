@@ -31,10 +31,13 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
   const isMobile = useIsMobile();
 
   const { refetch: refetchRoles } = useRolesQuery();
-  const { mutateAsync: createRole } = usePostRoleMutation();
+  const { mutateAsync: createRole, isPending: isCreating } = usePostRoleMutation();
   const { mutateAsync: deleteRole } = useDeleteRoleMutation();
-  const { mutateAsync: updateRoleMutation } = usePutRoleMutation();
-  const { mutateAsync: updateRolePermissionsMutation } = usePutRolePermissionsMutation();
+  const { mutateAsync: updateRoleMutation, isPending: isUpdatingRole } = usePutRoleMutation();
+  const { mutateAsync: updateRolePermissionsMutation, isPending: isUpdatingPermissions } = usePutRolePermissionsMutation();
+
+  const isSavingRole = isCreating || isUpdatingRole;
+  const isSavingPermissions = isUpdatingPermissions;
 
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
@@ -152,7 +155,8 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
     }
   };
 
-  const handleSave = async (roleToSave?: Role) => {
+  // 역할 정보 저장 (새 역할 생성 또는 desc 수정)
+  const handleSaveRole = async (roleToSave?: Role) => {
     const role = roleToSave || editingRole;
     if (!role) return;
 
@@ -187,13 +191,6 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
           }
         });
 
-        await updateRolePermissionsMutation({
-          roleCode: role.role_code,
-          data: {
-            permission_codes: role.permissions.map(p => p.code)
-          }
-        });
-
         toast.success(t('authority.roleUpdated'));
       }
 
@@ -201,6 +198,43 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
     } catch (error) {
       console.error("Failed to save role:", error);
       toast.error(t('authority.roleSaveFailed'));
+    }
+  };
+
+  // 권한만 저장
+  const handleSavePermissions = async (permissionCodes: string[]) => {
+    if (!editingRole) return;
+
+    const isNewRole = (editingRole as any).isNew;
+    if (isNewRole) {
+      // 새 역할은 역할 저장 시 권한도 함께 저장되므로 여기서는 로컬 상태만 업데이트
+      const newPermissions = authorities
+        .filter((a: PermissionResp) => permissionCodes.includes(a.code))
+        .map((a: PermissionResp): Authority => ({
+          code: a.code,
+          name: a.name,
+          desc: a.desc,
+          resource: a.resource,
+          action: a.action
+        }));
+      setEditingRole({ ...editingRole, permissions: newPermissions });
+      toast.success(t('authority.permissionsUpdatedLocal'));
+      return;
+    }
+
+    try {
+      await updateRolePermissionsMutation({
+        roleCode: editingRole.role_code,
+        data: {
+          permission_codes: permissionCodes
+        }
+      });
+
+      toast.success(t('authority.permissionsUpdated'));
+      await refetchRoles();
+    } catch (error) {
+      console.error("Failed to save permissions:", error);
+      toast.error(t('authority.permissionsSaveFailed'));
     }
   };
 
@@ -232,8 +266,11 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
                 role={editingRole}
                 allAuthorities={authorities}
                 onUpdateRole={handleUpdateRole}
-                onSave={handleSave}
+                onSaveRole={handleSaveRole}
+                onSavePermissions={handleSavePermissions}
                 onBack={handleBackToList}
+                isSavingRole={isSavingRole}
+                isSavingPermissions={isSavingPermissions}
               />
             )}
           </DialogContent>
@@ -260,7 +297,10 @@ const RoleManagementPanelInner = ({ roles, authorities }: RoleManagementPanelInn
             role={editingRole}
             allAuthorities={authorities}
             onUpdateRole={handleUpdateRole}
-            onSave={handleSave}
+            onSaveRole={handleSaveRole}
+            onSavePermissions={handleSavePermissions}
+            isSavingRole={isSavingRole}
+            isSavingPermissions={isSavingPermissions}
           />
         ) : (
           <div className="flex items-center justify-center h-full text-muted-foreground">

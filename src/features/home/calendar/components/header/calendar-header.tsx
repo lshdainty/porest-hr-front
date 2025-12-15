@@ -1,8 +1,10 @@
 import { CalendarRange, Columns, Grid2x2, Grid3x3, List, Plus } from 'lucide-react';
+import { Activity } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 import { Button } from '@/components/shadcn/button';
+import { usePermission } from '@/contexts/PermissionContext';
+import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 
 import { AddEventDialog } from '@/features/home/calendar/components/dialogs/add-event-dialog';
 import { DateNavigator } from '@/features/home/calendar/components/header/date-navigator';
@@ -18,6 +20,11 @@ interface IProps {
 export function CalendarHeader({ events }: IProps) {
   const { t } = useTranslation('calendar');
   const { view, setView } = useCalendar();
+  const { hasAnyPermission } = usePermission();
+
+  // 권한 체크: 둘 중 하나라도 있으면 일정 추가 가능
+  const canAddEvent = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE', 'SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
+
   return (
     <div className='flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between'>
       <div className='flex items-center gap-3'>
@@ -82,12 +89,14 @@ export function CalendarHeader({ events }: IProps) {
           <EventFilter />
         </div>
 
-        <AddEventDialog>
-          <Button className='w-full sm:w-auto'>
-            <Plus />
-            {t('header.addEvent')}
-          </Button>
-        </AddEventDialog>
+        <Activity mode={canAddEvent ? 'visible' : 'hidden'}>
+          <AddEventDialog>
+            <Button className='w-full sm:w-auto'>
+              <Plus />
+              {t('header.addEvent')}
+            </Button>
+          </AddEventDialog>
+        </Activity>
       </div>
     </div>
   );

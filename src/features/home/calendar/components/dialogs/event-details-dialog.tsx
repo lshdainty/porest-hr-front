@@ -2,11 +2,13 @@
 
 import { format, parseISO } from 'date-fns';
 import { Calendar, Clock, Text, User } from 'lucide-react';
+import { Activity } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { Spinner } from '@/components/shadcn/spinner';
+import { usePermission } from '@/contexts/PermissionContext';
 import { EditEventDialog } from '@/features/home/calendar/components/dialogs/edit-event-dialog';
 import { useDeleteEvent } from '@/features/home/calendar/hooks/use-delete-event';
 
@@ -24,6 +26,15 @@ export function EventDetailsDialog({ event, children }: IProps) {
   const endDate = parseISO(event.endDate);
 
   const { deleteEvent, isPending } = useDeleteEvent();
+  const { hasAnyPermission } = usePermission();
+
+  // 권한 체크: 이벤트 타입에 따라 권한 확인
+  const eventType = event.type.type; // 'vacation' | 'schedule'
+  const canModifyVacation = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE']);
+  const canModifySchedule = hasAnyPermission(['SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
+
+  // 해당 이벤트 타입에 대한 수정/삭제 권한
+  const canModify = eventType === 'vacation' ? canModifyVacation : canModifySchedule;
 
   const handleDelete = () => {
     deleteEvent(event);
@@ -74,15 +85,19 @@ export function EventDetailsDialog({ event, children }: IProps) {
           </div>
 
           <DialogFooter>
-            <EditEventDialog event={event}>
-              <Button type='button' variant='outline'>
-                {tc('edit')}
+            <Activity mode={canModify ? 'visible' : 'hidden'}>
+              <EditEventDialog event={event}>
+                <Button type='button' variant='outline'>
+                  {tc('edit')}
+                </Button>
+              </EditEventDialog>
+            </Activity>
+            <Activity mode={canModify ? 'visible' : 'hidden'}>
+              <Button type='button' variant='destructive' onClick={handleDelete} disabled={isPending}>
+                {isPending && <Spinner />}
+                {tc('delete')}
               </Button>
-            </EditEventDialog>
-            <Button type='button' variant='destructive' onClick={handleDelete} disabled={isPending}>
-              {isPending && <Spinner />}
-              {tc('delete')}
-            </Button>
+            </Activity>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/shadcn/select';
 import { Spinner } from '@/components/shadcn/spinner';
+import { usePermission } from '@/contexts/PermissionContext';
 import { useUser } from '@/contexts/UserContext';
 import { useAddEvent } from '@/features/home/calendar/hooks/use-add-event';
 import type { TEventColor } from '@/features/home/calendar/types';
@@ -90,7 +91,12 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   const { t: tc } = useTranslation('common');
   const [internalOpen, setInternalOpen] = React.useState(false)
   const { loginUser } = useUser()
+  const { hasAnyPermission } = usePermission()
   const formSchema = createFormSchema(t);
+
+  // 권한 체크
+  const canUseVacation = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE']);
+  const canUseSchedule = hasAnyPermission(['SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
 
   // open 상태 관리: props가 있으면 props 사용, 없으면 내부 상태 사용
   const open = propOpen !== undefined ? propOpen : internalOpen;
@@ -193,26 +199,30 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                         <SelectValue placeholder={t('addEvent.calendarType')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>{t('addEvent.vacation')}</SelectLabel>
-                          {calendarTypes.filter(c => c.type === 'vacation').map(ct => (
-                            <SelectItem key={ct.id} value={ct.id}>
-                              <Badge className={colorClassMap[ct.color]}>
-                                {ct.name}
-                              </Badge>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                        <SelectGroup>
-                          <SelectLabel>{t('addEvent.schedule')}</SelectLabel>
-                          {calendarTypes.filter(c => c.type === 'schedule').map(ct => (
-                            <SelectItem key={ct.id} value={ct.id}>
-                              <Badge className={colorClassMap[ct.color]}>
-                                {ct.name}
-                              </Badge>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
+                        {canUseVacation && (
+                          <SelectGroup>
+                            <SelectLabel>{t('addEvent.vacation')}</SelectLabel>
+                            {calendarTypes.filter(c => c.type === 'vacation').map(ct => (
+                              <SelectItem key={ct.id} value={ct.id}>
+                                <Badge className={colorClassMap[ct.color]}>
+                                  {ct.name}
+                                </Badge>
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                        {canUseSchedule && (
+                          <SelectGroup>
+                            <SelectLabel>{t('addEvent.schedule')}</SelectLabel>
+                            {calendarTypes.filter(c => c.type === 'schedule').map(ct => (
+                              <SelectItem key={ct.id} value={ct.id}>
+                                <Badge className={colorClassMap[ct.color]}>
+                                  {ct.name}
+                                </Badge>
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
                       </SelectContent>
                     </Select>
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />

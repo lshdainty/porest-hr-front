@@ -78,6 +78,7 @@ const PermissionMatrix = ({ authorities, selectedAuthorityIds, onToggleAuthority
                       id={auth.code}
                       checked={selectedAuthorityIds?.includes(auth.code) || false}
                       onCheckedChange={(checked) => onToggleAuthority(auth.code, checked as boolean)}
+                      onClick={(e) => e.stopPropagation()}
                       disabled={disabled}
                       className="mt-1 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                     />

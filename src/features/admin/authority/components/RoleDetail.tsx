@@ -2,6 +2,7 @@ import { RequirePermission } from "@/components/auth/RequirePermission";
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
+import { Spinner } from "@/components/shadcn/spinner";
 import { Textarea } from "@/components/shadcn/textarea";
 import { usePermission } from "@/contexts/PermissionContext";
 import { MobilePermissionDrawer } from "@/features/admin/authority/components/MobilePermissionDrawer";
@@ -9,17 +10,30 @@ import { PermissionMatrix } from "@/features/admin/authority/components/Permissi
 import { Authority, Role } from "@/features/admin/authority/types";
 import { useIsMobile } from "@/hooks/useMobile";
 import { ArrowLeft, Save } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface RoleDetailProps {
   role: Role;
   allAuthorities: Authority[];
   onUpdateRole: (updatedRole: Role) => void;
-  onSave: (role?: Role) => void;
+  onSaveRole: (role?: Role) => void;
+  onSavePermissions: (permissionCodes: string[]) => Promise<void>;
   onBack?: () => void;
+  isSavingRole?: boolean;
+  isSavingPermissions?: boolean;
 }
 
-const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: RoleDetailProps) => {
+const RoleDetail = ({
+  role,
+  allAuthorities,
+  onUpdateRole,
+  onSaveRole,
+  onSavePermissions,
+  onBack,
+  isSavingRole = false,
+  isSavingPermissions = false
+}: RoleDetailProps) => {
   const { t } = useTranslation('admin');
   const { hasPermission } = usePermission();
   const canManageRoles = hasPermission("ROLE:MANAGE");
@@ -27,6 +41,16 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
 
   // 새 역할인지 확인
   const isNewRole = (role as any).isNew;
+
+  // 데스크톱에서 권한을 로컬로 관리
+  const [localPermissionIds, setLocalPermissionIds] = useState<string[]>(
+    (role.permissions || []).filter(p => p && p.code).map(p => p.code)
+  );
+
+  // role이 변경되면 로컬 권한 상태도 동기화
+  useEffect(() => {
+    setLocalPermissionIds((role.permissions || []).filter(p => p && p.code).map(p => p.code));
+  }, [role.role_code, role.permissions]);
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdateRole({ ...role, role_code: e.target.value });
@@ -40,54 +64,51 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
     onUpdateRole({ ...role, desc: e.target.value });
   };
 
-  const handleToggleAuthority = (authCode: string, checked: boolean) => {
-    const currentPermissions = role.permissions || [];
-    let newPermissions = [...currentPermissions];
-
-    if (checked) {
-        const authToAdd = allAuthorities.find(a => a.code === authCode);
-        if (authToAdd && !newPermissions.some(p => p.code === authCode)) {
-            newPermissions.push(authToAdd);
-        }
-    } else {
-        newPermissions = newPermissions.filter(p => p.code !== authCode);
-    }
-
-    onUpdateRole({ ...role, permissions: newPermissions });
+  // 데스크톱용 로컬 권한 토글
+  const handleToggleLocalAuthority = (authCode: string, checked: boolean) => {
+    setLocalPermissionIds(prev =>
+      checked
+        ? [...prev.filter(id => id !== authCode), authCode] // 중복 방지
+        : prev.filter(id => id !== authCode)
+    );
   };
 
-  const handleToggleGroup = (authCodes: string[], checked: boolean) => {
-    const currentPermissions = role.permissions || [];
-    let newPermissions = [...currentPermissions];
-
-    if (checked) {
-      // Add all codes that are not already present
-      const authsToAdd = allAuthorities.filter(a => authCodes.includes(a.code));
-      authsToAdd.forEach(auth => {
-        if (!newPermissions.some(p => p.code === auth.code)) {
-          newPermissions.push(auth);
-        }
-      });
-    } else {
-      // Remove all codes
-      newPermissions = newPermissions.filter(p => !authCodes.includes(p.code));
-    }
-
-    onUpdateRole({ ...role, permissions: newPermissions });
+  // 데스크톱용 로컬 권한 그룹 토글
+  const handleToggleLocalGroup = (authCodes: string[], checked: boolean) => {
+    setLocalPermissionIds(prev => {
+      if (checked) {
+        const newIds = authCodes.filter(id => !prev.includes(id));
+        return [...prev, ...newIds];
+      } else {
+        return prev.filter(id => !authCodes.includes(id));
+      }
+    });
   };
 
+  // 데스크톱에서 권한 저장
+  const handleSavePermissions = async () => {
+    // 새 역할인 경우 로컬 상태를 role.permissions에 반영
+    if (isNewRole) {
+      const newPermissions = allAuthorities.filter(a => localPermissionIds.includes(a.code));
+      onUpdateRole({ ...role, permissions: newPermissions });
+    }
+    await onSavePermissions(localPermissionIds);
+  };
+
+  // 모바일에서 권한 저장
   const handleMobileSave = async (newPermissionCodes: string[]) => {
-    // Map codes back to Authority objects
-    const newPermissions = allAuthorities.filter(a => newPermissionCodes.includes(a.code));
-    
-    const updatedRole = { ...role, permissions: newPermissions };
-    
-    // Update local state
-    onUpdateRole(updatedRole);
-    
-    // Save to server
-    await onSave(updatedRole);
+    // 새 역할인 경우 로컬 상태를 role.permissions에 반영
+    if (isNewRole) {
+      const newPermissions = allAuthorities.filter(a => newPermissionCodes.includes(a.code));
+      onUpdateRole({ ...role, permissions: newPermissions });
+    }
+    await onSavePermissions(newPermissionCodes);
   };
+
+  // 권한 변경 여부 확인
+  const originalPermissionIds = (role.permissions || []).filter(p => p && p.code).map(p => p.code).sort();
+  const currentPermissionIds = [...localPermissionIds].sort();
+  const hasPermissionChanges = JSON.stringify(originalPermissionIds) !== JSON.stringify(currentPermissionIds);
 
   return (
     <div className="flex flex-col h-full">
@@ -107,9 +128,9 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
             </div>
           </div>
           <RequirePermission permission="ROLE:MANAGE">
-            <Button onClick={() => onSave()} className="gap-2">
-              <Save className="w-4 h-4" />
-              {t('authority.saveChanges')}
+            <Button onClick={() => onSaveRole()} className="gap-2" disabled={isSavingRole}>
+              {isSavingRole ? <Spinner /> : <Save className="w-4 h-4" />}
+              {isNewRole ? t('authority.createRole') : t('authority.saveRole')}
             </Button>
           </RequirePermission>
         </div>
@@ -157,7 +178,27 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-muted/10 pb-20">
-        <h3 className="text-lg font-semibold mb-4">{t('authority.permissions')}</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">{t('authority.permissions')}</h3>
+          {!isMobile && (
+            <RequirePermission permission="ROLE:MANAGE">
+              <Button
+                onClick={handleSavePermissions}
+                className="gap-2"
+                disabled={isSavingPermissions || (!hasPermissionChanges && !isNewRole)}
+                variant={hasPermissionChanges ? "default" : "outline"}
+              >
+                {isSavingPermissions ? <Spinner /> : <Save className="w-4 h-4" />}
+                {t('authority.savePermissions')}
+                {hasPermissionChanges && (
+                  <span className="bg-primary-foreground/20 text-xs px-1.5 py-0.5 rounded-full">
+                    {t('authority.changed')}
+                  </span>
+                )}
+              </Button>
+            </RequirePermission>
+          )}
+        </div>
         {isMobile ? (
           <MobilePermissionDrawer
             authorities={allAuthorities}
@@ -168,10 +209,10 @@ const RoleDetail = ({ role, allAuthorities, onUpdateRole, onSave, onBack }: Role
         ) : (
           <PermissionMatrix
             authorities={allAuthorities}
-            selectedAuthorityIds={(role.permissions || []).filter(p => p && p.code).map(p => p.code)}
-            onToggleAuthority={handleToggleAuthority}
-            onToggleGroup={handleToggleGroup}
-            disabled={!canManageRoles}
+            selectedAuthorityIds={localPermissionIds}
+            onToggleAuthority={handleToggleLocalAuthority}
+            onToggleGroup={handleToggleLocalGroup}
+            disabled={!canManageRoles || isSavingPermissions}
           />
         )}
       </div>
