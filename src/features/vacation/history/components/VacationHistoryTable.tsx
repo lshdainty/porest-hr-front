@@ -1,12 +1,13 @@
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { usePermission } from '@/contexts/PermissionContext';
 import { AddEventDialog } from '@/features/home/calendar/components/dialogs/add-event-dialog';
 import { EditEventDialog } from '@/features/home/calendar/components/dialogs/edit-event-dialog';
 import { IEvent } from '@/features/home/calendar/interfaces';
 import { calendarTypes } from '@/features/home/calendar/types';
 import { useDeleteVacationUsageMutation } from '@/hooks/queries/useVacations';
 import { GetUserVacationHistoryResp } from '@/lib/api/vacation';
-import { useState } from 'react';
+import { Activity, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { VacationHistoryContent } from './VacationHistoryContent'
 
@@ -22,6 +23,10 @@ const VacationHistoryTable = ({ value: data, canAdd = false }: VacationHistoryTa
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
 
   const { mutate: deleteVacationUsage } = useDeleteVacationUsageMutation();
+  const { hasAnyPermission } = usePermission();
+
+  // 권한 체크: 둘 중 하나라도 있으면 일정 추가 가능
+  const canAddEvent = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE', 'SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
 
   const handleAddVacation = () => {
     setAddDialogOpen(true);
@@ -55,11 +60,11 @@ const VacationHistoryTable = ({ value: data, canAdd = false }: VacationHistoryTa
         <CardHeader>
           <div className='flex items-center justify-between'>
             <CardTitle>{t('history.vacationHistory')}</CardTitle>
-            {canAdd && (
+            <Activity mode={canAdd && canAddEvent ? 'visible' : 'hidden'}>
               <div className='flex gap-2'>
                 <Button className='text-sm h-8' size='sm' onClick={handleAddVacation}>{t('history.useVacation')}</Button>
               </div>
-            )}
+            </Activity>
           </div>
         </CardHeader>
         <CardContent>

@@ -3,6 +3,7 @@
 import dayjs from 'dayjs';
 import { createContext, useCallback, useContext, useState } from 'react';
 
+import { usePermission } from '@/contexts/PermissionContext';
 import { AddEventDialog } from '@/features/home/calendar/components/dialogs/add-event-dialog';
 
 interface DragSelectContextType {
@@ -28,15 +29,23 @@ export const DragSelectProvider = ({ children }: { children: React.ReactNode }) 
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectionStart, setSelectionStart] = useState<Date | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<Date | null>(null);
-  
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogDateRange, setDialogDateRange] = useState<{ start: Date; end: Date } | null>(null);
 
+  const { hasAnyPermission } = usePermission();
+
+  // 권한 체크: 둘 중 하나라도 있으면 일정 추가 가능
+  const canAddEvent = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE', 'SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
+
   const startSelection = useCallback((date: Date) => {
+    // 권한 없으면 드래그 선택 비활성화
+    if (!canAddEvent) return;
+
     setIsSelecting(true);
     setSelectionStart(date);
     setSelectionEnd(date);
-  }, []);
+  }, [canAddEvent]);
 
   const updateSelection = useCallback((date: Date) => {
     if (isSelecting) {

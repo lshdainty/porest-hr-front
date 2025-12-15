@@ -23,11 +23,13 @@ import {
   SelectValue,
 } from '@/components/shadcn/select';
 import { Spinner } from '@/components/shadcn/spinner';
+import { usePermission } from '@/contexts/PermissionContext';
 import { useUser } from '@/contexts/UserContext';
 import { useAddEvent } from '@/features/home/calendar/hooks/use-add-event';
 import type { TEventColor } from '@/features/home/calendar/types';
 import { calendarTypes } from '@/features/home/calendar/types';
 import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
@@ -49,6 +51,7 @@ const colorClassMap: Record<TEventColor, string> = {
 };
 
 const createFormSchema = (t: (key: string) => string) => z.object({
+  selectedUser: z.string().optional(),
   calendarType: z.string().min(1, t('addEvent.calendarTypeRequired')),
   vacationType: z.string().optional(),
   desc: z.string().optional(),
@@ -90,7 +93,16 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   const { t: tc } = useTranslation('common');
   const [internalOpen, setInternalOpen] = React.useState(false)
   const { loginUser } = useUser()
+  const { hasAnyPermission } = usePermission()
   const formSchema = createFormSchema(t);
+
+  // 권한 체크
+  const canUseVacation = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE']);
+  const canUseSchedule = hasAnyPermission(['SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
+  const canManageVacation = hasAnyPermission(['VACATION:MANAGE']);
+
+  // VACATION:MANAGE 권한이 있을 때만 유저 목록 조회
+  const { data: users, isLoading: isLoadingUsers } = useUsersQuery();
 
   // open 상태 관리: props가 있으면 props 사용, 없으면 내부 상태 사용
   const open = propOpen !== undefined ? propOpen : internalOpen;
@@ -103,6 +115,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      selectedUser: '',
       calendarType: '',
       vacationType: '',
       desc: '',
@@ -119,6 +132,12 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   const isDate = selectedCalendar?.isDate;
 
   const watchedStartDate = form.watch('startDate');
+  const watchedSelectedUser = form.watch('selectedUser');
+
+  // 휴가 조회 시 사용할 userId: VACATION:MANAGE 권한이 있으면 선택된 유저, 없으면 loginUser
+  const targetUserId = canManageVacation && watchedSelectedUser
+    ? watchedSelectedUser
+    : loginUser?.user_id || '';
 
   useEffect(() => {
     const currentEndDate = form.getValues('endDate');
@@ -132,16 +151,21 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   }, [watchedStartDate, form]);
 
   const {data: vacations} = useAvailableVacationsQuery(
-    loginUser?.user_id || '',
+    targetUserId,
     watchedStartDate ? dayjs(watchedStartDate).format('YYYY-MM-DDTHH:mm:ss') : '',
-    { enabled: open && !!watchedStartDate }
+    { enabled: open && !!watchedStartDate && !!targetUserId }
   );
 
   const { addEvent, isPending } = useAddEvent();
 
   const onSubmit = (values: AddEventFormValues) => {
+    // VACATION:MANAGE 권한이 있으면 선택된 유저, 없으면 loginUser
+    const userId = canManageVacation && values.selectedUser
+      ? values.selectedUser
+      : loginUser?.user_id || '';
+
     addEvent({
-      userId: loginUser?.user_id || '',
+      userId,
       calendarType: values.calendarType,
       vacationType: values.vacationType,
       desc: values.desc,
@@ -157,6 +181,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
   useEffect(() => {
     if(open) {
       form.reset({
+        selectedUser: '',
         calendarType: '',
         vacationType: '',
         desc: '',
@@ -178,6 +203,34 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="py-6 space-y-4">
+            {/* VACATION:MANAGE 권한이 있을 때만 유저 선택 표시 */}
+            {canManageVacation && (
+              <Controller
+                control={form.control}
+                name="selectedUser"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={!!fieldState.error}>
+                    <FieldLabel>
+                      {t('addEvent.targetUser')}
+                      <span className='text-destructive ml-0.5'>*</span>
+                    </FieldLabel>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingUsers}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={isLoadingUsers ? tc('loading') : t('addEvent.selectUserPlaceholder')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users?.map((user) => (
+                          <SelectItem key={user.user_id} value={user.user_id}>
+                            {user.user_name} ({user.user_id})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+                  </Field>
+                )}
+              />
+            )}
             <div className='flex flex-row gap-2'>
               <Controller
                 control={form.control}
@@ -193,26 +246,30 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                         <SelectValue placeholder={t('addEvent.calendarType')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>{t('addEvent.vacation')}</SelectLabel>
-                          {calendarTypes.filter(c => c.type === 'vacation').map(ct => (
-                            <SelectItem key={ct.id} value={ct.id}>
-                              <Badge className={colorClassMap[ct.color]}>
-                                {ct.name}
-                              </Badge>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                        <SelectGroup>
-                          <SelectLabel>{t('addEvent.schedule')}</SelectLabel>
-                          {calendarTypes.filter(c => c.type === 'schedule').map(ct => (
-                            <SelectItem key={ct.id} value={ct.id}>
-                              <Badge className={colorClassMap[ct.color]}>
-                                {ct.name}
-                              </Badge>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
+                        {canUseVacation && (
+                          <SelectGroup>
+                            <SelectLabel>{t('addEvent.vacation')}</SelectLabel>
+                            {calendarTypes.filter(c => c.type === 'vacation').map(ct => (
+                              <SelectItem key={ct.id} value={ct.id}>
+                                <Badge className={colorClassMap[ct.color]}>
+                                  {ct.name}
+                                </Badge>
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
+                        {canUseSchedule && (
+                          <SelectGroup>
+                            <SelectLabel>{t('addEvent.schedule')}</SelectLabel>
+                            {calendarTypes.filter(c => c.type === 'schedule').map(ct => (
+                              <SelectItem key={ct.id} value={ct.id}>
+                                <Badge className={colorClassMap[ct.color]}>
+                                  {ct.name}
+                                </Badge>
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        )}
                       </SelectContent>
                     </Select>
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />

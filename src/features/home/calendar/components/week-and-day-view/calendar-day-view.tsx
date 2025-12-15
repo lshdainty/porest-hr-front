@@ -2,8 +2,10 @@ import { areIntervalsOverlapping, format, parseISO } from 'date-fns';
 import { enUS, ko } from 'date-fns/locale';
 import dayjs from 'dayjs';
 import { Calendar as CalendarIcon, Clock, User } from 'lucide-react';
+import { Activity } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { usePermission } from '@/contexts/PermissionContext';
 import { useCalendar } from '@/features/home/calendar/contexts/calendar-context';
 
 import { Calendar } from '@/components/shadcn/calendar';
@@ -28,6 +30,10 @@ interface IProps {
 export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
   const { t, i18n } = useTranslation('calendar');
   const { selectedDate, setSelectedDate, users, visibleHours, workingHours, findHolidayByDate, holidays } = useCalendar();
+  const { hasAnyPermission } = usePermission();
+
+  // 권한 체크: 둘 중 하나라도 있으면 일정 추가 가능
+  const canAddEvent = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE', 'SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
 
   const locale = i18n.language === 'ko' ? ko : enUS;
   const { hours, earliestEventHour, latestEventHour } = getVisibleHours(visibleHours, singleDayEvents);
@@ -113,17 +119,21 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                       {index !== 0 && <div className='pointer-events-none absolute inset-x-0 top-0 border-b'></div>}
 
                       <DroppableTimeBlock date={selectedDate} hour={hour} minute={0}>
-                        <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 0 }}>
-                          <div className='absolute inset-x-0 top-0 h-[48px] cursor-pointer transition-colors hover:bg-accent' />
-                        </AddEventDialog>
+                        <Activity mode={canAddEvent ? 'visible' : 'hidden'}>
+                          <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 0 }}>
+                            <div className='absolute inset-x-0 top-0 h-[48px] cursor-pointer transition-colors hover:bg-accent' />
+                          </AddEventDialog>
+                        </Activity>
                       </DroppableTimeBlock>
 
                       <div className='pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed'></div>
 
                       <DroppableTimeBlock date={selectedDate} hour={hour} minute={30}>
-                        <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 30 }}>
-                          <div className='absolute inset-x-0 top-[48px] h-[48px] cursor-pointer transition-colors hover:bg-accent' />
-                        </AddEventDialog>
+                        <Activity mode={canAddEvent ? 'visible' : 'hidden'}>
+                          <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 30 }}>
+                            <div className='absolute inset-x-0 top-[48px] h-[48px] cursor-pointer transition-colors hover:bg-accent' />
+                          </AddEventDialog>
+                        </Activity>
                       </DroppableTimeBlock>
                     </div>
                   );

@@ -357,11 +357,17 @@ const ReportTable = ({
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align='end' className='w-32'>
-                              <DropdownMenuItem onClick={() => handleDuplicate(row)}>
+                              <DropdownMenuItem
+                                onClick={() => handleDuplicate(row)}
+                                disabled={!hasAnyPermission(['WORK:WRITE', 'WORK:MANAGE'])}
+                              >
                                 <Copy className='h-4 w-4 mr-2' />
                                 <span>{t('report.duplicate')}</span>
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleEdit(row)}>
+                              <DropdownMenuItem
+                                onClick={() => handleEdit(row)}
+                                disabled={!hasAnyPermission(['WORK:WRITE', 'WORK:MANAGE'])}
+                              >
                                 <Pencil className='h-4 w-4 mr-2' />
                                 <span>{tc('edit')}</span>
                               </DropdownMenuItem>
@@ -369,6 +375,7 @@ const ReportTable = ({
                               <DropdownMenuItem
                                 onClick={() => handleDelete(row)}
                                 className='text-destructive focus:text-destructive'
+                                disabled={!hasAnyPermission(['WORK:WRITE', 'WORK:MANAGE'])}
                               >
                                 <Trash2 className='h-4 w-4 mr-2' />
                                 <span>{tc('delete')}</span>
