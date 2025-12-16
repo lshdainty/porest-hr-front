@@ -12,7 +12,7 @@ import { EmptyWorkCode } from '@/features/admin/work/components/EmptyWorkCode';
 import { useWorkGroupsWithPartsQuery } from '@/hooks/queries/useWorks';
 import { WorkCodeResp, WorkGroupWithParts, WorkLabelWithParts } from '@/lib/api/work';
 import { Edit, Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { WorkCodeDeleteDialog } from './WorkCodeDeleteDialog';
 import { WorkCodeEditDialog } from './WorkCodeEditDialog';
@@ -62,9 +62,9 @@ const WorkCodeListInner = ({ workGroups }: WorkCodeListInnerProps) => {
           </TableHeader>
           <TableBody>
             {workGroups?.map((group) => (
-              <>
+              <Fragment key={`group-${group.work_code_id}`}>
                 {/* Group Row (Option) - 최상위 그룹은 + 버튼 없음 */}
-                <TableRow key={group.work_code_id} className="bg-muted/50">
+                <TableRow className="bg-muted/50">
                   <TableCell className="font-medium pl-4">
                     {group.work_code_name}
                   </TableCell>
@@ -93,8 +93,8 @@ const WorkCodeListInner = ({ workGroups }: WorkCodeListInnerProps) => {
 
                 {/* Label Rows */}
                 {group.labels?.map((label: WorkLabelWithParts) => (
-                  <>
-                    <TableRow key={label.work_code_id} className="bg-muted/30">
+                  <Fragment key={`label-${label.work_code_id}`}>
+                    <TableRow className="bg-muted/30">
                       <TableCell className="pl-8">
                         └ {label.work_code_name}
                       </TableCell>
@@ -158,9 +158,9 @@ const WorkCodeListInner = ({ workGroups }: WorkCodeListInnerProps) => {
                         </TableCell>
                       </TableRow>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
-              </>
+              </Fragment>
             ))}
           </TableBody>
         </Table>
