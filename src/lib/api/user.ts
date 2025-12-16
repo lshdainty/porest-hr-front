@@ -194,6 +194,13 @@ export interface RequestPasswordResetReq {
   email: string
 }
 
+// 비밀번호 변경 (로그인 사용자)
+export interface ChangePasswordReq {
+  current_password: string
+  new_password: string
+  new_password_confirm: string
+}
+
 // API Functions
 export async function fetchGetUser(userId: string): Promise<GetUserResp> {
   const resp: ApiResponse<GetUserResp> = await api.request({
@@ -367,6 +374,17 @@ export async function fetchRequestPasswordReset(data: RequestPasswordResetReq): 
   const resp: ApiResponse = await api.request({
     method: 'post',
     url: `/users/password/reset-request`,
+    data
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+}
+
+// 비밀번호 변경 (로그인 사용자)
+export async function fetchChangePassword(data: ChangePasswordReq): Promise<void> {
+  const resp: ApiResponse = await api.request({
+    method: 'patch',
+    url: `/users/me/password`,
     data
   });
 

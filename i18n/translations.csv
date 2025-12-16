@@ -90,6 +90,7 @@ sidebar,menu.adminWork,업무 코드,Work Code
 sidebar,menu.adminNotice,공지사항 관리,Notice
 sidebar,menu.notice,공지사항,Notice
 sidebar,footer.account,계정,Account
+sidebar,footer.changePassword,비밀번호 변경,Change Password
 sidebar,footer.logout,로그아웃,Log out
 sidebar,footer.loggingOut,로그아웃 중...,Logging out...
 admin,company.title,회사 정보,Company Info
@@ -1052,6 +1053,20 @@ user,info.birthFormat,{{year}}년 {{month}}월 {{day}}일,{{year}}/{{month}}/{{d
 user,info.company,회사,Company
 user,info.department,부서,Department
 user,info.workTime,유연근무시간,Flexible Work Time
+user,passwordChange,비밀번호 변경,Change Password
+user,passwordChangeDescription,비밀번호를 변경하려면 현재 비밀번호와 새 비밀번호를 입력하세요.,Enter your current password and new password to change.
+user,currentPassword,현재 비밀번호,Current Password
+user,currentPasswordPlaceholder,현재 비밀번호를 입력하세요,Enter current password
+user,currentPasswordRequired,현재 비밀번호를 입력해주세요.,Please enter your current password.
+user,newPassword,새 비밀번호,New Password
+user,newPasswordPlaceholder,새 비밀번호를 입력하세요,Enter new password
+user,newPasswordRequired,새 비밀번호를 입력해주세요.,Please enter a new password.
+user,confirmPassword,새 비밀번호 확인,Confirm New Password
+user,confirmPasswordPlaceholder,새 비밀번호를 다시 입력하세요,Enter new password again
+user,confirmPasswordRequired,비밀번호 확인을 입력해주세요.,Please confirm your new password.
+user,passwordMismatch,비밀번호가 일치하지 않습니다.,Passwords do not match.
+user,passwordChangeSuccess,비밀번호가 성공적으로 변경되었습니다.,Password changed successfully.
+user,passwordChangeError,비밀번호 변경에 실패했습니다.,Failed to change password.
 auth,signup.birthDate,생년월일,Birth Date
 auth,signup.useLunarBirth,음력 생일 사용,Use Lunar Birthday
 auth,signup.processing,처리 중...,Processing...

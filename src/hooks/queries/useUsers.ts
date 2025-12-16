@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
 import {
+  fetchChangePassword,
   fetchDeleteUser,
   fetchGetUser,
   fetchGetUserApprovers,
@@ -18,6 +19,7 @@ import {
   fetchRequestPasswordReset,
   fetchResetPassword,
   fetchUpdateDashboard,
+  type ChangePasswordReq,
   type GetUserApproversResp,
   type GetUserIdDuplicateResp,
   type GetUserResp,
@@ -172,5 +174,12 @@ export const useResetPasswordMutation = () => {
 export const useRequestPasswordResetMutation = () => {
   return useMutation<void, Error, RequestPasswordResetReq>({
     mutationFn: (data: RequestPasswordResetReq) => fetchRequestPasswordReset(data)
+  })
+}
+
+// 비밀번호 변경 Mutation 훅 (로그인 사용자)
+export const useChangePasswordMutation = () => {
+  return useMutation<void, Error, ChangePasswordReq>({
+    mutationFn: (data: ChangePasswordReq) => fetchChangePassword(data)
   })
 }
