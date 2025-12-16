@@ -1260,3 +1260,18 @@ admin,user.newPassword,새 비밀번호,New Password
 admin,user.newPasswordPlaceholder,새 비밀번호를 입력하세요,Enter new password
 admin,user.resetting,초기화 중...,Resetting...
 admin,user.reset,초기화,Reset
+login,forgotPassword,비밀번호를 잊으셨나요?,Forgot your password?
+login,resetPassword.title,비밀번호 초기화,Reset Password
+login,resetPassword.description,비밀번호 초기화를 위해 아이디와 이메일을 입력해주세요.,Enter your ID and email to reset your password.
+login,resetPassword.email,이메일,Email
+login,resetPassword.emailPlaceholder,이메일을 입력하세요,Enter your email
+login,resetPassword.submit,초기화 링크 전송,Send Reset Link
+login,resetPassword.cancel,취소,Cancel
+login,resetPassword.backToLogin,로그인으로 돌아가기,Back to login
+login,resetPassword.submitting,전송 중...,Sending...
+login,resetPassword.success,임시 비밀번호가 이메일로 전송되었습니다.,A temporary password has been sent to your email.
+login,resetPassword.error,비밀번호 초기화에 실패했습니다. 아이디와 이메일을 확인해주세요.,Failed to reset password. Please check your ID and email.
+login,resetPassword.userIdRequired,아이디를 입력해주세요.,Please enter your ID.
+login,resetPassword.emailInvalid,올바른 이메일 형식을 입력해주세요.,Please enter a valid email address.
+login,idRequired,아이디를 입력해주세요.,Please enter your ID.
+login,passwordRequired,비밀번호를 입력해주세요.,Please enter your password.

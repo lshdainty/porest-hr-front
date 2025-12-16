@@ -188,6 +188,12 @@ export interface ResetPasswordReq {
   new_password: string
 }
 
+// 비밀번호 초기화 요청 (비로그인)
+export interface RequestPasswordResetReq {
+  user_id: string
+  email: string
+}
+
 // API Functions
 export async function fetchGetUser(userId: string): Promise<GetUserResp> {
   const resp: ApiResponse<GetUserResp> = await api.request({
@@ -351,6 +357,17 @@ export async function fetchResetPassword(data: ResetPasswordReq): Promise<void> 
     data: {
       new_password: data.new_password
     }
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+}
+
+// 비밀번호 초기화 요청 (비로그인)
+export async function fetchRequestPasswordReset(data: RequestPasswordResetReq): Promise<void> {
+  const resp: ApiResponse = await api.request({
+    method: 'post',
+    url: `/users/password/reset-request`,
+    data
   });
 
   if (!resp.success) throw new Error(resp.message);

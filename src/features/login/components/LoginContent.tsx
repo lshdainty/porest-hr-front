@@ -1,13 +1,26 @@
 import loginBG from '@/assets/img/login_bg.jpg';
+import Logo from '@/assets/img/porest.svg';
+import LogoDark from '@/assets/img/porest_dark.svg';
+import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
+import { Field, FieldError, FieldLabel } from '@/components/shadcn/field';
+import { Input } from '@/components/shadcn/input';
 import { toast } from '@/components/shadcn/sonner';
+import { Spinner } from '@/components/shadcn/spinner';
+import { useTheme } from '@/components/shadcn/themeProvider';
+import { useUser } from '@/contexts/UserContext';
+import { PasswordResetDialog } from '@/features/login/components/PasswordResetDialog';
 import { SocialLoginButton } from '@/features/login/components/SocialLoginButton';
-import { authKeys, useCsrfTokenQuery } from '@/hooks/queries/useAuths';
+import { authKeys, useCsrfTokenQuery, usePostLoginMutation } from '@/hooks/queries/useAuths';
 import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { KeyRound, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
 
 interface LoginContentProps extends React.ComponentProps<'div'> {}
 
@@ -61,7 +74,7 @@ const LoginContent = ({ className, ...props }: LoginContentProps) => {
       <div className='w-full max-w-sm md:max-w-6xl'>
         <div className={cn('flex flex-col gap-6 h-[700px]', className)} {...props}>
           <Card className='overflow-hidden p-0 h-full'>
-            <CardContent className='grid p-0 md:[grid-template-columns:2fr_1fr] h-full'>
+            <CardContent className='grid p-0 md:grid-cols-[2fr_1fr] h-full'>
               <div className='bg-muted relative hidden md:block'>
                 <img
                   src={loginBG}
@@ -70,39 +83,9 @@ const LoginContent = ({ className, ...props }: LoginContentProps) => {
                 />
               </div>
               <div className='p-6 md:p-8 h-full flex justify-center'>
-                 <div className='flex flex-col justify-center gap-6 w-full'>
-                    {/* LoginForm needs to be slightly adjusted to not contain the wrapper div if I want to inject SocialButton here.
-                        Or I can just render LoginForm and SocialLoginButton inside the wrapper here. 
-                        Wait, LoginForm in my previous step included the wrapper div with 'flex flex-col justify-center gap-6'.
-                        Let's adjust LoginForm to be just the form fields and button, OR reuse it as is but I need to insert SocialLoginButton.
-                        
-                        Actually, I'll modify LoginForm to accept children or just put SocialLoginButton inside LoginForm in the previous step?
-                        I didn't put it in. I left a comment.
-                        
-                        Let's rewrite LoginForm to include SocialLoginButton for simplicity as they are tightly coupled in the design.
-                        OR, I can rewrite LoginContent to render the form structure.
-                        
-                        Let's check LoginForm again. It renders a <form> tag.
-                        Inside <form>, it has the inputs and the "Or continue with" divider.
-                        I should put SocialLoginButton inside the form or right after it?
-                        The original code had the button inside the form div (which was inside the form tag? No, let's check original).
-                        
-                        Original:
-                        <form ...>
-                          <div className='flex flex-col justify-center gap-6'>
-                             ... inputs ...
-                             <Button type='submit' ... />
-                             <div ... divider ... />
-                             <button ... google ... />
-                          </div>
-                        </form>
-                        
-                        So the google button was INSIDE the form tag.
-                        
-                        I will update LoginForm to import and use SocialLoginButton.
-                    */}
-                    <LoginFormWithSocial />
-                 </div>
+                <div className='flex flex-col justify-center gap-6 w-full'>
+                  <LoginForm />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -112,80 +95,119 @@ const LoginContent = ({ className, ...props }: LoginContentProps) => {
   );
 };
 
-// Helper component to combine Form and Social Button to match original structure
-import Logo from '@/assets/img/porest.svg';
-import LogoDark from '@/assets/img/porest_dark.svg';
-import { Button } from '@/components/shadcn/button';
-import { Input } from '@/components/shadcn/input';
-import { Label } from '@/components/shadcn/label';
-import { useTheme } from '@/components/shadcn/themeProvider';
-import { useUser } from '@/contexts/UserContext'; // 추가
-import { usePostLoginMutation } from '@/hooks/queries/useAuths';
+const createLoginFormSchema = (t: (key: string) => string) =>
+  z.object({
+    user_id: z.string().min(1, t('idRequired')),
+    user_pw: z.string().min(1, t('passwordRequired')),
+  });
 
-const LoginFormWithSocial = () => {
+type LoginFormValues = z.infer<ReturnType<typeof createLoginFormSchema>>;
+
+const LoginForm = () => {
   const { t } = useTranslation('login');
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { refreshUser } = useUser(); // Context의 강제 갱신 함수 가져오기
+  const { refreshUser } = useUser();
   const loginMutation = usePostLoginMutation();
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(createLoginFormSchema(t)),
+    defaultValues: {
+      user_id: '',
+      user_pw: '',
+    },
+  });
+
+  const onSubmit = (values: LoginFormValues) => {
+    const formData = new FormData();
+    formData.append('user_id', values.user_id);
+    formData.append('user_pw', values.user_pw);
 
     loginMutation.mutate(formData, {
       onSuccess: async () => {
-        // [수정됨] invalidateQueries 대신 refreshUser() 사용
-        // 이 함수는 내부적으로 refetch()를 호출하여 데이터를 확실히 가져올 때까지 기다립니다.
-        await refreshUser(); 
-        
-        // 데이터 갱신이 끝난 후 이동하므로 안전함
+        await refreshUser();
         navigate('/dashboard');
-      }
+      },
     });
   };
 
   return (
-    <form className='w-full' onSubmit={handleSubmit}>
+    <>
+      <form className='w-full' onSubmit={form.handleSubmit(onSubmit)}>
         <div className='flex flex-col justify-center gap-6'>
-        <div className='flex flex-col items-center text-center'>
-          <img src={theme == 'light' ? Logo : LogoDark} alt='logo'></img>
-        </div>
-        <div className='grid gap-3'>
-          <Label htmlFor='user_id'>{t('idLabel')}</Label>
-          <Input
-            id='user_id'
+          <div className='flex flex-col items-center text-center'>
+            <img src={theme == 'light' ? Logo : LogoDark} alt='logo' />
+          </div>
+          <Controller
+            control={form.control}
             name='user_id'
-            type='text'
-            placeholder={t('idPlaceholder')}
-            required
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <FieldLabel>
+                  <User className='h-4 w-4 text-muted-foreground inline-block' />
+                  {t('idLabel')}
+                </FieldLabel>
+                <Input
+                  {...field}
+                  placeholder={t('idPlaceholder')}
+                />
+                <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+              </Field>
+            )}
           />
-        </div>
-        <div className='grid gap-3'>
-          <Label htmlFor='user_pw'>{t('passwordLabel')}</Label>
-          <Input
-            id='user_pw'
+          <Controller
+            control={form.control}
             name='user_pw'
-            type='password'
-            required
+            render={({ field, fieldState }) => (
+              <Field data-invalid={!!fieldState.error}>
+                <div className='flex items-center'>
+                  <FieldLabel>
+                    <KeyRound className='h-4 w-4 text-muted-foreground inline-block' />
+                    {t('passwordLabel')}
+                  </FieldLabel>
+                  <a
+                    href='#'
+                    className='ml-auto text-sm font-medium text-muted-foreground underline-offset-4 hover:underline hover:text-primary'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsResetDialogOpen(true);
+                    }}
+                  >
+                    {t('forgotPassword')}
+                  </a>
+                </div>
+                <Input
+                  {...field}
+                  type='password'
+                />
+                <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
+              </Field>
+            )}
           />
+          <Button
+            type='submit'
+            className='w-full'
+            disabled={loginMutation.isPending}
+          >
+            {loginMutation.isPending && <Spinner />}
+            {loginMutation.isPending ? t('loadingBtn') : t('loginBtn')}
+          </Button>
+          <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
+            <span className='bg-card text-muted-foreground relative z-10 px-2'>
+              {t('orContinueWith')}
+            </span>
+          </div>
+          <SocialLoginButton />
         </div>
-        <Button
-          type='submit'
-          className='w-full'
-          disabled={loginMutation.isPending}
-        >
-          {loginMutation.isPending ? t('loadingBtn') : t('loginBtn')}
-        </Button>
-        <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
-          <span className='bg-card text-muted-foreground relative z-10 px-2'>
-            {t('orContinueWith')}
-          </span>
-        </div>
-        <SocialLoginButton />
-      </div>
-    </form>
-  )
-}
+      </form>
+
+      <PasswordResetDialog
+        open={isResetDialogOpen}
+        onOpenChange={setIsResetDialogOpen}
+      />
+    </>
+  );
+};
 
 export { LoginContent };

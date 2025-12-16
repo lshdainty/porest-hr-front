@@ -15,6 +15,7 @@ import {
   fetchPostUserInvite,
   fetchPutInvitedUser,
   fetchPutUser,
+  fetchRequestPasswordReset,
   fetchResetPassword,
   fetchUpdateDashboard,
   type GetUserApproversResp,
@@ -27,6 +28,7 @@ import {
   type PutInvitedUserReq,
   type PutInvitedUserResp,
   type PutUserReq,
+  type RequestPasswordResetReq,
   type ResetPasswordReq,
   type UpdateDashboardReq,
   type UpdateDashboardResp
@@ -163,5 +165,12 @@ export const useUpdateDashboardMutation = () => {
 export const useResetPasswordMutation = () => {
   return useMutation<void, Error, ResetPasswordReq>({
     mutationFn: (data: ResetPasswordReq) => fetchResetPassword(data)
+  })
+}
+
+// 비밀번호 초기화 요청 Mutation 훅 (비로그인)
+export const useRequestPasswordResetMutation = () => {
+  return useMutation<void, Error, RequestPasswordResetReq>({
+    mutationFn: (data: RequestPasswordResetReq) => fetchRequestPasswordReset(data)
   })
 }
