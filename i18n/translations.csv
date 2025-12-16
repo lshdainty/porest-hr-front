@@ -1253,3 +1253,10 @@ vacation,history.noGrantTitle,부여 내역이 없습니다,No grant history
 vacation,history.noGrantDesc,아직 휴가를 부여받은 기록이 없습니다.,You have no vacation grant records yet.
 vacation,history.empty.typeStats.title,휴가 유형 통계가 없습니다,No Vacation Type Statistics
 vacation,history.empty.typeStats.description,사용 가능한 휴가 유형이 없습니다,No available vacation types
+admin,user.passwordReset,비밀번호 초기화,Reset Password
+admin,user.passwordResetTitle,비밀번호 초기화,Reset Password
+admin,user.passwordResetDesc,{{name}} 사용자의 비밀번호를 초기화합니다.,Reset the password for user {{name}}.
+admin,user.newPassword,새 비밀번호,New Password
+admin,user.newPasswordPlaceholder,새 비밀번호를 입력하세요,Enter new password
+admin,user.resetting,초기화 중...,Resetting...
+admin,user.reset,초기화,Reset

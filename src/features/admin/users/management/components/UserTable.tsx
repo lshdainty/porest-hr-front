@@ -9,6 +9,7 @@ import { usePermission } from '@/contexts/PermissionContext';
 import { ResendEmailDialog } from '@/features/admin/users/management/components/ResendEmailDialog';
 import { UserDeleteDialog } from '@/features/admin/users/management/components/UserDeleteDialog';
 import { UserInviteDialog } from '@/features/admin/users/management/components/UserInviteDialog';
+import { UserPasswordResetDialog } from '@/features/admin/users/management/components/UserPasswordResetDialog';
 import { UserVacationPlanDialog } from '@/features/admin/users/management/components/UserVacationPlanDialog';
 import { useManagementContext } from '@/features/admin/users/management/contexts/ManagementContext';
 import UserEditDialog from '@/features/user/components/UserEditDialog';
@@ -18,7 +19,7 @@ import { type GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, MailPlus, Pencil, ShieldEllipsis, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, KeyRound, MailPlus, Pencil, ShieldEllipsis, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -45,7 +46,8 @@ const UserTable = ({ value: users }: UserTableProps) => {
     showResendDialog, setShowResendDialog,
     showPlanDialog, setPlanDialog,
     showDeleteDialog, setShowDeleteDialog,
-    showInviteEditDialog, setShowInviteEditDialog
+    showInviteEditDialog, setShowInviteEditDialog,
+    showPasswordResetDialog, setShowPasswordResetDialog
   } = useManagementContext();
 
   const { hasPermission, hasAllPermissions } = usePermission();
@@ -222,6 +224,14 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 <span>{t('user.vacationPlan')}</span>
                               </DropdownMenuItem>
                             )}
+                            {row.invitation_status === 'ACTIVE' && hasPermission('USER:MANAGE') && (
+                              <DropdownMenuItem
+                                onSelect={() => setShowPasswordResetDialog(row.user_id)}
+                              >
+                                <KeyRound className='h-4 w-4' />
+                                <span>{t('user.passwordReset')}</span>
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuSeparator />
                             {hasPermission('USER:MANAGE') && (
                               <DropdownMenuItem
@@ -356,6 +366,16 @@ const UserTable = ({ value: users }: UserTableProps) => {
           onOpenChange={(open) => !open && setShowDeleteDialog(null)}
           user={users.find(u => u.user_id === showDeleteDialog)!}
           onDelete={handleDeleteUser}
+        />
+      )}
+
+      {/* 비밀번호 초기화 Dialog */}
+      {showPasswordResetDialog && (
+        <UserPasswordResetDialog
+          open={true}
+          onOpenChange={(open) => !open && setShowPasswordResetDialog(null)}
+          userId={showPasswordResetDialog}
+          userName={users.find(u => u.user_id === showPasswordResetDialog)?.user_name || ''}
         />
       )}
     </Card>

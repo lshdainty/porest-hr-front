@@ -15,6 +15,7 @@ import {
   fetchPostUserInvite,
   fetchPutInvitedUser,
   fetchPutUser,
+  fetchResetPassword,
   fetchUpdateDashboard,
   type GetUserApproversResp,
   type GetUserIdDuplicateResp,
@@ -26,6 +27,7 @@ import {
   type PutInvitedUserReq,
   type PutInvitedUserResp,
   type PutUserReq,
+  type ResetPasswordReq,
   type UpdateDashboardReq,
   type UpdateDashboardResp
 } from '@/lib/api/user'
@@ -154,5 +156,12 @@ export const useUpdateDashboardMutation = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(data.user_id) })
     }
+  })
+}
+
+// 비밀번호 초기화 Mutation 훅
+export const useResetPasswordMutation = () => {
+  return useMutation<void, Error, ResetPasswordReq>({
+    mutationFn: (data: ResetPasswordReq) => fetchResetPassword(data)
   })
 }

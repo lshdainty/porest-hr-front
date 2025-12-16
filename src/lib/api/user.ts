@@ -183,6 +183,11 @@ export interface UpdateDashboardResp {
   dashboard: string
 }
 
+export interface ResetPasswordReq {
+  user_id: string
+  new_password: string
+}
+
 // API Functions
 export async function fetchGetUser(userId: string): Promise<GetUserResp> {
   const resp: ApiResponse<GetUserResp> = await api.request({
@@ -337,4 +342,16 @@ export async function fetchUpdateDashboard(userId: string, data: UpdateDashboard
   if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
+}
+
+export async function fetchResetPassword(data: ResetPasswordReq): Promise<void> {
+  const resp: ApiResponse = await api.request({
+    method: 'patch',
+    url: `/users/${data.user_id}/password`,
+    data: {
+      new_password: data.new_password
+    }
+  });
+
+  if (!resp.success) throw new Error(resp.message);
 }
