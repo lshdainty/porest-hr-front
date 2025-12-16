@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
 import {
+  fetchChangePassword,
   fetchDeleteUser,
   fetchGetUser,
   fetchGetUserApprovers,
@@ -15,7 +16,10 @@ import {
   fetchPostUserInvite,
   fetchPutInvitedUser,
   fetchPutUser,
+  fetchRequestPasswordReset,
+  fetchResetPassword,
   fetchUpdateDashboard,
+  type ChangePasswordReq,
   type GetUserApproversResp,
   type GetUserIdDuplicateResp,
   type GetUserResp,
@@ -26,6 +30,8 @@ import {
   type PutInvitedUserReq,
   type PutInvitedUserResp,
   type PutUserReq,
+  type RequestPasswordResetReq,
+  type ResetPasswordReq,
   type UpdateDashboardReq,
   type UpdateDashboardResp
 } from '@/lib/api/user'
@@ -154,5 +160,26 @@ export const useUpdateDashboardMutation = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: userKeys.detail(data.user_id) })
     }
+  })
+}
+
+// 비밀번호 초기화 Mutation 훅
+export const useResetPasswordMutation = () => {
+  return useMutation<void, Error, ResetPasswordReq>({
+    mutationFn: (data: ResetPasswordReq) => fetchResetPassword(data)
+  })
+}
+
+// 비밀번호 초기화 요청 Mutation 훅 (비로그인)
+export const useRequestPasswordResetMutation = () => {
+  return useMutation<void, Error, RequestPasswordResetReq>({
+    mutationFn: (data: RequestPasswordResetReq) => fetchRequestPasswordReset(data)
+  })
+}
+
+// 비밀번호 변경 Mutation 훅 (로그인 사용자)
+export const useChangePasswordMutation = () => {
+  return useMutation<void, Error, ChangePasswordReq>({
+    mutationFn: (data: ChangePasswordReq) => fetchChangePassword(data)
   })
 }

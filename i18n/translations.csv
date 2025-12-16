@@ -90,6 +90,7 @@ sidebar,menu.adminWork,업무 코드,Work Code
 sidebar,menu.adminNotice,공지사항 관리,Notice
 sidebar,menu.notice,공지사항,Notice
 sidebar,footer.account,계정,Account
+sidebar,footer.changePassword,비밀번호 변경,Change Password
 sidebar,footer.logout,로그아웃,Log out
 sidebar,footer.loggingOut,로그아웃 중...,Logging out...
 admin,company.title,회사 정보,Company Info
@@ -1052,6 +1053,20 @@ user,info.birthFormat,{{year}}년 {{month}}월 {{day}}일,{{year}}/{{month}}/{{d
 user,info.company,회사,Company
 user,info.department,부서,Department
 user,info.workTime,유연근무시간,Flexible Work Time
+user,passwordChange,비밀번호 변경,Change Password
+user,passwordChangeDescription,비밀번호를 변경하려면 현재 비밀번호와 새 비밀번호를 입력하세요.,Enter your current password and new password to change.
+user,currentPassword,현재 비밀번호,Current Password
+user,currentPasswordPlaceholder,현재 비밀번호를 입력하세요,Enter current password
+user,currentPasswordRequired,현재 비밀번호를 입력해주세요.,Please enter your current password.
+user,newPassword,새 비밀번호,New Password
+user,newPasswordPlaceholder,새 비밀번호를 입력하세요,Enter new password
+user,newPasswordRequired,새 비밀번호를 입력해주세요.,Please enter a new password.
+user,confirmPassword,새 비밀번호 확인,Confirm New Password
+user,confirmPasswordPlaceholder,새 비밀번호를 다시 입력하세요,Enter new password again
+user,confirmPasswordRequired,비밀번호 확인을 입력해주세요.,Please confirm your new password.
+user,passwordMismatch,비밀번호가 일치하지 않습니다.,Passwords do not match.
+user,passwordChangeSuccess,비밀번호가 성공적으로 변경되었습니다.,Password changed successfully.
+user,passwordChangeError,비밀번호 변경에 실패했습니다.,Failed to change password.
 auth,signup.birthDate,생년월일,Birth Date
 auth,signup.useLunarBirth,음력 생일 사용,Use Lunar Birthday
 auth,signup.processing,처리 중...,Processing...
@@ -1253,3 +1268,25 @@ vacation,history.noGrantTitle,부여 내역이 없습니다,No grant history
 vacation,history.noGrantDesc,아직 휴가를 부여받은 기록이 없습니다.,You have no vacation grant records yet.
 vacation,history.empty.typeStats.title,휴가 유형 통계가 없습니다,No Vacation Type Statistics
 vacation,history.empty.typeStats.description,사용 가능한 휴가 유형이 없습니다,No available vacation types
+admin,user.passwordReset,비밀번호 초기화,Reset Password
+admin,user.passwordResetTitle,비밀번호 초기화,Reset Password
+admin,user.passwordResetDesc,{{name}} 사용자의 비밀번호를 초기화합니다.,Reset the password for user {{name}}.
+admin,user.newPassword,새 비밀번호,New Password
+admin,user.newPasswordPlaceholder,새 비밀번호를 입력하세요,Enter new password
+admin,user.resetting,초기화 중...,Resetting...
+admin,user.reset,초기화,Reset
+login,forgotPassword,비밀번호를 잊으셨나요?,Forgot your password?
+login,resetPassword.title,비밀번호 초기화,Reset Password
+login,resetPassword.description,비밀번호 초기화를 위해 아이디와 이메일을 입력해주세요.,Enter your ID and email to reset your password.
+login,resetPassword.email,이메일,Email
+login,resetPassword.emailPlaceholder,이메일을 입력하세요,Enter your email
+login,resetPassword.submit,초기화 링크 전송,Send Reset Link
+login,resetPassword.cancel,취소,Cancel
+login,resetPassword.backToLogin,로그인으로 돌아가기,Back to login
+login,resetPassword.submitting,전송 중...,Sending...
+login,resetPassword.success,임시 비밀번호가 이메일로 전송되었습니다.,A temporary password has been sent to your email.
+login,resetPassword.error,비밀번호 초기화에 실패했습니다. 아이디와 이메일을 확인해주세요.,Failed to reset password. Please check your ID and email.
+login,resetPassword.userIdRequired,아이디를 입력해주세요.,Please enter your ID.
+login,resetPassword.emailInvalid,올바른 이메일 형식을 입력해주세요.,Please enter a valid email address.
+login,idRequired,아이디를 입력해주세요.,Please enter your ID.
+login,passwordRequired,비밀번호를 입력해주세요.,Please enter your password.

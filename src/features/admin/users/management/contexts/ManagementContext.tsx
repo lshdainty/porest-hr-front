@@ -13,6 +13,8 @@ interface ManagementContextType {
   setShowDeleteDialog: (id: string | null) => void;
   showInviteEditDialog: string | null;
   setShowInviteEditDialog: (id: string | null) => void;
+  showPasswordResetDialog: string | null;
+  setShowPasswordResetDialog: (id: string | null) => void;
 }
 
 const ManagementContext = createContext<ManagementContextType | null>(null);
@@ -24,6 +26,7 @@ export const ManagementProvider = ({ children }: { children: ReactNode }) => {
   const [showPlanDialog, setPlanDialog] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
   const [showInviteEditDialog, setShowInviteEditDialog] = useState<string | null>(null);
+  const [showPasswordResetDialog, setShowPasswordResetDialog] = useState<string | null>(null);
 
   return (
     <ManagementContext.Provider
@@ -39,7 +42,9 @@ export const ManagementProvider = ({ children }: { children: ReactNode }) => {
         showDeleteDialog,
         setShowDeleteDialog,
         showInviteEditDialog,
-        setShowInviteEditDialog
+        setShowInviteEditDialog,
+        showPasswordResetDialog,
+        setShowPasswordResetDialog
       }}
     >
       {children}

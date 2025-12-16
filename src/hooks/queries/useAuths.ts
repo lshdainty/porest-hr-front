@@ -61,7 +61,7 @@ export const usePostCompleteSignupMutation = () => {
 
 // CSRF 토큰 조회 훅
 export const useCsrfTokenQuery = (enabled: boolean = true) => {
-  return useQuery<void>({
+  return useQuery<null>({
     queryKey: authKeys.detail('csrf-token'),
     queryFn: () => fetchGetCsrfToken(),
     enabled,

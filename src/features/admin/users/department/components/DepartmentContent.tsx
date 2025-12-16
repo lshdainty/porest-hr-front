@@ -1,6 +1,6 @@
 import QueryAsyncBoundary from '@/components/common/QueryAsyncBoundary'
 import { Button } from '@/components/shadcn/button'
-import { Dialog, DialogContent } from '@/components/shadcn/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/shadcn/dialog'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/shadcn/resizable'
 import { DepartmentTreePanel } from '@/features/admin/company/components/DepartmentTreePanel'
 import { DepartmentContentSkeleton } from '@/features/admin/users/department/components/DepartmentContentSkeleton'
@@ -103,9 +103,9 @@ const DepartmentContentInner = ({ company }: DepartmentContentInnerProps) => {
               <Button variant="ghost" size="icon" onClick={() => setSelectedDept(null)}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <h2 className="text-lg font-semibold">
+              <DialogTitle className="text-lg font-semibold">
                 {selectedDept?.department_name}
-              </h2>
+              </DialogTitle>
             </div>
             <div className="flex-1 overflow-y-auto">
               <div className="p-4 min-h-full">

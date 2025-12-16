@@ -186,7 +186,7 @@ const UserDepartmentTransfer = ({
   }
 
   return (
-    <div className='w-full h-full flex flex-col gap-4'>
+    <div className='w-full h-full flex flex-col gap-4 min-h-0'>
       <div className='hidden md:flex justify-end gap-2'>
         <Button onClick={handleSave} disabled={!hasChanges() || isSaving}>
           {isSaving && <Spinner />}

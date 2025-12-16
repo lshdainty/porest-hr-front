@@ -5,13 +5,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar'
 import config from '@/config/config'
 import { useUser } from '@/contexts/UserContext'
+import { PasswordChangeDialog } from '@/features/user/components/PasswordChangeDialog'
 import UserEditDialog from '@/features/user/components/UserEditDialog'
 import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths'
 import { usePutUserMutation, useUserQuery } from '@/hooks/queries/useUsers'
 import type { PutUserReq } from '@/lib/api/user'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { CircleUser, EllipsisVertical, LogOut } from 'lucide-react'
+import { CircleUser, EllipsisVertical, KeyRound, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -36,6 +37,7 @@ export function Footer() {
 
   // Dialog 상태 관리
   const [showEditDialog, setShowEditDialog] = useState(false)
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
 
   // 로그인한 사용자의 상세 정보 가져오기
   const { data: userData } = useUserQuery(loginUser?.user_id || '')
@@ -124,10 +126,16 @@ export function Footer() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               {userData && (
-                <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
-                  <CircleUser />
-                  {t('footer.account')}
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
+                    <CircleUser />
+                    {t('footer.account')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setShowPasswordDialog(true)}>
+                    <KeyRound />
+                    {t('footer.changePassword')}
+                  </DropdownMenuItem>
+                </>
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -147,6 +155,12 @@ export function Footer() {
             onSave={handleUpdateUser}
           />
         )}
+
+        {/* 비밀번호 변경 Dialog */}
+        <PasswordChangeDialog
+          open={showPasswordDialog}
+          onOpenChange={setShowPasswordDialog}
+        />
       </SidebarMenuItem>
     </SidebarMenu>
   )
