@@ -343,6 +343,7 @@ const ReportContent = () => {
             isWorkGroupsLoading={false}
             workDivision={workDivision}
             isWorkDivisionLoading={false}
+            isSaving={createWorkHistory.isPending || updateWorkHistory.isPending}
           />
         </div>
 

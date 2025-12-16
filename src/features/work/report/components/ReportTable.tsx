@@ -1,5 +1,6 @@
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
+import { Spinner } from '@/components/shadcn/spinner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import {
@@ -52,6 +53,7 @@ interface ReportTableProps {
   isWorkGroupsLoading: boolean;
   workDivision: WorkCodeResp[] | undefined;
   isWorkDivisionLoading: boolean;
+  isSaving?: boolean;
 }
 
 const ReportTable = ({
@@ -68,6 +70,7 @@ const ReportTable = ({
   isWorkGroupsLoading,
   workDivision,
   isWorkDivisionLoading,
+  isSaving = false,
 }: ReportTableProps) => {
   const { t } = useTranslation('work');
   const { t: tc } = useTranslation('common');
@@ -237,8 +240,8 @@ const ReportTable = ({
                         <Select
                           value={editData?.work_part?.work_code || ''}
                           onValueChange={(value) => {
-                            const currentGroup = workGroups.find(g => g.work_code === editData?.work_group?.work_code);
-                            const selectedPart = currentGroup?.parts.find((p) => p.work_code === value);
+                            const currentGroup = workGroups?.find(g => g.work_code === editData?.work_group?.work_code);
+                            const selectedPart = currentGroup?.labels?.[0]?.parts?.find((p) => p.work_code === value);
                             if (selectedPart) {
                               updateEditData('work_part', selectedPart);
                             }
@@ -253,7 +256,7 @@ const ReportTable = ({
                             } />
                           </SelectTrigger>
                           <SelectContent>
-                            {workGroups.find(g => g.work_code === editData?.work_group?.work_code)?.parts.map((part) => (
+                            {workGroups?.find(g => g.work_code === editData?.work_group?.work_code)?.labels?.[0]?.parts?.map((part) => (
                               <SelectItem key={part.work_code} value={part.work_code}>
                                 {part.work_code_name}
                               </SelectItem>
@@ -333,13 +336,15 @@ const ReportTable = ({
                     <TableCell>
                       {editingRow === row.no ? (
                         <div className='flex gap-2'>
-                          <Button size='sm' onClick={handleSave}>
+                          <Button size='sm' onClick={handleSave} disabled={isSaving}>
+                            {isSaving && <Spinner />}
                             {tc('save')}
                           </Button>
                           <Button
                             size='sm'
                             variant='outline'
                             onClick={handleCancel}
+                            disabled={isSaving}
                           >
                             {tc('cancel')}
                           </Button>
