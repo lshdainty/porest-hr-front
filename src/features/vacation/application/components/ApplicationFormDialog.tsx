@@ -89,8 +89,6 @@ const ApplicationFormDialog = ({ open, onClose, onSubmitSuccess, vacationPolicie
   const endTime = form.watch('endTime')
   const selectedApprovers = form.watch('approvers')
 
-  console.log(vacationPolicies)
-
   // 선택된 정책 찾기
   const selectedPolicy = vacationPolicies.find(
     policy => policy.vacation_policy_id === vacationPolicyId
