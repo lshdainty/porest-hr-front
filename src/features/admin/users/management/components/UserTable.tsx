@@ -58,7 +58,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
       user_name: user.user_name,
       user_email: user.user_email,
       user_birth: dayjs(user.user_birth).format('YYYY-MM-DD'),
-      user_origin_company_type: user.user_origin_company_type,
+      user_company_type: user.user_company_type,
       user_work_time: user.user_work_time,
       lunar_yn: user.lunar_yn,
       profile_url: user.profile_url,
@@ -350,7 +350,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
               user_id: user.user_id,
               user_name: user.user_name,
               user_email: user.user_email,
-              user_origin_company_type: user.user_origin_company_type,
+              user_company_type: user.user_company_type,
               user_work_time: user.user_work_time,
               join_date: user.join_date,
               country_code: user.country_code

@@ -69,7 +69,7 @@ const UserManagementPanel = () => {
         user_email: userDetails.user_email,
         user_birth: userDetails.user_birth,
         user_roles: roleCodes,
-        user_origin_company_type: userDetails.user_origin_company_type,
+        user_company_type: userDetails.user_company_type,
         user_work_time: userDetails.user_work_time,
         lunar_yn: userDetails.lunar_yn,
         profile_url: userDetails.profile_url,

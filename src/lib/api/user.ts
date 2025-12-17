@@ -28,7 +28,7 @@ export interface GetUserResp {
   user_roles: string[]
   user_role_name: string
   permissions: string[]
-  user_origin_company_type: string
+  user_company_type: string
   user_origin_company_name: string
   main_department_name_kr: string | null
   lunar_yn: string
@@ -53,7 +53,7 @@ export interface GetUsersResp {
   user_roles: string[]
   user_role_name: string
   permissions: string[]
-  user_origin_company_type: string
+  user_company_type: string
   user_origin_company_name: string
   main_department_name_kr: string | null
   lunar_yn: string
@@ -104,7 +104,7 @@ export interface PostUserReq {
   user_name: string
   user_email: string
   user_birth: string
-  user_origin_company_type: string
+  user_company_type: string
   user_work_time: string
   lunar_yn: string
   profile_url: string
@@ -117,7 +117,7 @@ export interface PutUserReq {
   user_email: string
   user_birth: string
   user_roles?: string[]
-  user_origin_company_type: string
+  user_company_type: string
   user_work_time: string
   lunar_yn: string
   profile_url: string
@@ -130,7 +130,7 @@ export interface PutInvitedUserReq {
   user_id: string
   user_name: string
   user_email: string
-  user_origin_company_type: string
+  user_company_type: string
   user_work_time: string
   join_date: string
   country_code: string
@@ -140,7 +140,7 @@ export interface PutInvitedUserResp {
   user_id: string
   user_name: string
   user_email: string
-  user_origin_company_type: string
+  user_company_type: string
   user_work_time: string
   join_date: string
   country_code: string
@@ -154,7 +154,7 @@ export interface PostUserInviteReq {
   user_id: string
   user_name: string
   user_email: string
-  user_origin_company_type: string
+  user_company_type: string
   user_work_time: string
   join_date: string
   country_code: string
@@ -164,7 +164,7 @@ export interface PostUserInviteResp {
   user_id: string
   user_name: string
   user_email: string
-  user_origin_company_type: string
+  user_company_type: string
   user_work_time: string
   join_date: string
   country_code: string
@@ -281,7 +281,7 @@ export async function fetchPutInvitedUser(data: PutInvitedUserReq): Promise<PutI
     data: {
       user_name: data.user_name,
       user_email: data.user_email,
-      user_origin_company_type: data.user_origin_company_type,
+      user_company_type: data.user_company_type,
       user_work_time: data.user_work_time,
       join_date: data.join_date,
       country_code: data.country_code

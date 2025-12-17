@@ -21,7 +21,7 @@ const createFormSchema = (t: (key: string) => string, tc: (key: string) => strin
   user_name: z.string().min(1, t('user.userNameRequired')),
   user_email: z.string().email(t('user.userEmailRequired')),
   join_date: z.string().min(1, t('user.joinDateRequired')),
-  user_origin_company_type: z.string().min(1, t('user.companyRequired')),
+  user_company_type: z.string().min(1, t('user.companyRequired')),
   user_work_time: z.string().min(1, t('user.workTimeRequired')),
   country_code: z.string().min(1, tc('countryRequired'))
 })
@@ -37,7 +37,7 @@ interface UserInviteDialogProps {
     user_id: string
     user_name: string
     user_email: string
-    user_origin_company_type: string
+    user_company_type: string
     user_work_time: string
     join_date: string
     country_code: string
@@ -63,7 +63,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
       user_id: initialData?.user_id || '',
       user_name: initialData?.user_name || '',
       user_email: initialData?.user_email || '',
-      user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
+      user_company_type: initialData?.user_company_type || companyOptions[0]?.code || '',
       user_work_time: initialData?.user_work_time || '9 ~ 18',
       join_date: initialData?.join_date || '',
       country_code: initialData?.country_code || 'KR'
@@ -112,7 +112,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
         user_id: initialData?.user_id || '',
         user_name: initialData?.user_name || '',
         user_email: initialData?.user_email || '',
-        user_origin_company_type: initialData?.user_origin_company_type || companyOptions[0]?.code || '',
+        user_company_type: initialData?.user_company_type || companyOptions[0]?.code || '',
         user_work_time: initialData?.user_work_time || '9 ~ 18',
         join_date: initialData?.join_date || '',
         country_code: initialData?.country_code || 'KR'
@@ -128,7 +128,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
         user_id: values.user_id,
         user_name: values.user_name,
         user_email: values.user_email,
-        user_origin_company_type: values.user_origin_company_type,
+        user_company_type: values.user_company_type,
         user_work_time: values.user_work_time,
         join_date: values.join_date,
         country_code: values.country_code
@@ -219,7 +219,7 @@ const UserInviteDialog = ({ open, onOpenChange, title, companyOptions, initialDa
             />
             <Controller
               control={form.control}
-              name="user_origin_company_type"
+              name="user_company_type"
               render={({ field, fieldState }) => (
                 <Field data-invalid={!!fieldState.error}>
                   <FieldLabel>

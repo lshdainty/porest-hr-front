@@ -65,7 +65,7 @@ export function Footer() {
       user_name: user.user_name,
       user_email: user.user_email,
       user_birth: dayjs(user.user_birth).format('YYYY-MM-DD'),
-      user_origin_company_type: user.user_origin_company_type,
+      user_company_type: user.user_company_type,
       user_work_time: user.user_work_time,
       lunar_yn: user.lunar_yn,
       profile_url: user.profile_url,

@@ -35,7 +35,7 @@ export const getUserCompanyStatsConfig = (users: GetUsersResp[] = []): UserCompa
   const counts: { [key: string]: { count: number; name: string } } = {};
 
   users.forEach((user: GetUsersResp) => {
-    const type = user.user_origin_company_type;
+    const type = user.user_company_type;
     if (counts[type]) {
       counts[type].count++;
     } else {

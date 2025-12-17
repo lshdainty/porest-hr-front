@@ -40,7 +40,7 @@ const createFormSchema = (t: (key: string) => string, tc: (key: string) => strin
   user_id: z.string().min(1, { message: t('edit.idRequired') }),
   user_email: z.string().email({ message: t('edit.emailRequired') }),
   user_birth: z.string().min(1, { message: t('edit.birthRequired') }),
-  user_origin_company_type: z.string().min(1, { message: t('edit.companyRequired') }),
+  user_company_type: z.string().min(1, { message: t('edit.companyRequired') }),
   lunar_yn: z.string().min(1, { message: t('edit.lunarRequired') }),
   user_work_time: z.string().min(1, { message: t('edit.workTimeRequired') }),
   country_code: z.string().min(1, { message: tc('countryRequired') }),
@@ -118,7 +118,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
       user_id: '',
       user_email: '',
       user_birth: dayjs().format('YYYY-MM-DD'),
-      user_origin_company_type: companyOptions?.[0]?.code || '',
+      user_company_type: companyOptions?.[0]?.code || '',
       lunar_yn: 'N',
       user_work_time: '9 ~ 18',
       country_code: 'KR',
@@ -129,7 +129,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
     if (open) {
       form.reset({
         ...user,
-        user_origin_company_type: user.user_origin_company_type || companyOptions?.[0]?.code || '',
+        user_company_type: user.user_company_type || companyOptions?.[0]?.code || '',
         lunar_yn: user.lunar_yn || 'N',
         country_code: user.country_code || 'KR',
       });
@@ -419,7 +419,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                 <div className="grid grid-cols-2 gap-4">
                   <Controller
                     control={form.control}
-                    name="user_origin_company_type"
+                    name="user_company_type"
                     render={({ field, fieldState }) => (
                       <Field data-invalid={!!fieldState.error}>
                         <FieldLabel><Building2 className='h-4 w-4 text-muted-foreground inline-block' /> {t('edit.company')}</FieldLabel>

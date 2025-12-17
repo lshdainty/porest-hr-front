@@ -46,7 +46,7 @@ export interface GetValidateInvitationTokenResp {
   user_email: string
   user_role_type: string
   user_work_time: string
-  user_origin_company_type: string
+  user_company_type: string
   invitation_sent_at: string
   invitation_expires_at: string
   invitation_status: string

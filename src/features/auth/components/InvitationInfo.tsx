@@ -13,7 +13,7 @@ const InvitationInfo = () => {
       <div className="space-y-1 text-sm text-gray-600">
         <p><span className="font-medium">{t('signup.invitationName')}:</span> {validationData.user_name}</p>
         <p><span className="font-medium">{t('signup.invitationEmail')}:</span> {validationData.user_email}</p>
-        <p><span className="font-medium">{t('signup.invitationCompany')}:</span> {validationData.user_origin_company_type}</p>
+        <p><span className="font-medium">{t('signup.invitationCompany')}:</span> {validationData.user_company_type}</p>
       </div>
     </div>
   );
