@@ -9,65 +9,23 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/React-19.2.3-61DAFB?logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-4.1-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
 </p>
 
 ---
 
 ## 소개
 
-**POREST Frontend**는 사업장에 속한 근로자의 일정관리 및 휴가관리를 쉽게 관리하고자 만든 서비스의 프론트엔드입니다.
+**POREST Frontend**는 [POREST](https://github.com/lshdainty/POREST) 서비스의 프론트엔드입니다.
 
 React 19와 TypeScript를 기반으로 하며, shadcn/ui 컴포넌트와 Tailwind CSS를 사용하여 모던한 UI를 구현했습니다.
 
 ---
 
-## 주요 기능
-
-### 📅 일정관리
-
-구성원들의 근무 및 휴가 일정을 캘린더 상에서 확인할 수 있습니다.
-
-- 사용자가 등록한 일정을 캘린더 상에서 쉽게 확인
-- 휴가뿐만 아니라 공통 일정 (예비군, 교육) 등 빠르고 간편하게 등록
-- 부서별, 개인별 일정 필터링 지원
-
-### 🏖️ 휴가관리
-
-직원들의 휴가 발생과 잔여 일수 관리 등을 체계적으로 관리할 수 있습니다.
-
-- 캘린더 상에서 쉽게 휴가 등록
-- 전체 휴가 부여 및 직원별 수동 휴가 등록
-- 휴가 발생/사용 내역 손쉬운 관리
-
-### 📝 전자결재
-
-보고가 필요한 근무의 경우 전자결재를 통해 관리가 가능합니다.
-
-- 야근, 휴일근무 등 연장 근무 사전 결재
-- 사전 보고된 결재를 통한 추가 휴가 부여
-
-### 🔐 권한 관리
-
-역할 기반 접근 제어(RBAC)를 통해 메뉴 및 기능별 권한을 관리합니다.
-
-- 관리자가 사용자별로 세분화된 권한 부여
-- 권한에 따른 메뉴 및 기능 동적 제어
-
-### 🌐 다국어 지원
-
-한국어와 영어를 지원합니다.
-
-- i18next를 사용한 손쉬운 언어 전환
-
----
-
 ## 기술 스택
-
-### Frontend
 
 | Category | Technology |
 |----------|------------|
@@ -150,8 +108,6 @@ npm run i18n:generate
 
 ## 국제화 (i18n)
 
-한국어, 영어를 지원합니다.
-
 ```text
 src/locales/
 ├── en/              # 영어
@@ -160,12 +116,12 @@ src/locales/
 
 ---
 
-## 개발 도구
+## 관련 저장소
 
-<p>
-  <img src="https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="VS Code" />
-  <img src="https://img.shields.io/badge/Claude_Code-000000?style=for-the-badge&logo=anthropic&logoColor=white" alt="Claude Code" />
-</p>
+| Repository | Description |
+|------------|-------------|
+| [POREST](https://github.com/lshdainty/POREST) | 통합 레포지토리 (서비스 소개) |
+| [porest-back](https://github.com/lshdainty/porest-back) | Spring Boot 기반 백엔드 |
 
 ---
 
