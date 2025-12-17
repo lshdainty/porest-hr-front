@@ -13,7 +13,7 @@ import { UserPasswordResetDialog } from '@/features/admin/users/management/compo
 import { UserVacationPlanDialog } from '@/features/admin/users/management/components/UserVacationPlanDialog';
 import { useManagementContext } from '@/features/admin/users/management/contexts/ManagementContext';
 import UserEditDialog from '@/features/user/components/UserEditDialog';
-import { useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
+import { useCompanyTypesQuery } from '@/hooks/queries/useTypes';
 import { useDeleteUserMutation, usePutUserMutation } from '@/hooks/queries/useUsers';
 import { type GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { cn } from '@/lib/utils';
@@ -34,7 +34,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
   const { t: tc } = useTranslation('common');
   const { mutate: putUser } = usePutUserMutation();
   const { mutate: deleteUser } = useDeleteUserMutation();
-  const { data: companyTypes } = useOriginCompanyTypesQuery();
+  const { data: companyTypes } = useCompanyTypesQuery();
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = users.length > 0 ? Math.ceil(users.length / ROWS_PER_PAGE) : 1;

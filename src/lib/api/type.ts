@@ -64,8 +64,8 @@ export async function fetchGetHolidayTypes(): Promise<TypeResp[]> {
   return fetchGetTypes('holiday-type');
 }
 
-export async function fetchGetOriginCompanyTypes(): Promise<TypeResp[]> {
-  return fetchGetTypes('origin-company-type');
+export async function fetchGetCompanyTypes(): Promise<TypeResp[]> {
+  return fetchGetTypes('company-type');
 }
 
 export async function fetchGetSystemTypes(): Promise<TypeResp[]> {

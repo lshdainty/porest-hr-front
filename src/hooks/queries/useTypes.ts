@@ -14,7 +14,7 @@ import {
   fetchGetGrantStatusTypes,
   fetchGetScheduleTypes,
   fetchGetHolidayTypes,
-  fetchGetOriginCompanyTypes,
+  fetchGetCompanyTypes,
   fetchGetCountryCodeTypes,
   type TypeResp
 } from '@/lib/api/type'
@@ -101,11 +101,11 @@ export const useHolidayTypesQuery = () => {
   })
 }
 
-// Origin Company Types 조회 훅
-export const useOriginCompanyTypesQuery = () => {
+// Company Types 조회 훅
+export const useCompanyTypesQuery = () => {
   return useQuery<TypeResp[]>({
-    queryKey: typeKeys.list({ type: 'origin-company-type' }),
-    queryFn: () => fetchGetOriginCompanyTypes()
+    queryKey: typeKeys.list({ type: 'company-type' }),
+    queryFn: () => fetchGetCompanyTypes()
   })
 }
 

@@ -5,14 +5,14 @@ import { UserCompanyCard } from '@/features/admin/users/management/components/Us
 import { UserInviteDialog } from '@/features/admin/users/management/components/UserInviteDialog'
 import { UserTable } from '@/features/admin/users/management/components/UserTable'
 import { useManagementContext } from '@/features/admin/users/management/contexts/ManagementContext'
-import { useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes'
+import { useCompanyTypesQuery } from '@/hooks/queries/useTypes'
 import { useUsersQuery } from '@/hooks/queries/useUsers'
 import { useTranslation } from 'react-i18next'
 
 const ManagementContent = () => {
   const { t } = useTranslation('admin')
   const { data: users, isLoading, error } = useUsersQuery()
-  const { data: companyTypes } = useOriginCompanyTypesQuery()
+  const { data: companyTypes } = useCompanyTypesQuery()
   const { showInviteDialog, setShowInviteDialog } = useManagementContext()
 
   return (

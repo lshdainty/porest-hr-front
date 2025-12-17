@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/shadcn/skeleton';
 import { Spinner } from '@/components/shadcn/spinner';
 import config from '@/config/config';
 import { usePostUploadProfileMutation } from '@/hooks/queries/useUsers';
-import { useCountryCodeTypesQuery, useOriginCompanyTypesQuery } from '@/hooks/queries/useTypes';
+import { useCountryCodeTypesQuery, useCompanyTypesQuery } from '@/hooks/queries/useTypes';
 import { GetUsersResp, type PutUserReq } from '@/lib/api/user';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -102,7 +102,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
   const formSchema = createFormSchema(t, tc);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfileMutation();
   const { data: countryCodeOptions } = useCountryCodeTypesQuery();
-  const { data: companyOptions } = useOriginCompanyTypesQuery();
+  const { data: companyOptions } = useCompanyTypesQuery();
   
   // 이미지 업로드 관련 상태 관리 - 초기값부터 완전한 URL로 설정
   const [profileImage, setProfileImage] = useState<string>(getFullImageUrl(user.profile_url || ''));
