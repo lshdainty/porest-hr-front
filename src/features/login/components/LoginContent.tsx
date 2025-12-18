@@ -11,7 +11,11 @@ import { useTheme } from '@/components/shadcn/themeProvider';
 import { useUser } from '@/contexts/UserContext';
 import { PasswordResetDialog } from '@/features/login/components/PasswordResetDialog';
 import { SocialLoginButton } from '@/features/login/components/SocialLoginButton';
-import { authKeys, useCsrfTokenQuery, usePostLoginMutation } from '@/hooks/queries/useAuths';
+import {
+  authKeys,
+  useCsrfTokenQuery,
+  usePostLoginMutation
+} from '@/hooks/queries/useAuths';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
@@ -199,6 +203,19 @@ const LoginForm = () => {
             </span>
           </div>
           <SocialLoginButton />
+          <div className='text-center text-sm'>
+            <span className='text-muted-foreground'>{t('signup.noAccount')}</span>{' '}
+            <a
+              href='#'
+              className='font-medium text-primary underline-offset-4 hover:underline'
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/signup');
+              }}
+            >
+              {t('tab.signup')}
+            </a>
+          </div>
         </div>
       </form>
 

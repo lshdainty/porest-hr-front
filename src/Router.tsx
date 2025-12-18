@@ -83,11 +83,12 @@ const Router: React.FC = () => {
 
   return (
     <Routes>
-      {/* 로그인/회원가입 - 이미 인증된 경우 대시보드로 리다이렉트 */}
+      {/* 로그인 - 이미 인증된 경우 대시보드로 리다이렉트 */}
       <Route
         path='/login'
         element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage/>}
       />
+      {/* 회원가입 - 정중앙 카드 디자인 */}
       <Route
         path='/signup'
         element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage/>}

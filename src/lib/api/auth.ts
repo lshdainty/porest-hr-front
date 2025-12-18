@@ -36,32 +36,36 @@ export interface GetLoginCheck {
   profile_url?: string;
 }
 
-export interface GetValidateInvitationTokenReq {
-  token: string
-}
-
-export interface GetValidateInvitationTokenResp {
+// ID/PW 회원가입 - 1단계: 초대 확인
+export interface PostRegistrationValidateReq {
   user_id: string
   user_name: string
   user_email: string
-  user_role_type: string
-  user_work_time: string
-  user_company_type: string
-  invitation_sent_at: string
-  invitation_expires_at: string
-  invitation_status: string
+  invitation_code: string
 }
 
-export interface PostCompleteSignupReq {
-  invitation_token: string
+export interface PostRegistrationValidateResp {
+  valid: boolean
+  message: string
+}
+
+// ID/PW 회원가입 - 2단계: 회원가입 완료
+export interface PostRegistrationCompleteReq {
+  new_user_id: string
+  new_user_email: string
+  password: string
+  password_confirm: string
   user_birth: string
   lunar_yn: string
 }
 
-export interface PostCompleteSignupResp {
+export interface PostRegistrationCompleteResp {
   user_id: string
-  user_name: string
-  user_email: string
+}
+
+// ID 중복 확인
+export interface GetCheckUserIdDuplicateResp {
+  duplicate: boolean
 }
 
 // API Functions
@@ -102,10 +106,19 @@ export async function fetchGetLoginCheck(): Promise<GetLoginCheck> {
   return resp.data;
 }
 
-export async function fetchGetValidateInvitationToken(token: string): Promise<GetValidateInvitationTokenResp> {
-  const resp: ApiResponse<GetValidateInvitationTokenResp> = await api.request({
-    method: 'get',
-    url: `/oauth2/signup/validate?token=${token}`
+export async function fetchGetCsrfToken(): Promise<null> {
+  await api.get('/csrf-token');
+  return null;
+}
+
+// ID/PW 회원가입 - 1단계: 초대 확인
+export async function fetchPostRegistrationValidate(
+  reqData: PostRegistrationValidateReq
+): Promise<PostRegistrationValidateResp> {
+  const resp: ApiResponse<PostRegistrationValidateResp> = await api.request({
+    method: 'post',
+    url: `/users/registration/validate`,
+    data: reqData
   });
 
   if (!resp.success) throw new Error(resp.message);
@@ -113,17 +126,32 @@ export async function fetchGetValidateInvitationToken(token: string): Promise<Ge
   return resp.data;
 }
 
-export async function fetchPostCompleteSignup(reqData: PostCompleteSignupReq): Promise<PostCompleteSignupResp> {
-  const resp: ApiResponse<PostCompleteSignupResp> = await api.request({
+// ID/PW 회원가입 - 2단계: 회원가입 완료
+export async function fetchPostRegistrationComplete(
+  reqData: PostRegistrationCompleteReq
+): Promise<PostRegistrationCompleteResp> {
+  const resp: ApiResponse<PostRegistrationCompleteResp> = await api.request({
     method: 'post',
-    url: `/oauth2/signup/invitation/complete`,
+    url: `/users/registration/complete`,
     data: reqData
   });
+
+  if (!resp.success) throw new Error(resp.message);
 
   return resp.data;
 }
 
-export async function fetchGetCsrfToken(): Promise<null> {
-  await api.get('/csrf-token');
-  return null;
+// ID 중복 확인
+export async function fetchGetCheckUserIdDuplicate(
+  userId: string
+): Promise<GetCheckUserIdDuplicateResp> {
+  const resp: ApiResponse<GetCheckUserIdDuplicateResp> = await api.request({
+    method: 'get',
+    url: `/users/check-duplicate`,
+    params: { user_id: userId }
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
 }
