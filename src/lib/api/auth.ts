@@ -34,6 +34,7 @@ export interface GetLoginCheck {
   permissions: string[];
   is_login: string;
   profile_url?: string;
+  password_change_required?: string;
 }
 
 // ID/PW 회원가입 - 1단계: 초대 확인

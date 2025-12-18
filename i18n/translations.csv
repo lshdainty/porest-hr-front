@@ -1337,3 +1337,7 @@ login,signup.birthDateRequired,생년월일을 입력해주세요.,Please enter 
 login,signup.newUserEmail,새 이메일,New Email
 login,signup.newUserEmailPlaceholder,새 이메일 입력 (선택),Enter new email (optional)
 login,signup.idAvailable,사용 가능한 아이디입니다.,ID is available.
+user,passwordChangeRequired,비밀번호 변경이 필요합니다,Password Change Required
+user,passwordChangeRequiredDescription,임시 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.,You are using a temporary password. Please change to a new password for security.
+common,or,또는,or
+common,logout,로그아웃,Log out

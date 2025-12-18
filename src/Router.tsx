@@ -6,6 +6,7 @@ import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import Layout from '@/components/layout/layout'
 import NotFound from '@/components/notFound/NotFound'
 import { LoginPage } from '@/pages/LoginPage'
+import { PasswordChangePage } from '@/pages/PasswordChangePage'
 import { SignUpPage } from '@/pages/SignUpPage'
 
 // 설정 파일에서 import
@@ -71,12 +72,15 @@ const generateRouteElements = (routes: RouteConfig[], parentPath = ''): React.Re
 }
 
 const Router: React.FC = () => {
-  const { isLoading, isAuthenticated } = useUser()
+  const { isLoading, isAuthenticated, loginUser } = useUser()
 
   // 초기 세션 확인 중
   if (isLoading) {
     return <Loading />
   }
+
+  // 비밀번호 변경 필요 여부
+  const requiresPasswordChange = loginUser?.password_change_required === 'Y'
 
   const flattenedRoutes = flattenRoutes(routesConfig)
   const routeElements = generateRouteElements(flattenedRoutes)
@@ -93,9 +97,22 @@ const Router: React.FC = () => {
         path='/signup'
         element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage/>}
       />
+      {/* 비밀번호 강제 변경 페이지 */}
+      <Route
+        path='/password-change'
+        element={
+          !isAuthenticated ? <Navigate to="/login" replace /> :
+          !requiresPasswordChange ? <Navigate to="/dashboard" replace /> :
+          <PasswordChangePage />
+        }
+      />
 
-      {/* 보호된 라우트 - 인증 안된 경우 로그인으로 리다이렉트 */}
-      <Route element={isAuthenticated ? <Layout/> : <Navigate to="/login" replace />}>
+      {/* 보호된 라우트 - 인증 안된 경우 로그인으로, 비밀번호 변경 필요시 비밀번호 변경 페이지로 리다이렉트 */}
+      <Route element={
+        !isAuthenticated ? <Navigate to="/login" replace /> :
+        requiresPasswordChange ? <Navigate to="/password-change" replace /> :
+        <Layout/>
+      }>
         {routeElements}
       </Route>
 
