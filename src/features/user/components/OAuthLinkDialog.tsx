@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import { Button } from '@/components/shadcn/button';
 import {
   Dialog,
@@ -9,8 +11,8 @@ import {
 import { toast } from '@/components/shadcn/sonner';
 import { Spinner } from '@/components/shadcn/spinner';
 import config from '@/config/config';
-import { useLinkedProvidersQuery, usePostOAuthLinkStartMutation } from '@/hooks/queries/useAuths';
-import { Check } from 'lucide-react';
+import { authKeys, useDeleteOAuthLinkMutation, useLinkedProvidersQuery, usePostOAuthLinkStartMutation } from '@/hooks/queries/useAuths';
+import { Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface OAuthLinkDialogProps {
@@ -33,7 +35,9 @@ const GoogleIcon = ({ className }: { className?: string }) => (
 
 const OAuthLinkDialog = ({ open, onOpenChange }: OAuthLinkDialogProps) => {
   const { t } = useTranslation('user');
+  const queryClient = useQueryClient();
   const startLinkMutation = usePostOAuthLinkStartMutation();
+  const unlinkMutation = useDeleteOAuthLinkMutation();
   const { data: linkedProviders, isLoading: isLoadingProviders } = useLinkedProvidersQuery(open);
 
   const isGoogleLinked = linkedProviders?.some(p => p.provider_type === 'google') ?? false;
@@ -53,6 +57,21 @@ const OAuthLinkDialog = ({ open, onOpenChange }: OAuthLinkDialogProps) => {
     );
   };
 
+  const handleGoogleUnlink = () => {
+    unlinkMutation.mutate(
+      'google',
+      {
+        onSuccess: () => {
+          toast.success(t('oauthLink.unlinkSuccess'));
+          queryClient.invalidateQueries({ queryKey: authKeys.detail('linked-providers') });
+        },
+        onError: (error) => {
+          toast.error(error.message || t('oauthLink.unlinkError'));
+        },
+      }
+    );
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-md'>
@@ -66,26 +85,45 @@ const OAuthLinkDialog = ({ open, onOpenChange }: OAuthLinkDialogProps) => {
               <Spinner />
             </div>
           ) : (
-            <Button
-              type='button'
-              variant='outline'
-              onClick={handleGoogleLink}
-              disabled={startLinkMutation.isPending || isGoogleLinked}
-              className='w-full justify-start gap-3 h-12'
-            >
-              {startLinkMutation.isPending ? (
-                <Spinner className='h-5 w-5' />
-              ) : (
-                <GoogleIcon className='h-5 w-5' />
-              )}
-              <span className='flex-1 text-left'>{t('oauthLink.google')}</span>
+            <div className='flex items-center gap-2'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={handleGoogleLink}
+                disabled={startLinkMutation.isPending || isGoogleLinked}
+                className='flex-1 justify-start gap-3 h-12'
+              >
+                {startLinkMutation.isPending ? (
+                  <Spinner className='h-5 w-5' />
+                ) : (
+                  <GoogleIcon className='h-5 w-5' />
+                )}
+                <span className='flex-1 text-left'>{t('oauthLink.google')}</span>
+                {isGoogleLinked && (
+                  <span className='flex items-center gap-1 text-sm text-green-600'>
+                    <Check className='h-4 w-4' />
+                    {t('oauthLink.linked')}
+                  </span>
+                )}
+              </Button>
               {isGoogleLinked && (
-                <span className='flex items-center gap-1 text-sm text-green-600'>
-                  <Check className='h-4 w-4' />
-                  {t('oauthLink.linked')}
-                </span>
+                <Button
+                  type='button'
+                  variant='destructive'
+                  size='icon'
+                  onClick={handleGoogleUnlink}
+                  disabled={unlinkMutation.isPending}
+                  className='h-12 w-12 shrink-0'
+                  title={t('oauthLink.unlink')}
+                >
+                  {unlinkMutation.isPending ? (
+                    <Spinner className='h-4 w-4' />
+                  ) : (
+                    <X className='h-4 w-4' />
+                  )}
+                </Button>
               )}
-            </Button>
+            </div>
           )}
         </div>
       </DialogContent>

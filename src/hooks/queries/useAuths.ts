@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 import { createQueryKeys } from '@/constants/query-keys'
 import {
+  fetchDeleteOAuthLink,
   fetchGetCheckUserIdDuplicate,
   fetchGetCsrfToken,
   fetchGetLinkedProviders,
@@ -97,5 +98,13 @@ export const useLinkedProvidersQuery = (enabled: boolean = true) => {
     queryKey: authKeys.detail('linked-providers'),
     queryFn: () => fetchGetLinkedProviders(),
     enabled
+  })
+}
+
+// OAuth 연동 해제 Mutation 훅
+export const useDeleteOAuthLinkMutation = () => {
+  return useMutation<void, Error, string>({
+    mutationFn: (provider: string) =>
+      fetchDeleteOAuthLink(provider)
   })
 }

@@ -195,3 +195,13 @@ export async function fetchGetLinkedProviders(): Promise<LinkedProviderInfo[]> {
 
   return resp.data;
 }
+
+// OAuth 연동 해제
+export async function fetchDeleteOAuthLink(provider: string): Promise<void> {
+  const resp: ApiResponse<void> = await api.request({
+    method: 'delete',
+    url: `/oauth/link/${provider}`
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+}

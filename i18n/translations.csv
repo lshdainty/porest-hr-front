@@ -1349,5 +1349,8 @@ user,oauthLink.error,소셜 계정 연동에 실패했습니다.,Failed to link 
 user,oauthLink.alreadyLinkedSelf,이 계정은 이미 연동되어 있습니다.,This account is already linked.
 user,oauthLink.alreadyLinkedOther,이 계정은 다른 사용자와 연동되어 있습니다.,This account is linked to another user.
 user,oauthLink.userNotFound,세션이 만료되었습니다. 다시 로그인해주세요.,Session expired. Please log in again.
+user,oauthLink.unlink,연동 해제,Unlink
+user,oauthLink.unlinkSuccess,소셜 계정 연동이 해제되었습니다.,Social account has been unlinked.
+user,oauthLink.unlinkError,소셜 계정 연동 해제에 실패했습니다.,Failed to unlink social account.
 common,or,또는,or
 common,logout,로그아웃,Log out
