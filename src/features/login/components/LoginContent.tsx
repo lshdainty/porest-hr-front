@@ -1,5 +1,3 @@
-// TODO: OAuth 연동 페이지 및 기능 개발 필요 (Google, Kakao 등 소셜 로그인 연동)
-
 import loginBG from '@/assets/img/login_bg.jpg';
 import Logo from '@/assets/img/porest.svg';
 import LogoDark from '@/assets/img/porest_dark.svg';
