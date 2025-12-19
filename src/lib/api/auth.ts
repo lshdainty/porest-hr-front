@@ -69,6 +69,18 @@ export interface GetCheckUserIdDuplicateResp {
   duplicate: boolean
 }
 
+// OAuth 연동 시작 응답
+export interface PostOAuthLinkStartResp {
+  auth_url: string
+}
+
+// 연동된 OAuth 제공자 정보
+export interface LinkedProviderInfo {
+  seq: number
+  provider_type: string
+  linked_at: string
+}
+
 // API Functions
 export async function fetchPostLogin(formData: FormData): Promise<PostLoginResp> {
   // FormData를 URLSearchParams로 변환 (Spring Security Form 로그인은 application/x-www-form-urlencoded를 사용)
@@ -150,6 +162,33 @@ export async function fetchGetCheckUserIdDuplicate(
     method: 'get',
     url: `/users/check-duplicate`,
     params: { user_id: userId }
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
+}
+
+// OAuth 연동 시작
+export async function fetchPostOAuthLinkStart(
+  provider: string
+): Promise<PostOAuthLinkStartResp> {
+  const resp: ApiResponse<PostOAuthLinkStartResp> = await api.request({
+    method: 'post',
+    url: `/oauth/link/start`,
+    params: { provider }
+  });
+
+  if (!resp.success) throw new Error(resp.message);
+
+  return resp.data;
+}
+
+// 연동된 OAuth 제공자 목록 조회
+export async function fetchGetLinkedProviders(): Promise<LinkedProviderInfo[]> {
+  const resp: ApiResponse<LinkedProviderInfo[]> = await api.request({
+    method: 'get',
+    url: `/oauth/providers`
   });
 
   if (!resp.success) throw new Error(resp.message);

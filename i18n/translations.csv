@@ -93,6 +93,7 @@ sidebar,footer.account,계정,Account
 sidebar,footer.changePassword,비밀번호 변경,Change Password
 sidebar,footer.logout,로그아웃,Log out
 sidebar,footer.loggingOut,로그아웃 중...,Logging out...
+sidebar,footer.oauthLink,소셜 계정 연동,Social Account Link
 admin,company.title,회사 정보,Company Info
 admin,company.editTitle,회사 정보 수정,Edit Company Info
 admin,company.createTitle,회사 정보 입력,Create Company Info
@@ -1339,5 +1340,14 @@ login,signup.newUserEmailPlaceholder,새 이메일 입력 (선택),Enter new ema
 login,signup.idAvailable,사용 가능한 아이디입니다.,ID is available.
 user,passwordChangeRequired,비밀번호 변경이 필요합니다,Password Change Required
 user,passwordChangeRequiredDescription,임시 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.,You are using a temporary password. Please change to a new password for security.
+user,oauthLink.title,소셜 계정 연동,Social Account Link
+user,oauthLink.description,소셜 계정을 연동하면 해당 계정으로도 로그인할 수 있습니다.,Link your social account to enable login with that account.
+user,oauthLink.google,Google 계정 연동,Link Google Account
+user,oauthLink.linked,연동됨,Linked
+user,oauthLink.success,소셜 계정이 성공적으로 연동되었습니다.,Social account linked successfully.
+user,oauthLink.error,소셜 계정 연동에 실패했습니다.,Failed to link social account.
+user,oauthLink.alreadyLinkedSelf,이 계정은 이미 연동되어 있습니다.,This account is already linked.
+user,oauthLink.alreadyLinkedOther,이 계정은 다른 사용자와 연동되어 있습니다.,This account is linked to another user.
+user,oauthLink.userNotFound,세션이 만료되었습니다. 다시 로그인해주세요.,Session expired. Please log in again.
 common,or,또는,or
 common,logout,로그아웃,Log out

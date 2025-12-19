@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar'
 import config from '@/config/config'
 import { useUser } from '@/contexts/UserContext'
+import { OAuthLinkDialog } from '@/features/user/components/OAuthLinkDialog'
 import { PasswordChangeDialog } from '@/features/user/components/PasswordChangeDialog'
 import UserEditDialog from '@/features/user/components/UserEditDialog'
 import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths'
@@ -12,7 +13,7 @@ import { usePutUserMutation, useUserQuery } from '@/hooks/queries/useUsers'
 import type { PutUserReq } from '@/lib/api/user'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { CircleUser, EllipsisVertical, KeyRound, LogOut } from 'lucide-react'
+import { CircleUser, EllipsisVertical, KeyRound, Link2, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -38,6 +39,7 @@ export function Footer() {
   // Dialog 상태 관리
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
+  const [showOAuthLinkDialog, setShowOAuthLinkDialog] = useState(false)
 
   // 로그인한 사용자의 상세 정보 가져오기
   const { data: userData } = useUserQuery(loginUser?.user_id || '')
@@ -135,6 +137,10 @@ export function Footer() {
                     <KeyRound />
                     {t('footer.changePassword')}
                   </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setShowOAuthLinkDialog(true)}>
+                    <Link2 />
+                    {t('footer.oauthLink')}
+                  </DropdownMenuItem>
                 </>
               )}
             </DropdownMenuGroup>
@@ -160,6 +166,12 @@ export function Footer() {
         <PasswordChangeDialog
           open={showPasswordDialog}
           onOpenChange={setShowPasswordDialog}
+        />
+
+        {/* OAuth 연동 Dialog */}
+        <OAuthLinkDialog
+          open={showOAuthLinkDialog}
+          onOpenChange={setShowOAuthLinkDialog}
         />
       </SidebarMenuItem>
     </SidebarMenu>

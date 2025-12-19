@@ -6,14 +6,18 @@ import { createQueryKeys } from '@/constants/query-keys'
 import {
   fetchGetCheckUserIdDuplicate,
   fetchGetCsrfToken,
+  fetchGetLinkedProviders,
   fetchGetLoginCheck,
   fetchPostLogin,
   fetchPostLogout,
+  fetchPostOAuthLinkStart,
   fetchPostRegistrationComplete,
   fetchPostRegistrationValidate,
   type GetCheckUserIdDuplicateResp,
   type GetLoginCheck,
+  type LinkedProviderInfo,
   type PostLoginResp,
+  type PostOAuthLinkStartResp,
   type PostRegistrationCompleteReq,
   type PostRegistrationCompleteResp,
   type PostRegistrationValidateReq,
@@ -76,5 +80,22 @@ export const useCheckUserIdDuplicateMutation = () => {
   return useMutation<GetCheckUserIdDuplicateResp, Error, string>({
     mutationFn: (userId: string) =>
       fetchGetCheckUserIdDuplicate(userId)
+  })
+}
+
+// OAuth 연동 시작 Mutation 훅
+export const usePostOAuthLinkStartMutation = () => {
+  return useMutation<PostOAuthLinkStartResp, Error, string>({
+    mutationFn: (provider: string) =>
+      fetchPostOAuthLinkStart(provider)
+  })
+}
+
+// 연동된 OAuth 제공자 목록 조회 훅
+export const useLinkedProvidersQuery = (enabled: boolean = true) => {
+  return useQuery<LinkedProviderInfo[]>({
+    queryKey: authKeys.detail('linked-providers'),
+    queryFn: () => fetchGetLinkedProviders(),
+    enabled
   })
 }
