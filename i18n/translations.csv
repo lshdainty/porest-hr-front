@@ -93,6 +93,7 @@ sidebar,footer.account,계정,Account
 sidebar,footer.changePassword,비밀번호 변경,Change Password
 sidebar,footer.logout,로그아웃,Log out
 sidebar,footer.loggingOut,로그아웃 중...,Logging out...
+sidebar,footer.oauthLink,소셜 계정 연동,Social Account Link
 admin,company.title,회사 정보,Company Info
 admin,company.editTitle,회사 정보 수정,Edit Company Info
 admin,company.createTitle,회사 정보 입력,Create Company Info
@@ -1290,3 +1291,66 @@ login,resetPassword.userIdRequired,아이디를 입력해주세요.,Please enter
 login,resetPassword.emailInvalid,올바른 이메일 형식을 입력해주세요.,Please enter a valid email address.
 login,idRequired,아이디를 입력해주세요.,Please enter your ID.
 login,passwordRequired,비밀번호를 입력해주세요.,Please enter your password.
+login,tab.login,로그인,Login
+login,tab.signup,회원가입,Sign Up
+login,signup.title,회원가입,Sign Up
+login,signup.subtitle,새 계정을 만들어보세요,Create a new account
+login,signup.idLabel,아이디,ID
+login,signup.idPlaceholder,아이디를 입력하세요,Enter your ID
+login,signup.nameLabel,이름,Name
+login,signup.namePlaceholder,이름을 입력하세요,Enter your name
+login,signup.emailLabel,이메일,Email
+login,signup.emailPlaceholder,이메일을 입력하세요,Enter your email
+login,signup.tokenLabel,초대 코드,Invitation Code
+login,signup.tokenPlaceholder,초대 코드를 입력하세요,Enter your invitation code
+login,signup.submitBtn,다음,Next
+login,signup.loadingBtn,처리 중...,Processing...
+login,signup.idRequired,아이디를 입력해주세요.,Please enter your ID.
+login,signup.nameRequired,이름을 입력해주세요.,Please enter your name.
+login,signup.emailRequired,이메일을 입력해주세요.,Please enter your email.
+login,signup.emailInvalid,올바른 이메일 형식을 입력해주세요.,Please enter a valid email address.
+login,signup.tokenRequired,초대 코드를 입력해주세요.,Please enter your invitation code.
+login,signup.hasAccount,이미 계정이 있으신가요?,Already have an account?
+login,signup.noAccount,계정이 없으신가요?,Don't have an account?
+login,signup.step1.title,초대 확인,Verify Invitation
+login,signup.step1.subtitle,초대 이메일에 포함된 정보를 입력하세요,Enter the information from your invitation email
+login,signup.step2.title,회원 정보 입력,Enter Your Information
+login,signup.step2.subtitle,비밀번호와 추가 정보를 입력하세요,Set your password and additional info
+login,signup.newUserId,새 아이디,New User ID
+login,signup.newUserIdPlaceholder,새 아이디 입력 (선택),Enter new user ID (optional)
+login,signup.password,비밀번호,Password
+login,signup.passwordPlaceholder,비밀번호 입력,Enter password
+login,signup.passwordConfirm,비밀번호 확인,Confirm Password
+login,signup.passwordConfirmPlaceholder,비밀번호 재입력,Re-enter password
+login,signup.birthDate,생년월일,Birth Date
+login,signup.lunarYn,음력,Lunar Calendar
+login,signup.complete,회원가입 진행,Continue Registration
+login,signup.back,뒤로,Back
+login,signup.success,회원가입이 완료되었습니다. 로그인해주세요.,Registration completed successfully. Please login.
+login,signup.error.invalidInfo,초대 정보가 일치하지 않습니다.,Invitation information does not match.
+login,signup.error.expired,초대가 만료되었습니다.,Invitation has expired.
+login,signup.error.passwordMismatch,비밀번호가 일치하지 않습니다.,Passwords do not match.
+login,signup.error.duplicateId,이미 사용 중인 아이디입니다.,User ID already exists.
+login,signup.error.blockedEmailDomain,사용할 수 없는 이메일 도메인입니다.,This email domain is not allowed.
+login,signup.passwordRequired,비밀번호를 입력해주세요.,Please enter your password.
+login,signup.passwordConfirmRequired,비밀번호 확인을 입력해주세요.,Please confirm your password.
+login,signup.birthDateRequired,생년월일을 입력해주세요.,Please enter your birth date.
+login,signup.newUserEmail,새 이메일,New Email
+login,signup.newUserEmailPlaceholder,새 이메일 입력 (선택),Enter new email (optional)
+login,signup.idAvailable,사용 가능한 아이디입니다.,ID is available.
+user,passwordChangeRequired,비밀번호 변경이 필요합니다,Password Change Required
+user,passwordChangeRequiredDescription,임시 비밀번호를 사용 중입니다. 보안을 위해 새 비밀번호로 변경해주세요.,You are using a temporary password. Please change to a new password for security.
+user,oauthLink.title,소셜 계정 연동,Social Account Link
+user,oauthLink.description,소셜 계정을 연동하면 해당 계정으로도 로그인할 수 있습니다.,Link your social account to enable login with that account.
+user,oauthLink.google,Google 계정 연동,Link Google Account
+user,oauthLink.linked,연동됨,Linked
+user,oauthLink.success,소셜 계정이 성공적으로 연동되었습니다.,Social account linked successfully.
+user,oauthLink.error,소셜 계정 연동에 실패했습니다.,Failed to link social account.
+user,oauthLink.alreadyLinkedSelf,이 계정은 이미 연동되어 있습니다.,This account is already linked.
+user,oauthLink.alreadyLinkedOther,이 계정은 다른 사용자와 연동되어 있습니다.,This account is linked to another user.
+user,oauthLink.userNotFound,세션이 만료되었습니다. 다시 로그인해주세요.,Session expired. Please log in again.
+user,oauthLink.unlink,연동 해제,Unlink
+user,oauthLink.unlinkSuccess,소셜 계정 연동이 해제되었습니다.,Social account has been unlinked.
+user,oauthLink.unlinkError,소셜 계정 연동 해제에 실패했습니다.,Failed to unlink social account.
+common,or,또는,or
+common,logout,로그아웃,Log out

@@ -183,9 +183,8 @@ const UserTable = ({ value: users }: UserTableProps) => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align='end' className='w-32'>
-                            {hasPermission('USER:MANAGE') && (
+                            {hasPermission('USER:MANAGE') && row.invitation_status !== 'ACTIVE' && (
                               <DropdownMenuItem
-                                disabled={row.invitation_status !== 'EXPIRED' && row.invitation_status !== 'INACTIVE'}
                                 onSelect={() => setShowResendDialog(row.user_id)}
                               >
                                 <MailPlus className='h-4 w-4' />
