@@ -171,6 +171,14 @@ export function getVisibleHours(visibleHours: TVisibleHours, singleDayEvents: IE
 
 // ================ Month view helper functions ================ //
 
+/**
+ * 이벤트의 고유 키 생성 (type.type + id 조합)
+ * schedule과 vacation 이벤트가 같은 id를 가질 수 있으므로 복합 키 사용
+ */
+export function getEventUniqueKey(event: IEvent): string {
+  return `${event.type.type}-${event.id}`;
+}
+
 export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
   const currentYear = selectedDate.getFullYear();
   const currentMonth = selectedDate.getMonth();
@@ -212,7 +220,8 @@ export function calculateMonthEventPositions(multiDayEvents: IEvent[], singleDay
   const occupiedPositions: { [key: string]: boolean[] } = {};
 
   eachDayOfInterval({ start: monthStart, end: monthEnd }).forEach(day => {
-    occupiedPositions[day.toISOString()] = [false, false, false];
+    const dayKey = startOfDay(day).toISOString();
+    occupiedPositions[dayKey] = [false, false, false];
   });
 
   const sortedEvents = [
@@ -227,9 +236,11 @@ export function calculateMonthEventPositions(multiDayEvents: IEvent[], singleDay
   sortedEvents.forEach(event => {
     const eventStart = parseISO(event.startDate);
     const eventEnd = parseISO(event.endDate);
+    const eventKey = getEventUniqueKey(event);
+
     const eventDays = eachDayOfInterval({
-      start: eventStart < monthStart ? monthStart : eventStart,
-      end: eventEnd > monthEnd ? monthEnd : eventEnd,
+      start: eventStart < monthStart ? monthStart : startOfDay(eventStart),
+      end: eventEnd > monthEnd ? monthEnd : startOfDay(eventEnd),
     });
 
     let position = -1;
@@ -237,7 +248,8 @@ export function calculateMonthEventPositions(multiDayEvents: IEvent[], singleDay
     for (let i = 0; i < 3; i++) {
       if (
         eventDays.every(day => {
-          const dayPositions = occupiedPositions[startOfDay(day).toISOString()];
+          const dayKey = startOfDay(day).toISOString();
+          const dayPositions = occupiedPositions[dayKey];
           return dayPositions && !dayPositions[i];
         })
       ) {
@@ -251,7 +263,7 @@ export function calculateMonthEventPositions(multiDayEvents: IEvent[], singleDay
         const dayKey = startOfDay(day).toISOString();
         occupiedPositions[dayKey][position] = true;
       });
-      eventPositions[event.id] = position;
+      eventPositions[eventKey] = position;
     }
   });
 
@@ -262,13 +274,18 @@ export function getMonthCellEvents(date: Date, events: IEvent[], eventPositions:
   const eventsForDate = events.filter(event => {
     const eventStart = parseISO(event.startDate);
     const eventEnd = parseISO(event.endDate);
-    return (date >= eventStart && date <= eventEnd) || isSameDay(date, eventStart) || isSameDay(date, eventEnd);
+    const cellDateStart = startOfDay(date);
+
+    // startOfDay를 사용해서 날짜만 비교
+    return isSameDay(cellDateStart, eventStart) ||
+           isSameDay(cellDateStart, eventEnd) ||
+           (cellDateStart >= startOfDay(eventStart) && cellDateStart <= startOfDay(eventEnd));
   });
 
   return eventsForDate
     .map(event => ({
       ...event,
-      position: eventPositions[event.id] ?? -1,
+      position: eventPositions[getEventUniqueKey(event)] ?? -1,
       isMultiDay: event.startDate !== event.endDate,
     }))
     .sort((a, b) => {
