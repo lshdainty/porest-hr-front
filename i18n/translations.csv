@@ -927,7 +927,7 @@ culture,rule.vacation.sadInLaws,🙇빙부 빙모 시부 시모상: 3일,🙇In-
 culture,rule.vacation.specialDesc,경조 휴가가 지급돼요. 운영팀은 항상 함께하고 있어요.,Special leave is provided. Our team is always with you.
 culture,rule.vacation.otherTitle,기타 휴가,Other Leave
 culture,rule.vacation.healthTrigger,건강검진,Health checkup
-culture,rule.vacation.healthDesc,2년에 한번 반차,Half-day every 2 years
+culture,rule.vacation.healthDesc,1년에 한번 반차,Half-day every 1 year
 culture,rule.vacation.militaryTrigger,예비군(민방위),Reserve forces
 culture,rule.vacation.militaryMobilization,동원 훈련: 3일,Mobilization training: 3 days
 culture,rule.vacation.militaryLocal,동미참 훈련: 1일,Local training: 1 day
