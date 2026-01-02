@@ -29,7 +29,8 @@ import {
   useRecurringHolidaysPreviewQuery,
 } from '@/hooks/queries/useHolidays'
 import { type BulkSaveHolidayItem, type GetHolidaysResp, type GetRecurringHolidaysPreviewResp, type PostHolidayReq } from '@/lib/api/holiday'
-import { CalendarPlus, Loader2, Pencil, Trash2 } from 'lucide-react'
+import { Spinner } from '@/components/shadcn/spinner'
+import { CalendarPlus, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -298,7 +299,7 @@ const BulkGenerateHolidayDialog = ({
           <Button onClick={handleLoadPreview} disabled={isPreviewLoading}>
             {isPreviewLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Spinner className="mr-2 h-4 w-4" />
                 {tc('loading')}
               </>
             ) : (
@@ -317,7 +318,7 @@ const BulkGenerateHolidayDialog = ({
           <div className="flex-1 min-h-0 overflow-auto border rounded-md">
             {isPreviewLoading ? (
               <div className="flex items-center justify-center h-40">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Spinner className="h-8 w-8 text-muted-foreground" />
               </div>
             ) : localPreviewHolidays.length > 0 ? (
               <Table className="min-w-[700px]" wrapperClassName="overflow-visible">
@@ -437,7 +438,7 @@ const BulkGenerateHolidayDialog = ({
             >
               {bulkSaveMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Spinner className="mr-2 h-4 w-4" />
                   {tc('saving')}
                 </>
               ) : (

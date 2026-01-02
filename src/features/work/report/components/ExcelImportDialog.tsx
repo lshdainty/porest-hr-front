@@ -26,7 +26,8 @@ import { Textarea } from '@/components/shadcn/textarea';
 import { GetUsersResp } from '@/lib/api/user';
 import { WorkCodeResp, WorkGroupWithParts } from '@/lib/api/work';
 import { cn } from '@/lib/utils';
-import { AlertCircle, Check, Loader2, Trash2 } from 'lucide-react';
+import { Spinner } from '@/components/shadcn/spinner';
+import { AlertCircle, Check, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/shadcn/sonner';
 import { useTranslation } from 'react-i18next';
@@ -482,7 +483,7 @@ const ExcelImportDialog = ({
                 {t('excel.validate')}
               </Button>
               <Button onClick={handleRegister} disabled={validationErrorCount > 0 || isRegistering}>
-                {isRegistering && <Loader2 className='w-4 h-4 mr-2 animate-spin' />}
+                {isRegistering && <Spinner className='w-4 h-4 mr-2' />}
                 {validationErrorCount > 0 ? t('excel.errorsNeedFix', { count: validationErrorCount }) : t('excel.batchRegister')}
               </Button>
             </>

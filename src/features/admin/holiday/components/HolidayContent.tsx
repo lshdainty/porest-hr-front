@@ -155,6 +155,7 @@ const HolidayContent = () => {
                 onOpenChange={setIsDialogOpen}
                 editingHoliday={editingHoliday}
                 onSave={handleSave}
+                isLoading={editingHoliday ? putMutation.isPending : postMutation.isPending}
                 trigger={
                   <Button className='flex-1 sm:flex-none flex items-center gap-2' onClick={handleAddClick}>
                     {tc('add')}

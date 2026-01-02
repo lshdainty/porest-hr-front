@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/shadcn/dialog'
-import { Loader2 } from 'lucide-react'
+import { Spinner } from '@/components/shadcn/spinner'
 import { useTranslation } from 'react-i18next'
 
 interface ResendEmailDialogProps {
@@ -48,7 +48,7 @@ const ResendEmailDialog = ({ open, onOpenChange, userId, userEmail }: ResendEmai
           <Button onClick={handleConfirm} disabled={isPending}>
             {isPending ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <Spinner className="h-4 w-4 mr-2" />
                 {t('user.sending')}
               </>
             ) : (

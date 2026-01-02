@@ -16,7 +16,7 @@ import { ScrollArea } from '@/components/shadcn/scrollArea'
 import { usePutPlanPoliciesMutation } from '@/hooks/queries/useVacationPlans'
 import { useVacationPoliciesQuery } from '@/hooks/queries/useVacations'
 import { type VacationPlanResp } from '@/lib/api/vacationPlan'
-import { Loader2 } from 'lucide-react'
+import { Spinner } from '@/components/shadcn/spinner'
 
 interface VacationPlanPolicyDialogProps {
   plan: VacationPlanResp
@@ -89,7 +89,7 @@ const VacationPlanPolicyDialog = ({
 
           {isPoliciesLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <Spinner className="h-6 w-6 text-muted-foreground" />
             </div>
           ) : (
             <ScrollArea className="h-[300px] rounded-md border p-4">

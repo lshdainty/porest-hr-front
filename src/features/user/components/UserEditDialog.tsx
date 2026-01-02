@@ -23,7 +23,6 @@ import {
   Camera,
   Clock,
   Globe,
-  Loader2,
   Mail,
   Moon,
   Trash2,
@@ -246,7 +245,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="flex flex-col items-center gap-2">
-                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          <Spinner className="h-8 w-8 text-primary" />
                           <span className="text-xs text-muted-foreground font-medium">{tc('processing')}</span>
                         </div>
                       </div>

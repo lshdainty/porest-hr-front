@@ -11,7 +11,7 @@ import {
 } from '@/components/shadcn/dialog'
 import { Input } from '@/components/shadcn/input'
 import { Label } from '@/components/shadcn/label'
-import { Loader2 } from 'lucide-react'
+import { Spinner } from '@/components/shadcn/spinner'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -72,7 +72,7 @@ const UserPasswordResetDialog = ({ open, onOpenChange, userId, userName }: UserP
           <Button onClick={handleConfirm} disabled={isPending || !password.trim()}>
             {isPending ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <Spinner className="h-4 w-4 mr-2" />
                 {t('user.resetting')}
               </>
             ) : (

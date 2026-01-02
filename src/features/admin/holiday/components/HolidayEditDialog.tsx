@@ -8,6 +8,7 @@ import { useCountryCodeTypesQuery } from '@/hooks/queries/useTypes';
 import { type GetHolidaysResp, type PostHolidayReq } from '@/lib/api/holiday';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
+import { Spinner } from '@/components/shadcn/spinner';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +36,7 @@ interface HolidayEditDialogProps {
   editingHoliday: GetHolidaysResp | null;
   onSave: (data: PostHolidayReq) => void;
   trigger?: React.ReactNode;
+  isLoading?: boolean;
 }
 
 const HolidayEditDialog = ({
@@ -43,6 +45,7 @@ const HolidayEditDialog = ({
   editingHoliday,
   onSave,
   trigger,
+  isLoading = false,
 }: HolidayEditDialogProps) => {
   const { t } = useTranslation('admin');
   const { t: tc } = useTranslation('common');
@@ -65,7 +68,11 @@ const HolidayEditDialog = ({
 
   useEffect(() => {
     if (editingHoliday) {
-      form.reset(editingHoliday);
+      form.reset({
+        ...editingHoliday,
+        lunar_date: editingHoliday.lunar_date ?? '',
+        holiday_icon: editingHoliday.holiday_icon ?? '',
+      });
     } else {
       form.reset({
         holiday_name: '',
@@ -269,11 +276,19 @@ const HolidayEditDialog = ({
                 type='button'
                 variant='outline'
                 onClick={handleCancel}
+                disabled={isLoading}
               >
                 {tc('cancel')}
               </Button>
-              <Button type='submit'>
-                {editingHoliday ? tc('edit') : tc('add')}
+              <Button type='submit' disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Spinner className='mr-2 h-4 w-4' />
+                    {tc('saving')}
+                  </>
+                ) : (
+                  editingHoliday ? tc('edit') : tc('add')
+                )}
               </Button>
             </div>
           </form>
