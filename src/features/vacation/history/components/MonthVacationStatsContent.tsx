@@ -15,6 +15,8 @@ export const MonthVacationStatsContent = ({ data, className }: MonthVacationStat
   const hasData = data && data.length > 0 && data.some((item) => item.used_time > 0)
 
   useEffect(() => {
+    if (!hasData) return
+
     const updateDimensions = () => {
       if (containerRef.current) {
         const { clientWidth, clientHeight } = containerRef.current
@@ -33,17 +35,18 @@ export const MonthVacationStatsContent = ({ data, className }: MonthVacationStat
       clearTimeout(timer)
       resizeObserver.disconnect()
     }
-  }, [])
+  }, [hasData])
 
   if (!hasData) {
     return <MonthVacationStatsEmpty className={className} />
   }
 
   return (
-    <div className={cn('w-full h-full relative', className)}>
-      <div ref={containerRef} className='absolute inset-0'>
-        {dimensions.width > 0 && dimensions.height > 0 && (
-          <BarChart
+    <div className={cn('flex flex-col h-full w-full', className)}>
+      <div className='flex-1 pb-0 flex flex-col relative min-h-[200px]' ref={containerRef}>
+        <div className='flex items-center justify-center absolute inset-0'>
+          {dimensions.width > 0 && dimensions.height > 0 && (
+            <BarChart
             width={dimensions.width}
             height={dimensions.height}
             data={data}
@@ -83,7 +86,8 @@ export const MonthVacationStatsContent = ({ data, className }: MonthVacationStat
             />
             <Bar dataKey='used_time' fill='#8884d8' radius={[4, 4, 0, 0]} />
           </BarChart>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )

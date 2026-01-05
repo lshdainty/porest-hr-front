@@ -16,8 +16,8 @@ const MonthVacationStatsCard = ({ value: data, className }: MonthVacationStatsCa
       <CardHeader>
         <CardTitle>{t('history.monthlyUsageTrend')}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <MonthVacationStatsContent data={data} className='h-[350px]' />
+      <CardContent className='flex-1 pb-4 flex flex-col min-h-[350px]'>
+        <MonthVacationStatsContent data={data} />
       </CardContent>
     </Card>
   )
