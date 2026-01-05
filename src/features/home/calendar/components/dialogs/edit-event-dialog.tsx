@@ -32,7 +32,7 @@ import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations';
 import { useVacationTypesQuery } from '@/hooks/queries/useTypes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
-import React, { useEffect, useMemo } from 'react';
+import React, { Activity, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
@@ -212,7 +212,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
                         <SelectValue placeholder={t('addEvent.calendarType')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {(canUseVacation || currentEventType === 'vacation') && (
+                        <Activity mode={canUseVacation || currentEventType === 'vacation' ? 'visible' : 'hidden'}>
                           <SelectGroup>
                             <SelectLabel>{t('addEvent.vacation')}</SelectLabel>
                             {calendarTypes.filter(c => c.type === 'vacation').map(ct => {
@@ -228,8 +228,8 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
                               );
                             })}
                           </SelectGroup>
-                        )}
-                        {(canUseSchedule || currentEventType === 'schedule') && (
+                        </Activity>
+                        <Activity mode={canUseSchedule || currentEventType === 'schedule' ? 'visible' : 'hidden'}>
                           <SelectGroup>
                             <SelectLabel>{t('addEvent.schedule')}</SelectLabel>
                             {calendarTypes.filter(c => c.type === 'schedule').map(ct => {
@@ -245,7 +245,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
                               );
                             })}
                           </SelectGroup>
-                        )}
+                        </Activity>
                       </SelectContent>
                     </Select>
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />

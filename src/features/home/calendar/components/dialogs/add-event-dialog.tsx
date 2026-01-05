@@ -32,7 +32,7 @@ import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations';
 import { useUsersQuery } from '@/hooks/queries/useUsers';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
-import React, { useEffect, useMemo } from 'react';
+import React, { Activity, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from '@/components/shadcn/sonner';
 import { useTranslation } from 'react-i18next';
@@ -204,7 +204,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="py-6 space-y-4">
             {/* VACATION:MANAGE 권한이 있을 때만 유저 선택 표시 */}
-            {canManageVacation && (
+            <Activity mode={canManageVacation ? 'visible' : 'hidden'}>
               <Controller
                 control={form.control}
                 name="selectedUser"
@@ -230,7 +230,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                   </Field>
                 )}
               />
-            )}
+            </Activity>
             <div className='flex flex-row gap-2'>
               <Controller
                 control={form.control}
@@ -246,7 +246,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                         <SelectValue placeholder={t('addEvent.calendarType')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {canUseVacation && (
+                        <Activity mode={canUseVacation ? 'visible' : 'hidden'}>
                           <SelectGroup>
                             <SelectLabel>{t('addEvent.vacation')}</SelectLabel>
                             {calendarTypes.filter(c => c.type === 'vacation').map(ct => (
@@ -257,8 +257,8 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                               </SelectItem>
                             ))}
                           </SelectGroup>
-                        )}
-                        {canUseSchedule && (
+                        </Activity>
+                        <Activity mode={canUseSchedule ? 'visible' : 'hidden'}>
                           <SelectGroup>
                             <SelectLabel>{t('addEvent.schedule')}</SelectLabel>
                             {calendarTypes.filter(c => c.type === 'schedule').map(ct => (
@@ -269,7 +269,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
                               </SelectItem>
                             ))}
                           </SelectGroup>
-                        )}
+                        </Activity>
                       </SelectContent>
                     </Select>
                     <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />

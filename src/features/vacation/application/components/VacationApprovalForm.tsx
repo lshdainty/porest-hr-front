@@ -8,7 +8,7 @@ import {
   Users,
   XCircle
 } from 'lucide-react';
-import { useState } from 'react';
+import { Activity, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { usePostApproveVacationMutation, usePostRejectVacationMutation } from '@/hooks/queries/useVacations';
@@ -378,7 +378,7 @@ const VacationApprovalForm = ({
                   </Card>
 
                   {/* 결재 처리 카드 */}
-                  {isCurrentApprover && (requestData?.grant_status === 'PROGRESS' || requestData?.grant_status === 'PENDING') && (
+                  <Activity mode={isCurrentApprover && (requestData?.grant_status === 'PROGRESS' || requestData?.grant_status === 'PENDING') ? 'visible' : 'hidden'}>
                     <Card className='mt-6'>
                       <CardHeader>
                         <CardTitle className='flex items-center gap-2'>
@@ -445,7 +445,7 @@ const VacationApprovalForm = ({
                         )}
                       </CardContent>
                     </Card>
-                  )}
+                  </Activity>
                 </div>
               </div>
             </div>

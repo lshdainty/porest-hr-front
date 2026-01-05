@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils';
 import { Empty } from 'antd';
 import dayjs from 'dayjs';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, KeyRound, MailPlus, Pencil, ShieldEllipsis, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Activity, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface UserTableProps {
@@ -77,11 +77,11 @@ const UserTable = ({ value: users }: UserTableProps) => {
         <div className='flex items-center justify-between'>
           <CardTitle>{t('user.list')}</CardTitle>
           <div className='flex gap-2'>
-            {hasPermission('USER:MANAGE') && (
+            <Activity mode={hasPermission('USER:MANAGE') ? 'visible' : 'hidden'}>
               <Button className='text-sm h-8' size='sm' onClick={() => setShowInviteDialog(true)}>
                 {t('user.invite')}
               </Button>
-            )}
+            </Activity>
           </div>
         </div>
       </CardHeader>
@@ -183,56 +183,56 @@ const UserTable = ({ value: users }: UserTableProps) => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align='end' className='w-32'>
-                            {hasPermission('USER:MANAGE') && row.invitation_status !== 'ACTIVE' && (
+                            <Activity mode={hasPermission('USER:MANAGE') && row.invitation_status !== 'ACTIVE' ? 'visible' : 'hidden'}>
                               <DropdownMenuItem
                                 onSelect={() => setShowResendDialog(row.user_id)}
                               >
                                 <MailPlus className='h-4 w-4' />
                                 <span>{t('user.resendEmail')}</span>
                               </DropdownMenuItem>
-                            )}
-                            {row.invitation_status === 'ACTIVE' && hasPermission('USER:MANAGE') && (
+                            </Activity>
+                            <Activity mode={row.invitation_status === 'ACTIVE' && hasPermission('USER:MANAGE') ? 'visible' : 'hidden'}>
                               <DropdownMenuItem
                                 onSelect={() => setShowEditDialog(row.user_id)}
                               >
                                 <Pencil className='h-4 w-4' />
                                 <span>{t('user.editTitle')}</span>
                               </DropdownMenuItem>
-                            )}
-                            {row.invitation_status === 'PENDING' && hasPermission('USER:MANAGE') && (
+                            </Activity>
+                            <Activity mode={row.invitation_status === 'PENDING' && hasPermission('USER:MANAGE') ? 'visible' : 'hidden'}>
                               <DropdownMenuItem
                                 onSelect={() => setShowInviteEditDialog(row.user_id)}
                               >
                                 <Pencil className='h-4 w-4' />
                                 <span>{t('user.inviteEdit')}</span>
                               </DropdownMenuItem>
-                            )}
-                            {row.invitation_status !== 'ACTIVE' && row.invitation_status !== 'PENDING' && (
+                            </Activity>
+                            <Activity mode={row.invitation_status !== 'ACTIVE' && row.invitation_status !== 'PENDING' ? 'visible' : 'hidden'}>
                               <DropdownMenuItem
                                 disabled
                               >
                                 <Pencil className='h-4 w-4' />
                                 <span>{t('user.editTitle')}</span>
                               </DropdownMenuItem>
-                            )}
-                            {row.invitation_status === 'ACTIVE' && hasAllPermissions(['USER:MANAGE', 'VACATION:MANAGE']) && (
+                            </Activity>
+                            <Activity mode={row.invitation_status === 'ACTIVE' && hasAllPermissions(['USER:MANAGE', 'VACATION:MANAGE']) ? 'visible' : 'hidden'}>
                               <DropdownMenuItem
                                 onSelect={() => setPlanDialog(row.user_id)}
                               >
                                 <ShieldEllipsis className='h-4 w-4' />
                                 <span>{t('user.vacationPlan')}</span>
                               </DropdownMenuItem>
-                            )}
-                            {row.invitation_status === 'ACTIVE' && hasPermission('USER:MANAGE') && (
+                            </Activity>
+                            <Activity mode={row.invitation_status === 'ACTIVE' && hasPermission('USER:MANAGE') ? 'visible' : 'hidden'}>
                               <DropdownMenuItem
                                 onSelect={() => setShowPasswordResetDialog(row.user_id)}
                               >
                                 <KeyRound className='h-4 w-4' />
                                 <span>{t('user.passwordReset')}</span>
                               </DropdownMenuItem>
-                            )}
+                            </Activity>
                             <DropdownMenuSeparator />
-                            {hasPermission('USER:MANAGE') && (
+                            <Activity mode={hasPermission('USER:MANAGE') ? 'visible' : 'hidden'}>
                               <DropdownMenuItem
                                 onSelect={() => setShowDeleteDialog(row.user_id)}
                                 className='text-destructive focus:text-destructive hover:!bg-destructive/20'
@@ -240,7 +240,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                                 <Trash2 className='h-4 w-4' />
                                 <span>{tc('delete')}</span>
                               </DropdownMenuItem>
-                            )}
+                            </Activity>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
