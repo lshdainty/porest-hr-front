@@ -439,6 +439,8 @@ export interface GetUserRequestedVacationsResp {
   current_approver_id: string | null
   current_approver_name: string | null
   approvers: ApproverInfo[] | null
+  applicant_id: string
+  applicant_name: string
 }
 
 export interface GetUserRequestedVacationStatsReq {

@@ -138,7 +138,6 @@ const ApplicationContent = () => {
           vacationRequests={vacationRequests}
           grantStatusTypes={grantStatusTypes}
           userId={loginUser?.user_id || ''}
-          userName={loginUser?.user_name}
         />
         <ApplicationFormDialog
           open={isDialogOpen}

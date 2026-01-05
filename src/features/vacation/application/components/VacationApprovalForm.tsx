@@ -34,14 +34,12 @@ interface VacationApprovalFormProps {
   open: boolean;
   onClose: () => void;
   requestData?: GetUserRequestedVacationsResp;
-  applicantName?: string;
 }
 
 const VacationApprovalForm = ({
   open,
   onClose,
   requestData,
-  applicantName,
 }: VacationApprovalFormProps) => {
   const { t } = useTranslation('vacation')
   const { t: tc } = useTranslation('common')
@@ -137,7 +135,7 @@ const VacationApprovalForm = ({
                             <tr className='border-b'>
                               <td className='bg-muted px-4 py-3 font-medium w-32'>{t('approval.applicantLabel')}</td>
                               <td className='px-4 py-3'>
-                                {applicantName || tc('noInfo')}
+                                {requestData?.applicant_name || tc('noInfo')}
                               </td>
                             </tr>
                             <tr>

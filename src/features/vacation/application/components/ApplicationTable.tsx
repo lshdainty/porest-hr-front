@@ -13,17 +13,17 @@ import { useTranslation } from 'react-i18next';
 interface ApplicationTableProps {
   vacationRequests: GetUserRequestedVacationsResp[]
   grantStatusTypes: TypeResp[]
-  userId: string
-  userName?: string
+  userId?: string
   showGrantButton?: boolean
+  showCancelButton?: boolean
 }
 
 const ApplicationTable = ({
   vacationRequests,
   grantStatusTypes,
   userId,
-  userName,
-  showGrantButton = false
+  showGrantButton = false,
+  showCancelButton = true
 }: ApplicationTableProps) => {
   const { t } = useTranslation('vacation');
   const [detailOpen, setDetailOpen] = useState(false);
@@ -73,7 +73,7 @@ const ApplicationTable = ({
             vacationRequests={vacationRequests}
             grantStatusTypes={grantStatusTypes}
             onDetailView={handleDetailView}
-            onCancelRequest={handleCancelRequest}
+            onCancelRequest={showCancelButton ? handleCancelRequest : undefined}
           />
         </CardContent>
       </Card>
@@ -83,7 +83,6 @@ const ApplicationTable = ({
         open={detailOpen}
         onClose={handleDetailClose}
         requestData={selectedRequest || undefined}
-        applicantName={userName}
       />
 
       {/* 휴가 부여 다이얼로그 */}

@@ -116,9 +116,8 @@ const VacationContentInner = ({ users }: VacationContentInnerProps) => {
         <ApplicationTable
           vacationRequests={vacationRequests}
           grantStatusTypes={grantStatusTypes}
-          userId={selectedUserId}
-          userName={users.find(user => user.user_id === selectedUserId)?.user_name}
           showGrantButton={true}
+          showCancelButton={false}
         />
       </div>
     </div>
