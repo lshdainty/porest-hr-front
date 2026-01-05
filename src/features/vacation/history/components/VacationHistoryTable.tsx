@@ -76,15 +76,15 @@ const VacationHistoryTable = ({ value: data, canAdd = false }: VacationHistoryTa
         </CardContent>
       </Card>
       <AddEventDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />
-      <Activity mode={selectedEvent ? 'visible' : 'hidden'}>
+      {selectedEvent && (
         <EditEventDialog
           open={editDialogOpen}
           onOpenChange={setEditDialogOpen}
-          event={selectedEvent!}
+          event={selectedEvent}
         >
           <></>
         </EditEventDialog>
-      </Activity>
+      )}
     </>
   )
 }
