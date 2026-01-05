@@ -324,7 +324,7 @@ const BulkGenerateHolidayDialog = ({
               <Table className="min-w-[700px]" wrapperClassName="overflow-visible">
                 <TableHeader className="sticky top-0 bg-background z-10">
                   <TableRow>
-                    <TableHead className="w-12 min-w-[48px]">
+                    <TableHead className="w-12 min-w-12">
                       <Checkbox
                         checked={isAllSelected}
                         onCheckedChange={handleSelectAll}
@@ -335,9 +335,9 @@ const BulkGenerateHolidayDialog = ({
                     </TableHead>
                     <TableHead className="min-w-[140px]">{t('holiday.name')}</TableHead>
                     <TableHead className="min-w-[110px]">{t('holiday.date')}</TableHead>
-                    <TableHead className="min-w-[80px]">{t('holiday.type')}</TableHead>
+                    <TableHead className="min-w-20">{t('holiday.type')}</TableHead>
                     <TableHead className="min-w-[70px]">{t('holiday.lunarYn')}</TableHead>
-                    <TableHead className="min-w-[80px] text-center">{tc('actions')}</TableHead>
+                    <TableHead className="min-w-20 text-center">{tc('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

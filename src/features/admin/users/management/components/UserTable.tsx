@@ -105,7 +105,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                   <TableHead className='min-w-[120px]'>{t('user.tableCompany')}</TableHead>
                   <TableHead className='min-w-[120px]'>{t('user.tableDepartment')}</TableHead>
                   <TableHead className='min-w-[120px]'>{t('user.tableInviteStatus')}</TableHead>
-                  <TableHead className='min-w-[80px] pr-4'></TableHead>
+                  <TableHead className='min-w-20 pr-4'></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -124,7 +124,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                       )}
                     >
                       <div className='flex items-center gap-3'>
-                        <Avatar className='w-8 h-8 flex-shrink-0'>
+                        <Avatar className='w-8 h-8 shrink-0'>
                           <AvatarImage src={`${config.baseUrl}${row.profile_url}`} alt={row.user_name} />
                           <AvatarFallback>{row.user_name.charAt(0)}</AvatarFallback>
                         </Avatar>
@@ -235,7 +235,7 @@ const UserTable = ({ value: users }: UserTableProps) => {
                             <Activity mode={hasPermission('USER:MANAGE') ? 'visible' : 'hidden'}>
                               <DropdownMenuItem
                                 onSelect={() => setShowDeleteDialog(row.user_id)}
-                                className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                                className='text-destructive focus:text-destructive hover:bg-destructive/20!'
                               >
                                 <Trash2 className='h-4 w-4' />
                                 <span>{tc('delete')}</span>

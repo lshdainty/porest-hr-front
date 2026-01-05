@@ -236,7 +236,7 @@ const UserEditDialog = ({ open, onOpenChange, user, onSave }: UserEditDialogProp
                 <div className="relative group">
                   {isUploading ? (
                     <div className="relative">
-                      <Skeleton className="w-40 h-40 rounded-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200px_100%] animate-pulse" 
+                      <Skeleton className="w-40 h-40 rounded-full bg-linear-to-r from-gray-200 via-gray-300 to-gray-200 bg-size-[200px_100%] animate-pulse" 
                         style={{
                           backgroundImage: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
                           backgroundSize: '200px 100%',
