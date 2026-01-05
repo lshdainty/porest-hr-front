@@ -1184,6 +1184,11 @@ vacation,application.policyRequired,휴가 정책을 선택해주세요.,Please 
 vacation,application.titleRequired,제목을 입력해주세요.,Please enter a title.
 vacation,application.dateRequired,날짜를 선택해주세요.,Please select a date.
 vacation,application.reasonRequired,사유를 입력해주세요.,Please enter a reason.
+vacation,application.applicationHistory,신청이력,Application History
+vacation,application.requestTab,신청내역,My Requests
+vacation,application.approvalTab,승인내역,Pending Approvals
+vacation,application.noApprovalsTitle,승인 대기 내역이 없습니다,No Pending Approvals
+vacation,application.noApprovalsDesc,현재 승인 대기 중인 휴가 신청이 없습니다.,There are no vacation requests pending your approval.
 work,report.fileNamePrefix,업무이력,WorkHistory
 work,unregistered.fileNamePrefix,미등록_업무시간,Unregistered_WorkHours
 work,unregistered.fileNameYear,년,year

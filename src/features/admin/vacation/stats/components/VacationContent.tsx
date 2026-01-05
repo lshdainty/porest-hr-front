@@ -21,6 +21,7 @@ import {
   useAllVacationsByApproverQuery,
   useAvailableVacationsQuery,
   useUserMonthlyVacationStatsQuery,
+  useUserRequestedVacationsQuery,
   useUserVacationHistoryQuery,
   useUserVacationStatsQuery
 } from '@/hooks/queries/useVacations'
@@ -40,9 +41,10 @@ const getYearOptions = () => {
 
 interface VacationContentInnerProps {
   users: GetUsersResp[]
+  loginUserId: string
 }
 
-const VacationContentInner = ({ users }: VacationContentInnerProps) => {
+const VacationContentInner = ({ users, loginUserId }: VacationContentInnerProps) => {
   const { t } = useTranslation('vacation')
   const { selectedUserId, setSelectedUserId, selectedYear, setSelectedYear } = useVacationContext()
 
@@ -59,8 +61,14 @@ const VacationContentInner = ({ users }: VacationContentInnerProps) => {
     selectedUserId,
     dayjs().year(parseInt(selectedYear)).format('YYYY-MM-DDT23:59:59')
   )
-  const { data: vacationRequests = [] } = useAllVacationsByApproverQuery(
+  // 선택된 사용자의 신청 내역
+  const { data: selectedUserRequests = [] } = useUserRequestedVacationsQuery(
     selectedUserId,
+    parseInt(selectedYear)
+  )
+  // 로그인한 관리자가 승인권자인 내역 (선택 사용자와 무관)
+  const { data: approvalRequests = [] } = useAllVacationsByApproverQuery(
+    loginUserId,
     parseInt(selectedYear)
   )
   const { data: grantStatusTypes = [] } = useGrantStatusTypesQuery()
@@ -114,10 +122,12 @@ const VacationContentInner = ({ users }: VacationContentInnerProps) => {
       </div>
       <div className='grid grid-cols-1 gap-6 mt-6'>
         <ApplicationTable
-          vacationRequests={vacationRequests}
+          vacationRequests={selectedUserRequests}
+          approvalRequests={approvalRequests}
           grantStatusTypes={grantStatusTypes}
           showGrantButton={true}
           showCancelButton={false}
+          showApprovalTab={true}
         />
       </div>
     </div>
@@ -141,7 +151,7 @@ const VacationContent = () => {
       queryState={{ isLoading, error, data: users }}
       loadingComponent={<VacationContentSkeleton />}
     >
-      <VacationContentInner users={users || []} />
+      <VacationContentInner users={users || []} loginUserId={loginUser?.user_id || ''} />
     </QueryAsyncBoundary>
   )
 }

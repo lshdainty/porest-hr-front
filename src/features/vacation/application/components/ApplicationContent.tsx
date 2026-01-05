@@ -34,7 +34,7 @@ const ApplicationContent = () => {
   const { t: tc } = useTranslation('common');
   const { isDialogOpen, setIsDialogOpen, selectedYear, setSelectedYear } = useApplicationContext();
   const { loginUser } = useUser();
-  
+
   const { data: vacationPolicies = [] } = useUserVacationPoliciesQuery(
     loginUser?.user_id || '',
     'ON_REQUEST'
