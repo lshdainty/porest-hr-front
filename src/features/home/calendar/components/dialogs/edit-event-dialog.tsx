@@ -30,6 +30,7 @@ import type { TEventColor } from '@/features/home/calendar/types';
 import { calendarTypes } from '@/features/home/calendar/types';
 import { useAvailableVacationsQuery } from '@/hooks/queries/useVacations';
 import { useVacationTypesQuery } from '@/hooks/queries/useTypes';
+import { useUsersQuery } from '@/hooks/queries/useUsers';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
 import React, { Activity, useEffect, useMemo } from 'react';
@@ -85,6 +86,9 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   // 권한 체크
   const canUseVacation = hasAnyPermission(['VACATION:USE', 'VACATION:MANAGE']);
   const canUseSchedule = hasAnyPermission(['SCHEDULE:WRITE', 'SCHEDULE:MANAGE']);
+
+  // 사용자 목록 조회 (userWorkTime을 가져오기 위함)
+  const { data: users } = useUsersQuery();
 
   // 기존 이벤트 타입 확인
   const currentEventType = event.type.type; // 'vacation' | 'schedule'
@@ -157,6 +161,10 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   const { updateEvent, isPending } = useUpdateEvent();
 
   const onSubmit = (values: EditEventFormValues) => {
+    // 이벤트 소유자의 근무타입 조회
+    const targetUser = users?.find(u => u.user_id === event.user.id);
+    const userWorkTime = targetUser?.user_work_time;
+
     // 이벤트 소유자의 ID 사용 (VACATION:MANAGE 권한이 있으면 다른 유저 이벤트 수정 가능)
     updateEvent({
       eventId: event.id,
@@ -168,6 +176,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
       endDate: values.endDate,
       startHour: values.startHour,
       startMinute: values.startMinute,
+      userWorkTime,
     }, {
       onSuccess: () => setOpen(false)
     });

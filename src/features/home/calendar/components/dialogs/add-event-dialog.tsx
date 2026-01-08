@@ -164,6 +164,10 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
       ? values.selectedUser
       : loginUser?.user_id || '';
 
+    // 선택된 사용자의 근무타입 조회
+    const targetUser = users?.find(u => u.user_id === userId);
+    const userWorkTime = targetUser?.user_work_time;
+
     addEvent({
       userId,
       calendarType: values.calendarType,
@@ -173,6 +177,7 @@ export const AddEventDialog: React.FC<AddEventDialogProps> = ({
       endDate: values.endDate,
       startHour: values.startHour,
       startMinute: values.startMinute,
+      userWorkTime,
     }, {
       onSuccess: () => setOpen(false)
     });

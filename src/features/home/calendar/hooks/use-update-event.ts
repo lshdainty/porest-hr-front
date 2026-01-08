@@ -14,7 +14,36 @@ export interface UpdateEventParams {
   endDate: string;
   startHour?: string;
   startMinute?: string;
+  userWorkTime?: string;
 }
+
+// 오후반 여부 확인 (13시 출근자)
+const isAfternoonShift = (workTime?: string): boolean => {
+  return workTime === '13 ~ 21';
+};
+
+// 휴식시간 포함하여 종료시간 계산
+const calculateEndHourWithBreak = (
+  startHour: number,
+  plusHour: number,
+  workTime?: string
+): number => {
+  const endHour = startHour + plusHour;
+
+  if (isAfternoonShift(workTime)) {
+    // 오후반: 저녁시간(18~19) 고려
+    if (endHour > 18) {
+      return endHour + 1;
+    }
+  } else {
+    // 오전반: 점심시간(12~13) 고려
+    if (endHour > 12) {
+      return endHour + 1;
+    }
+  }
+
+  return endHour;
+};
 
 interface UseUpdateEventOptions {
   onSuccess?: () => void;
@@ -77,7 +106,8 @@ export const useUpdateEvent = () => {
       startDate,
       endDate,
       startHour,
-      startMinute
+      startMinute,
+      userWorkTime
     } = params;
 
     const selectedCalendar = calendarTypes.find(c => c.id === calendarType);
@@ -126,13 +156,15 @@ export const useUpdateEvent = () => {
           break;
       }
 
+      const endHour = calculateEndHourWithBreak(Number(startHour), plusHour, userWorkTime);
+
       payload.start_date = dayjs(startDate)
         .hour(Number(startHour))
         .minute(Number(startMinute))
         .second(0)
         .format(format);
       payload.end_date = dayjs(endDate)
-        .hour(Number(startHour) + plusHour)
+        .hour(endHour)
         .minute(Number(startMinute))
         .second(0)
         .format(format);
