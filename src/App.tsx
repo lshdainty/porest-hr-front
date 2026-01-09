@@ -1,3 +1,4 @@
+import { EnvWatermark } from '@/components/common/EnvWatermark'
 import { Toaster } from '@/components/shadcn/sonner'
 import { ThemeProvider } from '@/components/shadcn/themeProvider'
 import { PermissionProvider } from '@/contexts/PermissionContext'
@@ -29,6 +30,7 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
+      <EnvWatermark />
       <Toaster position="top-center" />
       <Providers>
         <BrowserRouter basename='/'>
