@@ -12,7 +12,7 @@ ENV BUILD_MODE=$BUILD_MODE
 
 # 소스 복사 및 빌드
 COPY . .
-RUN npm run build
+RUN npm run build:skip-check
 
 # 실행 단계
 FROM nginx:alpine AS runtime

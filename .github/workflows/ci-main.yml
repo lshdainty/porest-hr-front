@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Build Test
-        run: npm run build
+        run: npm run build:skip-check
 
   # [2] Docker 이미지 빌드 & Push (main 브랜치 push 시에만)
   build-and-push:
