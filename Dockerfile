@@ -6,10 +6,6 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
 
-# 빌드 인자로 환경 구분
-ARG BUILD_MODE=production
-ENV BUILD_MODE=$BUILD_MODE
-
 # 소스 복사 및 빌드
 COPY . .
 RUN npm run i18n:generate && npm run build:skip-check
