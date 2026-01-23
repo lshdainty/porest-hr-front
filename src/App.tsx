@@ -4,10 +4,8 @@ import { ThemeProvider } from '@/components/shadcn/themeProvider'
 import { PermissionProvider } from '@/contexts/PermissionContext'
 import { UserProvider } from '@/contexts/UserContext'
 import { api } from '@/lib/api'
-import { fetchGetCsrfToken } from '@/lib/api/auth'
 import Providers from '@/providers'
 import Router from '@/Router'
-import { useEffect } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 /*
   react19에서 antd 호환성 해결
@@ -19,15 +17,6 @@ import '@ant-design/v5-patch-for-react-19'
 void api
 
 const App: React.FC = () => {
-  // 앱 시작 시 CSRF 토큰 발급
-  useEffect(() => {
-    // CSRF 토큰 발급용 API 호출
-    // 서버가 응답 헤더(Set-Cookie)로 XSRF-TOKEN 쿠키를 브라우저에 심어줍니다.
-    fetchGetCsrfToken().catch((err) => {
-      console.error('CSRF token fetch failed:', err)
-    })
-  }, [])
-
   return (
     <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
       <EnvWatermark />

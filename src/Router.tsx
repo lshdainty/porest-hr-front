@@ -5,6 +5,7 @@ import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
 
 import Layout from '@/components/layout/layout'
 import NotFound from '@/components/notFound/NotFound'
+import { AuthCallbackPage } from '@/pages/AuthCallbackPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { PasswordChangePage } from '@/pages/PasswordChangePage'
 import { SignUpPage } from '@/pages/SignUpPage'
@@ -92,7 +93,12 @@ const Router: React.FC = () => {
         path='/login'
         element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage/>}
       />
-      {/* 회원가입 - 정중앙 카드 디자인 */}
+      {/* SSO 인증 콜백 */}
+      <Route
+        path='/auth/callback'
+        element={<AuthCallbackPage />}
+      />
+      {/* 회원가입 - SSO에서 처리하므로 리다이렉트 */}
       <Route
         path='/signup'
         element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage/>}

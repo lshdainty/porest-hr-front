@@ -5,18 +5,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/shadcn/sidebar'
 import config from '@/config/config'
 import { useUser } from '@/contexts/UserContext'
-import { OAuthLinkDialog } from '@/features/user/components/OAuthLinkDialog'
 import { PasswordChangeDialog } from '@/features/user/components/PasswordChangeDialog'
 import UserEditDialog from '@/features/user/components/UserEditDialog'
-import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths'
+import { authKeys } from '@/hooks/queries/useAuths'
 import { usePutUserMutation, useUserQuery } from '@/hooks/queries/useUsers'
 import type { PutUserReq } from '@/lib/api/user'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { CircleUser, EllipsisVertical, KeyRound, Link2, LogOut } from 'lucide-react'
+import { CircleUser, EllipsisVertical, KeyRound, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 
 const defaultUser = {
   user_name: 'Guest',
@@ -29,36 +27,23 @@ const defaultUser = {
 
 export function Footer() {
   const { isMobile } = useSidebar()
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const logoutMutation = usePostLogoutMutation()
-  const { loginUser, clearLoginUser } = useUser()
+  const { loginUser, logout } = useUser()
   const { mutate: putUser } = usePutUserMutation()
   const { t } = useTranslation('sidebar')
 
   // Dialog 상태 관리
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
-  const [showOAuthLinkDialog, setShowOAuthLinkDialog] = useState(false)
 
   // 로그인한 사용자의 상세 정보 가져오기
   const { data: userData } = useUserQuery(loginUser?.user_id || '')
 
   const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        // 전역 store 초기화
-        clearLoginUser()
-
-        // React Query 캐시 제거 (재요청 없이 캐시만 삭제)
-        queryClient.setQueryData(
-          authKeys.detail('login-check'),
-          null // 혹은 초기값
-        )
-
-        navigate('/login')
-      }
-    })
+    // React Query 캐시 제거
+    queryClient.setQueryData(authKeys.detail('login-check'), null)
+    // JWT 토큰 삭제 및 로그인 페이지로 이동
+    logout()
   }
 
   const handleUpdateUser = (user: PutUserReq) => {
@@ -137,17 +122,13 @@ export function Footer() {
                     <KeyRound />
                     {t('footer.changePassword')}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => setShowOAuthLinkDialog(true)}>
-                    <Link2 />
-                    {t('footer.oauthLink')}
-                  </DropdownMenuItem>
                 </>
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} disabled={logoutMutation.isPending}>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
-              {logoutMutation.isPending ? t('footer.loggingOut') : t('footer.logout')}
+              {t('footer.logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -166,12 +147,6 @@ export function Footer() {
         <PasswordChangeDialog
           open={showPasswordDialog}
           onOpenChange={setShowPasswordDialog}
-        />
-
-        {/* OAuth 연동 Dialog */}
-        <OAuthLinkDialog
-          open={showOAuthLinkDialog}
-          onOpenChange={setShowOAuthLinkDialog}
         />
       </SidebarMenuItem>
     </SidebarMenu>

@@ -3,76 +3,20 @@ import Logo from '@/assets/img/porest.svg';
 import LogoDark from '@/assets/img/porest_dark.svg';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
-import { Field, FieldError, FieldLabel } from '@/components/shadcn/field';
-import { Input } from '@/components/shadcn/input';
-import { toast } from '@/components/shadcn/sonner';
 import { Spinner } from '@/components/shadcn/spinner';
 import { useTheme } from '@/components/shadcn/themeProvider';
-import { useUser } from '@/contexts/UserContext';
-import { PasswordResetDialog } from '@/features/login/components/PasswordResetDialog';
-import { SocialLoginButton } from '@/features/login/components/SocialLoginButton';
-import {
-  authKeys,
-  useCsrfTokenQuery,
-  usePostLoginMutation
-} from '@/hooks/queries/useAuths';
+import config from '@/config/config';
 import { cn } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
-import { KeyRound, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { z } from 'zod';
 
 interface LoginContentProps extends React.ComponentProps<'div'> {}
 
+/**
+ * 로그인 콘텐츠 컴포넌트
+ * SSO로 리다이렉트하여 인증을 처리합니다.
+ */
 const LoginContent = ({ className, ...props }: LoginContentProps) => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  // CSRF 토큰 발급
-  useCsrfTokenQuery();
-
-  // OAuth2 로그인 성공/실패 처리
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
-    const error = urlParams.get('error');
-
-    // OAuth2 로그인 성공 처리
-    if (status === 'success') {
-      // 유저 정보 다시 가져오기
-      queryClient.invalidateQueries({
-        queryKey: authKeys.detail('login-check')
-      }).then(() => {
-        // URL 파라미터 제거 후 대시보드로 이동
-        window.history.replaceState({}, '', window.location.pathname);
-        navigate('/dashboard');
-      });
-
-      return;
-    }
-
-    // OAuth2 로그인 실패 처리
-    if (error) {
-      const errorMessage = decodeURIComponent(error);
-
-      // toast 호출 전 약간의 지연
-      setTimeout(() => {
-        toast.error(errorMessage);
-      }, 100);
-
-      // URL 파라미터 제거
-      const timer = setTimeout(() => {
-        window.history.replaceState({}, '', window.location.pathname);
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [navigate, queryClient]);
-
   return (
     <div className='bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10'>
       <div className='w-full max-w-sm md:max-w-6xl'>
@@ -99,131 +43,61 @@ const LoginContent = ({ className, ...props }: LoginContentProps) => {
   );
 };
 
-const createLoginFormSchema = (t: (key: string) => string) =>
-  z.object({
-    user_id: z.string().min(1, t('idRequired')),
-    user_pw: z.string().min(1, t('passwordRequired')),
-  });
-
-type LoginFormValues = z.infer<ReturnType<typeof createLoginFormSchema>>;
-
+/**
+ * 로그인 폼 컴포넌트
+ * SSO로 리다이렉트하는 버튼을 표시합니다.
+ */
 const LoginForm = () => {
   const { t } = useTranslation('login');
-  const navigate = useNavigate();
   const { theme } = useTheme();
-  const { refreshUser } = useUser();
-  const loginMutation = usePostLoginMutation();
-  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(createLoginFormSchema(t)),
-    defaultValues: {
-      user_id: '',
-      user_pw: '',
-    },
-  });
-
-  const onSubmit = (values: LoginFormValues) => {
-    const formData = new FormData();
-    formData.append('user_id', values.user_id);
-    formData.append('user_pw', values.user_pw);
-
-    loginMutation.mutate(formData, {
-      onSuccess: async () => {
-        await refreshUser();
-        navigate('/dashboard');
-      },
-    });
+  // SSO 로그인 URL 생성
+  const getSsoLoginUrl = () => {
+    const ssoUrl = config.ssoUrl;
+    // 현재 페이지를 callback URL로 설정
+    const callbackUrl = `${window.location.origin}/auth/callback`;
+    return `${ssoUrl}/login?redirect_uri=${encodeURIComponent(callbackUrl)}`;
   };
 
-  return (
-    <>
-      <form className='w-full' onSubmit={form.handleSubmit(onSubmit)}>
-        <div className='flex flex-col justify-center gap-6'>
-          <div className='flex flex-col items-center text-center'>
-            <img src={theme == 'light' ? Logo : LogoDark} alt='logo' />
-          </div>
-          <Controller
-            control={form.control}
-            name='user_id'
-            render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
-                <FieldLabel>
-                  <User className='h-4 w-4 text-muted-foreground inline-block' />
-                  {t('idLabel')}
-                </FieldLabel>
-                <Input
-                  {...field}
-                  placeholder={t('idPlaceholder')}
-                />
-                <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-              </Field>
-            )}
-          />
-          <Controller
-            control={form.control}
-            name='user_pw'
-            render={({ field, fieldState }) => (
-              <Field data-invalid={!!fieldState.error}>
-                <div className='flex items-center'>
-                  <FieldLabel>
-                    <KeyRound className='h-4 w-4 text-muted-foreground inline-block' />
-                    {t('passwordLabel')}
-                  </FieldLabel>
-                  <a
-                    href='#'
-                    className='ml-auto text-sm font-medium text-muted-foreground underline-offset-4 hover:underline hover:text-primary'
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsResetDialogOpen(true);
-                    }}
-                  >
-                    {t('forgotPassword')}
-                  </a>
-                </div>
-                <Input
-                  {...field}
-                  type='password'
-                />
-                <FieldError errors={fieldState.error ? [fieldState.error] : undefined} />
-              </Field>
-            )}
-          />
-          <Button
-            type='submit'
-            className='w-full'
-            disabled={loginMutation.isPending}
-          >
-            {loginMutation.isPending && <Spinner />}
-            {loginMutation.isPending ? t('loadingBtn') : t('loginBtn')}
-          </Button>
-          <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
-            <span className='bg-card text-muted-foreground relative z-10 px-2'>
-              {t('orContinueWith')}
-            </span>
-          </div>
-          <SocialLoginButton />
-          <div className='text-center text-sm'>
-            <span className='text-muted-foreground'>{t('signup.noAccount')}</span>{' '}
-            <a
-              href='#'
-              className='font-medium text-primary underline-offset-4 hover:underline'
-              onClick={(e) => {
-                e.preventDefault();
-                navigate('/signup');
-              }}
-            >
-              {t('tab.signup')}
-            </a>
-          </div>
-        </div>
-      </form>
+  // SSO로 리다이렉트
+  const handleSsoRedirect = () => {
+    setIsRedirecting(true);
+    window.location.href = getSsoLoginUrl();
+  };
 
-      <PasswordResetDialog
-        open={isResetDialogOpen}
-        onOpenChange={setIsResetDialogOpen}
-      />
-    </>
+  // 자동 리다이렉트 (선택적 - 필요시 활성화)
+  useEffect(() => {
+    // 자동 리다이렉트를 원하면 아래 주석 해제
+    // handleSsoRedirect();
+  }, []);
+
+  return (
+    <div className='w-full'>
+      <div className='flex flex-col justify-center gap-6'>
+        <div className='flex flex-col items-center text-center'>
+          <img src={theme == 'light' ? Logo : LogoDark} alt='logo' />
+        </div>
+        <div className='text-center'>
+          <p className='text-muted-foreground mb-6'>
+            {t('sso.description', '로그인하려면 아래 버튼을 클릭하세요.')}
+          </p>
+          <Button
+            type='button'
+            className='w-full'
+            size='lg'
+            onClick={handleSsoRedirect}
+            disabled={isRedirecting}
+          >
+            {isRedirecting && <Spinner className='mr-2' />}
+            {isRedirecting ? t('sso.redirecting', '로그인 페이지로 이동 중...') : t('sso.login', '로그인')}
+          </Button>
+        </div>
+        <div className='text-center text-sm text-muted-foreground'>
+          <p>{t('sso.notice', '통합 인증 시스템(SSO)을 통해 로그인합니다.')}</p>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -8,11 +8,9 @@ import { toast } from '@/components/shadcn/sonner';
 import { Spinner } from '@/components/shadcn/spinner';
 import { useTheme } from '@/components/shadcn/themeProvider';
 import { useUser } from '@/contexts/UserContext';
-import { authKeys, usePostLogoutMutation } from '@/hooks/queries/useAuths';
 import { useChangePasswordMutation } from '@/hooks/queries/useUsers';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
 import { KeyRound, Lock, LogOut, ShieldCheck } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -49,11 +47,9 @@ const PasswordChangeForm = () => {
   const { t } = useTranslation('user');
   const { t: tc } = useTranslation('common');
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { theme } = useTheme();
-  const { refreshUser, clearLoginUser } = useUser();
+  const { refreshUser, logout } = useUser();
   const changePasswordMutation = useChangePasswordMutation();
-  const logoutMutation = usePostLogoutMutation();
 
   const form = useForm<PasswordChangeFormValues>({
     resolver: zodResolver(createFormSchema(t)),
@@ -85,13 +81,7 @@ const PasswordChangeForm = () => {
   };
 
   const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        clearLoginUser();
-        queryClient.setQueryData(authKeys.detail('login-check'), null);
-        navigate('/login');
-      },
-    });
+    logout();
   };
 
   return (
@@ -181,10 +171,9 @@ const PasswordChangeForm = () => {
               variant='outline'
               className='w-full'
               onClick={handleLogout}
-              disabled={logoutMutation.isPending}
             >
               <LogOut className='h-4 w-4' />
-              {logoutMutation.isPending ? tc('processing') : tc('logout')}
+              {tc('logout')}
             </Button>
           </div>
         </form>
