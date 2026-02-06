@@ -51,7 +51,7 @@ const ReportFilter = ({
   } = useReportContext();
   // 선택된 업무 분류에 따른 업무 파트 목록
   const currentWorkParts = filters.selectedWorkGroup !== 'all'
-    ? workGroups.find(g => g.work_code === filters.selectedWorkGroup)?.parts || []
+    ? workGroups.find(g => g.work_code === filters.selectedWorkGroup)?.labels.flatMap(l => l.parts) || []
     : [];
 
   return (
@@ -171,7 +171,7 @@ const ReportFilter = ({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value='all'>{tc('all')}</SelectItem>
-                      {currentWorkParts.map((part) => (
+                      {currentWorkParts.map((part: WorkCodeResp) => (
                         <SelectItem key={part.work_code} value={part.work_code}>
                           {part.work_code_name}
                         </SelectItem>

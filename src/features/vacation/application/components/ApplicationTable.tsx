@@ -33,7 +33,6 @@ const ApplicationTable = ({
   showApprovalTab = false
 }: ApplicationTableProps) => {
   const { t } = useTranslation('vacation')
-  const [activeTab, setActiveTab] = useState('requests')
   const [detailOpen, setDetailOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState<GetUserRequestedVacationsResp | null>(null)
   const [grantDialogOpen, setGrantDialogOpen] = useState(false)
@@ -77,7 +76,7 @@ const ApplicationTable = ({
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="requests" onValueChange={setActiveTab}>
+          <Tabs defaultValue="requests">
             <TabsList>
               <TabsTrigger value="requests">{t('application.requestTab')}</TabsTrigger>
               <Activity mode={showApprovalTab ? 'visible' : 'hidden'}>

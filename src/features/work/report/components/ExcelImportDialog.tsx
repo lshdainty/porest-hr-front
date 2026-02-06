@@ -118,12 +118,13 @@ const ExcelImportDialog = ({
     }
 
     // Find Part Code
-    let partCode;
+    let partCode: WorkCodeResp | undefined;
     if (groupCode) {
-       // Check if the part exists in the group's parts list
-       partCode = groupCode.parts.find(p => p.work_code === row.work_part_code);
+       // Check if the part exists in the group's labels -> parts list
+       const allParts = groupCode.labels.flatMap(l => l.parts);
+       partCode = allParts.find(p => p.work_code === row.work_part_code);
        if (!partCode) {
-           partCode = groupCode.parts.find(p => p.work_code_name === row.work_part_name);
+           partCode = allParts.find(p => p.work_code_name === row.work_part_name);
        }
     }
 
@@ -245,9 +246,10 @@ const ExcelImportDialog = ({
         updatedRow.work_part_code = undefined;
         updatedRow.work_part_name = '';
       } else if (type === 'part') {
-        // Find part in the current group's parts
+        // Find part in the current group's labels -> parts
         const currentGroup = workGroups.find(g => g.work_code === updatedRow.work_group_code);
-        const part = currentGroup?.parts.find(p => p.work_code === code);
+        const allParts = currentGroup?.labels.flatMap(l => l.parts) || [];
+        const part = allParts.find((p: WorkCodeResp) => p.work_code === code);
         updatedRow.work_part_code = code;
         updatedRow.work_part_name = part?.work_code_name || '';
       } else if (type === 'division') {
@@ -345,7 +347,7 @@ const ExcelImportDialog = ({
                   {parsedData.map((row) => {
                     // Filter parts based on selected group
                     const currentGroup = workGroups.find(g => g.work_code === row.work_group_code);
-                    const filteredParts = currentGroup ? currentGroup.parts : [];
+                    const filteredParts = currentGroup ? currentGroup.labels.flatMap(l => l.parts) : [];
 
                     return (
                       <TableRow key={row.id} className={cn(!row.isValid && 'bg-red-50')}>
@@ -408,7 +410,7 @@ const ExcelImportDialog = ({
                               <SelectValue placeholder={tc('select')} />
                             </SelectTrigger>
                             <SelectContent>
-                              {filteredParts.map((part) => (
+                              {filteredParts.map((part: WorkCodeResp) => (
                                 <SelectItem key={part.work_code} value={part.work_code}>
                                   {part.work_code_name}
                                 </SelectItem>

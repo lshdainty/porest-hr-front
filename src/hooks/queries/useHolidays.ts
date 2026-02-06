@@ -68,7 +68,7 @@ export const useDeleteHolidayMutation = () => {
 // 반복 공휴일 프리뷰 조회 훅
 export const useRecurringHolidaysPreviewQuery = (targetYear: number, countryCode: string, enabled: boolean = false) => {
   return useQuery<GetRecurringHolidaysPreviewResp[]>({
-    queryKey: holidayKeys.detail({ targetYear, countryCode, type: 'recurringPreview' }),
+    queryKey: holidayKeys.list({ targetYear, countryCode, type: 'recurringPreview' }),
     queryFn: () => fetchGetRecurringHolidaysPreview(targetYear, countryCode),
     enabled: enabled && !!targetYear && !!countryCode
   })

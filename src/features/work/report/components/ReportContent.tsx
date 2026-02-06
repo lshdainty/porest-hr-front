@@ -53,7 +53,7 @@ const ReportContent = () => {
       ? workGroupsWithParts?.find(g => g.work_code === activeFilters.selectedWorkGroup)?.work_code_id
       : undefined,
     partSeq: activeFilters.selectedWorkPart !== 'all'
-      ? workGroupsWithParts?.flatMap(g => g.parts).find(p => p.work_code === activeFilters.selectedWorkPart)?.work_code_id
+      ? workGroupsWithParts?.flatMap(g => g.labels.flatMap(l => l.parts)).find(p => p.work_code === activeFilters.selectedWorkPart)?.work_code_id
       : undefined,
     divisionSeq: activeFilters.selectedWorkDivision !== 'all'
       ? workDivision?.find(d => d.work_code === activeFilters.selectedWorkDivision)?.work_code_id
