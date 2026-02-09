@@ -33,7 +33,7 @@ const AuthCallbackPage = () => {
       if (ssoToken) {
         try {
           // SSO 토큰을 HR 토큰으로 교환
-          const response = await sessionApi.sessionApi.exchangeToken(ssoToken);
+          const response = await sessionApi.exchangeToken(ssoToken);
 
           // HR 토큰 저장
           setToken(response.accessToken);
