@@ -30,12 +30,14 @@ const calculateEndHourWithBreak = (
 
   if (isAfternoonShift(workTime)) {
     // 오후반: 저녁시간(18~19) 고려
-    if (endHour > 18) {
+    // 시작시간이 18시 이전이고 종료시간이 18시를 넘는 경우만 +1
+    if (startHour < 18 && endHour > 18) {
       return endHour + 1
     }
   } else {
     // 오전반: 점심시간(12~13) 고려
-    if (endHour > 12) {
+    // 시작시간이 12시 이전이고 종료시간이 12시를 넘는 경우만 +1
+    if (startHour < 12 && endHour > 12) {
       return endHour + 1
     }
   }
