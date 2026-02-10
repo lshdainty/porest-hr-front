@@ -1,6 +1,6 @@
 import { useLoginCheckQuery } from '@/entities/session/api/sessionQueries'
 import type { GetLoginCheck } from '@/entities/session/model/types'
-import { hasToken, removeToken } from '@/shared/api'
+import { sessionApi } from '@/entities/session/api/sessionApi'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
@@ -34,8 +34,8 @@ export function UserProvider({ children }: UserProviderProps) {
   // 현재 경로가 인증 페이지인지 확인
   const isAuthPage = AUTH_PATHS.includes(location.pathname)
 
-  // JWT 토큰이 있고 인증 페이지가 아닐 때만 로그인 체크 쿼리 실행
-  const shouldCheckLogin = hasToken() && !isAuthPage
+  // 인증 페이지가 아닐 때 로그인 체크 쿼리 실행 (HttpOnly 쿠키 기반)
+  const shouldCheckLogin = !isAuthPage
   const { data, isLoading, refetch } = useLoginCheckQuery(shouldCheckLogin)
 
   // 세션 데이터가 변경되면 상태 업데이트
@@ -58,9 +58,13 @@ export function UserProvider({ children }: UserProviderProps) {
     setLoginUserState(null)
   }
 
-  // 로그아웃 함수 (JWT 토큰 삭제)
-  const logout = () => {
-    removeToken()
+  // 로그아웃 함수 (HttpOnly 쿠키 삭제)
+  const logout = async () => {
+    try {
+      await sessionApi.logout()
+    } catch (e) {
+      // 로그아웃 실패해도 로그인 페이지로 이동
+    }
     setLoginUserState(null)
     window.location.href = '/login'
   }

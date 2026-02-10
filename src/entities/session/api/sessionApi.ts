@@ -20,8 +20,18 @@ export const sessionApi = {
   },
 
   /**
-   * 로그인 사용자 정보 조회 (JWT 토큰 기반)
-   * JWT 토큰을 Authorization 헤더로 전송하여 사용자 정보를 조회합니다.
+   * 로그아웃 (HttpOnly 쿠키 삭제)
+   */
+  logout: async (): Promise<void> => {
+    await apiClient.request({
+      method: 'post',
+      url: `/auth/logout`
+    })
+  },
+
+  /**
+   * 로그인 사용자 정보 조회 (HttpOnly 쿠키 기반)
+   * JWT 토큰이 쿠키로 자동 전송되어 사용자 정보를 조회합니다.
    */
   getLoginCheck: async (): Promise<GetLoginCheck> => {
     const resp: ApiResponse<GetLoginCheck> = await apiClient.request({

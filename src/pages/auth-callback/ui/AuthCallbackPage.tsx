@@ -1,5 +1,4 @@
 import Loading from '@/shared/ui/loading/Loading';
-import { setToken } from '@/shared/api'
 import { sessionApi } from '@/entities/session';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -32,11 +31,8 @@ const AuthCallbackPage = () => {
 
       if (ssoToken) {
         try {
-          // SSO 토큰을 HR 토큰으로 교환
-          const response = await sessionApi.exchangeToken(ssoToken);
-
-          // HR 토큰 저장
-          setToken(response.accessToken);
+          // SSO 토큰을 HR 토큰으로 교환 (HR JWT는 HttpOnly Cookie로 자동 설정됨)
+          await sessionApi.exchangeToken(ssoToken);
 
           // URL에서 토큰 제거 (보안)
           window.history.replaceState({}, '', window.location.pathname);

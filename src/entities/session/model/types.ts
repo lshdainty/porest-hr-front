@@ -40,8 +40,6 @@ export interface TokenExchangeUserInfo {
 }
 
 export interface TokenExchangeResponse {
-  accessToken: string
-  tokenType: string
   expiresIn: number
   user: TokenExchangeUserInfo
 }
