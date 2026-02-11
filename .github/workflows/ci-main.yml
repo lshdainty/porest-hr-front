@@ -1,18 +1,15 @@
-name: CI/CD
+name: CI
 
 on:
   pull_request:
     branches: [ main, master ]
   push:
     branches: [ main, master ]
-    tags:
-      - 'v*'  # v1.0.0, v1.0.1 등 버전 태그
 
 permissions:
   contents: write
 
 jobs:
-  # [1] 빌드 테스트
   build-test:
     runs-on: ubuntu-latest
     steps:
@@ -34,91 +31,10 @@ jobs:
       - name: Build Test
         run: npm run build:skip-check
 
-  # [2] Docker 이미지 빌드 & Push
-  build-and-push:
+  trigger-deploy:
     needs: build-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
-    outputs:
-      image_tag: ${{ steps.meta.outputs.version }}
-      is_release: ${{ startsWith(github.ref, 'refs/tags/v') }}
     steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ secrets.DOCKER_USERNAME }}/porest-front
-          tags: |
-            # main push: latest + sha
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=sha,prefix=,enable=${{ github.ref == 'refs/heads/main' }}
-            # tag push: 버전 태그 (v1.0.0 -> 1.0.0)
-            type=semver,pattern={{version}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-            type=semver,pattern={{major}}.{{minor}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  # [3] Jenkins Dev 배포 트리거 (main push만)
-  trigger-dev-deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Trigger Jenkins Dev Deployment
-        run: |
-          curl -X POST "${{ secrets.JENKINS_URL }}/job/porest-front-deploy/buildWithParameters" \
-            --user "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
-            --data-urlencode "DEPLOY_ENV=dev" \
-            --data-urlencode "IMAGE_TAG=latest" \
-            --fail --silent --show-error
-
-      - name: Dev Deployment Triggered
-        run: echo "Dev deployment triggered with latest image"
-
-  # [4] 릴리스 생성 및 Prod 배포 트리거 (tag push만)
-  create-release:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          tag_name: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trigger Jenkins Prod Deployment
-        run: |
-          curl -X POST "${{ secrets.JENKINS_URL }}/job/porest-front-deploy/buildWithParameters" \
-            --user "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
-            --data-urlencode "DEPLOY_ENV=prod" \
-            --data-urlencode "IMAGE_TAG=${{ needs.build-and-push.outputs.image_tag }}" \
-            --fail --silent --show-error
-
-      - name: Release and Prod Deployment Triggered
-        run: |
-          echo "Release ${{ github.ref_name }} created. Prod deployment triggered."
+      - name: Trigger Jenkins Deploy
+        run: curl -s -X POST "${{ secrets.JENKINS_URL }}/generic-webhook-trigger/invoke?token=porest-front-deploy"
