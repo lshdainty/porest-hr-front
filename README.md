@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/POREST-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="POREST" />
 </p>
 
-<h1 align="center">POREST Frontend</h1>
+<h1 align="center">POREST HR Frontend</h1>
 
 <p align="center">
   <strong>사업장 근로자를 위한 일정관리 및 휴가관리 서비스</strong>
@@ -19,7 +19,7 @@
 
 ## 소개
 
-**POREST Frontend**는 [POREST](https://github.com/lshdainty/POREST) 서비스의 프론트엔드입니다.
+**POREST HR Frontend**는 [POREST](https://github.com/lshdainty/POREST) 서비스의 HR(인사관리) 프론트엔드입니다.
 
 React 19와 TypeScript를 기반으로 하며, shadcn/ui 컴포넌트와 Tailwind CSS를 사용하여 모던한 UI를 구현했습니다.
 
@@ -121,7 +121,10 @@ src/locales/
 | Repository | Description |
 |------------|-------------|
 | [POREST](https://github.com/lshdainty/POREST) | 통합 레포지토리 (서비스 소개) |
-| [porest-back](https://github.com/lshdainty/porest-back) | Spring Boot 기반 백엔드 |
+| [porest-hr-back](https://github.com/lshdainty/porest-hr-back) | HR 백엔드 |
+| [porest-core](https://github.com/lshdainty/porest-core) | 공통 라이브러리 |
+| [porest-sso-back](https://github.com/lshdainty/porest-sso-back) | SSO 백엔드 |
+| [porest-sso-front](https://github.com/lshdainty/porest-sso-front) | SSO 프론트엔드 |
 
 ---
 

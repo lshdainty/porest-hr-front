@@ -6,7 +6,7 @@ import svgr from 'vite-plugin-svgr';
 
 const ReactCompilerConfig = {
   sources: (filename: string) => {
-    return filename.indexOf('src/components') !== -1;
+    return filename.indexOf('/ui/') !== -1;
   },
 };
 
