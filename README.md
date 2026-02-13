@@ -45,32 +45,15 @@ React 19와 TypeScript를 기반으로 하며, shadcn/ui 컴포넌트와 Tailwin
 
 ```text
 src/
-├── assets/          # 폰트, 이미지 등 정적 자산
-├── components/      # 재사용 가능한 UI 컴포넌트
-│   ├── auth/        # 인증 관련 컴포넌트
-│   ├── common/      # 공통 컴포넌트
-│   ├── layout/      # 레이아웃 컴포넌트
-│   ├── shadcn/      # shadcn/ui 컴포넌트
-│   ├── sidebar/     # 사이드바 컴포넌트
-│   └── ui/          # 기타 UI 컴포넌트
-├── config/          # 설정 파일 (라우트 등)
-├── constants/       # 상수 정의
-├── contexts/        # React Context
-├── features/        # 기능별 모듈
-│   ├── admin/       # 관리자 기능
-│   ├── auth/        # 인증 기능
-│   ├── culture/     # 회비/규정 기능
-│   ├── home/        # 대시보드/캘린더
-│   ├── login/       # 로그인 기능
-│   ├── user/        # 사용자 기능
-│   ├── vacation/    # 휴가 관리
-│   └── work/        # 업무 관리
-├── hooks/           # 커스텀 훅
-├── lib/             # 유틸리티 라이브러리
+├── app/             # 앱 초기화, 라우터, 전역 Provider, 설정
+├── entities/        # 도메인 엔티티 API/모델 (user, vacation, work 등)
+├── features/        # 기능 단위 모듈 (admin-*, vacation-*, work-*, auth 등)
+├── pages/           # 라우트 단위 페이지 컴포넌트
+├── shared/          # 공용 API/자산/설정/훅/UI
+├── widgets/         # 화면 조합 위젯 (layout, sidebar, notice-popup)
 ├── locales/         # 다국어 리소스 (ko, en)
-├── pages/           # 페이지 컴포넌트
-├── types/           # TypeScript 타입 정의
-└── utils/           # 유틸리티 함수
+├── main.tsx         # 엔트리포인트
+└── index.css        # 전역 스타일
 ```
 
 ---
