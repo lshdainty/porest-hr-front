@@ -15,16 +15,21 @@ const UserRoleAssignmentSkeleton = () => {
       </div>
 
       <div className="p-6">
-        <Skeleton className="h-6 w-28 mb-4" />
-        <div className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg bg-card gap-4">
-          <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <Skeleton className="h-6 w-24" />
-              <Skeleton className="h-6 w-28" />
+        <Skeleton className="h-5 w-12 mb-2" />
+        <Skeleton className="h-4 w-64 mb-3" />
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className="flex items-center gap-1.5 rounded-xl border py-4 pl-5 pr-4">
+              <div className="flex flex-1 flex-col gap-1.5">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-3/4" />
+              </div>
+              <Skeleton className="size-5 shrink-0" />
             </div>
-            <Skeleton className="h-4 w-64" />
-          </div>
-          <Skeleton className="h-10 w-[200px]" />
+          ))}
+        </div>
+        <div className="mt-3 flex justify-end">
+          <Skeleton className="h-9 w-16" />
         </div>
       </div>
     </div>

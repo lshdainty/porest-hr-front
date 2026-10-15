@@ -83,6 +83,8 @@ const UserManagementPanel = () => {
     } catch (error) {
       console.error("Failed to update user roles:", error);
       toast.error(t('authority.userRolesUpdateFailed'));
+      // 고르기 화면이 실패를 알아야 고른 것을 그대로 두고 다시 저장하게 할 수 있다
+      throw error
     }
   };
 
@@ -108,6 +110,7 @@ const UserManagementPanel = () => {
           <DialogContent className="w-full h-full max-w-none m-0 p-0 rounded-none border-none bg-background [&>button]:hidden">
             {selectedUser && (
               <UserRoleAssignment
+                key={selectedUser.id}
                 user={selectedUser}
                 allRoles={domainRoles}
                 onUpdateUserRole={handleUpdateUserRole}
@@ -139,6 +142,7 @@ const UserManagementPanel = () => {
           <UserRoleAssignmentSkeleton />
         ) : selectedUser ? (
           <UserRoleAssignment
+            key={selectedUser.id}
             user={selectedUser}
             allRoles={domainRoles}
             onUpdateUserRole={handleUpdateUserRole}
