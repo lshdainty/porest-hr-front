@@ -1,5 +1,4 @@
 export { MobilePermissionDrawer } from './ui/MobilePermissionDrawer';
-export { MobileRoleSelector } from './ui/MobileRoleSelector';
 export { PermissionMatrix } from './ui/PermissionMatrix';
 export { RoleDetail } from './ui/RoleDetail';
 export { RoleList } from './ui/RoleList';

@@ -37,17 +37,6 @@ export {
 export { Checkbox } from '@/shared/ui/shadcn/checkbox'
 export { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/shared/ui/shadcn/collapsible'
 export {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from '@/shared/ui/shadcn/command'
-export {
   ContextMenu,
   ContextMenuTrigger,
   ContextMenuContent,
