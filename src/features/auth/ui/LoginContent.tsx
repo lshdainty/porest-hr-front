@@ -1,6 +1,6 @@
 import loginBG from '@/shared/assets/img/login_bg.jpg';
-import Logo from '@/shared/assets/img/porest.svg';
-import LogoDark from '@/shared/assets/img/porest_dark.svg';
+import Logo from '@/shared/assets/img/groo.svg';
+import LogoDark from '@/shared/assets/img/groo_dark.svg';
 import { Button } from '@/shared/ui/shadcn/button';
 import { Card, CardContent } from '@/shared/ui/shadcn/card';
 import { Spinner } from '@/shared/ui/shadcn/spinner';

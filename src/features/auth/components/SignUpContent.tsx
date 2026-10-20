@@ -1,5 +1,5 @@
-import Logo from '@/shared/assets/img/porest.svg';
-import LogoDark from '@/shared/assets/img/porest_dark.svg';
+import Logo from '@/shared/assets/img/groo.svg';
+import LogoDark from '@/shared/assets/img/groo_dark.svg';
 import { Button } from '@/shared/ui/shadcn/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/shadcn/card';
 import { Spinner } from '@/shared/ui/shadcn/spinner';
@@ -45,7 +45,7 @@ const SignUpContent = () => {
           <div className="flex justify-center mb-4">
             <img
               src={theme === 'light' ? Logo : LogoDark}
-              alt="Porest Logo"
+              alt="Groo Logo"
               className="h-12"
             />
           </div>
