@@ -895,8 +895,8 @@ auth,signup.title,회원가입,Sign Up
 auth,signup.subtitle,초대받은 정보로 계정을 완성해주세요,Complete your account with the invitation info
 auth,signup.additionalInfo,추가 정보,Additional Info
 auth,signup.hasAccount,이미 계정이 있으신가요?,Already have an account?
-culture,rule.header.title,💁 POREST 🌲,💁 POREST 🌲
-culture,rule.header.subtitle,POREST팀은 이용자분들의 복지를 개선하기 위해 항상 노력하고 있어요,POREST team always strives to improve the welfare of our members
+culture,rule.header.title,💁 그루 🌲,💁 그루 🌲
+culture,rule.header.subtitle,그루 팀은 이용자분들의 복지를 개선하기 위해 항상 노력하고 있어요,그루 team always strives to improve the welfare of our members
 culture,rule.vacation.title,🏖️ 휴가,🏖️ Vacation
 culture,rule.vacation.daysTitle,휴가 일수,Vacation Days
 culture,rule.vacation.daysDesc,휴가는 📅1년에 <b><u>총 15일</u></b> 지급으로 🕐<b><u>1시간 단위</u></b>로 자유롭게 사용 가능해요.,You receive 📅<b><u>15 days</u></b> per year with 🕐<b><u>hourly flexibility</u></b> to use vacation freely.

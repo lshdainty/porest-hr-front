@@ -1,6 +1,6 @@
-import Logo from '@/shared/assets/img/porest.svg';
-import LogoDark from '@/shared/assets/img/porest_dark.svg';
-import LogoIcon from '@/shared/assets/img/porest_logo.svg';
+import Logo from '@/shared/assets/img/groo.svg';
+import LogoDark from '@/shared/assets/img/groo_dark.svg';
+import LogoIcon from '@/shared/assets/img/groo_logo.svg';
 import {
   SidebarMenu,
   SidebarMenuButton,
